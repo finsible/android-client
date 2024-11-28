@@ -28,6 +28,11 @@ import com.itsjeel01.finsiblefrontend.ui.viewmodel.OnboardingViewModel
 @Composable
 fun OnboardingBottomSheet(viewModel: OnboardingViewModel, modifier: Modifier) {
     val currentSlide = viewModel.currentSlide.collectAsState().value
+    val buttonLabel: String = when (currentSlide) {
+        0 -> "Get Started"
+        slides.lastIndex -> "Sign In with Google"
+        else -> "Next"
+    }
 
     fun nextSlide() {
         if (currentSlide == slides.lastIndex) viewModel.updateSlide(0)
@@ -90,9 +95,7 @@ fun OnboardingBottomSheet(viewModel: OnboardingViewModel, modifier: Modifier) {
             onClick = { nextSlide() },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(
-                text = if (currentSlide < slides.lastIndex) "Next" else "Sign In with Google"
-            )
+            Text(text = buttonLabel)
         }
     }
 }

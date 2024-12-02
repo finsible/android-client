@@ -69,6 +69,9 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.activity.ktx)
     implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.googleid)
 
     ksp(libs.hilt.compiler)
 

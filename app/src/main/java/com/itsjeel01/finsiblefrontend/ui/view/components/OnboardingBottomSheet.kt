@@ -17,13 +17,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.itsjeel01.finsiblefrontend.data.slides
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.OnboardingViewModel
+import com.itsjeel01.finsiblefrontend.utils.signInWithGoogle
 
 @Composable
 fun OnboardingBottomSheet(viewModel: OnboardingViewModel, modifier: Modifier) {
@@ -33,10 +36,14 @@ fun OnboardingBottomSheet(viewModel: OnboardingViewModel, modifier: Modifier) {
         slides.lastIndex -> "Sign In with Google"
         else -> "Next"
     }
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
     fun nextSlide() {
-        if (currentSlide == slides.lastIndex) viewModel.updateSlide(0)
-        else viewModel.updateSlide(currentSlide + 1)
+        if (currentSlide == slides.lastIndex) {
+            signInWithGoogle(context, coroutineScope)
+            return
+        } else viewModel.updateSlide(currentSlide + 1)
     }
 
     Column(

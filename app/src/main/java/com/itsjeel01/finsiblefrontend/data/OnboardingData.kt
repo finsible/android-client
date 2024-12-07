@@ -3,26 +3,25 @@ package com.itsjeel01.finsiblefrontend.data
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.data.models.OnboardingBottomSheetDataModel
 
-// Sample data for slides
 val slides = listOf(
     OnboardingBottomSheetDataModel(
-        illustration = R.drawable.ic_launcher_foreground,
+        illustration = R.drawable.welcome_illustration,
         headline = "Welcome to Finsible",
-        description = "Manage your finances smartly with Finsible. Stay on top of your goals!"
+        description = "Discover the smarter way to take control of your finances. Finsible empowers you to track, manage, and achieve your financial goals—all in one place."
     ),
     OnboardingBottomSheetDataModel(
-        illustration = R.drawable.ic_launcher_foreground,
-        headline = "Track Your Expenses",
-        description = "Effortlessly track and categorize your daily expenses with ease."
+        illustration = R.drawable.transactions_illustration,
+        headline = "Where your money goes?",
+        description = "Effortlessly track and categorize every expense. From daily coffee runs to big purchases, Finsible ensures you always know where your money is going."
     ),
     OnboardingBottomSheetDataModel(
-        illustration = R.drawable.ic_launcher_foreground,
-        headline = "Set Financial Goals",
-        description = "Set goals, monitor your progress, and achieve financial freedom."
+        illustration = R.drawable.graph_illustration,
+        headline = "Your Goals, Achieved",
+        description = "Set personalized financial goals, track your progress over time, and achieve the financial freedom you’ve always wanted with actionable insights."
     ),
     OnboardingBottomSheetDataModel(
-        illustration = R.drawable.ic_launcher_foreground,
-        headline = "Sign In and Get Started",
-        description = "Sign in with Google to experience the power of Finsible."
+        illustration = R.drawable.login_illustration,
+        headline = "Start Your Journey",
+        description = "Get started by signing in with Google. Experience a seamless, secure, and personalized way to manage your finances with Finsible."
     )
 )

@@ -137,7 +137,7 @@ fun OnboardingBottomSheet(viewModel: OnboardingViewModel, modifier: Modifier) {
                 Box(
                     modifier = Modifier
                         .padding(horizontal = 2.dp)
-                        .size(if (index == currentSlide) 16.dp else 8.dp)
+                        .size(size)
                         .background(color, shape = RoundedCornerShape(50))
                         .clickable { viewModel.updateSlide(index) }
                 )

@@ -2,9 +2,8 @@ package com.itsjeel01.finsiblefrontend.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.font.FontFamily
-
-import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.text.googlefonts.Font
+import androidx.compose.ui.text.googlefonts.GoogleFont
 import com.itsjeel01.finsiblefrontend.R
 
 val provider = GoogleFont.Provider(
@@ -15,14 +14,14 @@ val provider = GoogleFont.Provider(
 
 val bodyFontFamily = FontFamily(
     Font(
-        googleFont = GoogleFont("Inter Tight"),
+        googleFont = GoogleFont("Rubik"),
         fontProvider = provider,
     )
 )
 
 val displayFontFamily = FontFamily(
     Font(
-        googleFont = GoogleFont("Manrope"),
+        googleFont = GoogleFont("Rubik"),
         fontProvider = provider,
     )
 )

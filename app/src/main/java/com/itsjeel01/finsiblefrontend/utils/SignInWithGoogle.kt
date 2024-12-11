@@ -7,13 +7,19 @@ import androidx.credentials.GetCredentialRequest
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.itsjeel01.finsiblefrontend.BuildConfig
+import com.itsjeel01.finsiblefrontend.ui.viewmodel.AuthViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.security.MessageDigest
 import java.util.UUID
 
-fun signInWithGoogle(context: Context, coroutineScope: CoroutineScope) {
+fun signInWithGoogle(
+    context: Context,
+    coroutineScope: CoroutineScope,
+    authViewModel: AuthViewModel,
+) {
     val credentialsManager = CredentialManager.create(context)
+    val clientId = BuildConfig.SERVER_CLIENT_ID
 
     val rawNonce = UUID.randomUUID().toString()
     val bytes = rawNonce.toByteArray()
@@ -22,7 +28,7 @@ fun signInWithGoogle(context: Context, coroutineScope: CoroutineScope) {
 
     val googleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
         .setFilterByAuthorizedAccounts(false)
-        .setServerClientId(BuildConfig.SERVER_CLIENT_ID) // web client ID
+        .setServerClientId(clientId) // web client ID
         .setNonce(hashedNonce)
         .build()
 
@@ -37,6 +43,8 @@ fun signInWithGoogle(context: Context, coroutineScope: CoroutineScope) {
 
             val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
             val googleIdToken = googleIdTokenCredential.idToken
+
+            authViewModel.authenticate(clientId = clientId, token = googleIdToken)
 
             Log.i("SignInWithGoogle", googleIdToken)
         } catch (e: Exception) {

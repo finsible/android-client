@@ -9,4 +9,7 @@ sealed class Routes {
 
     @Serializable
     data object DashboardScreen : Routes()
+
+    @Serializable
+    data object LaunchScreen : Routes()
 }

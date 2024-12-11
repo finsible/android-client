@@ -31,12 +31,14 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.itsjeel01.finsiblefrontend.data.slides
 import com.itsjeel01.finsiblefrontend.ui.view.components.OnboardingBottomSheet
+import com.itsjeel01.finsiblefrontend.ui.viewmodel.AuthViewModel
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.OnboardingViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OnboardingScreen() {
     val onboardingViewModel: OnboardingViewModel = hiltViewModel()
+    val authViewModel: AuthViewModel = hiltViewModel()
 
     val topAppBarColors = TopAppBarColors(
         containerColor = MaterialTheme.colorScheme.background,
@@ -94,8 +96,9 @@ fun OnboardingScreen() {
 
             // Sticky Bottom Sheet
             OnboardingBottomSheet(
-                viewModel = onboardingViewModel,
+                onboardingViewModel = onboardingViewModel,
                 modifier = Modifier.align(Alignment.BottomCenter),
+                authViewModel = authViewModel
             )
         }
     }

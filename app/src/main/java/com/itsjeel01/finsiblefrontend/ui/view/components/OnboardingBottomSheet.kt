@@ -37,14 +37,22 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
 import com.itsjeel01.finsiblefrontend.R
+import com.itsjeel01.finsiblefrontend.data.models.AuthState
 import com.itsjeel01.finsiblefrontend.data.slides
+import com.itsjeel01.finsiblefrontend.ui.navigation.Routes
+import com.itsjeel01.finsiblefrontend.ui.viewmodel.AuthViewModel
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.OnboardingViewModel
 import com.itsjeel01.finsiblefrontend.utils.signInWithGoogle
 
 @Composable
-fun OnboardingBottomSheet(viewModel: OnboardingViewModel, modifier: Modifier) {
-    val currentSlide = viewModel.currentSlide.collectAsState().value
+fun OnboardingBottomSheet(
+    onboardingViewModel: OnboardingViewModel,
+    modifier: Modifier,
+    authViewModel: AuthViewModel,
+) {
+    val currentSlide = onboardingViewModel.currentSlide.collectAsState().value
     val buttonLabel: String = when (currentSlide) {
         0 -> "Get Started"
         slides.lastIndex -> "Sign In with Google"
@@ -52,12 +60,15 @@ fun OnboardingBottomSheet(viewModel: OnboardingViewModel, modifier: Modifier) {
     }
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+    val navController = rememberNavController()
 
     fun navigateToNext() {
         if (currentSlide == slides.lastIndex) {
-            signInWithGoogle(context, coroutineScope)
-            return
-        } else viewModel.updateSlide(currentSlide + 1)
+            signInWithGoogle(context, coroutineScope, authViewModel)
+            if (authViewModel.authState.value == AuthState.Positive) {
+                navController.navigate(Routes.DashboardScreen)
+            }
+        } else onboardingViewModel.updateSlide(currentSlide + 1)
     }
 
     Column(
@@ -139,7 +150,7 @@ fun OnboardingBottomSheet(viewModel: OnboardingViewModel, modifier: Modifier) {
                         .padding(horizontal = 2.dp)
                         .size(size)
                         .background(color, shape = RoundedCornerShape(50))
-                        .clickable { viewModel.updateSlide(index) }
+                        .clickable { onboardingViewModel.updateSlide(index) }
                 )
             }
         }

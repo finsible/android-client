@@ -39,8 +39,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.itsjeel01.finsiblefrontend.R
+import com.itsjeel01.finsiblefrontend.data.OnboardingData
 import com.itsjeel01.finsiblefrontend.data.models.AuthState
-import com.itsjeel01.finsiblefrontend.data.slides
 import com.itsjeel01.finsiblefrontend.ui.navigation.Routes
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.AuthViewModel
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.OnboardingViewModel
@@ -52,6 +52,7 @@ fun OnboardingBottomSheet(
     modifier: Modifier,
     authViewModel: AuthViewModel,
 ) {
+    val slides = OnboardingData().getOnboardingData()
     val currentSlide = onboardingViewModel.currentSlide.collectAsState().value
     val buttonLabel: String = when (currentSlide) {
         0 -> "Get Started"

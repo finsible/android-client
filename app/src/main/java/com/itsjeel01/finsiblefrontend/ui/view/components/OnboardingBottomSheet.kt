@@ -37,7 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavHostController
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.data.OnboardingData
 import com.itsjeel01.finsiblefrontend.data.models.AuthState
@@ -51,6 +51,7 @@ fun OnboardingBottomSheet(
     onboardingViewModel: OnboardingViewModel,
     modifier: Modifier,
     authViewModel: AuthViewModel,
+    navController: NavHostController,
 ) {
     val slides = OnboardingData().getOnboardingData()
     val currentSlide = onboardingViewModel.currentSlide.collectAsState().value
@@ -61,7 +62,6 @@ fun OnboardingBottomSheet(
     }
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    val navController = rememberNavController()
 
     fun navigateToNext() {
         if (currentSlide == slides.lastIndex) {

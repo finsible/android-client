@@ -1,0 +1,109 @@
+package com.itsjeel01.finsiblefrontend.ui.view.components
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemColors
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import com.itsjeel01.finsiblefrontend.data.BottomNavigationItems
+import com.itsjeel01.finsiblefrontend.ui.navigation.Routes
+import com.itsjeel01.finsiblefrontend.ui.viewmodel.DashboardViewModel
+
+@Composable
+fun BottomNavBar(navController: NavHostController) {
+
+    val dashboardViewModel: DashboardViewModel = hiltViewModel()
+    val selectedTabItem by dashboardViewModel.selectedTabState.collectAsState()
+
+    NavigationBar(
+        containerColor = MaterialTheme.colorScheme.background,
+    ) {
+        BottomNavigationItems().getBottomNavigationItems()
+            .forEachIndexed { index, navigationItem ->
+                val isSelected = selectedTabItem == index
+
+                NavigationBarItem(
+                    selected = isSelected,
+                    alwaysShowLabel = true,
+                    label = {
+                        val labelFontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                        Text(navigationItem.label, fontWeight = labelFontWeight)
+                    },
+                    colors = NavigationBarItemColors(
+                        selectedIndicatorColor = MaterialTheme.colorScheme.background,
+                        unselectedIconColor = MaterialTheme.colorScheme.outline,
+                        unselectedTextColor = MaterialTheme.colorScheme.outline,
+                        disabledIconColor = MaterialTheme.colorScheme.outline,
+                        disabledTextColor = MaterialTheme.colorScheme.outline,
+                        selectedIconColor = MaterialTheme.colorScheme.primary,
+                        selectedTextColor = MaterialTheme.colorScheme.primary
+                    ),
+                    icon = {
+                        if (navigationItem.opensScreen)
+                            Icon(
+                                painter = painterResource(id = navigationItem.icon),
+                                modifier = Modifier.size(24.dp),
+                                contentDescription = navigationItem.label
+                            )
+                        else
+                            Box(
+                                modifier = Modifier
+                                    .background(
+                                        shape = CircleShape,
+                                        brush = Brush.horizontalGradient(
+                                            endX = 200F,
+                                            colors = listOf(
+                                                MaterialTheme.colorScheme.primary,
+                                                MaterialTheme.colorScheme.secondaryContainer
+                                            )
+                                        )
+                                    )
+                                    .shadow(
+                                        elevation = 16.dp,
+                                        shape = CircleShape,
+                                        ambientColor = MaterialTheme.colorScheme.primary,
+                                        spotColor = MaterialTheme.colorScheme.primary,
+                                    )
+                                    .padding(16.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = navigationItem.icon),
+                                    tint = MaterialTheme.colorScheme.background,
+                                    modifier = Modifier.size(24.dp),
+                                    contentDescription = navigationItem.label
+                                )
+                            }
+                    },
+                    onClick = {
+                        dashboardViewModel.changeTab(index)
+                        if (isSelected) {
+                            navController.navigate(navigationItem.route) {
+                                popUpTo(Routes.HomeScreen) {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
+                            }
+                        }
+
+                    }
+                )
+            }
+    }
+}

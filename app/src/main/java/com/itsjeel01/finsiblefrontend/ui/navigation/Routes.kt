@@ -12,4 +12,16 @@ sealed class Routes {
 
     @Serializable
     data object LaunchScreen : Routes()
+
+    @Serializable
+    data object HomeScreen : Routes()
+
+    @Serializable
+    data object InsightsScreen : Routes()
+
+    @Serializable
+    data object BalanceScreen : Routes()
+
+    @Serializable
+    data object SettingsScreen : Routes()
 }

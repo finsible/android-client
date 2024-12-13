@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.itsjeel01.finsiblefrontend.data.slides
+import com.itsjeel01.finsiblefrontend.data.OnboardingData
 import com.itsjeel01.finsiblefrontend.ui.view.components.OnboardingBottomSheet
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.AuthViewModel
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.OnboardingViewModel
@@ -41,6 +41,7 @@ import com.itsjeel01.finsiblefrontend.ui.viewmodel.OnboardingViewModel
 fun OnboardingScreen(navController: NavHostController) {
     val onboardingViewModel: OnboardingViewModel = hiltViewModel()
     val authViewModel: AuthViewModel = hiltViewModel()
+    val slides = OnboardingData().getOnboardingData()
 
     val topAppBarColors = TopAppBarColors(
         containerColor = MaterialTheme.colorScheme.background,

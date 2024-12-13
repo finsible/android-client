@@ -29,6 +29,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.itsjeel01.finsiblefrontend.data.slides
 import com.itsjeel01.finsiblefrontend.ui.view.components.OnboardingBottomSheet
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.AuthViewModel
@@ -36,7 +38,7 @@ import com.itsjeel01.finsiblefrontend.ui.viewmodel.OnboardingViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OnboardingScreen() {
+fun OnboardingScreen(navController: NavHostController) {
     val onboardingViewModel: OnboardingViewModel = hiltViewModel()
     val authViewModel: AuthViewModel = hiltViewModel()
 
@@ -98,7 +100,8 @@ fun OnboardingScreen() {
             OnboardingBottomSheet(
                 onboardingViewModel = onboardingViewModel,
                 modifier = Modifier.align(Alignment.BottomCenter),
-                authViewModel = authViewModel
+                authViewModel = authViewModel,
+                navController = navController
             )
         }
     }
@@ -107,5 +110,5 @@ fun OnboardingScreen() {
 @Preview(showBackground = true)
 @Composable
 fun OnboardingScreenPreview() {
-    OnboardingScreen()
+    OnboardingScreen(rememberNavController())
 }

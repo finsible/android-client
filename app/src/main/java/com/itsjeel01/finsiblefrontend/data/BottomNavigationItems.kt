@@ -28,12 +28,12 @@ data class BottomNavigationItems(
             BottomNavigationItems(
                 label = "Balance",
                 icon = R.drawable.coins_icon,
-                route = Routes.DashboardScreen
+                route = Routes.BalanceScreen
             ),
             BottomNavigationItems(
                 label = "Settings",
                 icon = R.drawable.user_gear_icon,
-                route = Routes.DashboardScreen
+                route = Routes.SettingsScreen
             ),
         )
     }

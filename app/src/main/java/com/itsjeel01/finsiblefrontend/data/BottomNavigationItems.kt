@@ -7,6 +7,7 @@ data class BottomNavigationItems(
     val label: String = "",
     val icon: Int = 0,
     val route: Routes = Routes.DashboardScreen,
+    val opensScreen: Boolean = true,
 ) {
     fun getBottomNavigationItems(): List<BottomNavigationItems> {
         return listOf(
@@ -21,18 +22,18 @@ data class BottomNavigationItems(
                 route = Routes.InsightsScreen
             ),
             BottomNavigationItems(
-                label = "New Transaction",
-                icon = R.drawable.square_plus_icon,
-                route = Routes.DashboardScreen
+                icon = R.drawable.plus_icon,
+                route = Routes.DashboardScreen,
+                opensScreen = false
             ),
             BottomNavigationItems(
                 label = "Balance",
-                icon = R.drawable.coins_icon,
+                icon = R.drawable.piggy_bank_icon,
                 route = Routes.BalanceScreen
             ),
             BottomNavigationItems(
                 label = "Settings",
-                icon = R.drawable.user_gear_icon,
+                icon = R.drawable.hamburger_menu_icon,
                 route = Routes.SettingsScreen
             ),
         )

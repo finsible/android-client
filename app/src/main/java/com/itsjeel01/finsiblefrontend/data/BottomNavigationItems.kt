@@ -23,7 +23,6 @@ data class BottomNavigationItems(
             ),
             BottomNavigationItems(
                 icon = R.drawable.plus_icon,
-                route = Routes.DashboardScreen,
                 opensScreen = false
             ),
             BottomNavigationItems(

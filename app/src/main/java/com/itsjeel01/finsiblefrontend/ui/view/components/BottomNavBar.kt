@@ -22,16 +22,18 @@ import com.itsjeel01.finsiblefrontend.ui.viewmodel.DashboardViewModel
 
 @Composable
 fun BottomNavBar(navController: NavHostController) {
-
     val dashboardViewModel: DashboardViewModel = hiltViewModel()
+
     val selectedTabItem by dashboardViewModel.selectedTabState.collectAsState()
+    val showModalSheet by dashboardViewModel.showModalSheetState.collectAsState()
 
     NavigationBar(
         containerColor = MaterialTheme.colorScheme.background,
     ) {
+        var isSelected: Boolean
         BottomNavigationItems().getBottomNavigationItems()
             .forEachIndexed { index, navigationItem ->
-                val isSelected = selectedTabItem == index
+                isSelected = selectedTabItem == index
 
                 NavigationBarItem(
                     selected = isSelected,
@@ -60,17 +62,23 @@ fun BottomNavBar(navController: NavHostController) {
                             NewTransactionButton(navigationItem)
                     },
                     onClick = {
-                        dashboardViewModel.changeTab(index)
-                        if (isSelected) {
+                        if (navigationItem.opensScreen && !isSelected) {
+                            dashboardViewModel.changeTab(index)
                             navController.navigate(navigationItem.route) {
                                 popUpTo(Routes.HomeScreen) {
                                     inclusive = true
                                 }
                                 launchSingleTop = true
                             }
+                        } else {
+                            dashboardViewModel.showModalSheet()
                         }
                     }
                 )
             }
+    }
+
+    if (showModalSheet) {
+        NewTransactionForm(dashboardViewModel)
     }
 }

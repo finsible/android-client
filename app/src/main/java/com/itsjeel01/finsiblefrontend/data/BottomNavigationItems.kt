@@ -7,7 +7,7 @@ data class BottomNavigationItems(
     val label: String = "",
     val icon: Int = 0,
     val route: Routes = Routes.DashboardScreen,
-    val opensScreen: Boolean = true,
+    val isNewTransactionForm: Boolean = false,
 ) {
     fun getBottomNavigationItems(): List<BottomNavigationItems> {
         return listOf(
@@ -23,7 +23,8 @@ data class BottomNavigationItems(
             ),
             BottomNavigationItems(
                 icon = R.drawable.plus_icon,
-                opensScreen = false
+                isNewTransactionForm = true,
+                route = Routes.NewTransactionForm
             ),
             BottomNavigationItems(
                 label = "Balance",

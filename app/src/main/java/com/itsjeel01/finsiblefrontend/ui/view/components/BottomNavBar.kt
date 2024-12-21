@@ -9,7 +9,6 @@ import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -24,16 +23,14 @@ import com.itsjeel01.finsiblefrontend.ui.viewmodel.DashboardViewModel
 fun BottomNavBar(navController: NavHostController) {
     val dashboardViewModel: DashboardViewModel = hiltViewModel()
 
-    val selectedTabItem by dashboardViewModel.selectedTabState.collectAsState()
-    val showModalSheet by dashboardViewModel.showModalSheetState.collectAsState()
+    val selectedTabItem = dashboardViewModel.selectedTabState.collectAsState().value
 
     NavigationBar(
         containerColor = MaterialTheme.colorScheme.background,
     ) {
-        var isSelected: Boolean
         BottomNavigationItems().getBottomNavigationItems()
             .forEachIndexed { index, navigationItem ->
-                isSelected = selectedTabItem == index
+                val isSelected = selectedTabItem == index
 
                 NavigationBarItem(
                     selected = isSelected,
@@ -52,7 +49,7 @@ fun BottomNavBar(navController: NavHostController) {
                         selectedTextColor = MaterialTheme.colorScheme.primary
                     ),
                     icon = {
-                        if (navigationItem.opensScreen)
+                        if (!navigationItem.isNewTransactionForm)
                             Icon(
                                 painter = painterResource(id = navigationItem.icon),
                                 modifier = Modifier.size(24.dp),
@@ -62,7 +59,7 @@ fun BottomNavBar(navController: NavHostController) {
                             NewTransactionButton(navigationItem)
                     },
                     onClick = {
-                        if (navigationItem.opensScreen && !isSelected) {
+                        if (selectedTabItem != index) {
                             dashboardViewModel.changeTab(index)
                             navController.navigate(navigationItem.route) {
                                 popUpTo(Routes.HomeScreen) {
@@ -70,15 +67,9 @@ fun BottomNavBar(navController: NavHostController) {
                                 }
                                 launchSingleTop = true
                             }
-                        } else {
-                            dashboardViewModel.showModalSheet()
                         }
                     }
                 )
             }
-    }
-
-    if (showModalSheet) {
-        NewTransactionForm(dashboardViewModel)
     }
 }

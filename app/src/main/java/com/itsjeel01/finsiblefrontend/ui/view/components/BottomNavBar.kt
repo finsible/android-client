@@ -5,7 +5,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -17,6 +16,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.itsjeel01.finsiblefrontend.data.BottomNavigationItems
 import com.itsjeel01.finsiblefrontend.ui.navigation.Routes
+import com.itsjeel01.finsiblefrontend.ui.theme.navigationBarItemColors
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.DashboardViewModel
 
 @Composable
@@ -39,15 +39,7 @@ fun BottomNavBar(navController: NavHostController) {
                         val labelFontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
                         Text(navigationItem.label, fontWeight = labelFontWeight)
                     },
-                    colors = NavigationBarItemColors(
-                        selectedIndicatorColor = MaterialTheme.colorScheme.background,
-                        unselectedIconColor = MaterialTheme.colorScheme.outline,
-                        unselectedTextColor = MaterialTheme.colorScheme.outline,
-                        disabledIconColor = MaterialTheme.colorScheme.outline,
-                        disabledTextColor = MaterialTheme.colorScheme.outline,
-                        selectedIconColor = MaterialTheme.colorScheme.primary,
-                        selectedTextColor = MaterialTheme.colorScheme.primary
-                    ),
+                    colors = navigationBarItemColors(),
                     icon = {
                         if (!navigationItem.isNewTransactionForm)
                             Icon(

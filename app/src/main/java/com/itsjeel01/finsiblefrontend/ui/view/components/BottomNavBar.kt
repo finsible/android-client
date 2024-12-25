@@ -16,7 +16,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.itsjeel01.finsiblefrontend.data.BottomNavigationItems
 import com.itsjeel01.finsiblefrontend.ui.navigation.Routes
-import com.itsjeel01.finsiblefrontend.ui.theme.navigationBarItemColors
+import com.itsjeel01.finsiblefrontend.ui.theme.finsibleNavigationBarItemColors
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.DashboardViewModel
 
 @Composable
@@ -39,7 +39,7 @@ fun BottomNavBar(navController: NavHostController) {
                         val labelFontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
                         Text(navigationItem.label, fontWeight = labelFontWeight)
                     },
-                    colors = navigationBarItemColors(),
+                    colors = finsibleNavigationBarItemColors(),
                     icon = {
                         if (!navigationItem.isNewTransactionForm)
                             Icon(

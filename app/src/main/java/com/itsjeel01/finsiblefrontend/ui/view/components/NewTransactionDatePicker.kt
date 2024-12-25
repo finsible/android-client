@@ -28,8 +28,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.data.getTransactionColor
-import com.itsjeel01.finsiblefrontend.ui.theme.datePickerColors
-import com.itsjeel01.finsiblefrontend.ui.theme.datePickerDialogColors
+import com.itsjeel01.finsiblefrontend.ui.theme.finsibleDatePickerColors
+import com.itsjeel01.finsiblefrontend.ui.theme.finsibleDatePickerDialogColors
 import com.itsjeel01.finsiblefrontend.ui.theme.finsibleTextFieldColors
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.NewTransactionFormViewModel
 import java.text.SimpleDateFormat
@@ -90,7 +90,7 @@ fun DatePickerModal(
 
     DatePickerDialog(
         onDismissRequest = onDismiss,
-        colors = datePickerDialogColors(),
+        colors = finsibleDatePickerDialogColors(),
         confirmButton = {
             TextButton(
                 onClick = {
@@ -112,7 +112,8 @@ fun DatePickerModal(
         }
     ) {
         DatePicker(
-            state = datePickerState, colors = datePickerColors(accentColor = transactionColor)
+            state = datePickerState,
+            colors = finsibleDatePickerColors(accentColor = transactionColor)
         )
     }
 }

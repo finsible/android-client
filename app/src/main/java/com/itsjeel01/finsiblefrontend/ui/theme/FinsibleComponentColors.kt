@@ -23,7 +23,7 @@ fun finsibleTextFieldColors(accentColor: Color): TextFieldColors {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun datePickerColors(accentColor: Color): DatePickerColors {
+fun finsibleDatePickerColors(accentColor: Color): DatePickerColors {
     return DatePickerDefaults.colors().copy(
         containerColor = MaterialTheme.colorScheme.background,
         selectedDayContainerColor = accentColor.copy(alpha = 0.5F),
@@ -35,13 +35,13 @@ fun datePickerColors(accentColor: Color): DatePickerColors {
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun datePickerDialogColors(): DatePickerColors {
+fun finsibleDatePickerDialogColors(): DatePickerColors {
     return DatePickerDefaults.colors()
         .copy(containerColor = MaterialTheme.colorScheme.background)
 }
 
 @Composable
-fun navigationBarItemColors(): NavigationBarItemColors {
+fun finsibleNavigationBarItemColors(): NavigationBarItemColors {
     return NavigationBarItemColors(
         selectedIndicatorColor = MaterialTheme.colorScheme.background,
         unselectedIconColor = MaterialTheme.colorScheme.outline,

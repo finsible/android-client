@@ -17,7 +17,8 @@ fun finsibleTextFieldColors(accentColor: Color): TextFieldColors {
         focusedContainerColor = MaterialTheme.colorScheme.background,
         focusedLabelColor = accentColor,
         cursorColor = accentColor,
-        focusedIndicatorColor = accentColor.copy(alpha = 0.5F)
+        focusedIndicatorColor = accentColor.copy(alpha = 0.5F),
+        unfocusedLabelColor = MaterialTheme.colorScheme.onSecondaryContainer,
     )
 }
 

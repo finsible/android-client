@@ -12,11 +12,18 @@ class NewTransactionFormViewModel : ViewModel() {
     private val _transactionDateState = MutableStateFlow(System.currentTimeMillis())
     val transactionDateState: StateFlow<Long> = _transactionDateState
 
+    private val _transactionAmountState = MutableStateFlow<Double?>(null)
+    val transactionAmountState: StateFlow<Double?> = _transactionAmountState
+
     fun setTransactionType(transactionType: TransactionType) {
         _transactionTypeState.value = transactionType
     }
 
     fun setTransactionDate(transactionDate: Long) {
         _transactionDateState.value = transactionDate
+    }
+
+    fun setTransactionAmount(transactionAmount: Double?) {
+        _transactionAmountState.value = transactionAmount
     }
 }

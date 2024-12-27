@@ -5,10 +5,10 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.itsjeel01.finsiblefrontend.ui.view.components.NewTransactionForm
 import com.itsjeel01.finsiblefrontend.ui.view.screens.BalanceScreen
 import com.itsjeel01.finsiblefrontend.ui.view.screens.HomeScreen
 import com.itsjeel01.finsiblefrontend.ui.view.screens.InsightsScreen
+import com.itsjeel01.finsiblefrontend.ui.view.screens.NewTransactionForm
 import com.itsjeel01.finsiblefrontend.ui.view.screens.SettingsScreen
 
 @Composable

@@ -46,6 +46,7 @@ fun NewTransactionDatePicker(modifier: Modifier = Modifier) {
     TextField(
         value = convertMillisToDate(transactionDate),
         onValueChange = { },
+        readOnly = true,
         colors = finsibleTextFieldColors(accentColor = transactionColor),
         label = { Text("Date") },
         placeholder = { Text("DD/MM/YYYY") },

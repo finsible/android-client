@@ -13,7 +13,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.itsjeel01.finsiblefrontend.data.BottomNavigationItems
+import com.itsjeel01.finsiblefrontend.data.client.BottomNavigationItems
 
 @Composable
 fun NewTransactionButton(navigationItem: BottomNavigationItems) {

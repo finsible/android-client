@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.data
+package com.itsjeel01.finsiblefrontend.data.client
 
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.ui.navigation.Routes

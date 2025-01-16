@@ -39,7 +39,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.itsjeel01.finsiblefrontend.R
-import com.itsjeel01.finsiblefrontend.data.OnboardingData
+import com.itsjeel01.finsiblefrontend.data.client.OnboardingData
 import com.itsjeel01.finsiblefrontend.data.models.AuthState
 import com.itsjeel01.finsiblefrontend.ui.navigation.Routes
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.AuthViewModel

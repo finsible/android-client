@@ -14,7 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.itsjeel01.finsiblefrontend.data.BottomNavigationItems
+import com.itsjeel01.finsiblefrontend.data.client.BottomNavigationItems
 import com.itsjeel01.finsiblefrontend.ui.navigation.Routes
 import com.itsjeel01.finsiblefrontend.ui.theme.finsibleNavigationBarItemColors
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.DashboardViewModel

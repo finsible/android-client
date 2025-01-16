@@ -66,7 +66,7 @@ fun OnboardingBottomSheet(
     fun navigateToNext() {
         if (currentSlide == slides.lastIndex) {
             signInWithGoogle(context, coroutineScope, authViewModel)
-            if (authViewModel.authState.value == AuthState.Positive) {
+            if (authViewModel.authState.value is AuthState.Positive) {
                 navController.navigate(Routes.DashboardScreen)
             }
         } else onboardingViewModel.updateSlide(currentSlide + 1)

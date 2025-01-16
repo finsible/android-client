@@ -35,10 +35,10 @@ class AuthViewModel @Inject constructor(
             try {
                 val response = authRepository.authenticate(clientId, token)
                 if (response.success) {
-                    preferenceManager.saveAuthData(response)
+                    preferenceManager.saveAuthData(response.data)
                     _authState.value = AuthState.Positive
                 } else {
-                    _authState.value = AuthState.Negative(response.message.toString())
+                    _authState.value = AuthState.Negative(response.message)
                 }
             } catch (e: Exception) {
                 _authState.value = AuthState.Negative(e.message ?: "Unknown error occurred")

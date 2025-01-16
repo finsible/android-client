@@ -45,8 +45,6 @@ fun signInWithGoogle(
             val googleIdToken = googleIdTokenCredential.idToken
 
             authViewModel.authenticate(clientId = clientId, token = googleIdToken)
-
-            Log.i("SignInWithGoogle", googleIdToken)
         } catch (e: Exception) {
             Log.e("SignInWithGoogle", e.message.toString())
         }

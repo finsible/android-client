@@ -3,9 +3,7 @@ package com.itsjeel01.finsiblefrontend.data.network.responses
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class AuthResponse(
-    val success: Boolean,
-    val status: Int,
+data class AuthAttributes(
     val isNewUser: Boolean,
     val userId: String,
     val email: String,
@@ -13,5 +11,4 @@ data class AuthResponse(
     val picture: String,
     val accountCreated: String,
     val jwt: String,
-    val message: String?,
 )

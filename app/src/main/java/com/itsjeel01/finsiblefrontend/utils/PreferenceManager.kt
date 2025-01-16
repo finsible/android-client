@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
-import com.itsjeel01.finsiblefrontend.data.network.responses.AuthResponse
+import com.itsjeel01.finsiblefrontend.data.network.responses.AuthAttributes
 import javax.inject.Inject
 
 class PreferenceManager @Inject constructor(context: Context) {
@@ -20,7 +20,7 @@ class PreferenceManager @Inject constructor(context: Context) {
         EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
     )
 
-    fun saveAuthData(authResponse: AuthResponse) {
+    fun saveAuthData(authResponse: AuthAttributes) {
         sharedPreferences.edit().apply {
             putString("jwt", authResponse.jwt)
             putBoolean("isLoggedIn", true)

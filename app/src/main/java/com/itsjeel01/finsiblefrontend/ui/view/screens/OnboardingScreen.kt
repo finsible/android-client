@@ -33,14 +33,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.itsjeel01.finsiblefrontend.data.client.OnboardingData
 import com.itsjeel01.finsiblefrontend.ui.view.components.OnboardingBottomSheet
-import com.itsjeel01.finsiblefrontend.ui.viewmodel.AuthViewModel
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.OnboardingViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OnboardingScreen(navController: NavHostController) {
     val onboardingViewModel: OnboardingViewModel = hiltViewModel()
-    val authViewModel: AuthViewModel = hiltViewModel()
     val slides = OnboardingData().getOnboardingData()
 
     val topAppBarColors = TopAppBarColors(

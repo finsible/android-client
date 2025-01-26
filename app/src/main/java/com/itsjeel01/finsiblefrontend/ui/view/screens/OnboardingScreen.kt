@@ -99,9 +99,7 @@ fun OnboardingScreen(navController: NavHostController) {
 
             // Sticky Bottom Sheet
             OnboardingBottomSheet(
-                onboardingViewModel = onboardingViewModel,
                 modifier = Modifier.align(Alignment.BottomCenter),
-                authViewModel = authViewModel,
                 navController = navController
             )
         }

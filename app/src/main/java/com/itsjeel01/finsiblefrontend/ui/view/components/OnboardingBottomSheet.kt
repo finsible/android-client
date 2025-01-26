@@ -37,6 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.data.client.OnboardingData
@@ -48,11 +49,11 @@ import com.itsjeel01.finsiblefrontend.utils.signInWithGoogle
 
 @Composable
 fun OnboardingBottomSheet(
-    onboardingViewModel: OnboardingViewModel,
     modifier: Modifier,
-    authViewModel: AuthViewModel,
     navController: NavHostController,
 ) {
+    val onboardingViewModel: OnboardingViewModel = hiltViewModel()
+    val authViewModel: AuthViewModel = hiltViewModel()
     val slides = OnboardingData().getOnboardingData()
     val currentSlide = onboardingViewModel.currentSlide.collectAsState().value
     val buttonLabel: String = when (currentSlide) {

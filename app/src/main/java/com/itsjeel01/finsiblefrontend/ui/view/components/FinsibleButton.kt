@@ -65,7 +65,7 @@ fun FinsibleButton(
 fun ButtonPreview() {
     FinsibleButton(
         label = "Button Preview",
-        onClick = { /*TODO*/ },
+        onClick = { },
         modifier = Modifier.fillMaxWidth()
     )
 }

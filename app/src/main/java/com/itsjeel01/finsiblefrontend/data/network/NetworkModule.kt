@@ -3,6 +3,7 @@ package com.itsjeel01.finsiblefrontend.data.network
 import com.itsjeel01.finsiblefrontend.BuildConfig
 import com.itsjeel01.finsiblefrontend.data.network.apis.AuthApiService
 import com.itsjeel01.finsiblefrontend.data.network.apis.CategoryApiService
+import com.itsjeel01.finsiblefrontend.utils.PreferenceManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,22 +13,29 @@ import okhttp3.MediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-
-    private val httpClient: OkHttpClient = OkHttpClient.Builder().build()
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(preferenceManager: PreferenceManager): OkHttpClient {
+        val token = preferenceManager.getJwt()
+        return OkHttpClient.Builder()
+            .addInterceptor(AuthInterceptor(preferenceManager))
+            .build()
+    }
 
     @Provides
-    fun provideRetrofit(): Retrofit {
+    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         val contentType = MediaType.get("application/json")
         val json = Json { ignoreUnknownKeys = true }
 
         return Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL)
             .addConverterFactory(json.asConverterFactory(contentType))
-            .client(httpClient)
+            .client(okHttpClient)
             .build()
     }
 

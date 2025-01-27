@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend
+package com.itsjeel01.finsiblefrontend.module
 
 import android.app.Application
 import android.content.Context

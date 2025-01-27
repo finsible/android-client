@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.hiltAndroid)
     id("kotlin-parcelize") // needed only for non-primitive classes
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+    id("io.objectbox")
 }
 
 android {

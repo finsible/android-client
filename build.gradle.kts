@@ -9,7 +9,12 @@ plugins {
 }
 
 buildscript {
+    repositories {
+        mavenCentral()
+    }
+
     dependencies {
         classpath(libs.secrets.gradle.plugin)
+        classpath(libs.objectbox.gradle.plugin)
     }
 }

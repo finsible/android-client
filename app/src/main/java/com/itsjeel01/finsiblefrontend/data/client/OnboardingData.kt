@@ -21,12 +21,12 @@ data class OnboardingData(
             ),
             OnboardingData(
                 illustration = R.drawable.graph_illustration,
-                headline = "Your Goals, Achieved",
+                headline = "Your goals, achieved!",
                 description = "Set personalized financial goals, track your progress over time, and achieve the financial freedom you’ve always wanted with actionable insights."
             ),
             OnboardingData(
                 illustration = R.drawable.login_illustration,
-                headline = "Start Your Journey",
+                headline = "Start your journey...",
                 description = "Get started by signing in with Google. Experience a seamless, secure, and personalized way to manage your finances with Finsible."
             )
         )

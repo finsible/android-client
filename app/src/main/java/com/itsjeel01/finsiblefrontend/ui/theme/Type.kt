@@ -12,16 +12,16 @@ val provider = GoogleFont.Provider(
     certificates = R.array.com_google_android_gms_fonts_certs
 )
 
-val bodyFontFamily = FontFamily(
+val sansSerifFont = FontFamily(
     Font(
-        googleFont = GoogleFont("Rubik"),
+        googleFont = GoogleFont("Outfit"),
         fontProvider = provider,
     )
 )
 
-val displayFontFamily = FontFamily(
+val serifFont = FontFamily(
     Font(
-        googleFont = GoogleFont("Rubik"),
+        googleFont = GoogleFont("EB Garamond"),
         fontProvider = provider,
     )
 )
@@ -30,20 +30,28 @@ val displayFontFamily = FontFamily(
 val baseline = Typography()
 
 val AppTypography = Typography(
-    displayLarge = baseline.displayLarge.copy(fontFamily = displayFontFamily),
-    displayMedium = baseline.displayMedium.copy(fontFamily = displayFontFamily),
-    displaySmall = baseline.displaySmall.copy(fontFamily = displayFontFamily),
-    headlineLarge = baseline.headlineLarge.copy(fontFamily = displayFontFamily),
-    headlineMedium = baseline.headlineMedium.copy(fontFamily = displayFontFamily),
-    headlineSmall = baseline.headlineSmall.copy(fontFamily = displayFontFamily),
-    titleLarge = baseline.titleLarge.copy(fontFamily = displayFontFamily),
-    titleMedium = baseline.titleMedium.copy(fontFamily = displayFontFamily),
-    titleSmall = baseline.titleSmall.copy(fontFamily = displayFontFamily),
-    bodyLarge = baseline.bodyLarge.copy(fontFamily = bodyFontFamily),
-    bodyMedium = baseline.bodyMedium.copy(fontFamily = bodyFontFamily),
-    bodySmall = baseline.bodySmall.copy(fontFamily = bodyFontFamily),
-    labelLarge = baseline.labelLarge.copy(fontFamily = bodyFontFamily),
-    labelMedium = baseline.labelMedium.copy(fontFamily = bodyFontFamily),
-    labelSmall = baseline.labelSmall.copy(fontFamily = bodyFontFamily),
-)
+    // Display -> Serif
+    displayLarge = baseline.displayLarge.copy(fontFamily = serifFont),
+    displayMedium = baseline.displayMedium.copy(fontFamily = serifFont),
+    displaySmall = baseline.displaySmall.copy(fontFamily = serifFont),
 
+    // Headline -> Sans Serif
+    headlineLarge = baseline.headlineLarge.copy(fontFamily = sansSerifFont),
+    headlineMedium = baseline.headlineMedium.copy(fontFamily = sansSerifFont),
+    headlineSmall = baseline.headlineSmall.copy(fontFamily = sansSerifFont),
+
+    // Title -> Serif
+    titleLarge = baseline.titleLarge.copy(fontFamily = serifFont),
+    titleMedium = baseline.titleMedium.copy(fontFamily = serifFont),
+    titleSmall = baseline.titleSmall.copy(fontFamily = serifFont),
+
+    // Body -> Sans Serif
+    bodyLarge = baseline.bodyLarge.copy(fontFamily = sansSerifFont),
+    bodyMedium = baseline.bodyMedium.copy(fontFamily = sansSerifFont),
+    bodySmall = baseline.bodySmall.copy(fontFamily = sansSerifFont),
+
+    // Label -> Serif
+    labelLarge = baseline.labelLarge.copy(fontFamily = serifFont),
+    labelMedium = baseline.labelMedium.copy(fontFamily = serifFont),
+    labelSmall = baseline.labelSmall.copy(fontFamily = serifFont),
+)

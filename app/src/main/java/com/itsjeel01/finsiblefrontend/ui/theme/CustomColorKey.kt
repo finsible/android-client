@@ -24,5 +24,7 @@ enum class CustomColorKey {
     BtnSecondaryForegroundEnabled,
     BtnSecondaryBorderEnabled,
     BtnSecondaryForegroundDisabled,
-    BtnSecondaryBorderDisabled
+    BtnSecondaryBorderDisabled,
+    OnboardingGradientColor1,
+    OnboardingGradientColor2,
 }

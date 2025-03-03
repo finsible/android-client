@@ -28,7 +28,9 @@ object CustomColors {
         CustomColorKey.BtnSecondaryForegroundEnabled to Color(0xFF222222),
         CustomColorKey.BtnSecondaryBorderEnabled to Color(0xFF222222),
         CustomColorKey.BtnSecondaryForegroundDisabled to Color(0xFFBDBDBD),
-        CustomColorKey.BtnSecondaryBorderDisabled to Color(0xFFBDBDBD)
+        CustomColorKey.BtnSecondaryBorderDisabled to Color(0xFFBDBDBD),
+        CustomColorKey.OnboardingGradientColor1 to Color(0xFFC5FFF9),
+        CustomColorKey.OnboardingGradientColor2 to Color(0xFFDEE3E3)
     )
 
     val darkModeColors = mapOf(
@@ -53,7 +55,9 @@ object CustomColors {
         CustomColorKey.BtnSecondaryForegroundEnabled to Color(0xFFF1F1F1),
         CustomColorKey.BtnSecondaryBorderEnabled to Color(0xFFF1F1F1),
         CustomColorKey.BtnSecondaryForegroundDisabled to Color(0xFF757575),
-        CustomColorKey.BtnSecondaryBorderDisabled to Color(0xFF757575)
+        CustomColorKey.BtnSecondaryBorderDisabled to Color(0xFF757575),
+        CustomColorKey.OnboardingGradientColor1 to Color(0xFF1B4742),
+        CustomColorKey.OnboardingGradientColor2 to Color(0xFF050E0D)
     )
 }
 

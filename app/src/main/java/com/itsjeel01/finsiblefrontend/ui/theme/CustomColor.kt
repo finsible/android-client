@@ -18,7 +18,17 @@ object CustomColors {
         CustomColorKey.CategoryColor5 to Color(0xFFD37510),
         CustomColorKey.CategoryColor6 to Color(0xFFD45BE9),
         CustomColorKey.CategoryColor7 to Color(0xFF009EB3),
-        CustomColorKey.CategoryColor8 to Color(0xFF797979)
+        CustomColorKey.CategoryColor8 to Color(0xFF797979),
+        CustomColorKey.BtnPrimaryBackgroundEnabled to Color(0xFF222222),
+        CustomColorKey.BtnPrimaryForegroundEnabled to Color(0xFFF1F1F1),
+        CustomColorKey.BtnPrimaryBorder to Color.Transparent,
+        CustomColorKey.BtnPrimaryBackgroundDisabled to Color(0xFFBDBDBD),
+        CustomColorKey.BtnPrimaryForegroundDisabled to Color(0xFF757575),
+        CustomColorKey.BtnSecondaryBackground to Color.Transparent,
+        CustomColorKey.BtnSecondaryForegroundEnabled to Color(0xFF222222),
+        CustomColorKey.BtnSecondaryBorderEnabled to Color(0xFF222222),
+        CustomColorKey.BtnSecondaryForegroundDisabled to Color(0xFFBDBDBD),
+        CustomColorKey.BtnSecondaryBorderDisabled to Color(0xFFBDBDBD)
     )
 
     val darkModeColors = mapOf(
@@ -33,7 +43,17 @@ object CustomColors {
         CustomColorKey.CategoryColor5 to Color(0xFFF8A750),
         CustomColorKey.CategoryColor6 to Color(0xFFEA82FC),
         CustomColorKey.CategoryColor7 to Color(0xFF56E8FA),
-        CustomColorKey.CategoryColor8 to Color(0xFFBDBDBD)
+        CustomColorKey.CategoryColor8 to Color(0xFFBDBDBD),
+        CustomColorKey.BtnPrimaryBackgroundEnabled to Color(0xFFF1F1F1),
+        CustomColorKey.BtnPrimaryForegroundEnabled to Color(0xFF222222),
+        CustomColorKey.BtnPrimaryBorder to Color.Transparent,
+        CustomColorKey.BtnPrimaryBackgroundDisabled to Color(0xFF757575),
+        CustomColorKey.BtnPrimaryForegroundDisabled to Color(0xFFBDBDBD),
+        CustomColorKey.BtnSecondaryBackground to Color.Transparent,
+        CustomColorKey.BtnSecondaryForegroundEnabled to Color(0xFFF1F1F1),
+        CustomColorKey.BtnSecondaryBorderEnabled to Color(0xFFF1F1F1),
+        CustomColorKey.BtnSecondaryForegroundDisabled to Color(0xFF757575),
+        CustomColorKey.BtnSecondaryBorderDisabled to Color(0xFF757575)
     )
 }
 

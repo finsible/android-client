@@ -27,14 +27,14 @@ class AuthViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _authState =
-        MutableStateFlow<AuthState>(AuthState.Negative("You are not logged in"))
+        MutableStateFlow<AuthState>(AuthState.Negative("You are not logged in", isFailed = false))
     val authState: StateFlow<AuthState> = _authState
 
     init {
         if (preferenceManager.isLoggedIn()) {
             _authState.value = AuthState.Positive
         } else {
-            _authState.value = AuthState.Negative("You are not logged in")
+            _authState.value = AuthState.Negative("You are not logged in", isFailed = false)
         }
     }
 
@@ -48,10 +48,10 @@ class AuthViewModel @Inject constructor(
                     _authState.value = AuthState.Positive // Update Auth state
                     fetchAndStoreCategories() // Fetch and store categories
                 } else {
-                    _authState.value = AuthState.Negative(response.message)
+                    _authState.value = AuthState.Negative(response.message, isFailed = true)
                 }
             } catch (e: Exception) {
-                _authState.value = AuthState.Negative(e.message ?: "Unknown error occurred")
+                _authState.value = AuthState.Negative(e.message ?: "Unknown error occurred", isFailed = true)
             }
         }
     }
@@ -59,7 +59,7 @@ class AuthViewModel @Inject constructor(
     fun logout() {
         viewModelScope.launch {
             preferenceManager.clearAuthData()
-            _authState.value = AuthState.Negative("You are not logged in")
+            _authState.value = AuthState.Negative("You are not logged in", isFailed = false)
         }
     }
 

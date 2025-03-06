@@ -14,7 +14,7 @@ val provider = GoogleFont.Provider(
 
 val sansSerifFont = FontFamily(
     Font(
-        googleFont = GoogleFont("Rubik"),
+        googleFont = GoogleFont("Outfit"),
         fontProvider = provider,
     )
 )

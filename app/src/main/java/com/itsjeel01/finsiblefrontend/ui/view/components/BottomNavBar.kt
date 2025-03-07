@@ -34,10 +34,12 @@ fun BottomNavBar(navController: NavHostController) {
 
                 NavigationBarItem(
                     selected = isSelected,
-                    alwaysShowLabel = true,
+                    alwaysShowLabel = false,
                     label = {
-                        val labelFontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-                        Text(navigationItem.label, fontWeight = labelFontWeight)
+                        Text(
+                            navigationItem.label,
+                            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold)
+                        )
                     },
                     colors = finsibleNavigationBarItemColors(),
                     icon = {

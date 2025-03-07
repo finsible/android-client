@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -31,40 +32,48 @@ fun TransactionSegmentedControl(modifier: Modifier = Modifier) {
 
     Row(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp),
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         transactionTypes.forEach { type ->
             val isSelected = selectedType == type
             val selectedColor = getTransactionColor(type)
-            val borderModifier = Modifier.border(
+
+            // Set border and background color based on selection
+            val borderModifier = if (isSelected) Modifier.border(
                 width = 1.dp,
                 color = selectedColor,
                 shape = RoundedCornerShape(4.dp)
+            ) else Modifier
+            val backgroundColor = if (isSelected) {
+                selectedColor.copy(alpha = 0.1f)
+            } else MaterialTheme.colorScheme.secondaryContainer;
+
+            // Set text color and style based on selection
+            val label = type.name.replace("_", " ").lowercase().replaceFirstChar { it.titlecase(Locale.ROOT) }
+            val textColor = if (isSelected) selectedColor else MaterialTheme.colorScheme.onSecondaryContainer
+            val textStyle = MaterialTheme.typography.bodyLarge.copy(
+                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
             )
 
             Box(
                 modifier = Modifier
-                    .then(if (isSelected) borderModifier else Modifier)
+                    .then(borderModifier)
                     .clickable {
                         newTransactionFormViewModel.setTransactionType(type)
                     }
                     .background(
-                        color = if (isSelected) {
-                            selectedColor.copy(alpha = 0.1f)
-                        } else MaterialTheme.colorScheme.secondaryContainer,
+                        color = backgroundColor,
                         shape = RoundedCornerShape(4.dp)
                     )
-                    .padding(vertical = 8.dp)
+                    .padding(vertical = 10.dp)
                     .weight(1f),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = type.name.replace("_", " ").lowercase()
-                        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() },
-                    color = if (isSelected) selectedColor else MaterialTheme.colorScheme.onSecondaryContainer,
-                    style = MaterialTheme.typography.bodyMedium
+                    text = label,
+                    color = textColor,
+                    style = textStyle,
                 )
             }
         }

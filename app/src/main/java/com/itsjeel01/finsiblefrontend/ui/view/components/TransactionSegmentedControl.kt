@@ -47,7 +47,7 @@ fun TransactionSegmentedControl(modifier: Modifier = Modifier) {
             ) else Modifier
             val backgroundColor = if (isSelected) {
                 selectedColor.copy(alpha = 0.1f)
-            } else MaterialTheme.colorScheme.secondaryContainer;
+            } else MaterialTheme.colorScheme.secondaryContainer
 
             // Set text color and style based on selection
             val label = type.name.replace("_", " ").lowercase().replaceFirstChar { it.titlecase(Locale.ROOT) }

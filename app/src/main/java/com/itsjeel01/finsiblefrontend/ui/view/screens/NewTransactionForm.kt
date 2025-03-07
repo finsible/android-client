@@ -2,12 +2,16 @@ package com.itsjeel01.finsiblefrontend.ui.view.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -25,11 +29,14 @@ fun NewTransactionForm() {
     val transactionType = newTransactionFormViewModel.transactionTypeState.collectAsState().value
     val transactionAmount =
         newTransactionFormViewModel.transactionAmountState.collectAsState().value
+    val screenHeight = LocalConfiguration.current.screenHeightDp
+    val screenWidth = LocalConfiguration.current.screenWidthDp
 
     Scaffold { padding ->
         Column(
             modifier = Modifier
-                .padding(paddingValues = padding)
+                .windowInsetsPadding(WindowInsets.systemBars)
+                .padding(horizontal = (0.035 * screenWidth).dp, vertical = (0.02 * screenHeight).dp)
         ) {
             TransactionSegmentedControl()
             Column(

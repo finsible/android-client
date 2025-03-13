@@ -47,8 +47,7 @@ fun OnboardingIndicators(currentSlide: Int, totalSlides: Int) {
                         shape = CircleShape
                     )
                     .shadow(
-                        elevation = if (isCurrent) 16.dp else 0.dp,
-                        shape = CircleShape,
+                        elevation = if (isCurrent) 4.dp else 0.dp,
                         ambientColor = MaterialTheme.colorScheme.onBackground,
                         spotColor = MaterialTheme.colorScheme.primary
                     )

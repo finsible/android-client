@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -194,16 +195,24 @@ fun OnboardingScreen(navController: NavHostController) {
 
                     Spacer(Modifier.height(24.dp))
 
-                    // Description
-                    Crossfade(
-                        targetState = currentSlide,
-                        animationSpec = tween(AppConstants.ANIMATION_DURATION_SHORT, easing = FastOutSlowInEasing)
-                    ) { slide ->
-                        Text(
-                            slides[slide].description,
-                            style = MaterialTheme.typography.bodyLarge,
-                            textAlign = TextAlign.Center,
-                        )
+                    // Description with fixed height
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height((4 * MaterialTheme.typography.bodyLarge.lineHeight.value).dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Crossfade(
+                            targetState = currentSlide,
+                            animationSpec = tween(AppConstants.ANIMATION_DURATION_SHORT, easing = FastOutSlowInEasing)
+                        ) { slide ->
+                            Text(
+                                slides[slide].description,
+                                modifier = Modifier.fillMaxHeight(),
+                                style = MaterialTheme.typography.bodyLarge,
+                                textAlign = TextAlign.Center,
+                            )
+                        }
                     }
                 }
 

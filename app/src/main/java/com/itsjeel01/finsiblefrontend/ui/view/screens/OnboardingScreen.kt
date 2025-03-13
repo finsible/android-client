@@ -95,7 +95,7 @@ fun OnboardingScreen(navController: NavHostController) {
             }
 
             is AuthState.Negative -> {
-                if ((authState as AuthState.Negative).isFailed) Log.d("OnboardingScreen", "Error: ${authState.message}")
+                if (authState.isFailed) Log.d("OnboardingScreen", "Error: ${authState.message}")
             }
         }
     }

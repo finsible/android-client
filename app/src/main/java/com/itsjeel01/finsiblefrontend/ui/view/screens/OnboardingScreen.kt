@@ -199,7 +199,7 @@ fun OnboardingScreen(navController: NavHostController) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height((4 * MaterialTheme.typography.bodyLarge.lineHeight.value).dp),
+                            .height((4 * MaterialTheme.typography.bodyMedium.lineHeight.value).dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Crossfade(
@@ -209,7 +209,9 @@ fun OnboardingScreen(navController: NavHostController) {
                             Text(
                                 slides[slide].description,
                                 modifier = Modifier.fillMaxHeight(),
-                                style = MaterialTheme.typography.bodyLarge,
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                ),
                                 textAlign = TextAlign.Center,
                             )
                         }

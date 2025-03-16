@@ -55,13 +55,16 @@ fun FinsibleTextField(
     var isFocused by remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
 
+    // Determine the height and text styles based on the size
     val (height, textStyle, secondaryTextStyle) = when (size) {
         TextFieldSize.SMALL -> Triple(48.dp, MaterialTheme.typography.bodyMedium, MaterialTheme.typography.bodySmall)
         TextFieldSize.LARGE -> Triple(56.dp, MaterialTheme.typography.bodyLarge, MaterialTheme.typography.bodyMedium)
     }
 
     val labelPadding = 4.dp
-    val borderColor = when {
+
+    // Determine the color of the label and border based on focus and error state
+    val focusColor = when {
         isError -> MaterialTheme.colorScheme.error
         isFocused -> accentColor
         else -> MaterialTheme.colorScheme.outline
@@ -72,11 +75,7 @@ fun FinsibleTextField(
         Text(
             text = label,
             style = secondaryTextStyle,
-            color = when {
-                isError -> MaterialTheme.colorScheme.error
-                isFocused -> accentColor
-                else -> MaterialTheme.colorScheme.outline
-            },
+            color = focusColor,
             modifier = Modifier.padding(start = labelPadding, bottom = labelPadding)
         )
 
@@ -85,7 +84,7 @@ fun FinsibleTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(height)
-                .border(1.dp, borderColor, RoundedCornerShape(2.dp)),
+                .border(1.dp, focusColor, RoundedCornerShape(2.dp)),
             contentAlignment = Alignment.CenterStart
         ) {
             BasicTextField(
@@ -105,6 +104,7 @@ fun FinsibleTextField(
                     .onFocusChanged { isFocused = it.isFocused },
                 decorationBox = { innerTextField ->
                     Row(verticalAlignment = Alignment.CenterVertically) {
+                        // Leading icon (optional)
                         leadingIcon?.let {
                             Box(
                                 modifier = Modifier
@@ -115,6 +115,7 @@ fun FinsibleTextField(
                             }
                         }
 
+                        // Placeholder and input text
                         Box(modifier = Modifier.weight(1f)) {
                             if (value.isEmpty() && placeholder != null) {
                                 Text(
@@ -126,6 +127,7 @@ fun FinsibleTextField(
                             innerTextField()
                         }
 
+                        // Trailing icon (optional)
                         trailingIcon?.let {
                             Box(
                                 modifier = Modifier

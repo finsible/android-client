@@ -67,6 +67,7 @@ fun NewTransactionAmountTextField(
         value = rawInput,
         onValueChange = { validateAndProcessInput(it) },
         label = "Amount",
+        placeholder = "0.00",
         isError = showError,
         errorMessage = errorMessage,
         keyboardOptions = KeyboardOptions(

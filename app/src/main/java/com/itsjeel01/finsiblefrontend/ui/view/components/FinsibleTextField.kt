@@ -26,7 +26,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 
 enum class TextFieldSize { SMALL, LARGE }
@@ -161,33 +160,5 @@ fun FinsibleTextField(
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun HelpRow(
-    text: String,
-    icon: @Composable (() -> Unit)?,
-    textColor: Color,
-    textStyle: TextStyle,
-) {
-    Row(
-        verticalAlignment = Alignment.Top,
-        modifier = Modifier.padding(start = 8.dp, top = 4.dp)
-    ) {
-        icon?.let {
-            Box(
-                modifier = Modifier
-                    .padding(end = 4.dp, top = 2.dp)
-                    .size(12.dp)
-            ) {
-                it()
-            }
-        }
-        Text(
-            text = text,
-            style = textStyle,
-            color = textColor
-        )
     }
 }

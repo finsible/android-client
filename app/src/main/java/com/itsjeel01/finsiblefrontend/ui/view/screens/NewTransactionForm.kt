@@ -16,7 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.itsjeel01.finsiblefrontend.data.TransactionType
-import com.itsjeel01.finsiblefrontend.data.getTransactionColor
+import com.itsjeel01.finsiblefrontend.ui.theme.getTransactionColor
 import com.itsjeel01.finsiblefrontend.ui.view.components.NewTransactionAmountTextField
 import com.itsjeel01.finsiblefrontend.ui.view.components.NewTransactionDatePicker
 import com.itsjeel01.finsiblefrontend.ui.view.components.TransactionCategoryDropdown
@@ -40,8 +40,7 @@ fun NewTransactionForm() {
         ) {
             TransactionSegmentedControl()
             Column(
-                modifier = Modifier
-                    .padding(horizontal = 24.dp)
+                modifier = Modifier.padding(horizontal = (0.03 * screenWidth).dp)
             ) {
                 NewTransactionAmountTextField(
                     initialAmount = transactionAmount,

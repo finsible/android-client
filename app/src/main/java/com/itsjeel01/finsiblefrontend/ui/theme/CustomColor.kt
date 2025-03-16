@@ -4,12 +4,13 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import com.itsjeel01.finsiblefrontend.data.TransactionType
 
 object CustomColors {
     val lightModeColors = mapOf(
-        CustomColorKey.Income to Color(0xFF388E3C),
-        CustomColorKey.Expense to Color(0xFFD32F2F),
-        CustomColorKey.Transfer to Color(0xFF1976D2),
+        CustomColorKey.Income to Color(0xFF2D995B),
+        CustomColorKey.Expense to Color(0xFFC26619),
+        CustomColorKey.Transfer to Color(0xFF1976B8),
         CustomColorKey.SecondaryBackground to Color(0xFFF5F5F5),
         CustomColorKey.CategoryColor1 to Color(0xFFE0594D),
         CustomColorKey.CategoryColor2 to Color(0xFF3F7540),
@@ -34,9 +35,9 @@ object CustomColors {
     )
 
     val darkModeColors = mapOf(
-        CustomColorKey.Income to Color(0xFF69F0AE),
-        CustomColorKey.Expense to Color(0xFFFF8A80),
-        CustomColorKey.Transfer to Color(0xFF82B1FF),
+        CustomColorKey.Income to Color(0xFF70AF8B),
+        CustomColorKey.Expense to Color(0xFFD78549),
+        CustomColorKey.Transfer to Color(0xFF6EA0CB),
         CustomColorKey.SecondaryBackground to Color(0xFF222222),
         CustomColorKey.CategoryColor1 to Color(0xFFFF897E),
         CustomColorKey.CategoryColor2 to Color(0xFF74C976),
@@ -87,4 +88,13 @@ fun getCategoryColor(number: Int): Color {
         else -> CustomColorKey.CategoryColor1 // Default to CategoryColor1 if the number is invalid
     }
     return getCustomColor(key)
+}
+
+@Composable
+fun getTransactionColor(type: TransactionType): Color {
+    return when (type) {
+        TransactionType.INCOME -> getCustomColor(key = CustomColorKey.Income)
+        TransactionType.EXPENSE -> getCustomColor(key = CustomColorKey.Expense)
+        TransactionType.TRANSFER -> getCustomColor(key = CustomColorKey.Transfer)
+    }
 }

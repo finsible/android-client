@@ -20,7 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.itsjeel01.finsiblefrontend.data.TransactionType
-import com.itsjeel01.finsiblefrontend.data.getTransactionColor
+import com.itsjeel01.finsiblefrontend.ui.theme.getTransactionColor
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.NewTransactionFormViewModel
 import java.util.Locale
 
@@ -52,7 +52,7 @@ fun TransactionSegmentedControl(modifier: Modifier = Modifier) {
             // Set text color and style based on selection
             val label = type.name.replace("_", " ").lowercase().replaceFirstChar { it.titlecase(Locale.ROOT) }
             val textColor = if (isSelected) selectedColor else MaterialTheme.colorScheme.onSecondaryContainer
-            val textStyle = MaterialTheme.typography.bodyLarge.copy(
+            val textStyle = MaterialTheme.typography.bodyMedium.copy(
                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
             )
 

@@ -6,7 +6,6 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -53,7 +52,8 @@ import com.itsjeel01.finsiblefrontend.data.models.AuthState
 import com.itsjeel01.finsiblefrontend.ui.navigation.Routes
 import com.itsjeel01.finsiblefrontend.ui.theme.CustomColorKey
 import com.itsjeel01.finsiblefrontend.ui.theme.getCustomColor
-import com.itsjeel01.finsiblefrontend.ui.view.components.ButtonSize
+import com.itsjeel01.finsiblefrontend.ui.view.InputCommonProps
+import com.itsjeel01.finsiblefrontend.ui.view.InputFieldSize
 import com.itsjeel01.finsiblefrontend.ui.view.components.ButtonStyle
 import com.itsjeel01.finsiblefrontend.ui.view.components.ButtonVariant
 import com.itsjeel01.finsiblefrontend.ui.view.components.FinsibleButton
@@ -67,23 +67,41 @@ import com.itsjeel01.finsiblefrontend.utils.signInWithGoogle
 
 @Composable
 fun OnboardingScreen(navController: NavHostController) {
+    // View models
     val onboardingViewModel: OnboardingViewModel = hiltViewModel()
     val authViewModel: AuthViewModel = hiltViewModel()
+
+    // State
     val slides = OnboardingData().getOnboardingData()
     val currentSlide = onboardingViewModel.currentSlide.collectAsState().value
     val authState = authViewModel.authState.collectAsState().value
-
-    val (fwdNavigationLabel, iconDrawable, iconPosition) = when {
-        currentSlide == 0 -> Triple("Get started", R.drawable.arrow_right_icon, IconPosition.EndOfButton)
-        currentSlide < slides.lastIndex -> Triple("Next", null, IconPosition.EndOfLabel)
-        else -> Triple("Sign In with Google", R.drawable.piggy_bank_icon, IconPosition.StartOfLabel)
-    }
-
-    val transition = updateTransition(targetState = currentSlide, label = "Text Transition")
-
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
+    // Background gradient
+    val backgroundGradient = Brush.linearGradient(
+        listOf(
+            getCustomColor(CustomColorKey.OnboardingGradientColor2),
+            getCustomColor(CustomColorKey.OnboardingGradientColor1),
+            getCustomColor(CustomColorKey.OnboardingGradientColor2)
+        ),
+    )
+
+    // Navigation button configuration
+    val (fwdNavigationLabel, iconDrawable, iconPosition) = when {
+        currentSlide == 0 -> Triple("Get started", R.drawable.ic_right_arrow_dotted, IconPosition.EndOfButton)
+        currentSlide < slides.lastIndex -> Triple("Next", null, IconPosition.EndOfLabel)
+        else -> Triple("Sign In with Google", R.drawable.ic_google, IconPosition.StartOfLabel)
+    }
+
+    // Icon tinting
+    val tintedIcon = when (currentSlide) {
+        slides.lastIndex -> false
+        else -> true
+    }
+
+    // Auth state monitoring
     LaunchedEffect(authState) {
         when (authState) {
             is AuthState.Positive -> {
@@ -100,6 +118,7 @@ fun OnboardingScreen(navController: NavHostController) {
         }
     }
 
+    // Navigation functions
     fun forwardNavigation() {
         if (currentSlide < slides.lastIndex) {
             onboardingViewModel.nextSlide()
@@ -112,22 +131,12 @@ fun OnboardingScreen(navController: NavHostController) {
         onboardingViewModel.previousSlide()
     }
 
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
-
-    val backgroundGradient = Brush.linearGradient(
-        listOf(
-            getCustomColor(CustomColorKey.OnboardingGradientColor2),
-            getCustomColor(CustomColorKey.OnboardingGradientColor1),
-            getCustomColor(CustomColorKey.OnboardingGradientColor2)
-        ),
-    )
-
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         contentWindowInsets = WindowInsets.ime,
     ) { _ ->
         Box(modifier = Modifier.fillMaxSize()) {
-            // SCREEN CONTENT
+            // Main content
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -135,142 +144,196 @@ fun OnboardingScreen(navController: NavHostController) {
                     .padding(horizontal = 32.dp, vertical = screenHeight * 0.1f),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Fixed Image Container (Prevents Content Jumping)
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(screenHeight * 0.3f),
-                    contentAlignment = Alignment.TopCenter
-                ) {
-                    Crossfade(
-                        targetState = currentSlide,
-                        animationSpec = tween(AppConstants.ANIMATION_DURATION_SHORT, easing = FastOutSlowInEasing)
-                    ) { slide ->
-                        Image(
-                            painter = painterResource(id = slides[slide].illustration),
-                            contentDescription = "Onboarding Illustration",
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            contentScale = ContentScale.Fit
-                        )
-                    }
-                }
+                // SECTION: Illustration
+                OnboardingIllustration(
+                    currentSlide = currentSlide,
+                    slides = slides,
+                    screenHeight = screenHeight
+                )
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                // Headline and Description
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    // Headline
-                    AnimatedContent(
-                        targetState = currentSlide,
-                        transitionSpec = {
-                            (fadeIn(
-                                tween(
-                                    AppConstants.ANIMATION_DURATION_VERY_SHORT,
-                                    delayMillis = AppConstants.ANIMATION_DURATION_VERY_SHORT
-                                )
-                            ) + scaleIn(
-                                tween(
-                                    durationMillis = AppConstants.ANIMATION_DURATION_SHORT,
-                                    delayMillis = AppConstants.ANIMATION_DURATION_VERY_SHORT * 2,
-                                ),
-                                initialScale = 0.9f
-                            ))
-                                .togetherWith(fadeOut(tween(AppConstants.ANIMATION_DURATION_VERY_SHORT)))
-                                .using(SizeTransform(clip = false))
-                        }
-                    ) { targetSlide ->
-                        Text(
-                            slides[targetSlide].headline,
-                            style = MaterialTheme.typography.displayLarge.copy(
-                                fontWeight = FontWeight.Bold
-                            ),
-                            textAlign = TextAlign.Center,
-                        )
-                    }
-
-                    Spacer(Modifier.height(24.dp))
-
-                    // Description with fixed height
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height((4 * MaterialTheme.typography.bodyLarge.lineHeight.value).dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Crossfade(
-                            targetState = currentSlide,
-                            animationSpec = tween(AppConstants.ANIMATION_DURATION_SHORT, easing = FastOutSlowInEasing)
-                        ) { slide ->
-                            Text(
-                                slides[slide].description,
-                                modifier = Modifier.fillMaxHeight(),
-                                style = MaterialTheme.typography.bodyLarge,
-                                textAlign = TextAlign.Center,
-                            )
-                        }
-                    }
-                }
+                // SECTION: Text Content
+                OnboardingTextContent(
+                    currentSlide = currentSlide,
+                    slides = slides
+                )
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                // Indicators
+                // SECTION: Indicators
                 OnboardingIndicators(currentSlide, slides.size)
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                // Navigation Buttons
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                    // Backward Navigation Button
-                    if (currentSlide > 0 && currentSlide <= slides.lastIndex) {
-                        FinsibleButton(
-                            modifier = if (currentSlide == slides.lastIndex) Modifier else Modifier.weight(1f),
-                            label = "Back",
-                            onClick = { backwardNavigation() },
-                            style = ButtonStyle.Secondary,
-                            variant = if (currentSlide == slides.lastIndex) ButtonVariant.WrapContent else ButtonVariant.FullWidth,
-                            size = ButtonSize.Large
-                        )
-
-                        Spacer(Modifier.width(16.dp))
-                    }
-
-                    // Forward Navigation Button
-                    FinsibleButton(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f),
-                        label = fwdNavigationLabel,
-                        onClick = { forwardNavigation() },
-                        iconDrawable = iconDrawable,
-                        variant = ButtonVariant.FullWidthWithIcon,
-                        iconPosition = iconPosition,
-                        size = ButtonSize.Large,
-                        style = ButtonStyle.Primary,
-                    )
-                }
-
+                // SECTION: Navigation Buttons
+                OnboardingNavigationButtons(
+                    currentSlide = currentSlide,
+                    slidesLastIndex = slides.lastIndex,
+                    fwdNavigationLabel = fwdNavigationLabel,
+                    iconDrawable = iconDrawable,
+                    tintedIcon = tintedIcon,
+                    iconPosition = iconPosition,
+                    onBackClick = { backwardNavigation() },
+                    onForwardClick = { forwardNavigation() }
+                )
             }
 
-            // CONDITIONAL LOADING INDICATOR
+            // SECTION: Loading overlay
             if (authState == AuthState.Loading) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.background.copy(alpha = 0.6f)), // Semi-transparent overlay
-                    contentAlignment = Alignment.Center
-                ) {
-                    RippleLoadingIndicator(
-                        primaryColor = MaterialTheme.colorScheme.primary,
-                        secondaryColor = MaterialTheme.colorScheme.onBackground
-                    )
-                }
+                LoadingOverlay()
             }
         }
+    }
+}
+
+@Composable
+private fun OnboardingIllustration(
+    currentSlide: Int,
+    slides: List<OnboardingData>,
+    screenHeight: androidx.compose.ui.unit.Dp,
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(screenHeight * 0.3f),
+        contentAlignment = Alignment.TopCenter
+    ) {
+        Crossfade(
+            targetState = currentSlide,
+            animationSpec = tween(AppConstants.ANIMATION_DURATION_SHORT, easing = FastOutSlowInEasing)
+        ) { slide ->
+            Image(
+                painter = painterResource(id = slides[slide].illustration),
+                contentDescription = "Onboarding Illustration",
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Fit
+            )
+        }
+    }
+}
+
+@Composable
+private fun OnboardingTextContent(
+    currentSlide: Int,
+    slides: List<OnboardingData>,
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        // Animated headline
+        AnimatedContent(
+            targetState = currentSlide,
+            transitionSpec = {
+                (fadeIn(
+                    tween(
+                        AppConstants.ANIMATION_DURATION_VERY_SHORT,
+                        delayMillis = AppConstants.ANIMATION_DURATION_VERY_SHORT
+                    )
+                ) + scaleIn(
+                    tween(
+                        durationMillis = AppConstants.ANIMATION_DURATION_VERY_SHORT,
+                        delayMillis = AppConstants.ANIMATION_DURATION_VERY_SHORT * 2,
+                    ),
+                    initialScale = 0.9f
+                ))
+                    .togetherWith(fadeOut(tween(AppConstants.ANIMATION_DURATION_VERY_SHORT)))
+                    .using(SizeTransform(clip = false))
+            }
+        ) { targetSlide ->
+            Text(
+                slides[targetSlide].headline,
+                style = MaterialTheme.typography.displayLarge.copy(
+                    fontWeight = FontWeight.Bold
+                ),
+                textAlign = TextAlign.Center,
+            )
+        }
+
+        Spacer(Modifier.height(24.dp))
+
+        // Description with fixed height
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height((4 * MaterialTheme.typography.bodyLarge.lineHeight.value).dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Crossfade(
+                targetState = currentSlide,
+                animationSpec = tween(AppConstants.ANIMATION_DURATION_SHORT, easing = FastOutSlowInEasing)
+            ) { slide ->
+                Text(
+                    slides[slide].description,
+                    modifier = Modifier.fillMaxHeight(),
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun OnboardingNavigationButtons(
+    currentSlide: Int,
+    slidesLastIndex: Int,
+    fwdNavigationLabel: String,
+    iconDrawable: Int?,
+    tintedIcon: Boolean = true,
+    iconPosition: IconPosition,
+    onBackClick: () -> Unit,
+    onForwardClick: () -> Unit,
+) {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+        // Back button (conditionally shown)
+        if (currentSlide > 0 && currentSlide <= slidesLastIndex) {
+            FinsibleButton(
+                onClick = onBackClick,
+                commonProps = InputCommonProps(
+                    modifier = if (currentSlide == slidesLastIndex) Modifier else Modifier.weight(1f),
+                    label = "Back",
+                    size = InputFieldSize.Large
+                ),
+                style = ButtonStyle.Secondary,
+                variant = if (currentSlide == slidesLastIndex) ButtonVariant.WrapContent else ButtonVariant.FullWidth
+            )
+
+            Spacer(Modifier.width(16.dp))
+        }
+
+        // Forward/Next/Sign in button
+        FinsibleButton(
+            onClick = onForwardClick,
+            commonProps = InputCommonProps(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                label = fwdNavigationLabel,
+                size = InputFieldSize.Large
+            ),
+            style = ButtonStyle.Primary,
+            variant = ButtonVariant.FullWidth,
+            icon = iconDrawable,
+            tintedIcon = tintedIcon,
+            iconPosition = iconPosition
+        )
+    }
+}
+
+@Composable
+private fun LoadingOverlay() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.6f)),
+        contentAlignment = Alignment.Center
+    ) {
+        RippleLoadingIndicator(
+            primaryColor = MaterialTheme.colorScheme.primary,
+            secondaryColor = MaterialTheme.colorScheme.onBackground
+        )
     }
 }
 

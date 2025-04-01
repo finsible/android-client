@@ -33,6 +33,7 @@ class NewTransactionFormViewModel @Inject constructor(
 
     // Selected category
     private val _transactionCategoryState = MutableStateFlow<CategoryEntity>(currentCategoriesState.value.first())
+    val transactionCategoryState: StateFlow<CategoryEntity> = _transactionCategoryState
 
     init {
         loadCategories()

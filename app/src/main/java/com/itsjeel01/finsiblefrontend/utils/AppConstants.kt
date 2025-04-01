@@ -8,6 +8,6 @@ class AppConstants {
         const val ANIMATION_DURATION_LONG = 1800
         const val ANIMATION_DURATION_VERY_LONG = 2400
 
-        const val MAX_TRANSACTION_AMOUNT = 1_000_000_000.0
+        const val MAX_TRANSACTION_AMOUNT = 10000000
     }
 }

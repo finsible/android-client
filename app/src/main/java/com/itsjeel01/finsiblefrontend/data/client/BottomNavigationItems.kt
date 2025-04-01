@@ -13,27 +13,27 @@ data class BottomNavigationItems(
         return listOf(
             BottomNavigationItems(
                 label = "Home",
-                icon = R.drawable.transactions_icon,
+                icon = R.drawable.ic_transactions,
                 route = Routes.HomeScreen
             ),
             BottomNavigationItems(
                 label = "Insights",
-                icon = R.drawable.stats_icon,
+                icon = R.drawable.ic_stats,
                 route = Routes.InsightsScreen
             ),
             BottomNavigationItems(
-                icon = R.drawable.plus_icon,
+                icon = R.drawable.ic_plus,
                 isNewTransactionForm = true,
                 route = Routes.NewTransactionForm
             ),
             BottomNavigationItems(
                 label = "Balance",
-                icon = R.drawable.piggy_bank_icon,
+                icon = R.drawable.ic_piggy_bank,
                 route = Routes.BalanceScreen
             ),
             BottomNavigationItems(
                 label = "Settings",
-                icon = R.drawable.hamburger_menu_icon,
+                icon = R.drawable.ic_hamburger,
                 route = Routes.SettingsScreen
             ),
         )

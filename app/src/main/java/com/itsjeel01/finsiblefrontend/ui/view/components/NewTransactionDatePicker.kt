@@ -30,7 +30,7 @@ fun NewTransactionDatePicker(modifier: Modifier = Modifier) {
         accentColor = getTransactionColor(transactionType),
         trailingIcon = {
             Icon(
-                painterResource(R.drawable.calendar_icon),
+                painterResource(R.drawable.ic_calendar),
                 contentDescription = "Calendar Icon",
                 tint = MaterialTheme.colorScheme.outline
             )

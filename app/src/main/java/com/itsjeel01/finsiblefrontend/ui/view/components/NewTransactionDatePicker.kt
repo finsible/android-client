@@ -40,12 +40,12 @@ fun NewTransactionDatePicker(modifier: Modifier = Modifier) {
 
     fun onDateSelected(date: Long) {
         newTransactionFormViewModel.setTransactionDate(date)
-        focusManager.clearFocus()
     }
 
     FinsibleDateInput(
         date = transactionDate,
         onValueChange = { onDateSelected(it) },
         commonProps = inputProps,
+        clearFocus = { focusManager.clearFocus() },
     )
 }

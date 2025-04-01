@@ -37,6 +37,7 @@ import java.util.Locale
 fun FinsibleDateInput(
     date: Long,
     onValueChange: (Long) -> Unit,
+    clearFocus: () -> Unit,
     commonProps: InputCommonProps = InputCommonProps(),
 ) {
     val accentColor = commonProps.accentColor
@@ -71,9 +72,13 @@ fun FinsibleDateInput(
                 it?.let { date ->
                     onValueChange(date)
                     value = convertMillisToDate(date)
+                    clearFocus()
                 }
             },
-            onDismiss = { showModal = false },
+            onDismiss = {
+                showModal = false
+                clearFocus()
+            },
             date = date,
             accentColor = accentColor,
         )

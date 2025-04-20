@@ -67,7 +67,7 @@ fun FinsibleButton(
     val buttonShape = RoundedCornerShape(2.dp)
     val isSmall = commonProps.size == InputFieldSize.Small
     val horizontalPadding = if (isSmall) 12.dp else 16.dp
-    val verticalPadding = if (isSmall) 8.dp else 12.dp
+    val verticalPadding = if (isSmall) 12.dp else 16.dp
     val labelStyle = if (isSmall)
         MaterialTheme.typography.labelMedium
     else

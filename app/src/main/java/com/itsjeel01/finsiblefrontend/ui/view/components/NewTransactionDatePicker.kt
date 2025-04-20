@@ -17,7 +17,7 @@ import com.itsjeel01.finsiblefrontend.ui.viewmodel.NewTransactionFormViewModel
 @Composable
 fun NewTransactionDatePicker(modifier: Modifier = Modifier) {
     val newTransactionFormViewModel: NewTransactionFormViewModel = hiltViewModel()
-    val transactionDate = newTransactionFormViewModel.transactionDateState.collectAsState().value
+    val transactionDate = newTransactionFormViewModel.transactionDateState.collectAsState().value ?: System.currentTimeMillis()
     val transactionType = newTransactionFormViewModel.transactionTypeState.collectAsState().value
 
     val focusManager = LocalFocusManager.current

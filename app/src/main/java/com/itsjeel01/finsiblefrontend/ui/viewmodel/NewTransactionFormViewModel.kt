@@ -18,8 +18,8 @@ class NewTransactionFormViewModel @Inject constructor(
     val transactionTypeState: StateFlow<TransactionType> = _transactionTypeState
 
     // Transaction date
-    private val _transactionDateState = MutableStateFlow(System.currentTimeMillis())
-    val transactionDateState: StateFlow<Long> = _transactionDateState
+    private val _transactionDateState: MutableStateFlow<Long?> = MutableStateFlow(null)
+    val transactionDateState: StateFlow<Long?> = _transactionDateState
 
     // Transaction amount
     private val _transactionAmountState = MutableStateFlow<Double?>(null)
@@ -52,7 +52,7 @@ class NewTransactionFormViewModel @Inject constructor(
         }
     }
 
-    fun setTransactionDate(transactionDate: Long) {
+    fun setTransactionDate(transactionDate: Long?) {
         _transactionDateState.value = transactionDate
     }
 

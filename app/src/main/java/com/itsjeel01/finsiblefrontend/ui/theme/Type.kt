@@ -52,7 +52,7 @@ val AppTypography = Typography(
     bodySmall = baseline.bodySmall.copy(fontFamily = sansSerifFont),
 
     // Label -> Serif
-    labelLarge = baseline.labelLarge.copy(fontFamily = sansSerifFont).copy(fontSize = 22.sp),
-    labelMedium = baseline.labelMedium.copy(fontFamily = sansSerifFont).copy(fontSize = 16.sp),
-    labelSmall = baseline.labelSmall.copy(fontFamily = sansSerifFont).copy(fontSize = 14.sp),
+    labelLarge = baseline.labelLarge.copy(fontFamily = sansSerifFont).copy(fontSize = 20.sp),
+    labelMedium = baseline.labelMedium.copy(fontFamily = sansSerifFont).copy(fontSize = 14.sp),
+    labelSmall = baseline.labelSmall.copy(fontFamily = sansSerifFont).copy(fontSize = 12.sp),
 )

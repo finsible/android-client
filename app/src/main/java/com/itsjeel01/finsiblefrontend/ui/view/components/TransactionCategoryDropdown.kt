@@ -10,14 +10,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -26,113 +21,104 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.itsjeel01.finsiblefrontend.ui.theme.CustomColorKey
-import com.itsjeel01.finsiblefrontend.ui.theme.finsibleTextFieldColors
+import com.itsjeel01.finsiblefrontend.data.objectbox.entity.CategoryEntity
 import com.itsjeel01.finsiblefrontend.ui.theme.getCategoryColor
 import com.itsjeel01.finsiblefrontend.ui.theme.getCategoryColorsList
-import com.itsjeel01.finsiblefrontend.ui.theme.getCustomColor
+import com.itsjeel01.finsiblefrontend.ui.theme.getTransactionColor
+import com.itsjeel01.finsiblefrontend.ui.view.InputCommonProps
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.NewTransactionFormViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionCategoryDropdown(modifier: Modifier = Modifier) {
-    var expanded by remember { mutableStateOf(false) }
-    val newTransactionFormViewModel: NewTransactionFormViewModel = hiltViewModel()
-    val transactionCategory =
-        newTransactionFormViewModel.transactionCategoryState.collectAsState().value
-    val categories = newTransactionFormViewModel.currentCategoriesState.collectAsState().value
-    var openAlertDialog by remember { mutableStateOf(false) }
+    val viewModel: NewTransactionFormViewModel = hiltViewModel()
+    val transactionType = viewModel.transactionTypeState.collectAsState().value
+    val transactionCategory = viewModel.transactionCategoryState.collectAsState().value
+    val categories = viewModel.currentCategoriesState.collectAsState().value
+    val focusManager = LocalFocusManager.current
+    var showNewCategoryDialog by remember { mutableStateOf(false) }
 
-    when {
-        openAlertDialog -> {
-            NewCategoryAlertDialog(
-                dialogTitle = "Add New Category",
-                availableColors = getCategoryColorsList(),
-                onDismissRequest = {
-                    openAlertDialog = false
-                },
-                onConfirmation = {
-                    openAlertDialog = false
-                }
-            )
-        }
-    }
-
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = {
-            expanded = !expanded
-        },
+    val commonProps = InputCommonProps(
         modifier = modifier,
-    ) {
-        TextField(
-            readOnly = true,
-            value = transactionCategory.name,
-            onValueChange = { },
-            label = { Text("Category") },
-            maxLines = 1,
-            trailingIcon = {
-                ExposedDropdownMenuDefaults.TrailingIcon(
-                    expanded = expanded
-                )
-            },
-            colors = finsibleTextFieldColors(
-                accentColor = getCategoryColor(transactionCategory.color)
-            ),
-            modifier = Modifier
-                .menuAnchor(MenuAnchorType.PrimaryNotEditable)
-                .fillMaxWidth()
+        placeholder = "Category",
+        accentColor = getTransactionColor(transactionType),
+        leadingIcon = {
+            CategoryColorDot(color = getCategoryColor(transactionCategory.color))
+        }
+    )
+
+    if (showNewCategoryDialog) {
+        NewCategoryAlertDialog(
+            dialogTitle = "Add New Category",
+            availableColors = getCategoryColorsList(),
+            onDismissRequest = { showNewCategoryDialog = false },
+            onConfirmation = { showNewCategoryDialog = false }
         )
-        ExposedDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = {
-                expanded = false
-            },
-            modifier = Modifier.background(
-                color = getCustomColor(key = CustomColorKey.SecondaryBackground)
-            ),
-            shape = RoundedCornerShape(corner = CornerSize(4.dp)),
-        ) {
-            categories.forEach { category ->
-                DropdownMenuItem(
-                    onClick = {
-                        newTransactionFormViewModel.setTransactionCategory(categories.first { it.id == category.id })
-                        expanded = false
-                    },
-                    text = {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(
-                                modifier = Modifier
-                                    .background(
-                                        color = getCategoryColor(category.color),
-                                        shape = RoundedCornerShape(corner = CornerSize(8.dp)),
-                                    )
-                                    .size(8.dp)
-                            )
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Text(text = category.name)
-                        }
-                    }
-                )
-            }
+    }
 
-            HorizontalDivider(
-                modifier = Modifier.fillMaxWidth(),
-                thickness = 1.dp,
-                color = MaterialTheme.colorScheme.outlineVariant
-            )
-
-            DropdownMenuItem(
-                onClick = {
-                    openAlertDialog = true
-                    expanded = false
+    FinsibleDropdownInput(
+        value = transactionCategory,
+        options = categories,
+        onValueChange = { viewModel.setTransactionCategory(it) },
+        commonProps = commonProps,
+        clearFocus = { focusManager.clearFocus() },
+        displayText = { it.name },
+        itemContent = { category ->
+            CategoryDropdownItem(category = category, commonProps = commonProps)
+        },
+        footerContent = { closeDropdown ->
+            CategoryDropdownFooter(
+                onAddClick = {
+                    focusManager.clearFocus()
+                    showNewCategoryDialog = true
+                    closeDropdown()
                 },
-                text = {
-                    Text(text = "Add New Category")
-                }
+                commonProps = commonProps
             )
         }
+    )
+}
+
+@Composable
+private fun CategoryColorDot(color: Color) {
+    Box(
+        modifier = Modifier
+            .background(
+                color = color,
+                shape = RoundedCornerShape(corner = CornerSize(100)),
+            )
+            .size(16.dp)
+    )
+}
+
+@Composable
+private fun CategoryDropdownItem(
+    category: CategoryEntity,
+    commonProps: InputCommonProps,
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        CategoryColorDot(color = getCategoryColor(category.color))
+        Spacer(modifier = Modifier.width(24.dp))
+        Text(text = category.name, style = commonProps.primaryTextStyle())
     }
+}
+
+@Composable
+private fun CategoryDropdownFooter(
+    onAddClick: () -> Unit,
+    commonProps: InputCommonProps,
+) {
+    HorizontalDivider(
+        modifier = Modifier.fillMaxWidth(),
+        thickness = 1.dp,
+        color = MaterialTheme.colorScheme.outlineVariant
+    )
+
+    DropdownMenuItem(
+        onClick = onAddClick,
+        text = { Text(text = "Add New Category", style = commonProps.primaryTextStyle()) }
+    )
 }

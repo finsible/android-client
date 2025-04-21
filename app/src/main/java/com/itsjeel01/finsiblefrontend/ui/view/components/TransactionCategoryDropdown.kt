@@ -64,7 +64,7 @@ fun TransactionCategoryDropdown(modifier: Modifier = Modifier) {
         options = categories,
         onValueChange = { viewModel.setTransactionCategory(it) },
         commonProps = commonProps,
-        clearFocus = { focusManager.clearFocus() },
+        clearFocus = { focusManager.clearFocus(force = true) },
         displayText = { it.name },
         itemContent = { category ->
             CategoryDropdownItem(category = category, commonProps = commonProps)

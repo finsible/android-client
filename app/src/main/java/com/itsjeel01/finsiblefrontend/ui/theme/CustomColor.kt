@@ -4,7 +4,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import com.itsjeel01.finsiblefrontend.data.TransactionType
+import com.itsjeel01.finsiblefrontend.data.model.TransactionType
 
 object CustomColors {
     val lightModeColors = mapOf(

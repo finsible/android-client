@@ -6,8 +6,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.itsjeel01.finsiblefrontend.ui.navigation.Routes
-import com.itsjeel01.finsiblefrontend.ui.navigation.launchNavGraph
+import com.itsjeel01.finsiblefrontend.navigation.Routes
+import com.itsjeel01.finsiblefrontend.navigation.launchNavGraph
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 

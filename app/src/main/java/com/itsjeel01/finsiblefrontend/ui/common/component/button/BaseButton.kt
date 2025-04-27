@@ -98,7 +98,7 @@ fun BaseButton(
         ButtonContent(
             labelColor = labelColor,
             labelStyle = labelStyle,
-            label = commonProps.label!!,
+            label = commonProps.label ?: "",
             icon = icon,
             iconPosition = iconPosition,
             variant = variant,

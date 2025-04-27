@@ -41,7 +41,7 @@ enum class ButtonStyle { Primary, Secondary }
 enum class IconPosition { StartOfButton, EndOfButton, StartOfLabel, EndOfLabel }
 
 @Composable
-fun FinsibleButton(
+fun BaseButton(
     onClick: () -> Unit,
     commonProps: InputCommonProps = InputCommonProps(),
     style: ButtonStyle = ButtonStyle.Primary,

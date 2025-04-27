@@ -62,9 +62,9 @@ import com.itsjeel01.finsiblefrontend.feature.auth.viewmodel.OnboardingViewModel
 import com.itsjeel01.finsiblefrontend.navigation.Routes
 import com.itsjeel01.finsiblefrontend.ui.common.InputCommonProps
 import com.itsjeel01.finsiblefrontend.ui.common.InputFieldSize
+import com.itsjeel01.finsiblefrontend.ui.common.component.button.BaseButton
 import com.itsjeel01.finsiblefrontend.ui.common.component.button.ButtonStyle
 import com.itsjeel01.finsiblefrontend.ui.common.component.button.ButtonVariant
-import com.itsjeel01.finsiblefrontend.ui.common.component.button.FinsibleButton
 import com.itsjeel01.finsiblefrontend.ui.common.component.button.IconPosition
 import com.itsjeel01.finsiblefrontend.ui.common.component.indicator.OnboardingIndicators
 import com.itsjeel01.finsiblefrontend.ui.common.component.indicator.RippleLoadingIndicator
@@ -338,7 +338,7 @@ private fun OnboardingNavigationButtons(
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
         // Back button (conditionally shown)
         if (currentSlide > 0 && currentSlide <= slidesLastIndex) {
-            FinsibleButton(
+            BaseButton(
                 onClick = onBackClick,
                 commonProps = InputCommonProps(
                     modifier = if (currentSlide == slidesLastIndex) Modifier else Modifier.weight(1f),
@@ -353,7 +353,7 @@ private fun OnboardingNavigationButtons(
         }
 
         // Forward/Next/Sign in button
-        FinsibleButton(
+        BaseButton(
             onClick = onForwardClick,
             commonProps = InputCommonProps(
                 modifier = Modifier

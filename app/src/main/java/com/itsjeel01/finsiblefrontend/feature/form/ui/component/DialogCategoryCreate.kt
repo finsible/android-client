@@ -1,7 +1,6 @@
 package com.itsjeel01.finsiblefrontend.feature.form.ui.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -62,19 +61,14 @@ fun NewCategoryAlertDialog(
 
     AlertDialog(
         modifier = Modifier
-            .fillMaxWidth(0.9f)
-            .border(
-                width = 0.5.dp,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f),
-                shape = RoundedCornerShape(16.dp)
-            ),
+            .fillMaxWidth(0.9f),
         properties = DialogProperties(
             usePlatformDefaultWidth = false,
             decorFitsSystemWindows = true,
             dismissOnClickOutside = true,
             dismissOnBackPress = false
         ),
-        containerColor = MaterialTheme.colorScheme.background.copy(alpha = 0.5f),
+        containerColor = MaterialTheme.colorScheme.background,
         shape = RoundedCornerShape(8.dp),
         onDismissRequest = onDismissRequest,
         confirmButton = {

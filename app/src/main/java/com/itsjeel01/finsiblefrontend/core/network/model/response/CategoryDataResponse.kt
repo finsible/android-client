@@ -12,5 +12,5 @@ data class CategoryData(
 data class Category(
     val id: Long,
     val name: String,
-    val color: Int,
+    val color: String,
 )

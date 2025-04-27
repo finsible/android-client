@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CategoryAddRequest(
     val name: String,
-    val color: Int,
+    val color: String,
 )

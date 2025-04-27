@@ -14,7 +14,7 @@ class CategoryRepository @Inject constructor(private val categoryApiService: Cat
         return categoryApiService.getCategories(type)
     }
 
-    suspend fun addCategory(type: String, name: String, color: Int): BaseResponse<Unit> {
+    suspend fun addCategory(type: String, name: String, color: String): BaseResponse<Unit> {
         return categoryApiService.addCategory(type, CategoryAddRequest(name, color))
     }
 

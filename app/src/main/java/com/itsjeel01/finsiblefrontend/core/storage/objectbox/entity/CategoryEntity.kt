@@ -12,5 +12,5 @@ data class CategoryEntity(
     @Convert(converter = TransactionTypeConverter::class, dbType = Int::class)
     var type: TransactionType,
     var name: String,
-    var color: Int,
+    var color: String,
 )

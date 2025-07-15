@@ -1,10 +1,10 @@
 package com.itsjeel01.finsiblefrontend.data.repository
 
-import com.itsjeel01.finsiblefrontend.core.network.model.base.BaseResponse
-import com.itsjeel01.finsiblefrontend.core.network.model.request.CategoryAddRequest
-import com.itsjeel01.finsiblefrontend.core.network.model.request.CategoryRenameRequest
-import com.itsjeel01.finsiblefrontend.core.network.model.response.CategoryData
-import com.itsjeel01.finsiblefrontend.core.network.service.CategoryApiService
+import com.itsjeel01.finsiblefrontend.data.remote.model.BaseResponse
+import com.itsjeel01.finsiblefrontend.data.remote.model.CategoryAddRequest
+import com.itsjeel01.finsiblefrontend.data.remote.model.CategoryRenameRequest
+import com.itsjeel01.finsiblefrontend.data.remote.model.CategoryData
+import com.itsjeel01.finsiblefrontend.data.remote.api.CategoryApiService
 import javax.inject.Inject
 import javax.inject.Singleton
 

@@ -1,7 +1,7 @@
 package com.itsjeel01.finsiblefrontend.data.model.client
 
 import com.itsjeel01.finsiblefrontend.R
-import com.itsjeel01.finsiblefrontend.navigation.Routes
+import com.itsjeel01.finsiblefrontend.ui.navigation.Routes
 
 data class BottomNavigationItems(
     val label: String = "",

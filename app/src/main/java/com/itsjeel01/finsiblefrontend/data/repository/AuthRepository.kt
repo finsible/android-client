@@ -1,9 +1,9 @@
 package com.itsjeel01.finsiblefrontend.data.repository
 
-import com.itsjeel01.finsiblefrontend.core.network.model.base.BaseResponse
-import com.itsjeel01.finsiblefrontend.core.network.model.request.AuthLoginRequest
-import com.itsjeel01.finsiblefrontend.core.network.model.response.AuthDataResponse
-import com.itsjeel01.finsiblefrontend.core.network.service.AuthApiService
+import com.itsjeel01.finsiblefrontend.data.remote.model.BaseResponse
+import com.itsjeel01.finsiblefrontend.data.remote.model.AuthLoginRequest
+import com.itsjeel01.finsiblefrontend.data.remote.model.AuthDataResponse
+import com.itsjeel01.finsiblefrontend.data.remote.api.AuthApiService
 import javax.inject.Inject
 import javax.inject.Singleton
 

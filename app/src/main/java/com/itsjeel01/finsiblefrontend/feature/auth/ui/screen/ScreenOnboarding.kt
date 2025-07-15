@@ -100,7 +100,12 @@ fun OnboardingScreen(navController: NavHostController) {
 
     // Navigation button configuration
     val (fwdNavigationLabel, iconDrawable, iconPosition) = when {
-        currentSlide == 0 -> Triple("Get started", R.drawable.ic_right_arrow_dotted, IconPosition.EndOfButton)
+        currentSlide == 0 -> Triple(
+            "Get started",
+            R.drawable.ic_right_arrow_dotted,
+            IconPosition.EndOfButton
+        )
+
         currentSlide < slides.lastIndex -> Triple("Next", null, IconPosition.EndOfLabel)
         else -> Triple("Sign In with Google", R.drawable.ic_google, IconPosition.StartOfLabel)
     }
@@ -250,7 +255,10 @@ private fun OnboardingIllustration(
     ) {
         Crossfade(
             targetState = currentSlide,
-            animationSpec = tween(AppConstants.ANIMATION_DURATION_SHORT, easing = FastOutSlowInEasing)
+            animationSpec = tween(
+                AppConstants.ANIMATION_DURATION_SHORT,
+                easing = FastOutSlowInEasing
+            )
         ) { slide ->
             Image(
                 painter = painterResource(id = slides[slide].illustration),
@@ -311,7 +319,10 @@ private fun OnboardingTextContent(
         ) {
             Crossfade(
                 targetState = currentSlide,
-                animationSpec = tween(AppConstants.ANIMATION_DURATION_SHORT, easing = FastOutSlowInEasing)
+                animationSpec = tween(
+                    AppConstants.ANIMATION_DURATION_SHORT,
+                    easing = FastOutSlowInEasing
+                )
             ) { slide ->
                 Text(
                     slides[slide].description,

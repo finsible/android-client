@@ -1,5 +1,6 @@
 package com.itsjeel01.finsiblefrontend.ui.theme
 
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material3.DatePickerColors
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -12,13 +13,54 @@ import androidx.compose.ui.graphics.Color
 
 @Composable
 fun finsibleTextFieldColors(accentColor: Color): TextFieldColors {
-    return TextFieldDefaults.colors().copy(
-        unfocusedContainerColor = MaterialTheme.colorScheme.background,
-        focusedContainerColor = MaterialTheme.colorScheme.background,
-        focusedLabelColor = accentColor,
+    val disabledColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5F)
+    val neutralColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5F)
+    val errorColor = MaterialTheme.colorScheme.error
+    val onSurface = MaterialTheme.colorScheme.onSurface
+    val transparent = Color.Transparent
+
+    return TextFieldDefaults.colors(
+        // Label colors
+        disabledLabelColor = disabledColor,
+        unfocusedLabelColor = neutralColor,
+        focusedLabelColor = neutralColor,
+        errorLabelColor = neutralColor,
+
+        // Indicator colors
+        disabledIndicatorColor = disabledColor,
+        unfocusedIndicatorColor = neutralColor,
+        focusedIndicatorColor = accentColor,
+        errorIndicatorColor = errorColor,
+
+        // All container colors are transparent
+        disabledContainerColor = transparent,
+        unfocusedContainerColor = transparent,
+        focusedContainerColor = transparent,
+        errorContainerColor = transparent,
+
+        // Text colors
+        unfocusedTextColor = onSurface,
+        focusedTextColor = onSurface,
+        disabledTextColor = disabledColor,
+        errorTextColor = onSurface,
+
+        // Supporting text colors
+        unfocusedSupportingTextColor = neutralColor,
+        focusedSupportingTextColor = neutralColor,
+        disabledSupportingTextColor = disabledColor,
+        errorSupportingTextColor = errorColor,
+
+        // Placeholder colors
+        disabledPlaceholderColor = disabledColor,
+        unfocusedPlaceholderColor = neutralColor,
+        focusedPlaceholderColor = neutralColor,
+
+        // Selection and cursor
         cursorColor = accentColor,
-        focusedIndicatorColor = accentColor.copy(alpha = 0.5F),
-        unfocusedLabelColor = MaterialTheme.colorScheme.onSecondaryContainer,
+        selectionColors = TextSelectionColors(
+            handleColor = accentColor,
+            backgroundColor = accentColor.copy(alpha = 0.4F)
+        ),
     )
 }
 

@@ -64,7 +64,7 @@ val onTertiaryContainerDark = Color(0xFFCFE5FF)
 
 // Error
 val errorLight = Color(0xFFBA1A1A)
-val errorDark = Color(0xFFFFB4AB)
+val errorDark = Color(0xFFF88E80)
 
 // On Error
 val onErrorLight = Color(0xFFFFFFFF)

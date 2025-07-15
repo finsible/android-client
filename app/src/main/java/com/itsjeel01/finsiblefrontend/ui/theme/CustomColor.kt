@@ -4,21 +4,16 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.intl.Locale
+import androidx.compose.ui.text.toUpperCase
+import com.itsjeel01.finsiblefrontend.data.model.TransactionType
 
 object CustomColors {
     val lightModeColors = mapOf(
-        CustomColorKey.Income to Color(0xFF388E3C),
-        CustomColorKey.Expense to Color(0xFFD32F2F),
-        CustomColorKey.Transfer to Color(0xFF1976D2),
+        CustomColorKey.Income to Color(0xFF2D995B),
+        CustomColorKey.Expense to Color(0xFFC26619),
+        CustomColorKey.Transfer to Color(0xFF1976B8),
         CustomColorKey.SecondaryBackground to Color(0xFFF5F5F5),
-        CustomColorKey.CategoryColor1 to Color(0xFFE0594D),
-        CustomColorKey.CategoryColor2 to Color(0xFF3F7540),
-        CustomColorKey.CategoryColor3 to Color(0xFF2488D8),
-        CustomColorKey.CategoryColor4 to Color(0xFFAC8100),
-        CustomColorKey.CategoryColor5 to Color(0xFFD37510),
-        CustomColorKey.CategoryColor6 to Color(0xFFD45BE9),
-        CustomColorKey.CategoryColor7 to Color(0xFF009EB3),
-        CustomColorKey.CategoryColor8 to Color(0xFF797979),
         CustomColorKey.BtnPrimaryBackgroundEnabled to Color(0xFF222222),
         CustomColorKey.BtnPrimaryForegroundEnabled to Color(0xFFF1F1F1),
         CustomColorKey.BtnPrimaryBorder to Color.Transparent,
@@ -30,22 +25,22 @@ object CustomColors {
         CustomColorKey.BtnSecondaryForegroundDisabled to Color(0xFFBDBDBD),
         CustomColorKey.BtnSecondaryBorderDisabled to Color(0xFFBDBDBD),
         CustomColorKey.OnboardingGradientColor1 to Color(0xFFC5FFF9),
-        CustomColorKey.OnboardingGradientColor2 to Color(0xFFDEE3E3)
+        CustomColorKey.OnboardingGradientColor2 to Color(0xFFDEE3E3),
+        CustomColorKey.YELLOW to Color(0xFFDC9000),
+        CustomColorKey.ORANGE to Color(0xFFE65100),
+        CustomColorKey.RED to Color(0xFFC62828),
+        CustomColorKey.PINK to Color(0xFFC218A6),
+        CustomColorKey.PURPLE to Color(0xFF7B1FA2),
+        CustomColorKey.BLUE to Color(0xFF1565C0),
+        CustomColorKey.GREEN to Color(0xFF2E7D32),
+        CustomColorKey.GRAY to Color(0xFF455A64)
     )
 
     val darkModeColors = mapOf(
-        CustomColorKey.Income to Color(0xFF69F0AE),
-        CustomColorKey.Expense to Color(0xFFFF8A80),
-        CustomColorKey.Transfer to Color(0xFF82B1FF),
+        CustomColorKey.Income to Color(0xFF70AF8B),
+        CustomColorKey.Expense to Color(0xFFD78549),
+        CustomColorKey.Transfer to Color(0xFF6EA0CB),
         CustomColorKey.SecondaryBackground to Color(0xFF222222),
-        CustomColorKey.CategoryColor1 to Color(0xFFFF897E),
-        CustomColorKey.CategoryColor2 to Color(0xFF74C976),
-        CustomColorKey.CategoryColor3 to Color(0xFF56B2FD),
-        CustomColorKey.CategoryColor4 to Color(0xFFF5D165),
-        CustomColorKey.CategoryColor5 to Color(0xFFF8A750),
-        CustomColorKey.CategoryColor6 to Color(0xFFEA82FC),
-        CustomColorKey.CategoryColor7 to Color(0xFF56E8FA),
-        CustomColorKey.CategoryColor8 to Color(0xFFBDBDBD),
         CustomColorKey.BtnPrimaryBackgroundEnabled to Color(0xFFF1F1F1),
         CustomColorKey.BtnPrimaryForegroundEnabled to Color(0xFF222222),
         CustomColorKey.BtnPrimaryBorder to Color.Transparent,
@@ -57,7 +52,15 @@ object CustomColors {
         CustomColorKey.BtnSecondaryForegroundDisabled to Color(0xFF757575),
         CustomColorKey.BtnSecondaryBorderDisabled to Color(0xFF757575),
         CustomColorKey.OnboardingGradientColor1 to Color(0xFF1B4742),
-        CustomColorKey.OnboardingGradientColor2 to Color(0xFF050E0D)
+        CustomColorKey.OnboardingGradientColor2 to Color(0xFF050E0D),
+        CustomColorKey.YELLOW to Color(0xFFFFEF74),
+        CustomColorKey.ORANGE to Color(0xFFFFBC5F),
+        CustomColorKey.RED to Color(0xFFFA7979),
+        CustomColorKey.PINK to Color(0xFFFC6EC2),
+        CustomColorKey.PURPLE to Color(0xFFC97BFA),
+        CustomColorKey.BLUE to Color(0xFF64B5F6),
+        CustomColorKey.GREEN to Color(0xFF81C784),
+        CustomColorKey.GRAY to Color(0xFFB0BEC5)
     )
 }
 
@@ -70,21 +73,35 @@ fun getCustomColor(key: CustomColorKey): Color {
 
 @Composable
 fun getCategoryColorsList(): List<Color> {
-    return (1..8).map { getCategoryColor(it) }
+    val colors = listOf(
+        CustomColorKey.YELLOW,
+        CustomColorKey.ORANGE,
+        CustomColorKey.RED,
+        CustomColorKey.PINK,
+        CustomColorKey.PURPLE,
+        CustomColorKey.BLUE,
+        CustomColorKey.GREEN,
+        CustomColorKey.GRAY
+    )
+    return colors.map { getCustomColor(it) }
 }
 
 @Composable
-fun getCategoryColor(number: Int): Color {
-    val key = when (number) {
-        1 -> CustomColorKey.CategoryColor1
-        2 -> CustomColorKey.CategoryColor2
-        3 -> CustomColorKey.CategoryColor3
-        4 -> CustomColorKey.CategoryColor4
-        5 -> CustomColorKey.CategoryColor5
-        6 -> CustomColorKey.CategoryColor6
-        7 -> CustomColorKey.CategoryColor7
-        8 -> CustomColorKey.CategoryColor8
-        else -> CustomColorKey.CategoryColor1 // Default to CategoryColor1 if the number is invalid
+fun getCategoryColor(color: String): Color {
+    val colorKey = runCatching {
+        CustomColorKey.valueOf(color.toUpperCase(Locale.current))
+    }.getOrElse {
+        CustomColorKey.GRAY
     }
-    return getCustomColor(key)
+
+    return getCustomColor(key = colorKey)
+}
+
+@Composable
+fun getTransactionColor(type: TransactionType): Color {
+    return when (type) {
+        TransactionType.INCOME -> getCustomColor(key = CustomColorKey.Income)
+        TransactionType.EXPENSE -> getCustomColor(key = CustomColorKey.Expense)
+        TransactionType.TRANSFER -> getCustomColor(key = CustomColorKey.Transfer)
+    }
 }

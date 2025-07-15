@@ -4,6 +4,7 @@ import androidx.compose.material3.Typography
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.text.googlefonts.GoogleFont
+import androidx.compose.ui.unit.sp
 import com.itsjeel01.finsiblefrontend.R
 
 val provider = GoogleFont.Provider(
@@ -41,9 +42,9 @@ val AppTypography = Typography(
     headlineSmall = baseline.headlineSmall.copy(fontFamily = sansSerifFont),
 
     // Title -> Serif
-    titleLarge = baseline.titleLarge.copy(fontFamily = serifFont),
-    titleMedium = baseline.titleMedium.copy(fontFamily = serifFont),
-    titleSmall = baseline.titleSmall.copy(fontFamily = serifFont),
+    titleLarge = baseline.titleLarge.copy(fontFamily = sansSerifFont),
+    titleMedium = baseline.titleMedium.copy(fontFamily = sansSerifFont),
+    titleSmall = baseline.titleSmall.copy(fontFamily = sansSerifFont),
 
     // Body -> Sans Serif
     bodyLarge = baseline.bodyLarge.copy(fontFamily = sansSerifFont),
@@ -51,7 +52,7 @@ val AppTypography = Typography(
     bodySmall = baseline.bodySmall.copy(fontFamily = sansSerifFont),
 
     // Label -> Serif
-    labelLarge = baseline.labelLarge.copy(fontFamily = serifFont),
-    labelMedium = baseline.labelMedium.copy(fontFamily = serifFont),
-    labelSmall = baseline.labelSmall.copy(fontFamily = serifFont),
+    labelLarge = baseline.labelLarge.copy(fontFamily = sansSerifFont).copy(fontSize = 20.sp),
+    labelMedium = baseline.labelMedium.copy(fontFamily = sansSerifFont).copy(fontSize = 14.sp),
+    labelSmall = baseline.labelSmall.copy(fontFamily = sansSerifFont).copy(fontSize = 12.sp),
 )

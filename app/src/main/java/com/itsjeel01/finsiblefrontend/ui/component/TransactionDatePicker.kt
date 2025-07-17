@@ -9,27 +9,26 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.itsjeel01.finsiblefrontend.R
+import com.itsjeel01.finsiblefrontend.common.InputFieldSize
+import com.itsjeel01.finsiblefrontend.common.Utils
+import com.itsjeel01.finsiblefrontend.ui.component.base.BaseDateInput
+import com.itsjeel01.finsiblefrontend.ui.component.base.CommonProps
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.TransactionFormViewModel
-import com.itsjeel01.finsiblefrontend.ui.component.base.FinsibleDateInput
-import com.itsjeel01.finsiblefrontend.ui.component.base.InputCommonProps
-import com.itsjeel01.finsiblefrontend.ui.component.base.InputFieldSize
-import com.itsjeel01.finsiblefrontend.ui.theme.getTransactionColor
 
 @Composable
-fun NewTransactionDatePicker(modifier: Modifier = Modifier) {
-    val transactionFormViewModel: TransactionFormViewModel = hiltViewModel()
-    val transactionDate = transactionFormViewModel.transactionDateState.collectAsState().value
-        ?: System.currentTimeMillis()
-    val transactionType = transactionFormViewModel.transactionTypeState.collectAsState().value
-
+fun TransactionDatePicker(modifier: Modifier = Modifier) {
     val focusManager = LocalFocusManager.current
 
-    // Configure input field properties
-    val inputProps = InputCommonProps(
+    val transactionFormViewModel: TransactionFormViewModel = hiltViewModel()
+    val transactionDate = transactionFormViewModel.transactionDate.collectAsState().value
+        ?: System.currentTimeMillis()
+    val transactionType = transactionFormViewModel.transactionType.collectAsState().value
+
+    val inputProps = CommonProps(
         modifier = modifier,
         placeholder = "Date",
         enabled = true,
-        accentColor = getTransactionColor(transactionType),
+        accentColor = Utils.getTransactionColor(transactionType),
         trailingIcon = {
             Icon(
                 painterResource(R.drawable.ic_calendar),
@@ -40,13 +39,9 @@ fun NewTransactionDatePicker(modifier: Modifier = Modifier) {
         size = InputFieldSize.Large,
     )
 
-    fun onDateSelected(date: Long) {
-        transactionFormViewModel.setTransactionDate(date)
-    }
-
-    FinsibleDateInput(
+    BaseDateInput(
         date = transactionDate,
-        onValueChange = { onDateSelected(it) },
+        onValueChange = { transactionFormViewModel.setTransactionDate(it) },
         commonProps = inputProps,
         clearFocus = { focusManager.clearFocus() },
     )

@@ -18,24 +18,27 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.itsjeel01.finsiblefrontend.ui.theme.CustomColorKey
+import com.itsjeel01.finsiblefrontend.common.Strings
+import com.itsjeel01.finsiblefrontend.ui.theme.ColorKey
 import com.itsjeel01.finsiblefrontend.ui.theme.finsibleTextFieldColors
 import com.itsjeel01.finsiblefrontend.ui.theme.getCustomColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun <T> FinsibleDropdownInput(
+fun <T> BaseDropdownInput(
     value: T,
     options: List<T>,
     onValueChange: (T) -> Unit,
-    commonProps: InputCommonProps = InputCommonProps(),
+    commonProps: CommonProps = CommonProps(),
     clearFocus: (() -> Unit),
     displayText: (T) -> String = { it.toString() },
-    itemContent: @Composable (T) -> Unit,
-    footerContent: (@Composable (closeDropdown: () -> Unit) -> Unit)? = null,
+    item: @Composable (T) -> Unit,
+    footer: (@Composable (closeDropdown: () -> Unit) -> Unit)? = null,
 ) {
     var expanded by remember { mutableStateOf(false) }
     if (!expanded) clearFocus()
+
+    // --- Dropdown Input UI ---
 
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -49,22 +52,24 @@ fun <T> FinsibleDropdownInput(
             value = displayText(value),
             onValueChange = { },
             modifier = commonProps
-                .fieldModifier()
+                .modifier()
                 .menuAnchor(MenuAnchorType.PrimaryNotEditable)
                 .fillMaxWidth(),
-            label = commonProps.labelComposable(),
+            label = commonProps.label(),
             maxLines = 1,
             trailingIcon = commonProps.trailingIconComposable() ?: {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
             },
             leadingIcon = commonProps.leadingIconComposable(),
-            supportingText = commonProps.supportingTextComposable(),
+            supportingText = commonProps.supportingText(),
             isError = commonProps.isError,
             enabled = commonProps.enabled,
-            placeholder = commonProps.placeholderComposable(),
+            placeholder = commonProps.placeholder(),
             textStyle = commonProps.primaryTextStyle(),
             colors = finsibleTextFieldColors(accentColor = commonProps.accentColor),
         )
+
+        // --- Dropdown Menu UI ---
 
         ExposedDropdownMenu(
             expanded = expanded,
@@ -72,24 +77,22 @@ fun <T> FinsibleDropdownInput(
                 expanded = false
             },
             modifier = Modifier.background(
-                color = getCustomColor(key = CustomColorKey.SecondaryBackground)
+                color = getCustomColor(key = ColorKey.SecondaryBackground)
             ),
             shape = RoundedCornerShape(corner = CornerSize(4.dp)),
         ) {
-            // Render dropdown items
             options.forEach { item ->
                 DropdownMenuItem(
                     onClick = {
                         onValueChange(item)
-                        Log.d("FinsibleDropdownInput", "clearFocus() called on item click")
+                        Log.d(Strings.BASE_DROPDOWN_INPUT, "clearFocus() called on item click")
                         expanded = false
                     },
-                    text = { itemContent(item) }
+                    text = { item(item) }
                 )
             }
 
-            // Optional footer content
-            footerContent?.let { footer ->
+            footer?.let { footer ->
                 footer { expanded = false }
             }
         }

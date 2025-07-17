@@ -89,8 +89,7 @@ private val darkScheme = darkColorScheme(
 @Composable
 fun FinsibleAppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = false,
+    dynamicColor: Boolean = false, // Available only on Android 12 and above
     content: @Composable() () -> Unit,
 ) {
     val colorScheme = when {
@@ -105,8 +104,7 @@ fun FinsibleAppTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = AppTypography,
+        typography = FinsibleTypography,
         content = content
     )
 }
-

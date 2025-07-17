@@ -4,13 +4,12 @@ import com.itsjeel01.finsiblefrontend.common.PreferenceManager
 import okhttp3.Interceptor
 import okhttp3.Response
 
-// Adds the Authorization header (JWT) to every request
+/** Interceptor that adds JWT Authorization header to requests except for auth endpoints. */
 class AuthInterceptor(private val preferenceManager: PreferenceManager) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
         val token = preferenceManager.getJwt()
 
-        // Exemptions from adding the Authorization header
         if (originalRequest.url().encodedPath().contains("auth")) {
             return chain.proceed(originalRequest)
         }

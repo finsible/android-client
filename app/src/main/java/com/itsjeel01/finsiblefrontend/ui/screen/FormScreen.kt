@@ -15,28 +15,33 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.itsjeel01.finsiblefrontend.data.model.TransactionType
-import com.itsjeel01.finsiblefrontend.ui.component.NewTransactionAmountTextField
-import com.itsjeel01.finsiblefrontend.ui.component.NewTransactionDatePicker
+import com.itsjeel01.finsiblefrontend.common.TransactionType
+import com.itsjeel01.finsiblefrontend.ui.component.TransactionAmountTextField
 import com.itsjeel01.finsiblefrontend.ui.component.TransactionCategoryDropdown
-import com.itsjeel01.finsiblefrontend.ui.component.TransactionSegmentedControl
+import com.itsjeel01.finsiblefrontend.ui.component.TransactionDatePicker
+import com.itsjeel01.finsiblefrontend.ui.component.TransactionTypeSegmentedControl
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.TransactionFormViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun NewTransactionForm() {
-    // Get screen dimensions
+fun FormScreen() {
+
+    // --- Screen dimensions and padding calculations ---
+
     val screenHeight = LocalConfiguration.current.screenHeightDp
     val screenWidth = LocalConfiguration.current.screenWidthDp
 
-    // Calculate paddings based on screen dimensions
     val contentPadding = (0.02 * screenHeight).dp
     val formPadding = (0.025 * screenWidth).dp
     val fieldSpacing = (screenHeight * 0.01).dp
     val fieldRowSpacing = (screenWidth * 0.05).dp
 
+    // --- ViewModel and state management ---
+
     val viewModel: TransactionFormViewModel = hiltViewModel()
-    val transactionType = viewModel.transactionTypeState.collectAsState().value
+    val transactionType = viewModel.transactionType.collectAsState().value
+
+    // --- UI Composition ---
 
     Scaffold {
         Column(
@@ -44,10 +49,8 @@ fun NewTransactionForm() {
                 .windowInsetsPadding(WindowInsets.systemBars)
                 .padding(all = contentPadding)
         ) {
-            // Transaction type selector
-            TransactionSegmentedControl(screenWidth = screenWidth)
+            TransactionTypeSegmentedControl(screenWidth = screenWidth)
 
-            // Form fields container
             Column(
                 modifier = Modifier.padding(
                     horizontal = formPadding,
@@ -55,14 +58,12 @@ fun NewTransactionForm() {
                 ),
                 verticalArrangement = Arrangement.spacedBy(fieldSpacing)
             ) {
-                // Amount and date fields in a row
                 Row(horizontalArrangement = Arrangement.spacedBy(fieldRowSpacing)) {
                     val equalWeightModifier = Modifier.weight(1f)
-                    NewTransactionAmountTextField(equalWeightModifier)
-                    NewTransactionDatePicker(equalWeightModifier)
+                    TransactionAmountTextField(equalWeightModifier)
+                    TransactionDatePicker(equalWeightModifier)
                 }
 
-                // Category dropdown
                 if (transactionType != TransactionType.TRANSFER) TransactionCategoryDropdown()
             }
         }

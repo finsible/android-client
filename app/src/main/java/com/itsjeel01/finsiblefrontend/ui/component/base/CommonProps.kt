@@ -1,6 +1,5 @@
 package com.itsjeel01.finsiblefrontend.ui.component.base
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -8,9 +7,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.itsjeel01.finsiblefrontend.common.InputFieldSize
 
-data class InputCommonProps(
-    val modifier: Modifier = Modifier,
+data class CommonProps(
+    val modifier: Modifier = Modifier.Companion,
     val label: String? = null,
     val placeholder: String? = null,
     val supportingText: String? = null,
@@ -19,11 +19,10 @@ data class InputCommonProps(
     val enabled: Boolean = true,
     val leadingIcon: (@Composable () -> Unit)? = null,
     val trailingIcon: (@Composable () -> Unit)? = null,
-    val accentColor: Color = Color.Unspecified,
+    val accentColor: Color = Color.Companion.Unspecified,
     val size: InputFieldSize = InputFieldSize.Large,
 ) {
-    @SuppressLint("ModifierFactoryExtensionFunction")
-    fun fieldModifier() = modifier.heightIn(
+    fun modifier() = modifier.heightIn(
         min = if (size == InputFieldSize.Small) 48.dp else 56.dp
     )
 
@@ -39,7 +38,7 @@ data class InputCommonProps(
         InputFieldSize.Large -> MaterialTheme.typography.bodyMedium
     }
 
-    fun labelComposable(): (@Composable () -> Unit)? = when {
+    fun label(): (@Composable () -> Unit)? = when {
         label?.isNotEmpty() == true -> {
             { Text(text = label, style = secondaryTextStyle()) }
         }
@@ -47,7 +46,7 @@ data class InputCommonProps(
         else -> null
     }
 
-    fun placeholderComposable(): (@Composable () -> Unit)? = when {
+    fun placeholder(): (@Composable () -> Unit)? = when {
         placeholder?.isNotEmpty() == true -> {
             { Text(text = placeholder, style = primaryTextStyle()) }
         }
@@ -55,7 +54,7 @@ data class InputCommonProps(
         else -> null
     }
 
-    fun supportingTextComposable(): (@Composable () -> Unit)? = when {
+    fun supportingText(): (@Composable () -> Unit)? = when {
         isError && errorText?.isNotEmpty() == true -> {
             { Text(text = errorText, style = secondaryTextStyle()) }
         }
@@ -68,11 +67,5 @@ data class InputCommonProps(
     }
 
     fun leadingIconComposable(): (@Composable () -> Unit)? = leadingIcon?.let { { it() } }
-
     fun trailingIconComposable(): (@Composable () -> Unit)? = trailingIcon?.let { { it() } }
-}
-
-enum class InputFieldSize {
-    Small,
-    Large
 }

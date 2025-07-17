@@ -21,54 +21,59 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
-import com.itsjeel01.finsiblefrontend.common.FSUtils
+import com.itsjeel01.finsiblefrontend.common.Utils
 import com.itsjeel01.finsiblefrontend.ui.theme.finsibleDatePickerColors
 import com.itsjeel01.finsiblefrontend.ui.theme.finsibleDatePickerDialogColors
 import com.itsjeel01.finsiblefrontend.ui.theme.finsibleTextFieldColors
 import com.itsjeel01.finsiblefrontend.ui.theme.sansSerifFont
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
+/** BaseDateInput composable for displaying a read-only date field with a modal date picker. */
 @Composable
-fun FinsibleDateInput(
+fun BaseDateInput(
     date: Long,
     onValueChange: (Long) -> Unit,
     clearFocus: () -> Unit,
-    commonProps: InputCommonProps = InputCommonProps(),
+    commonProps: CommonProps = CommonProps(),
 ) {
+
+    // --- State and Properties ---
+
     val accentColor = commonProps.accentColor
     var showModal by remember { mutableStateOf(false) }
-    var value by remember { mutableStateOf(convertMillisToDate(date)) }
+    var value by remember { mutableStateOf(Utils.convertMillisToDate(date)) }
+
+    // --- DateInput UI ---
 
     TextField(
         modifier = commonProps
-            .fieldModifier()
+            .modifier()
             .pointerInput(date) {
                 awaitEachGesture {
                     awaitFirstDown(pass = PointerEventPass.Initial)
                     showModal = true
                 }
             },
-        label = commonProps.labelComposable(),
+        label = commonProps.label(),
         value = value,
         onValueChange = {},
         readOnly = true,
         isError = commonProps.isError,
         textStyle = commonProps.primaryTextStyle(),
-        placeholder = commonProps.placeholderComposable(),
+        placeholder = commonProps.placeholder(),
         leadingIcon = commonProps.leadingIconComposable(),
         trailingIcon = commonProps.trailingIconComposable(),
-        supportingText = commonProps.supportingTextComposable(),
+        supportingText = commonProps.supportingText(),
         colors = finsibleTextFieldColors(accentColor),
     )
 
+    // --- Date Picker Modal ---
+
     if (showModal) {
-        DatePickerModal(
+        BaseDatePickerModal(
             onDateSelected = {
                 it?.let { date ->
                     onValueChange(date)
-                    value = convertMillisToDate(date)
+                    value = Utils.convertMillisToDate(date)
                     clearFocus()
                 }
             },
@@ -82,35 +87,25 @@ fun FinsibleDateInput(
     }
 }
 
-fun convertMillisToDate(millis: Long): String {
-    val date = Date(millis)
-    val now = Date()
-    val diffInMillis = now.time - millis
-    val diffInHours = diffInMillis / (1000 * 60 * 60)
-    val diffInDays = diffInHours / 24
-
-    return when {
-        diffInDays == 0L && diffInHours < 24 -> "Today"
-        diffInDays == 1L -> "Yesterday"
-        diffInDays in 2..7 -> SimpleDateFormat("dd/MM (EEE)", Locale.getDefault()).format(date)
-        else -> SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(date)
-    }
-}
-
+/** Modal dialog composable for picking a date. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DatePickerModal(
+private fun BaseDatePickerModal(
     date: Long,
     onDateSelected: (Long?) -> Unit,
     onDismiss: () -> Unit,
     accentColor: Color,
 ) {
+
     val datePickerState =
-        rememberDatePickerState(initialSelectedDateMillis = FSUtils.convertToUTCMillis(date))
-    val confirmButtonComposable: @Composable (() -> Unit) = {
+        rememberDatePickerState(initialSelectedDateMillis = Utils.convertToUTCMillis(date))
+
+    // --- Date Picker Buttons UI ---
+
+    val confirmButton: @Composable (() -> Unit) = {
         TextButton(
             onClick = {
-                onDateSelected(FSUtils.convertToLocalMillis(datePickerState.selectedDateMillis!!))
+                onDateSelected(Utils.convertToLocalMillis(datePickerState.selectedDateMillis!!))
                 onDismiss()
             },
             colors = ButtonDefaults.textButtonColors().copy(
@@ -124,7 +119,8 @@ fun DatePickerModal(
             )
         }
     }
-    val dismissButtonComposable: @Composable (() -> Unit) = {
+
+    val dismissButton: @Composable (() -> Unit) = {
         TextButton(
             onClick = onDismiss,
             colors = ButtonDefaults.textButtonColors().copy(
@@ -138,6 +134,8 @@ fun DatePickerModal(
         }
     }
 
+    // --- Date Picker Dialog ---
+
     CompositionLocalProvider(
         LocalTextStyle provides MaterialTheme.typography.bodyMedium.copy(
             fontFamily = sansSerifFont
@@ -146,8 +144,8 @@ fun DatePickerModal(
         DatePickerDialog(
             onDismissRequest = onDismiss,
             colors = finsibleDatePickerDialogColors(),
-            confirmButton = confirmButtonComposable,
-            dismissButton = dismissButtonComposable
+            confirmButton = confirmButton,
+            dismissButton = dismissButton
         ) {
             DatePicker(
                 state = datePickerState,

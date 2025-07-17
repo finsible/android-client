@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.ui.component
+package com.itsjeel01.finsiblefrontend.ui.component.base
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.EaseOut
@@ -18,20 +18,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
-import com.itsjeel01.finsiblefrontend.common.AppConstants
+import com.itsjeel01.finsiblefrontend.common.Constants
 
 @Composable
-fun OnboardingIndicators(currentSlide: Int, totalSlides: Int) {
+fun BaseCarouselIndicators(currentItem: Int, totalItems: Int) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        repeat(totalSlides) { index ->
-            val isCurrent = index == currentSlide
+        repeat(totalItems) { index ->
+            val isCurrent = index == currentItem
+
             val width by animateDpAsState(
                 targetValue = if (isCurrent) 48.dp else 16.dp,
                 animationSpec = tween(
-                    durationMillis = AppConstants.ANIMATION_DURATION_SHORT, easing = EaseOut
+                    durationMillis = Constants.ANIMATION_DURATION_SHORT, easing = EaseOut
                 )
             )
             val color by animateColorAsState(
@@ -39,10 +40,11 @@ fun OnboardingIndicators(currentSlide: Int, totalSlides: Int) {
                     alpha = 0.3f
                 ),
                 animationSpec = tween(
-                    durationMillis = AppConstants.ANIMATION_DURATION_SHORT,
+                    durationMillis = Constants.ANIMATION_DURATION_SHORT,
                     easing = EaseOut
                 )
             )
+
             Box(
                 modifier = Modifier
                     .height(4.dp)

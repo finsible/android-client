@@ -4,12 +4,13 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.itsjeel01.finsiblefrontend.common.PreferenceManager
+import com.itsjeel01.finsiblefrontend.common.Strings
+import com.itsjeel01.finsiblefrontend.common.TransactionType
 import com.itsjeel01.finsiblefrontend.data.local.entity.CategoryEntity
-import com.itsjeel01.finsiblefrontend.data.local.entity.CategoryLocalRepository
+import com.itsjeel01.finsiblefrontend.data.local.repository.CategoryLocalRepository
 import com.itsjeel01.finsiblefrontend.data.model.AuthState
-import com.itsjeel01.finsiblefrontend.data.model.TransactionType
 import com.itsjeel01.finsiblefrontend.data.remote.model.BaseResponse
-import com.itsjeel01.finsiblefrontend.data.remote.model.CategoryData
+import com.itsjeel01.finsiblefrontend.data.remote.model.CategoriesData
 import com.itsjeel01.finsiblefrontend.data.repository.AuthRepository
 import com.itsjeel01.finsiblefrontend.data.repository.CategoryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,33 +27,46 @@ class AuthViewModel @Inject constructor(
     private val categoryLocalRepository: CategoryLocalRepository,
 ) : ViewModel() {
 
+    // --- State ---
+
     private val _authState =
-        MutableStateFlow<AuthState>(AuthState.Negative("You are not logged in", isFailed = false))
+        MutableStateFlow<AuthState>(
+            AuthState.Negative(
+                Strings.AUTH_STATE_NEGATIVE_MESSAGE,
+                isFailed = false
+            )
+        )
     val authState: StateFlow<AuthState> = _authState
+
+    // --- Actions ---
 
     init {
         if (preferenceManager.isLoggedIn()) {
             _authState.value = AuthState.Positive
         } else {
-            _authState.value = AuthState.Negative("You are not logged in", isFailed = false)
+            _authState.value =
+                AuthState.Negative(Strings.AUTH_STATE_NEGATIVE_MESSAGE)
         }
     }
 
-    fun authenticate(clientId: String, token: String) {
+    fun authenticate(clientId: String, idToken: String) {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
+
             try {
-                val response = authRepository.authenticate(clientId, token)
+                val response = authRepository.authenticate(clientId, idToken)
+
                 if (response.success) {
-                    preferenceManager.saveAuthData(response.data) // Save user info to app prefs
-                    _authState.value = AuthState.Positive // Update Auth state
-                    fetchAndStoreCategories() // Fetch and store categories
+                    fetchCategories()
+
+                    preferenceManager.saveAuthData(response.data)
+                    _authState.value = AuthState.Positive
                 } else {
                     _authState.value = AuthState.Negative(response.message, isFailed = true)
                 }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 _authState.value =
-                    AuthState.Negative(e.message ?: "Unknown error occurred", isFailed = true)
+                    AuthState.Negative(Strings.GENERIC_UNEXPECTED_ERROR_MESSAGE, isFailed = true)
             }
         }
     }
@@ -60,27 +74,32 @@ class AuthViewModel @Inject constructor(
     fun logout() {
         viewModelScope.launch {
             preferenceManager.clearAuthData()
-            _authState.value = AuthState.Negative("You are not logged in", isFailed = false)
+            _authState.value = AuthState.Negative(Strings.AUTH_STATE_NEGATIVE_MESSAGE)
         }
     }
 
-    private fun fetchAndStoreCategories() {
+    // --- Private Methods ---
+
+    private fun fetchCategories() {
         viewModelScope.launch {
             try {
                 val incomeCategoriesResponse =
                     categoryRepository.getCategories(TransactionType.INCOME.name)
-                storeCategories(TransactionType.INCOME, incomeCategoriesResponse)
+                cacheCategory(TransactionType.INCOME, incomeCategoriesResponse)
 
                 val expenseCategoriesResponse =
                     categoryRepository.getCategories(TransactionType.EXPENSE.name)
-                storeCategories(TransactionType.EXPENSE, expenseCategoriesResponse)
+                cacheCategory(TransactionType.EXPENSE, expenseCategoriesResponse)
             } catch (e: Exception) {
-                Log.e("CategoryFetch", e.message.toString())
+                Log.e(Strings.CATEGORY, e.message.toString())
             }
         }
     }
 
-    private fun storeCategories(type: TransactionType, response: BaseResponse<CategoryData>) {
+    private fun cacheCategory(
+        type: TransactionType,
+        response: BaseResponse<CategoriesData>
+    ) {
         viewModelScope.launch {
             if (response.success) {
                 for (category in response.data.categories) {

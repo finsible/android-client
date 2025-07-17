@@ -18,25 +18,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.itsjeel01.finsiblefrontend.data.model.TransactionType
+import com.itsjeel01.finsiblefrontend.common.TransactionType
+import com.itsjeel01.finsiblefrontend.common.Utils
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.TransactionFormViewModel
-import com.itsjeel01.finsiblefrontend.ui.theme.getTransactionColor
-import java.util.Locale
 
 @Composable
-fun TransactionSegmentedControl(
+fun TransactionTypeSegmentedControl(
     modifier: Modifier = Modifier,
     screenWidth: Int,
 ) {
     val viewModel: TransactionFormViewModel = hiltViewModel()
-    val transactionTypes = TransactionType.entries.toTypedArray()
-    val selectedType = viewModel.transactionTypeState.collectAsState().value
+    val types = TransactionType.entries.toTypedArray()
+    val selectedType = viewModel.transactionType.collectAsState().value
 
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy((0.025 * screenWidth).dp)
     ) {
-        transactionTypes.forEach { type ->
+        types.forEach { type ->
             SegmentItem(
                 type = type,
                 isSelected = selectedType == type,
@@ -54,15 +53,11 @@ private fun SegmentItem(
     onSelect: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val selectedColor = getTransactionColor(type)
 
-    // Format the type name for display
-    val label = type.name
-        .replace("_", " ")
-        .lowercase()
-        .replaceFirstChar { it.titlecase(Locale.ROOT) }
+    // --- Styles Computation ---
 
-    // Visual properties based on selection state
+    val selectedColor = Utils.getTransactionColor(type)
+
     val backgroundColor = if (isSelected) {
         selectedColor.copy(alpha = 0.1f)
     } else {
@@ -89,6 +84,8 @@ private fun SegmentItem(
         Modifier
     }
 
+    // --- Segment Item UI ---
+
     Box(
         modifier = modifier
             .then(borderModifier)
@@ -101,7 +98,7 @@ private fun SegmentItem(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = label,
+            text = Utils.toCamelCase(type.name),
             color = textColor,
             style = textStyle,
         )

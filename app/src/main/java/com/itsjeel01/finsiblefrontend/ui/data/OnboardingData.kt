@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.data.model.client
+package com.itsjeel01.finsiblefrontend.ui.data
 
 import com.itsjeel01.finsiblefrontend.R
 
@@ -7,7 +7,7 @@ data class OnboardingData(
     val headline: String = "",
     val description: String = "",
 ) {
-    fun getOnboardingData(): List<OnboardingData> {
+    fun get(): List<OnboardingData> {
         return listOf(
             OnboardingData(
                 illustration = R.drawable.ill_welcome,

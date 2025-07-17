@@ -14,7 +14,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideContext(application: Application): Context {
+    fun context(application: Application): Context {
         return application.applicationContext
     }
 }

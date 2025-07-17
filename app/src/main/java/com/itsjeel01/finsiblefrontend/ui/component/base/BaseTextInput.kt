@@ -7,27 +7,27 @@ import androidx.compose.runtime.Composable
 import com.itsjeel01.finsiblefrontend.ui.theme.finsibleTextFieldColors
 
 @Composable
-fun FinsibleTextInput(
+fun BaseTextInput(
     value: String,
     onValueChange: (String) -> Unit,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
-    commonProps: InputCommonProps = InputCommonProps(),
+    commonProps: CommonProps = CommonProps(),
 ) {
     TextField(
-        modifier = commonProps.fieldModifier(),
+        modifier = commonProps.modifier(),
         value = value,
-        label = commonProps.labelComposable(),
+        label = commonProps.label(),
         onValueChange = onValueChange,
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
         enabled = commonProps.enabled,
         isError = commonProps.isError,
         textStyle = commonProps.primaryTextStyle(),
-        placeholder = commonProps.placeholderComposable(),
+        placeholder = commonProps.placeholder(),
         leadingIcon = commonProps.leadingIconComposable(),
         trailingIcon = commonProps.trailingIconComposable(),
-        supportingText = commonProps.supportingTextComposable(),
+        supportingText = commonProps.supportingText(),
         colors = finsibleTextFieldColors(accentColor = commonProps.accentColor),
     )
 }

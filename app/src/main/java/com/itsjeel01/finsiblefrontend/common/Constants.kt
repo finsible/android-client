@@ -1,6 +1,6 @@
 package com.itsjeel01.finsiblefrontend.common
 
-class AppConstants {
+class Constants {
     companion object {
         const val ANIMATION_DURATION_VERY_SHORT = 300
         const val ANIMATION_DURATION_SHORT = 600

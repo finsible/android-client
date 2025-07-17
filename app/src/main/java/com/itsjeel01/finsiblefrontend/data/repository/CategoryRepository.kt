@@ -1,25 +1,25 @@
 package com.itsjeel01.finsiblefrontend.data.repository
 
+import com.itsjeel01.finsiblefrontend.data.remote.api.CategoryApiService
 import com.itsjeel01.finsiblefrontend.data.remote.model.BaseResponse
+import com.itsjeel01.finsiblefrontend.data.remote.model.CategoriesData
 import com.itsjeel01.finsiblefrontend.data.remote.model.CategoryAddRequest
 import com.itsjeel01.finsiblefrontend.data.remote.model.CategoryRenameRequest
-import com.itsjeel01.finsiblefrontend.data.remote.model.CategoryData
-import com.itsjeel01.finsiblefrontend.data.remote.api.CategoryApiService
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class CategoryRepository @Inject constructor(private val categoryApiService: CategoryApiService) {
-    suspend fun getCategories(type: String): BaseResponse<CategoryData> {
-        return categoryApiService.getCategories(type)
+class CategoryRepository @Inject constructor(private val apiService: CategoryApiService) {
+    suspend fun getCategories(type: String): BaseResponse<CategoriesData> {
+        return apiService.getCategories(type)
     }
 
     suspend fun addCategory(type: String, name: String, color: String): BaseResponse<Unit> {
-        return categoryApiService.addCategory(type, CategoryAddRequest(name, color))
+        return apiService.addCategory(type, CategoryAddRequest(name, color))
     }
 
     suspend fun removeCategory(type: String, categoryId: String): BaseResponse<Unit> {
-        return categoryApiService.removeCategory(type, categoryId)
+        return apiService.removeCategory(type, categoryId)
     }
 
     suspend fun renameCategory(
@@ -27,6 +27,6 @@ class CategoryRepository @Inject constructor(private val categoryApiService: Cat
         categoryId: String,
         newName: String,
     ): BaseResponse<Unit> {
-        return categoryApiService.renameCategory(type, CategoryRenameRequest(categoryId, newName))
+        return apiService.renameCategory(type, CategoryRenameRequest(categoryId, newName))
     }
 }

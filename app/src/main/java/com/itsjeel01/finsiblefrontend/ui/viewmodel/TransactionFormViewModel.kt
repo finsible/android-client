@@ -1,9 +1,9 @@
 package com.itsjeel01.finsiblefrontend.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
+import com.itsjeel01.finsiblefrontend.common.TransactionType
 import com.itsjeel01.finsiblefrontend.data.local.entity.CategoryEntity
-import com.itsjeel01.finsiblefrontend.data.local.entity.CategoryLocalRepository
-import com.itsjeel01.finsiblefrontend.data.model.TransactionType
+import com.itsjeel01.finsiblefrontend.data.local.repository.CategoryLocalRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,55 +13,58 @@ import javax.inject.Inject
 class TransactionFormViewModel @Inject constructor(
     private val categoryLocalRepository: CategoryLocalRepository,
 ) : ViewModel() {
-    // Transaction type
-    private val _transactionTypeState = MutableStateFlow(TransactionType.EXPENSE)
-    val transactionTypeState: StateFlow<TransactionType> = _transactionTypeState
 
-    // Transaction date
-    private val _transactionDateState: MutableStateFlow<Long?> = MutableStateFlow(null)
-    val transactionDateState: StateFlow<Long?> = _transactionDateState
+    // --- State ---
 
-    // Transaction amount
-    private val _transactionAmountState = MutableStateFlow<Double?>(null)
-    val transactionAmountState: StateFlow<Double?> = _transactionAmountState
+    private val _transactionType = MutableStateFlow(TransactionType.EXPENSE)
+    val transactionType: StateFlow<TransactionType> = _transactionType
 
-    private val _currentCategoriesState =
+    private val _transactionDate: MutableStateFlow<Long?> = MutableStateFlow(null)
+    val transactionDate: StateFlow<Long?> = _transactionDate
+
+    private val _transactionAmount = MutableStateFlow<Double?>(null)
+    val transactionAmount: StateFlow<Double?> = _transactionAmount
+
+    private val _categories =
         MutableStateFlow(
             categoryLocalRepository.getAllCategories()
-                .filter { it.type == _transactionTypeState.value })
-    val currentCategoriesState: StateFlow<List<CategoryEntity>> = _currentCategoriesState
+                .filter { it.type == _transactionType.value })
+    val categories: StateFlow<List<CategoryEntity>> = _categories
 
-    // Selected category
-    private val _transactionCategoryState =
-        MutableStateFlow<CategoryEntity>(currentCategoriesState.value.first())
-    val transactionCategoryState: StateFlow<CategoryEntity> = _transactionCategoryState
+    private val _transactionCategory =
+        MutableStateFlow(categories.value.first())
+    val transactionCategory: StateFlow<CategoryEntity> = _transactionCategory
+
+    // --- Actions ---
 
     init {
         loadCategories()
     }
 
-    private fun loadCategories() {
-        _currentCategoriesState.value = categoryLocalRepository.getAllCategories()
-            .filter { it.type == _transactionTypeState.value }
-        _transactionCategoryState.value = _currentCategoriesState.value.first()
-    }
-
     fun setTransactionType(transactionType: TransactionType) {
-        _transactionTypeState.value = transactionType
+        _transactionType.value = transactionType
         if (transactionType != TransactionType.TRANSFER) {
             loadCategories()
         }
     }
 
     fun setTransactionDate(transactionDate: Long?) {
-        _transactionDateState.value = transactionDate
+        _transactionDate.value = transactionDate
     }
 
     fun setTransactionAmount(transactionAmount: Double?) {
-        _transactionAmountState.value = transactionAmount
+        _transactionAmount.value = transactionAmount
     }
 
     fun setTransactionCategory(category: CategoryEntity) {
-        _transactionCategoryState.value = category
+        _transactionCategory.value = category
+    }
+
+    // --- Private Methods ---
+
+    private fun loadCategories() {
+        _categories.value = categoryLocalRepository.getAllCategories()
+            .filter { it.type == _transactionType.value }
+        _transactionCategory.value = _categories.value.first()
     }
 }

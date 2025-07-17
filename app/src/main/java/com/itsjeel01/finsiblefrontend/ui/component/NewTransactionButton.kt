@@ -13,10 +13,10 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.itsjeel01.finsiblefrontend.data.model.client.BottomNavigationItems
+import com.itsjeel01.finsiblefrontend.ui.data.NavBarItem
 
 @Composable
-fun NewTransactionButton(navigationItem: BottomNavigationItems) {
+fun NewTransactionButton(navBarItem: NavBarItem) {
     Box(
         modifier = Modifier
             .background(
@@ -38,10 +38,10 @@ fun NewTransactionButton(navigationItem: BottomNavigationItems) {
             .padding(16.dp)
     ) {
         Icon(
-            painter = painterResource(id = navigationItem.icon),
+            painter = painterResource(id = navBarItem.icon),
             tint = MaterialTheme.colorScheme.background,
             modifier = Modifier.size(24.dp),
-            contentDescription = navigationItem.label
+            contentDescription = navBarItem.label
         )
     }
 }

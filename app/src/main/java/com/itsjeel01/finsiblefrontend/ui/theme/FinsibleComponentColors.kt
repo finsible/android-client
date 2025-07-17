@@ -20,42 +20,29 @@ fun finsibleTextFieldColors(accentColor: Color): TextFieldColors {
     val transparent = Color.Transparent
 
     return TextFieldDefaults.colors(
-        // Label colors
         disabledLabelColor = disabledColor,
         unfocusedLabelColor = neutralColor,
         focusedLabelColor = neutralColor,
         errorLabelColor = neutralColor,
-
-        // Indicator colors
         disabledIndicatorColor = disabledColor,
         unfocusedIndicatorColor = neutralColor,
         focusedIndicatorColor = accentColor,
         errorIndicatorColor = errorColor,
-
-        // All container colors are transparent
         disabledContainerColor = transparent,
         unfocusedContainerColor = transparent,
         focusedContainerColor = transparent,
         errorContainerColor = transparent,
-
-        // Text colors
         unfocusedTextColor = onSurface,
         focusedTextColor = onSurface,
         disabledTextColor = disabledColor,
         errorTextColor = onSurface,
-
-        // Supporting text colors
         unfocusedSupportingTextColor = neutralColor,
         focusedSupportingTextColor = neutralColor,
         disabledSupportingTextColor = disabledColor,
         errorSupportingTextColor = errorColor,
-
-        // Placeholder colors
         disabledPlaceholderColor = disabledColor,
         unfocusedPlaceholderColor = neutralColor,
         focusedPlaceholderColor = neutralColor,
-
-        // Selection and cursor
         cursorColor = accentColor,
         selectionColors = TextSelectionColors(
             handleColor = accentColor,

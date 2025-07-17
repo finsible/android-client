@@ -24,25 +24,28 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.itsjeel01.finsiblefrontend.common.AppConstants
+import com.itsjeel01.finsiblefrontend.common.Constants
 
 @Composable
-fun RippleLoadingIndicator(
+fun BaseLoadingIndicator(
     primaryColor: Color = MaterialTheme.colorScheme.primary,
     secondaryColor: Color = MaterialTheme.colorScheme.secondary,
     rippleCount: Int = 3,
     size: Dp = 80.dp,
 ) {
-    val infiniteTransition = rememberInfiniteTransition(label = "ripple_transition")
 
-    // Calculate proportional sizes
+    // --- Properties ---
+
     val rippleSize = size
     val centerSize = size * 0.375f
 
-    // List to store animation values for multiple ripples
+    // --- Animations ---
+
+    val infiniteTransition =
+        rememberInfiniteTransition(label = "$rippleCount ripples infinite transition")
+
     val animations = List(rippleCount) { index ->
-        // Stagger the start of each ripple
-        val delay = (AppConstants.ANIMATION_DURATION_MEDIUM / rippleCount) * index
+        val delay = (Constants.ANIMATION_DURATION_MEDIUM / rippleCount) * index
 
         // Scale animation
         val scale = infiniteTransition.animateFloat(
@@ -50,13 +53,13 @@ fun RippleLoadingIndicator(
             targetValue = 1f,
             animationSpec = infiniteRepeatable(
                 animation = tween(
-                    durationMillis = AppConstants.ANIMATION_DURATION_VERY_LONG,
+                    durationMillis = Constants.ANIMATION_DURATION_VERY_LONG,
                     delayMillis = delay,
                     easing = FastOutSlowInEasing
                 ),
                 repeatMode = RepeatMode.Restart
             ),
-            label = "scale_$index"
+            label = "${index}th ripple scale animation"
         )
 
         // Alpha animation
@@ -65,13 +68,13 @@ fun RippleLoadingIndicator(
             targetValue = 0f,
             animationSpec = infiniteRepeatable(
                 animation = tween(
-                    durationMillis = AppConstants.ANIMATION_DURATION_VERY_LONG,
+                    durationMillis = Constants.ANIMATION_DURATION_VERY_LONG,
                     delayMillis = delay,
                     easing = FastOutSlowInEasing
                 ),
                 repeatMode = RepeatMode.Restart
             ),
-            label = "alpha_$index"
+            label = "${index}th ripple alpha animation"
         )
 
         // Rotation for the inner shape
@@ -82,14 +85,16 @@ fun RippleLoadingIndicator(
                 animation = tween(4000, easing = LinearEasing),
                 repeatMode = RepeatMode.Restart
             ),
-            label = "rotation_$index"
+            label = "${index}th ripple rotation animation"
         )
 
         Triple(scale, alpha, rotation)
     }
 
+    // --- UI ---
+
     Box(contentAlignment = Alignment.Center) {
-        // Draw ripple circles
+        // Create ripples
         animations.forEachIndexed { index, (scale, alpha, _) ->
             val color = if (index % 2 == 0) primaryColor else secondaryColor
 
@@ -105,7 +110,7 @@ fun RippleLoadingIndicator(
             )
         }
 
-        // Center shape that rotates
+        // Center box with rotation
         Box(
             modifier = Modifier
                 .size(centerSize)

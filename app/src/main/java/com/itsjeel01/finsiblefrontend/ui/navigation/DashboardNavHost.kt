@@ -6,7 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.itsjeel01.finsiblefrontend.ui.screen.BalanceScreen
-import com.itsjeel01.finsiblefrontend.ui.screen.NewTransactionForm
+import com.itsjeel01.finsiblefrontend.ui.screen.FormScreen
 import com.itsjeel01.finsiblefrontend.ui.screen.HomeScreen
 import com.itsjeel01.finsiblefrontend.ui.screen.InsightsScreen
 import com.itsjeel01.finsiblefrontend.ui.screen.SettingsScreen
@@ -27,7 +27,7 @@ fun DashboardNavHost(navController: NavHostController, paddingValues: PaddingVal
             SettingsScreen()
         }
         composable<Routes.NewTransactionForm> {
-            NewTransactionForm()
+            FormScreen()
         }
     }
 }

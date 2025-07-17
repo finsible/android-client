@@ -13,30 +13,29 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.itsjeel01.finsiblefrontend.common.AppConstants
-import com.itsjeel01.finsiblefrontend.ui.component.base.FinsibleTextInput
-import com.itsjeel01.finsiblefrontend.ui.component.base.InputCommonProps
-import com.itsjeel01.finsiblefrontend.ui.component.base.InputFieldSize
-import com.itsjeel01.finsiblefrontend.ui.theme.getTransactionColor
+import com.itsjeel01.finsiblefrontend.common.Constants
+import com.itsjeel01.finsiblefrontend.common.InputFieldSize
+import com.itsjeel01.finsiblefrontend.common.Strings
+import com.itsjeel01.finsiblefrontend.common.Utils
+import com.itsjeel01.finsiblefrontend.ui.component.base.BaseTextInput
+import com.itsjeel01.finsiblefrontend.ui.component.base.CommonProps
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.TransactionFormViewModel
 
 @Composable
-fun NewTransactionAmountTextField(modifier: Modifier) {
-    val errorMaxAmount = "Max amount: ${AppConstants.MAX_TRANSACTION_AMOUNT}"
+fun TransactionAmountTextField(modifier: Modifier) {
+
+    // --- ViewModel and State Initialization ---
+
     val viewModel: TransactionFormViewModel = hiltViewModel()
+    val transactionType = viewModel.transactionType.collectAsState().value
+    val amount = viewModel.transactionAmount.collectAsState().value
 
-    // Collect state values
-    val transactionType = viewModel.transactionTypeState.collectAsState().value
-    val transactionAmount = viewModel.transactionAmountState.collectAsState().value
-
-    // Local UI state
     val focusManager = LocalFocusManager.current
-    var inputText by remember { mutableStateOf(transactionAmount?.toString() ?: "") }
+    var inputText by remember { mutableStateOf(amount?.toString() ?: "") }
     var showError by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
 
-    // Amount validation pattern - allows currency format with up to 2 decimal places
-    val currencyPattern = Regex("^([1-9]\\d*(\\.\\d{0,2})?|0(\\.\\d{0,2})?)$")
+    // --- Validation Logic ---
 
     fun validateAmount(input: String) {
         when {
@@ -55,12 +54,13 @@ fun NewTransactionAmountTextField(modifier: Modifier) {
             }
 
             // Valid number format case
-            input.matches(currencyPattern) -> {
+            input.matches(Regex(Strings.VALID_AMOUNT_PATTERN)) -> {
                 try {
                     val amount = input.toDouble()
-                    if (amount > AppConstants.MAX_TRANSACTION_AMOUNT) {
+                    if (amount > Constants.MAX_TRANSACTION_AMOUNT) {
                         showError = true
-                        errorMessage = errorMaxAmount
+                        errorMessage =
+                            "Exceeds ${Utils.formatNumber(Constants.MAX_TRANSACTION_AMOUNT.toDouble())}"
                     } else {
                         inputText = input
                         viewModel.setTransactionAmount(amount)
@@ -74,19 +74,19 @@ fun NewTransactionAmountTextField(modifier: Modifier) {
         }
     }
 
-    // Configure input field properties
-    val inputProps = InputCommonProps(
+    // --- Amount Input Field UI ---
+
+    val inputProps = CommonProps(
         modifier = modifier,
         placeholder = "Amount",
         errorText = errorMessage,
         isError = showError,
         enabled = true,
-        accentColor = getTransactionColor(transactionType),
+        accentColor = Utils.getTransactionColor(transactionType),
         size = InputFieldSize.Large,
     )
 
-    // Render the text field
-    FinsibleTextInput(
+    BaseTextInput(
         value = inputText,
         onValueChange = { validateAmount(it) },
         keyboardOptions = KeyboardOptions(

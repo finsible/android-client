@@ -1,37 +1,37 @@
-package com.itsjeel01.finsiblefrontend.data.model.client
+package com.itsjeel01.finsiblefrontend.ui.data
 
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.ui.navigation.Routes
 
-data class BottomNavigationItems(
+data class NavBarItem(
     val label: String = "",
     val icon: Int = 0,
     val route: Routes = Routes.DashboardScreen,
     val isNewTransactionForm: Boolean = false,
 ) {
-    fun getBottomNavigationItems(): List<BottomNavigationItems> {
+    fun getItems(): List<NavBarItem> {
         return listOf(
-            BottomNavigationItems(
+            NavBarItem(
                 label = "Home",
                 icon = R.drawable.ic_transactions,
                 route = Routes.HomeScreen
             ),
-            BottomNavigationItems(
+            NavBarItem(
                 label = "Insights",
                 icon = R.drawable.ic_stats,
                 route = Routes.InsightsScreen
             ),
-            BottomNavigationItems(
+            NavBarItem(
                 icon = R.drawable.ic_plus,
                 isNewTransactionForm = true,
                 route = Routes.NewTransactionForm
             ),
-            BottomNavigationItems(
+            NavBarItem(
                 label = "Balance",
                 icon = R.drawable.ic_piggy_bank,
                 route = Routes.BalanceScreen
             ),
-            BottomNavigationItems(
+            NavBarItem(
                 label = "Settings",
                 icon = R.drawable.ic_hamburger,
                 route = Routes.SettingsScreen

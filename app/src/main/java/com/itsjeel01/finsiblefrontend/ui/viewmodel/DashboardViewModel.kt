@@ -8,10 +8,15 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor() : ViewModel() {
-    private val _selectedTabState = MutableStateFlow(0)
-    val selectedTabState: StateFlow<Int> = _selectedTabState
+
+    // --- State ---
+
+    private val _tabIdx = MutableStateFlow(0)
+    val tabIdx: StateFlow<Int> = _tabIdx
+
+    // --- Actions ---
 
     fun changeTab(index: Int) {
-        _selectedTabState.value = index
+        _tabIdx.value = index
     }
 }

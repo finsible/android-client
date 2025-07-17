@@ -2,6 +2,7 @@ package com.itsjeel01.finsiblefrontend.data.di
 
 import com.itsjeel01.finsiblefrontend.BuildConfig
 import com.itsjeel01.finsiblefrontend.common.PreferenceManager
+import com.itsjeel01.finsiblefrontend.common.Strings
 import com.itsjeel01.finsiblefrontend.data.remote.api.AuthApiService
 import com.itsjeel01.finsiblefrontend.data.remote.api.CategoryApiService
 import com.itsjeel01.finsiblefrontend.data.remote.interceptor.AuthInterceptor
@@ -19,18 +20,26 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
+
+    @Provides
+    fun categoryApiService(retrofit: Retrofit): CategoryApiService =
+        retrofit.create(CategoryApiService::class.java)
+
+    @Provides
+    fun authApiService(retrofit: Retrofit): AuthApiService =
+        retrofit.create(AuthApiService::class.java)
+
     @Provides
     @Singleton
-    fun provideOkHttpClient(preferenceManager: PreferenceManager): OkHttpClient {
-        preferenceManager.getJwt()
+    fun okHttpClient(preferenceManager: PreferenceManager): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(AuthInterceptor(preferenceManager))
             .build()
     }
 
     @Provides
-    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
-        val contentType = MediaType.get("application/json")
+    fun retrofit(okHttpClient: OkHttpClient): Retrofit {
+        val contentType = MediaType.get(Strings.JSON_CONTENT_TYPE)
         val json = Json { ignoreUnknownKeys = true }
 
         return Retrofit.Builder()
@@ -39,12 +48,4 @@ object NetworkModule {
             .client(okHttpClient)
             .build()
     }
-
-    @Provides
-    fun provideCategoryApi(retrofit: Retrofit): CategoryApiService =
-        retrofit.create(CategoryApiService::class.java)
-
-    @Provides
-    fun provideAuthApi(retrofit: Retrofit): AuthApiService =
-        retrofit.create(AuthApiService::class.java)
 }

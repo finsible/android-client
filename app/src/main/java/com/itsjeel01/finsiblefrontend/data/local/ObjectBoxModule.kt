@@ -20,7 +20,7 @@ object ObjectBoxModule {
     }
 
     @Provides
-    fun provideBoxStore(): BoxStore {
+    fun boxStore(): BoxStore {
         return store
     }
 }

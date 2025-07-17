@@ -2,7 +2,7 @@ package com.itsjeel01.finsiblefrontend.ui.theme
 
 // For light theme, primary button is dark, secondary button is light
 // For dark theme, primary button is light, secondary button is dark
-enum class CustomColorKey {
+enum class ColorKey {
     Income,
     Expense,
     Transfer,
@@ -17,8 +17,8 @@ enum class CustomColorKey {
     BtnSecondaryBorderEnabled,
     BtnSecondaryForegroundDisabled,
     BtnSecondaryBorderDisabled,
-    OnboardingGradientColor1,
-    OnboardingGradientColor2,
+    OnboardingGradientPrimaryColor,
+    OnboardingGradientSecondaryColor,
     YELLOW,
     ORANGE,
     RED,

@@ -38,30 +38,90 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
-import com.itsjeel01.finsiblefrontend.ui.component.base.FinsibleTextInput
-import com.itsjeel01.finsiblefrontend.ui.component.base.InputCommonProps
+import com.itsjeel01.finsiblefrontend.common.Strings
+import com.itsjeel01.finsiblefrontend.ui.component.base.BaseTextInput
+import com.itsjeel01.finsiblefrontend.ui.component.base.CommonProps
+
+// --- NewCategoryDialog Composable Function ---
 
 @Composable
-fun NewCategoryAlertDialog(
-    dialogTitle: String,
-    availableColors: List<Color>,
+fun NewCategoryDialog(
+    title: String,
+    colors: List<Color>,
     onDismissRequest: () -> Unit,
     onConfirmation: () -> Unit,
 ) {
-    var selectedColor by remember { mutableStateOf(availableColors.firstOrNull() ?: Color.Gray) }
+
+    // --- State Variables ---
+
+    var selectedColor by remember { mutableStateOf(colors.firstOrNull() ?: Color.Gray) }
     var categoryName by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
 
-    // Auto-focus the input field when dialog appears
+    // --- Request focus on the name input field when the dialog is launched ---
+
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
 
+    // --- Composable Functions ---
+
+    val confirmButton: @Composable () -> Unit = {
+        ConfirmButton(
+            onConfirmation = {
+                val validationError = validateName(categoryName)
+                if (validationError == null) {
+                    onConfirmation()
+                } else {
+                    showError = true
+                    errorMessage = validationError
+                }
+            },
+            selectedColor = selectedColor
+        )
+    }
+
+    val dismissButton: @Composable () -> Unit = {
+        TextButton(onClick = onDismissRequest) {
+            Text(
+                Strings.CANCEL,
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                style = MaterialTheme.typography.labelMedium
+            )
+        }
+    }
+
+    val titleComposable = @Composable {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+        )
+    }
+
+    val formContent: @Composable () -> Unit = {
+        FormContent(
+            colors = colors,
+            selectedColor = selectedColor,
+            onColorSelected = { selectedColor = it },
+            name = categoryName,
+            onNameChange = { newName ->
+                categoryName = newName.take(30)
+                errorMessage = validateName(newName) ?: ""
+                showError = errorMessage.isNotEmpty()
+            },
+            showError = showError,
+            errorMessage = errorMessage,
+            focusRequester = focusRequester,
+            onDoneAction = { onDismissRequest() }
+        )
+    }
+
+    // --- Alert Dialog ---
+
     AlertDialog(
-        modifier = Modifier
-            .fillMaxWidth(0.9f),
+        modifier = Modifier.fillMaxWidth(0.9f),
         properties = DialogProperties(
             usePlatformDefaultWidth = false,
             decorFitsSystemWindows = true,
@@ -71,81 +131,39 @@ fun NewCategoryAlertDialog(
         containerColor = MaterialTheme.colorScheme.background,
         shape = RoundedCornerShape(8.dp),
         onDismissRequest = onDismissRequest,
-        confirmButton = {
-            ConfirmButton(
-                onConfirmation = {
-                    val validationError = validateCategoryName(categoryName)
-                    if (validationError == null) {
-                        onConfirmation()
-                    } else {
-                        showError = true
-                        errorMessage = validationError
-                    }
-                },
-                selectedColor = selectedColor
-            )
-        },
-        dismissButton = {
-            TextButton(onClick = onDismissRequest) {
-                Text(
-                    "Cancel",
-                    color = MaterialTheme.colorScheme.onSecondaryContainer,
-                    style = MaterialTheme.typography.labelMedium
-                )
-            }
-        },
-        title = {
-            Text(
-                text = dialogTitle,
-                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
-            )
-        },
-        text = {
-            CategoryFormContent(
-                availableColors = availableColors,
-                selectedColor = selectedColor,
-                onColorSelected = { selectedColor = it },
-                categoryName = categoryName,
-                onCategoryNameChange = { newName ->
-                    categoryName = newName.take(30)
-                    errorMessage = validateCategoryName(newName) ?: ""
-                    showError = errorMessage.isNotEmpty()
-                },
-                showError = showError,
-                errorMessage = errorMessage,
-                focusRequester = focusRequester,
-                onDoneAction = { onDismissRequest() }
-            )
-        }
+        confirmButton = confirmButton,
+        dismissButton = dismissButton,
+        title = titleComposable,
+        text = formContent
     )
 }
 
+// --- Helper Composables and Functions ---
+
 @Composable
-private fun CategoryFormContent(
-    availableColors: List<Color>,
+private fun FormContent(
+    colors: List<Color>,
     selectedColor: Color,
     onColorSelected: (Color) -> Unit,
-    categoryName: String,
-    onCategoryNameChange: (String) -> Unit,
+    name: String,
+    onNameChange: (String) -> Unit,
     showError: Boolean,
     errorMessage: String,
     focusRequester: FocusRequester,
     onDoneAction: () -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
-        // Color selection row
         ColorSelectionRow(
-            availableColors = availableColors,
+            colors = colors,
             selectedColor = selectedColor,
             onColorSelected = onColorSelected
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Category name input
-        CategoryNameInput(
-            categoryName = categoryName,
-            onCategoryNameChange = onCategoryNameChange,
+        NameInput(
+            name = name,
+            onNameChange = onNameChange,
             showError = showError,
             errorMessage = errorMessage,
             focusRequester = focusRequester,
@@ -156,18 +174,18 @@ private fun CategoryFormContent(
 }
 
 @Composable
-private fun CategoryNameInput(
-    categoryName: String,
-    onCategoryNameChange: (String) -> Unit,
+private fun NameInput(
+    name: String,
+    onNameChange: (String) -> Unit,
     showError: Boolean,
     errorMessage: String,
     focusRequester: FocusRequester,
     onDoneAction: () -> Unit,
     accentColor: Color,
 ) {
-    FinsibleTextInput(
-        value = categoryName,
-        onValueChange = onCategoryNameChange,
+    BaseTextInput(
+        value = name,
+        onValueChange = onNameChange,
         keyboardOptions = KeyboardOptions(
             capitalization = KeyboardCapitalization.Sentences,
             autoCorrectEnabled = true,
@@ -175,7 +193,7 @@ private fun CategoryNameInput(
             imeAction = ImeAction.Done
         ),
         keyboardActions = KeyboardActions(onDone = { onDoneAction() }),
-        commonProps = InputCommonProps(
+        commonProps = CommonProps(
             modifier = Modifier
                 .fillMaxWidth()
                 .focusRequester(focusRequester),
@@ -187,15 +205,9 @@ private fun CategoryNameInput(
     )
 }
 
-fun validateCategoryName(name: String): String? {
-    if (name.isBlank()) return "Please enter a name"
-    if (name.length >= 30) return "Please enter a name under 30 characters"
-    return null
-}
-
 @Composable
 private fun ColorSelectionRow(
-    availableColors: List<Color>,
+    colors: List<Color>,
     selectedColor: Color,
     onColorSelected: (Color) -> Unit,
 ) {
@@ -206,7 +218,7 @@ private fun ColorSelectionRow(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        availableColors.forEach { color ->
+        colors.forEach { color ->
             Box(
                 modifier = Modifier
                     .size(24.dp)
@@ -217,7 +229,7 @@ private fun ColorSelectionRow(
             ) {
                 if (color == selectedColor) {
                     Text(
-                        text = "✓",
+                        text = Strings.TICK_SYMBOL,
                         color = MaterialTheme.colorScheme.background,
                         fontWeight = FontWeight.ExtraBold
                     )
@@ -244,9 +256,15 @@ private fun ConfirmButton(
         enabled = isEnabled
     ) {
         Text(
-            "Add",
+            Strings.ADD,
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.labelMedium
         )
     }
+}
+
+fun validateName(name: String): String? {
+    if (name.isBlank()) return "Please enter a name"
+    if (name.length >= 30) return "Please enter a name under 30 characters"
+    return null
 }

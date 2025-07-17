@@ -31,17 +31,30 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.itsjeel01.finsiblefrontend.ui.theme.CustomColorKey
+import com.itsjeel01.finsiblefrontend.common.ButtonStyle
+import com.itsjeel01.finsiblefrontend.common.ButtonVariant
+import com.itsjeel01.finsiblefrontend.common.IconPosition
+import com.itsjeel01.finsiblefrontend.common.InputFieldSize
+import com.itsjeel01.finsiblefrontend.ui.theme.ColorKey
 import com.itsjeel01.finsiblefrontend.ui.theme.getCustomColor
 
-enum class ButtonVariant { FullWidth, WrapContent }
-enum class ButtonStyle { Primary, Secondary }
-enum class IconPosition { StartOfButton, EndOfButton, StartOfLabel, EndOfLabel }
-
+/** Base composable for custom buttons with icon, style, and animation options.
+ * @param onClick Lambda to execute when button is clicked.
+ * @param commonProps Common input properties like label, size, modifier, enabled.
+ * @param style Button style (Primary/Secondary).
+ * @param variant Button width variant (FullWidth/WrapContent).
+ * @param icon Resource ID for the icon to display.
+ * @param iconPosition Position of the icon relative to label/button.
+ * @param tintedIcon Whether to tint the icon with label color.
+ * @param scaleValue Scale factor when pressed.
+ * @param pivotFractionX X pivot for scale animation.
+ * @param pivotFractionY Y pivot for scale animation.
+ * @param durationMillis Animation duration in milliseconds.
+ */
 @Composable
 fun BaseButton(
     onClick: () -> Unit,
-    commonProps: InputCommonProps = InputCommonProps(),
+    commonProps: CommonProps = CommonProps(),
     style: ButtonStyle = ButtonStyle.Primary,
     variant: ButtonVariant = ButtonVariant.FullWidth,
     icon: Int? = null,
@@ -52,16 +65,19 @@ fun BaseButton(
     pivotFractionY: Float = 0.5f,
     durationMillis: Int = 100,
 ) {
-    // Animation and interaction state
+
+    // --- Interaction and Animation Setup ---
+
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
     val scale by animateFloatAsState(
         targetValue = if (isPressed) scaleValue else 1f,
         animationSpec = tween(durationMillis = durationMillis),
-        label = "scaleAnimation"
+        label = "${commonProps.label ?: "Button"} Scale Animation"
     )
 
-    // Style configurations
+    // --- Button Properties ---
+
     val buttonShape = RoundedCornerShape(2.dp)
     val isSmall = commonProps.size == InputFieldSize.Small
     val horizontalPadding = if (isSmall) 12.dp else 16.dp
@@ -70,23 +86,19 @@ fun BaseButton(
         MaterialTheme.typography.labelMedium
     else
         MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
-
-    // Width modifier based on variant
     val widthModifier = when (variant) {
         ButtonVariant.FullWidth -> Modifier.fillMaxWidth()
         ButtonVariant.WrapContent -> Modifier.wrapContentSize()
     }
-
-    // Colors based on style and enabled state
-    val (labelColor, buttonBackground, buttonBorder) = getButtonColors(style, commonProps.enabled)
-
-    // Icon configuration
+    val (labelColor, buttonBackground, buttonBorder) = buttonColors(style, commonProps.enabled)
     val iconModifier = Modifier.size(labelStyle.fontSize.value.dp)
+
+    // --- Button Generation ---
 
     Box(
         modifier = commonProps.modifier
             .then(widthModifier)
-            .applyClickable(commonProps.enabled, onClick, interactionSource)
+            .addInteraction(commonProps.enabled, onClick, interactionSource)
             .applyScale(scale, pivotFractionX, pivotFractionY)
             .border(width = 1.dp, color = buttonBorder, shape = buttonShape)
             .background(color = buttonBackground, shape = buttonShape)
@@ -135,9 +147,9 @@ private fun ButtonContent(
     when (iconPosition) {
         IconPosition.StartOfButton, IconPosition.EndOfButton -> {
             if (variant == ButtonVariant.WrapContent) {
-                ButtonWithIconAtEnds(iconPosition, iconComposable, labelComposable, iconModifier)
+                ButtonWithIconAtEdges(iconPosition, iconComposable, labelComposable, iconModifier)
             } else {
-                ButtonWithOverlayIcon(
+                FullWidthButtonWithIconAtEdges(
                     iconPosition,
                     icon,
                     iconComposable,
@@ -148,13 +160,19 @@ private fun ButtonContent(
         }
 
         IconPosition.StartOfLabel, IconPosition.EndOfLabel -> {
-            ButtonWithInlineIcon(iconPosition, iconComposable, labelComposable, iconModifier)
+            ButtonWithIconAdjacentToLabel(
+                iconPosition,
+                iconComposable,
+                labelComposable,
+                iconModifier
+            )
         }
     }
 }
 
+/** Composable for button with icon at the ends of the button. */
 @Composable
-private fun ButtonWithIconAtEnds(
+private fun ButtonWithIconAtEdges(
     iconPosition: IconPosition,
     iconComposable: @Composable (Modifier) -> Unit,
     labelComposable: @Composable () -> Unit,
@@ -177,8 +195,9 @@ private fun ButtonWithIconAtEnds(
     }
 }
 
+/** Composable for button with icon overlaying the label. */
 @Composable
-private fun ButtonWithOverlayIcon(
+private fun FullWidthButtonWithIconAtEdges(
     iconPosition: IconPosition,
     icon: Int?,
     iconComposable: @Composable (Modifier) -> Unit,
@@ -199,8 +218,9 @@ private fun ButtonWithOverlayIcon(
     }
 }
 
+/** Composable for button with icon inline with the label. */
 @Composable
-private fun ButtonWithInlineIcon(
+private fun ButtonWithIconAdjacentToLabel(
     iconPosition: IconPosition,
     iconComposable: @Composable (Modifier) -> Unit,
     labelComposable: @Composable () -> Unit,
@@ -219,27 +239,30 @@ private fun ButtonWithInlineIcon(
 }
 
 @Composable
-private fun getButtonColors(style: ButtonStyle, enabled: Boolean): Triple<Color, Color, Color> {
+private fun buttonColors(style: ButtonStyle, enabled: Boolean): Triple<Color, Color, Color> {
     return when (style) {
         ButtonStyle.Primary -> Triple(
-            if (enabled) getCustomColor(CustomColorKey.BtnPrimaryForegroundEnabled)
-            else getCustomColor(CustomColorKey.BtnPrimaryForegroundDisabled),
-            if (enabled) getCustomColor(CustomColorKey.BtnPrimaryBackgroundEnabled)
-            else getCustomColor(CustomColorKey.BtnPrimaryBackgroundDisabled),
-            getCustomColor(CustomColorKey.BtnPrimaryBorder)
+            if (enabled) getCustomColor(ColorKey.BtnPrimaryForegroundEnabled) else getCustomColor(
+                ColorKey.BtnPrimaryForegroundDisabled
+            ),
+            if (enabled) getCustomColor(ColorKey.BtnPrimaryBackgroundEnabled) else getCustomColor(
+                ColorKey.BtnPrimaryBackgroundDisabled
+            ),
+            getCustomColor(ColorKey.BtnPrimaryBorder)
         )
 
         ButtonStyle.Secondary -> Triple(
-            if (enabled) getCustomColor(CustomColorKey.BtnSecondaryForegroundEnabled)
-            else getCustomColor(CustomColorKey.BtnSecondaryForegroundDisabled),
-            getCustomColor(CustomColorKey.BtnSecondaryBackground),
-            if (enabled) getCustomColor(CustomColorKey.BtnSecondaryBorderEnabled)
-            else getCustomColor(CustomColorKey.BtnSecondaryBorderDisabled)
+            if (enabled) getCustomColor(ColorKey.BtnSecondaryForegroundEnabled) else getCustomColor(
+                ColorKey.BtnSecondaryForegroundDisabled
+            ),
+            getCustomColor(ColorKey.BtnSecondaryBackground),
+            if (enabled) getCustomColor(ColorKey.BtnSecondaryBorderEnabled)
+            else getCustomColor(ColorKey.BtnSecondaryBorderDisabled)
         )
     }
 }
 
-private fun Modifier.applyClickable(
+private fun Modifier.addInteraction(
     enabled: Boolean,
     onClick: () -> Unit,
     interactionSource: MutableInteractionSource,

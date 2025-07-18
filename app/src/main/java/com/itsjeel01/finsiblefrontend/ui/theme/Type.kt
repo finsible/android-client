@@ -7,7 +7,7 @@ import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.unit.sp
 import com.itsjeel01.finsiblefrontend.R
 
-val provider = GoogleFont.Provider(
+val googleFontProvider = GoogleFont.Provider(
     providerAuthority = "com.google.android.gms.fonts",
     providerPackage = "com.google.android.gms",
     certificates = R.array.com_google_android_gms_fonts_certs
@@ -16,21 +16,20 @@ val provider = GoogleFont.Provider(
 val sansSerifFont = FontFamily(
     Font(
         googleFont = GoogleFont("Outfit"),
-        fontProvider = provider,
+        fontProvider = googleFontProvider,
     )
 )
 
 val serifFont = FontFamily(
     Font(
         googleFont = GoogleFont("EB Garamond"),
-        fontProvider = provider,
+        fontProvider = googleFontProvider,
     )
 )
 
-// Default Material 3 typography values
-val baseline = Typography()
+val baseline = Typography() // Default Material3 Typography
 
-val AppTypography = Typography(
+val FinsibleTypography = Typography(
     // Display -> Serif
     displayLarge = baseline.displayLarge.copy(fontFamily = serifFont),
     displayMedium = baseline.displayMedium.copy(fontFamily = serifFont),

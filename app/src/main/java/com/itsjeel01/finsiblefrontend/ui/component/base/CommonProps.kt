@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.dp
 import com.itsjeel01.finsiblefrontend.common.InputFieldSize
 
 data class CommonProps(
-    val modifier: Modifier = Modifier.Companion,
+    val modifier: Modifier = Modifier,
     val label: String? = null,
     val placeholder: String? = null,
     val supportingText: String? = null,
@@ -19,7 +19,7 @@ data class CommonProps(
     val enabled: Boolean = true,
     val leadingIcon: (@Composable () -> Unit)? = null,
     val trailingIcon: (@Composable () -> Unit)? = null,
-    val accentColor: Color = Color.Companion.Unspecified,
+    val accentColor: Color = Color.Unspecified,
     val size: InputFieldSize = InputFieldSize.Large,
 ) {
     fun modifier() = modifier.heightIn(

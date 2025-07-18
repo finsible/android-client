@@ -89,10 +89,11 @@ class Utils {
             }
         }
 
-        /** Converts a string to CamelCase format. */
-        fun toCamelCase(input: String): String {
-            return input.trim().split(" ")
-                .joinToString("") { it.lowercase().replaceFirstChar { char -> char.uppercase() } }
+        /** Convert a string to title case, replacing underscores and spaces with single spaces. */
+        fun toTitleCase(input: String): String {
+            return input.trim()
+                .split(Regex("[ _]+"))
+                .joinToString(" ") { it.lowercase().replaceFirstChar { char -> char.uppercase() } }
         }
 
         /** Format number according to locale. */

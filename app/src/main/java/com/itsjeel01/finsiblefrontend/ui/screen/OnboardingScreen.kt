@@ -208,10 +208,10 @@ private fun Illustration(
                 Constants.ANIMATION_DURATION_SHORT,
                 easing = FastOutSlowInEasing
             )
-        ) { idx ->
+        ) { index ->
             Image(
-                painter = painterResource(id = carouselItems[idx].illustration),
-                contentDescription = "${idx}th Onboarding Illustration",
+                painter = painterResource(id = carouselItems[index].illustration),
+                contentDescription = "${index}th Onboarding Illustration",
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Fit
             )
@@ -246,9 +246,9 @@ private fun TextContent(
                     .togetherWith(fadeOut(tween(Constants.ANIMATION_DURATION_VERY_SHORT)))
                     .using(SizeTransform(clip = false))
             }
-        ) { idx ->
+        ) { index ->
             Text(
-                carouselItems[idx].headline,
+                carouselItems[index].headline,
                 style = MaterialTheme.typography.displayLarge.copy(
                     fontWeight = FontWeight.Bold
                 ),
@@ -270,9 +270,9 @@ private fun TextContent(
                     Constants.ANIMATION_DURATION_SHORT,
                     easing = FastOutSlowInEasing
                 )
-            ) { idx ->
+            ) { index ->
                 Text(
-                    carouselItems[idx].description,
+                    carouselItems[index].description,
                     modifier = Modifier.fillMaxHeight(),
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center,

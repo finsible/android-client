@@ -43,8 +43,8 @@ class PreferenceManager @Inject constructor(context: Context) {
         }
     }
 
-    fun isLoggedIn(): Boolean = sharedPreferences.getBoolean(Strings.JWT, false)
-    fun getJwt(): String? = sharedPreferences.getString(Strings.IS_LOGGED_IN, null)
+    fun isLoggedIn(): Boolean = sharedPreferences.getBoolean(Strings.IS_LOGGED_IN, false)
+    fun getJwt(): String? = sharedPreferences.getString(Strings.JWT, null)
     fun getUserId(): String? = sharedPreferences.getString(Strings.USER_ID, null)
     fun getEmail(): String? = sharedPreferences.getString(Strings.EMAIL, null)
     fun getName(): String? = sharedPreferences.getString(Strings.NAME, null)

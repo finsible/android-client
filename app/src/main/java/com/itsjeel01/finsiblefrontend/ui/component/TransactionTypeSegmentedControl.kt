@@ -98,7 +98,7 @@ private fun SegmentItem(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = Utils.toCamelCase(type.name),
+            text = Utils.toTitleCase(type.name),
             color = textColor,
             style = textStyle,
         )

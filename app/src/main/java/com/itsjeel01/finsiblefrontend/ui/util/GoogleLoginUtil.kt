@@ -49,7 +49,21 @@ class GoogleLoginUtil {
 
                     authViewModel.authenticate(clientId = clientId, idToken = googleIdToken)
                 } catch (e: Exception) {
-                    Log.e(Strings.GOOGLE_LOGIN_UTIL, e.message.toString())
+                    Log.e(Strings.GOOGLE_LOGIN_UTIL, e.toString())
+                }
+            }
+        }
+
+        fun logout(
+            context: Context,
+            coroutineScope: CoroutineScope,
+            authViewModel: AuthViewModel,
+        ) {
+            coroutineScope.launch {
+                try {
+                    authViewModel.logout()
+                } catch (e: Exception) {
+                    Log.e(Strings.GOOGLE_LOGIN_UTIL, e.toString())
                 }
             }
         }

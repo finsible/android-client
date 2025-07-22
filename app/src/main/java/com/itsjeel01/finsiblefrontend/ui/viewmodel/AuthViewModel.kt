@@ -64,7 +64,8 @@ class AuthViewModel @Inject constructor(
                 } else {
                     _authState.value = AuthState.Negative(response.message, isFailed = true)
                 }
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                Log.e(Strings.GOOGLE_LOGIN_UTIL, e.message.toString())
                 _authState.value =
                     AuthState.Negative(Strings.GENERIC_UNEXPECTED_ERROR_MESSAGE, isFailed = true)
             }

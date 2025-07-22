@@ -26,5 +26,5 @@ sealed class Routes {
     data object SettingsScreen : Routes()
 
     @Serializable
-    data object NewTransactionForm : Routes()
+    data object FormScreen : Routes()
 }

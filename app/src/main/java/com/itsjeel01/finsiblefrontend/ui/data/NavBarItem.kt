@@ -24,7 +24,7 @@ data class NavBarItem(
             NavBarItem(
                 icon = R.drawable.ic_plus,
                 isNewTransactionForm = true,
-                route = Routes.NewTransactionForm
+                route = Routes.FormScreen
             ),
             NavBarItem(
                 label = "Balance",

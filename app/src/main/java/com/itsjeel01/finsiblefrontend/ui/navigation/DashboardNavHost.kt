@@ -12,8 +12,12 @@ import com.itsjeel01.finsiblefrontend.ui.screen.InsightsScreen
 import com.itsjeel01.finsiblefrontend.ui.screen.SettingsScreen
 
 @Composable
-fun DashboardNavHost(navController: NavHostController, paddingValues: PaddingValues) {
-    NavHost(navController = navController, startDestination = Routes.HomeScreen) {
+fun DashboardNavHost(
+    dashboardNavController: NavHostController,
+    navHostController: NavHostController,
+    paddingValues: PaddingValues,
+) {
+    NavHost(navController = dashboardNavController, startDestination = Routes.HomeScreen) {
         composable<Routes.HomeScreen> {
             HomeScreen()
         }
@@ -24,9 +28,13 @@ fun DashboardNavHost(navController: NavHostController, paddingValues: PaddingVal
             BalanceScreen()
         }
         composable<Routes.SettingsScreen> {
-            SettingsScreen()
+            SettingsScreen(onLogout = {
+                navHostController.navigate(Routes.OnboardingScreen) {
+                    popUpTo(Routes.LaunchScreen) { inclusive = true }
+                }
+            })
         }
-        composable<Routes.NewTransactionForm> {
+        composable<Routes.FormScreen> {
             FormScreen()
         }
     }

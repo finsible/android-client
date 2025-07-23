@@ -119,22 +119,22 @@ fun OnboardingScreen(navController: NavHostController) {
         )
 
         onboardingViewModel.isLastItem() -> Triple(
-            Strings.NEXT,
-            null,
-            IconPosition.EndOfLabel,
-        )
-
-        else -> Triple(
             Strings.SIGN_IN_WITH_GOOGLE,
             R.drawable.ic_google,
             IconPosition.StartOfLabel,
+        )
+
+        else -> Triple(
+            Strings.NEXT,
+            null,
+            IconPosition.EndOfLabel,
         )
     }
 
     // --- Navigation Functions ---
 
     fun onPrimaryButtonClick() {
-        if (onboardingViewModel.isLastItem())
+        if (!onboardingViewModel.isLastItem())
             onboardingViewModel.nextItem()
         else
             GoogleLoginUtil.login(context, coroutineScope, authViewModel)

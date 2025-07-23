@@ -15,7 +15,7 @@ class OnboardingViewModel @Inject constructor() : ViewModel() {
     private val _currentItem = MutableStateFlow(0)
     val currentItem: StateFlow<Int> = _currentItem
 
-    val carouselItems = OnboardingData().get()
+    private val carouselItems = OnboardingData().get()
 
     // --- Actions ---
 

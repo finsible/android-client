@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.data.local
+package com.itsjeel01.finsiblefrontend.data.di
 
 import android.content.Context
 import com.itsjeel01.finsiblefrontend.data.local.entity.MyObjectBox

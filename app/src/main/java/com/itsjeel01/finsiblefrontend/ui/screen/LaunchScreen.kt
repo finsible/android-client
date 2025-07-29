@@ -5,7 +5,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.itsjeel01.finsiblefrontend.data.model.AuthState
+import com.itsjeel01.finsiblefrontend.ui.data.AuthState
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.AuthViewModel
 
 @Composable

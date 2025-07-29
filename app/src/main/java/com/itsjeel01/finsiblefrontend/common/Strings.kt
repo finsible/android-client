@@ -26,5 +26,6 @@ class Strings {
         const val BACK = "Back"
         const val GET_STARTED = "Get Started"
         const val ONBOARDING_SCREEN = "OnboardingScreen"
+        const val RESPONSE_PROCESSOR = "ResponseProcessor"
     }
 }

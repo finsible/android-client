@@ -52,11 +52,11 @@ import com.itsjeel01.finsiblefrontend.common.Constants
 import com.itsjeel01.finsiblefrontend.common.IconPosition
 import com.itsjeel01.finsiblefrontend.common.InputFieldSize
 import com.itsjeel01.finsiblefrontend.common.Strings
-import com.itsjeel01.finsiblefrontend.data.model.AuthState
 import com.itsjeel01.finsiblefrontend.ui.component.base.BaseButton
 import com.itsjeel01.finsiblefrontend.ui.component.base.BaseCarouselIndicators
 import com.itsjeel01.finsiblefrontend.ui.component.base.BaseLoadingIndicator
 import com.itsjeel01.finsiblefrontend.ui.component.base.CommonProps
+import com.itsjeel01.finsiblefrontend.ui.data.AuthState
 import com.itsjeel01.finsiblefrontend.ui.data.OnboardingData
 import com.itsjeel01.finsiblefrontend.ui.navigation.Routes
 import com.itsjeel01.finsiblefrontend.ui.theme.ColorKey

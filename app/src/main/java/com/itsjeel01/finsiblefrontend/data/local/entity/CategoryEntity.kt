@@ -9,7 +9,7 @@ import io.objectbox.annotation.Id
 @Entity
 data class CategoryEntity(
     @Id(assignable = true)
-    override var id: Long,
+    override var id: Long = 0,
 
     @Convert(converter = TransactionTypeConverter::class, dbType = Int::class)
     var type: TransactionType = TransactionType.EXPENSE,

@@ -19,7 +19,7 @@ abstract class BaseEntity {
         if (cachedTime == 0L) return true
 
         val expiryTime = if (cacheTtlMinutes != null) {
-            cachedTime + (cacheTtlMinutes * SECONDS_IN_MINUTE * MILLISECONDS_IN_SECOND)
+            cachedTime + (cacheTtlMinutes!! * SECONDS_IN_MINUTE * MILLISECONDS_IN_SECOND)
         } else {
             Long.MAX_VALUE
         }

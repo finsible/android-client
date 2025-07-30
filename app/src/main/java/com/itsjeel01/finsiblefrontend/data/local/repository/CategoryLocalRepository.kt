@@ -20,7 +20,9 @@ class CategoryLocalRepository @Inject constructor(private val box: Box<CategoryE
     override fun addAll(models: List<Category>, additionalInfo: Any?, ttlMinutes: Long?) {
         val type = additionalInfo as TransactionType
         models.forEach { model ->
-            this.add(model.toEntity(type))
+            val entity = model.toEntity(type)
+            entity.updateCacheTime(ttlMinutes)
+            this.add(entity)
         }
     }
 

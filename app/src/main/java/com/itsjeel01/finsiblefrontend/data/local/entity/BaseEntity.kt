@@ -18,8 +18,11 @@ abstract class BaseEntity {
     fun isStale(): Boolean {
         if (cachedTime == 0L) return true
 
-        val expiryTime = cachedTime + ((cacheTtlMinutes?.times(SECONDS_IN_MINUTE)
-            ?: Long.MAX_VALUE) * MILLISECONDS_IN_SECOND)
+        val expiryTime = if (cacheTtlMinutes != null) {
+            cachedTime + (cacheTtlMinutes * SECONDS_IN_MINUTE * MILLISECONDS_IN_SECOND)
+        } else {
+            Long.MAX_VALUE
+        }
         return System.currentTimeMillis() > expiryTime
     }
 

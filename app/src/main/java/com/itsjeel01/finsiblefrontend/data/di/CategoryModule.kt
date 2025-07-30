@@ -2,7 +2,6 @@ package com.itsjeel01.finsiblefrontend.data.di
 
 import com.itsjeel01.finsiblefrontend.data.local.entity.CategoryEntity
 import com.itsjeel01.finsiblefrontend.data.local.repository.CategoryLocalRepository
-import com.itsjeel01.finsiblefrontend.data.remote.api.CategoryApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,8 +25,7 @@ object CategoryModule {
     @Singleton
     fun categoryLocalRepository(
         categoryEntityBox: Box<CategoryEntity>,
-        categoryApiService: CategoryApiService,
     ): CategoryLocalRepository {
-        return CategoryLocalRepository(categoryEntityBox, categoryApiService)
+        return CategoryLocalRepository(categoryEntityBox)
     }
 }

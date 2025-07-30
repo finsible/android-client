@@ -9,12 +9,12 @@ import io.objectbox.annotation.Id
 @Entity
 data class CategoryEntity(
     @Id(assignable = true)
-    var id: Long = 0,
+    override var id: Long = 0L,
 
     @Convert(converter = TransactionTypeConverter::class, dbType = Int::class)
-    var type: TransactionType,
+    var type: TransactionType = TransactionType.EXPENSE,
 
-    var name: String,
+    var name: String = "",
 
-    var color: String,
-)
+    var color: String = "#000000",
+) : BaseEntity()

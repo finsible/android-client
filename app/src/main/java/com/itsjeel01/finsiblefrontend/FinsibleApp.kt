@@ -1,7 +1,7 @@
 package com.itsjeel01.finsiblefrontend
 
 import android.app.Application
-import com.itsjeel01.finsiblefrontend.data.local.ObjectBoxModule
+import com.itsjeel01.finsiblefrontend.data.di.ObjectBoxModule
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp

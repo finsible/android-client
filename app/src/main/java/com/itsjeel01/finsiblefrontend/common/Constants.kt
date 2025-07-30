@@ -9,5 +9,7 @@ class Constants {
         const val ANIMATION_DURATION_VERY_LONG = 2400
 
         const val MAX_TRANSACTION_AMOUNT = 10000000
+
+        const val MINUTES = 1
     }
 }

@@ -27,7 +27,7 @@ class TransactionFormViewModel @Inject constructor(
 
     private val _categories =
         MutableStateFlow(
-            categoryLocalRepository.getAllCategories()
+            categoryLocalRepository.getAll()
                 .filter { it.type == _transactionType.value })
     val categories: StateFlow<List<CategoryEntity>> = _categories
 
@@ -63,7 +63,7 @@ class TransactionFormViewModel @Inject constructor(
     // --- Private Methods ---
 
     private fun loadCategories() {
-        _categories.value = categoryLocalRepository.getAllCategories()
+        _categories.value = categoryLocalRepository.getAll()
             .filter { it.type == _transactionType.value }
         _transactionCategory.value = _categories.value.first()
     }

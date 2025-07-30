@@ -8,4 +8,6 @@ data class BaseResponse<T>(
     val status: Int,
     val message: String,
     val data: T,
+    val cache: Boolean = false,
+    val cacheTtlMinutes: Long? = null,
 )

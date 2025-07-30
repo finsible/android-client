@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.data.model
+package com.itsjeel01.finsiblefrontend.ui.data
 
 import com.itsjeel01.finsiblefrontend.common.Strings
 

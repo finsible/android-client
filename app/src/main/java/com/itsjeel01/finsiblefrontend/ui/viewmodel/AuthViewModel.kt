@@ -6,13 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.itsjeel01.finsiblefrontend.common.PreferenceManager
 import com.itsjeel01.finsiblefrontend.common.Strings
 import com.itsjeel01.finsiblefrontend.common.TransactionType
-import com.itsjeel01.finsiblefrontend.data.local.entity.CategoryEntity
-import com.itsjeel01.finsiblefrontend.data.local.repository.CategoryLocalRepository
-import com.itsjeel01.finsiblefrontend.data.model.AuthState
-import com.itsjeel01.finsiblefrontend.data.remote.model.BaseResponse
-import com.itsjeel01.finsiblefrontend.data.remote.model.CategoriesData
 import com.itsjeel01.finsiblefrontend.data.repository.AuthRepository
 import com.itsjeel01.finsiblefrontend.data.repository.CategoryRepository
+import com.itsjeel01.finsiblefrontend.ui.data.AuthState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,7 +20,6 @@ class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val preferenceManager: PreferenceManager,
     private val categoryRepository: CategoryRepository,
-    private val categoryLocalRepository: CategoryLocalRepository,
 ) : ViewModel() {
 
     // --- State ---
@@ -84,35 +79,10 @@ class AuthViewModel @Inject constructor(
     private fun fetchCategories() {
         viewModelScope.launch {
             try {
-                val incomeCategoriesResponse =
-                    categoryRepository.getCategories(TransactionType.INCOME.name)
-                cacheCategory(TransactionType.INCOME, incomeCategoriesResponse)
-
-                val expenseCategoriesResponse =
-                    categoryRepository.getCategories(TransactionType.EXPENSE.name)
-                cacheCategory(TransactionType.EXPENSE, expenseCategoriesResponse)
+                categoryRepository.getCategories(TransactionType.INCOME.name)
+                categoryRepository.getCategories(TransactionType.EXPENSE.name)
             } catch (e: Exception) {
                 Log.e(Strings.CATEGORY, e.message.toString())
-            }
-        }
-    }
-
-    private fun cacheCategory(
-        type: TransactionType,
-        response: BaseResponse<CategoriesData>
-    ) {
-        viewModelScope.launch {
-            if (response.success) {
-                for (category in response.data.categories) {
-                    categoryLocalRepository.addCategory(
-                        CategoryEntity(
-                            id = category.id,
-                            type = type,
-                            name = category.name,
-                            color = category.color
-                        )
-                    )
-                }
             }
         }
     }

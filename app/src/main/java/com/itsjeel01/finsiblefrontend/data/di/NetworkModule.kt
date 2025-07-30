@@ -5,7 +5,10 @@ import com.itsjeel01.finsiblefrontend.common.PreferenceManager
 import com.itsjeel01.finsiblefrontend.common.Strings
 import com.itsjeel01.finsiblefrontend.data.remote.api.AuthApiService
 import com.itsjeel01.finsiblefrontend.data.remote.api.CategoryApiService
+import com.itsjeel01.finsiblefrontend.data.remote.converter.ConverterFactory
+import com.itsjeel01.finsiblefrontend.data.remote.converter.ResponseProcessor
 import com.itsjeel01.finsiblefrontend.data.remote.interceptor.AuthInterceptor
+import com.itsjeel01.finsiblefrontend.data.sync.CacheManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -38,13 +41,20 @@ object NetworkModule {
     }
 
     @Provides
-    fun retrofit(okHttpClient: OkHttpClient): Retrofit {
+    fun retrofit(okHttpClient: OkHttpClient, cacheManager: CacheManager): Retrofit {
         val contentType = MediaType.get(Strings.JSON_CONTENT_TYPE)
-        val json = Json { ignoreUnknownKeys = true }
+        val json = Json {
+            ignoreUnknownKeys = true
+            coerceInputValues = true
+        }
+
+        val jsonConverter = json.asConverterFactory(contentType)
+        val processor = ResponseProcessor(cacheManager)
+        val converter = ConverterFactory.create(jsonConverter, processor)
 
         return Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL)
-            .addConverterFactory(json.asConverterFactory(contentType))
+            .addConverterFactory(converter)
             .client(okHttpClient)
             .build()
     }

@@ -35,6 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.itsjeel01.finsiblefrontend.R
+import com.itsjeel01.finsiblefrontend.common.Constants
 import com.itsjeel01.finsiblefrontend.ui.theme.ColorKey
 import com.itsjeel01.finsiblefrontend.ui.theme.getCustomColor
 import com.itsjeel01.finsiblefrontend.ui.util.Animations
@@ -66,7 +67,7 @@ fun InAppNotificationView(
                     onDismiss()
                     break
                 }
-                delay(8L)
+                delay(Constants.PROGRESS_BAR_UPDATE_INTERVAL)
             }
         }
     }

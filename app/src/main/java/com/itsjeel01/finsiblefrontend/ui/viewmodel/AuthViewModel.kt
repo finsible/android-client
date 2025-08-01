@@ -121,10 +121,6 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun setAuthState(state: AuthState) {
-        _authState.value = state
-    }
-
     // --- Private Methods ---
 
     private fun fetchCategories() {

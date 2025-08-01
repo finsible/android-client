@@ -30,7 +30,7 @@ object CustomColors {
         ColorKey.PURPLE to Color(0xFF7B1FA2),
         ColorKey.BLUE to Color(0xFF1565C0),
         ColorKey.GREEN to Color(0xFF2E7D32),
-        ColorKey.GRAY to Color(0xFF455A64)
+        ColorKey.GRAY to Color(0xFF455A64),
     )
 
     val darkModeColors = mapOf(
@@ -57,7 +57,7 @@ object CustomColors {
         ColorKey.PURPLE to Color(0xFFC97BFA),
         ColorKey.BLUE to Color(0xFF64B5F6),
         ColorKey.GREEN to Color(0xFF81C784),
-        ColorKey.GRAY to Color(0xFFB0BEC5)
+        ColorKey.GRAY to Color(0xFFB0BEC5),
     )
 }
 

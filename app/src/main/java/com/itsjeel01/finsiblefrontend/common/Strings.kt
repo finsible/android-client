@@ -9,9 +9,10 @@ class Strings {
         const val NAME = "name"
         const val PREFS_FILE_NAME = "secret_shared_prefs"
         const val JSON_CONTENT_TYPE = "application/json"
-        const val AUTH_FAILED_GENERIC_MESSAGE = "Something went wrong, please log in again"
-        const val AUTH_STATE_NEGATIVE_MESSAGE = "You are not logged in"
-        const val GENERIC_UNEXPECTED_ERROR_MESSAGE = "An unexpected error occurred"
+        const val AUTH_FAILED_GENERIC_MESSAGE = "Something went wrong, please log in again."
+        const val AUTH_STATE_NEGATIVE_MESSAGE = "You are not logged in."
+        const val AUTH_SERVER_ERROR_MESSAGE = "It's not you, it's us. Please try again."
+        const val GENERIC_UNEXPECTED_ERROR_MESSAGE = "An unexpected error occurred."
         const val CATEGORY = "Category"
         const val BASE_DROPDOWN_INPUT = "BaseDropdownInput"
         const val GOOGLE_LOGIN_UTIL = "GoogleLoginUtil"
@@ -27,5 +28,6 @@ class Strings {
         const val GET_STARTED = "Get Started"
         const val ONBOARDING_SCREEN = "OnboardingScreen"
         const val RESPONSE_PROCESSOR = "ResponseProcessor"
+        const val AUTH_API = "AuthApi"
     }
 }

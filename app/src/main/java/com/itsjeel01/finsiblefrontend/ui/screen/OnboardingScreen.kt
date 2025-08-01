@@ -4,11 +4,6 @@ import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.SizeTransform
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -22,8 +17,8 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -31,7 +26,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -48,20 +42,23 @@ import androidx.navigation.NavHostController
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.ButtonStyle
 import com.itsjeel01.finsiblefrontend.common.ButtonVariant
-import com.itsjeel01.finsiblefrontend.common.Constants
 import com.itsjeel01.finsiblefrontend.common.IconPosition
 import com.itsjeel01.finsiblefrontend.common.InputFieldSize
 import com.itsjeel01.finsiblefrontend.common.Strings
+import com.itsjeel01.finsiblefrontend.data.di.hiltNotificationManager
 import com.itsjeel01.finsiblefrontend.ui.component.base.BaseButton
 import com.itsjeel01.finsiblefrontend.ui.component.base.BaseCarouselIndicators
-import com.itsjeel01.finsiblefrontend.ui.component.base.BaseLoadingIndicator
 import com.itsjeel01.finsiblefrontend.ui.component.base.CommonProps
+import com.itsjeel01.finsiblefrontend.ui.component.base.FullScreenLoadingIndicator
 import com.itsjeel01.finsiblefrontend.ui.data.AuthState
 import com.itsjeel01.finsiblefrontend.ui.data.OnboardingData
 import com.itsjeel01.finsiblefrontend.ui.navigation.Routes
 import com.itsjeel01.finsiblefrontend.ui.theme.ColorKey
 import com.itsjeel01.finsiblefrontend.ui.theme.getCustomColor
+import com.itsjeel01.finsiblefrontend.ui.util.Animations
 import com.itsjeel01.finsiblefrontend.ui.util.GoogleLoginUtil
+import com.itsjeel01.finsiblefrontend.ui.util.InAppNotificationManager
+import com.itsjeel01.finsiblefrontend.ui.util.InAppNotificationPosition
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.AuthViewModel
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.OnboardingViewModel
 
@@ -72,12 +69,12 @@ fun OnboardingScreen(navController: NavHostController) {
 
     val onboardingViewModel: OnboardingViewModel = hiltViewModel()
     val authViewModel: AuthViewModel = hiltViewModel()
+    val inAppNotificationManager: InAppNotificationManager = hiltNotificationManager()
 
     val carouselItems = OnboardingData().get()
     val currentItem = onboardingViewModel.currentItem.collectAsState().value
     val authState = authViewModel.authState.collectAsState().value
     val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
     // --- Side Effects for Navigation ---
@@ -136,8 +133,9 @@ fun OnboardingScreen(navController: NavHostController) {
     fun onPrimaryButtonClick() {
         if (!onboardingViewModel.isLastItem())
             onboardingViewModel.nextItem()
-        else
-            GoogleLoginUtil.login(context, coroutineScope, authViewModel)
+        else {
+            GoogleLoginUtil.login(context, authViewModel)
+        }
     }
 
     fun onSecondaryButtonClick() {
@@ -148,7 +146,7 @@ fun OnboardingScreen(navController: NavHostController) {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        contentWindowInsets = WindowInsets.ime,
+        contentWindowInsets = WindowInsets.systemBars,
     ) { _ ->
         Box(modifier = Modifier.fillMaxSize()) {
             Column(
@@ -183,8 +181,22 @@ fun OnboardingScreen(navController: NavHostController) {
                 )
             }
 
-            if (authState == AuthState.Loading) {
-                LoadingOverlay()
+            if (authState is AuthState.Loading) {
+                FullScreenLoadingIndicator()
+            }
+
+            if (authState is AuthState.Negative && authState.isFailed) {
+                inAppNotificationManager.showError(
+                    title = "Authentication Unsuccessful",
+                    subtitle = authState.message,
+                    actionLabel = "Retry",
+                    onAction = {
+                        GoogleLoginUtil.login(context, authViewModel)
+                    },
+                    autoDismiss = true,
+                    autoDismissDelay = 2500,
+                    position = InAppNotificationPosition.TOP
+                )
             }
         }
     }
@@ -204,10 +216,7 @@ private fun Illustration(
     ) {
         Crossfade(
             targetState = currentItem,
-            animationSpec = tween(
-                Constants.ANIMATION_DURATION_SHORT,
-                easing = FastOutSlowInEasing
-            )
+            animationSpec = Animations.fastOutSlowEasingSpec()
         ) { index ->
             Image(
                 painter = painterResource(id = carouselItems[index].illustration),
@@ -231,19 +240,8 @@ private fun TextContent(
         AnimatedContent(
             targetState = currentItem,
             transitionSpec = {
-                (fadeIn(
-                    tween(
-                        Constants.ANIMATION_DURATION_VERY_SHORT,
-                        delayMillis = Constants.ANIMATION_DURATION_VERY_SHORT
-                    )
-                ) + scaleIn(
-                    tween(
-                        durationMillis = Constants.ANIMATION_DURATION_VERY_SHORT,
-                        delayMillis = Constants.ANIMATION_DURATION_VERY_SHORT * 2,
-                    ),
-                    initialScale = 0.9f
-                ))
-                    .togetherWith(fadeOut(tween(Constants.ANIMATION_DURATION_VERY_SHORT)))
+                (Animations.fadeInDelayed + Animations.scaleInDelayed)
+                    .togetherWith(Animations.fadeOutQuickly)
                     .using(SizeTransform(clip = false))
             }
         ) { index ->
@@ -266,10 +264,7 @@ private fun TextContent(
         ) {
             Crossfade(
                 targetState = currentItem,
-                animationSpec = tween(
-                    Constants.ANIMATION_DURATION_SHORT,
-                    easing = FastOutSlowInEasing
-                )
+                animationSpec = Animations.fastOutSlowEasingSpec()
             ) { index ->
                 Text(
                     carouselItems[index].description,
@@ -323,21 +318,6 @@ private fun NavigationButtons(
             icon = iconDrawable,
             tintedIcon = tintedIcon,
             iconPosition = iconPosition
-        )
-    }
-}
-
-@Composable
-private fun LoadingOverlay() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.6f)),
-        contentAlignment = Alignment.Center
-    ) {
-        BaseLoadingIndicator(
-            primaryColor = MaterialTheme.colorScheme.primary,
-            secondaryColor = MaterialTheme.colorScheme.onBackground
         )
     }
 }

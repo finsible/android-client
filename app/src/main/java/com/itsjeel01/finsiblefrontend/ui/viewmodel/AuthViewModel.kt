@@ -1,8 +1,13 @@
 package com.itsjeel01.finsiblefrontend.ui.viewmodel
 
+import android.content.Context
 import android.util.Log
+import androidx.credentials.CredentialManager
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.exceptions.GetCredentialCancellationException
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.itsjeel01.finsiblefrontend.common.PreferenceManager
 import com.itsjeel01.finsiblefrontend.common.Strings
 import com.itsjeel01.finsiblefrontend.common.TransactionType
@@ -13,6 +18,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -44,7 +50,7 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun authenticate(clientId: String, idToken: String) {
+    private fun authenticate(clientId: String, idToken: String) {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
 
@@ -58,11 +64,52 @@ class AuthViewModel @Inject constructor(
                     _authState.value = AuthState.Positive
                 } else {
                     _authState.value = AuthState.Negative(response.message, isFailed = true)
+                    Log.e(Strings.AUTH_API, response.message)
                 }
             } catch (e: Exception) {
+                Log.e(Strings.AUTH_API, e.toString())
+
+                if (e is HttpException) {
+                    _authState.value = AuthState.Negative(
+                        Strings.AUTH_SERVER_ERROR_MESSAGE,
+                        isFailed = true
+                    )
+                } else {
+                    _authState.value = AuthState.Negative(
+                        Strings.AUTH_FAILED_GENERIC_MESSAGE,
+                        isFailed = true
+                    )
+                }
+            }
+
+        }
+    }
+
+    fun launchGoogleLogin(
+        credentialsManager: CredentialManager,
+        request: GetCredentialRequest,
+        context: Context,
+        clientId: String
+    ) {
+        viewModelScope.launch {
+            try {
+                _authState.value = AuthState.Loading
+
+                val result = credentialsManager.getCredential(request = request, context = context)
+                val credential = result.credential
+                val googleIdToken = GoogleIdTokenCredential.createFrom(credential.data).idToken
+
+                authenticate(clientId = clientId, idToken = googleIdToken)
+            } catch (e: Exception) {
                 Log.e(Strings.GOOGLE_LOGIN_UTIL, e.toString())
-                _authState.value =
-                    AuthState.Negative(Strings.GENERIC_UNEXPECTED_ERROR_MESSAGE, isFailed = true)
+
+                if (e is GetCredentialCancellationException) {
+                    _authState.value =
+                        AuthState.Negative(Strings.AUTH_STATE_NEGATIVE_MESSAGE, isFailed = true)
+                } else {
+                    _authState.value =
+                        AuthState.Negative(Strings.AUTH_FAILED_GENERIC_MESSAGE, isFailed = true)
+                }
             }
         }
     }

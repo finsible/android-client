@@ -9,7 +9,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.itsjeel01.finsiblefrontend.ui.util.GoogleLoginUtil
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.AuthViewModel
@@ -17,7 +16,6 @@ import com.itsjeel01.finsiblefrontend.ui.viewmodel.AuthViewModel
 @Composable
 fun SettingsScreen(onLogout: () -> Unit) {
 
-    val context = LocalContext.current
     val authViewModel: AuthViewModel = hiltViewModel()
     val coroutineScope = rememberCoroutineScope()
 
@@ -26,7 +24,6 @@ fun SettingsScreen(onLogout: () -> Unit) {
         Button(
             onClick = {
                 GoogleLoginUtil.logout(
-                    context,
                     coroutineScope,
                     authViewModel
                 )

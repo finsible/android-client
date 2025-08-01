@@ -83,7 +83,7 @@ fun BaseButton(
     val horizontalPadding = if (isSmall) 12.dp else 16.dp
     val verticalPadding = if (isSmall) 12.dp else 16.dp
     val labelStyle = if (isSmall)
-        MaterialTheme.typography.labelMedium
+        MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
     else
         MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
     val widthModifier = when (variant) {

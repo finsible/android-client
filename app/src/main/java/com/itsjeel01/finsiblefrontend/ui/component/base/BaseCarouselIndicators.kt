@@ -1,9 +1,7 @@
 package com.itsjeel01.finsiblefrontend.ui.component.base
 
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,7 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
-import com.itsjeel01.finsiblefrontend.common.Constants
+import com.itsjeel01.finsiblefrontend.ui.util.Animations
 
 @Composable
 fun BaseCarouselIndicators(currentItem: Int, totalItems: Int) {
@@ -31,18 +29,13 @@ fun BaseCarouselIndicators(currentItem: Int, totalItems: Int) {
 
             val width by animateDpAsState(
                 targetValue = if (isCurrent) 48.dp else 16.dp,
-                animationSpec = tween(
-                    durationMillis = Constants.ANIMATION_DURATION_SHORT, easing = EaseOut
-                )
+                animationSpec = Animations.easeOut()
             )
             val color by animateColorAsState(
-                targetValue = if (isCurrent) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground.copy(
-                    alpha = 0.3f
-                ),
-                animationSpec = tween(
-                    durationMillis = Constants.ANIMATION_DURATION_SHORT,
-                    easing = EaseOut
-                )
+                targetValue =
+                    if (isCurrent) MaterialTheme.colorScheme.primary
+                    else MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f),
+                animationSpec = Animations.easeOut()
             )
 
             Box(

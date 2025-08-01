@@ -14,6 +14,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,6 +34,7 @@ fun InAppNotificationHost(
 ) {
     val currentNotification by inAppNotificationManager.currentNotification.collectAsState()
     var isVisible by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(currentNotification) {
         if (currentNotification != null) {
@@ -42,7 +44,7 @@ fun InAppNotificationHost(
 
     val handleDismiss = {
         isVisible = false
-        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
+        coroutineScope.launch {
             delay(300)
             inAppNotificationManager.dismiss()
         }

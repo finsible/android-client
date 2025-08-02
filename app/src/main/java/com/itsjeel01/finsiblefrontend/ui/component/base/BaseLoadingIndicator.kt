@@ -25,14 +25,16 @@ import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.itsjeel01.finsiblefrontend.ui.theme.ColorKey
+import com.itsjeel01.finsiblefrontend.ui.theme.getCustomColor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 enum class LoadingSpeed(val durationMs: Int) {
-    SLOW(2200),        // For heavy operations like data sync
-    NORMAL(1400),      // Default for most operations
-    FAST(900),         // For quick operations like form validation
-    INSTANT(600)       // For immediate feedback
+    SLOW(2000),        // For heavy operations like data sync
+    NORMAL(1200),      // Default for most operations
+    FAST(800),         // For quick operations like form validation
+    INSTANT(400)       // For immediate feedback
 }
 
 @Composable
@@ -40,7 +42,7 @@ fun BaseLoadingIndicator(
     modifier: Modifier = Modifier,
     size: Dp = 48.dp,
     speed: LoadingSpeed = LoadingSpeed.NORMAL,
-    primaryColor: Color = MaterialTheme.colorScheme.primary,
+    primaryColor: Color = getCustomColor(ColorKey.IndicatorPrimary),
     secondaryColor: Color = MaterialTheme.colorScheme.background
 ) {
     val progress = remember { Animatable(0f) }
@@ -119,13 +121,13 @@ fun FullScreenLoadingIndicator(
     modifier: Modifier = Modifier,
     size: Dp = 48.dp,
     speed: LoadingSpeed = LoadingSpeed.NORMAL,
-    primaryColor: Color = MaterialTheme.colorScheme.primary,
+    primaryColor: Color = getCustomColor(ColorKey.IndicatorPrimary),
     secondaryColor: Color = MaterialTheme.colorScheme.background
 ) {
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)),
+            .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.5f)),
         contentAlignment = Alignment.Center
     ) {
         BaseLoadingIndicator(

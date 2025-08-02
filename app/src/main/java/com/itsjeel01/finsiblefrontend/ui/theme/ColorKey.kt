@@ -26,5 +26,6 @@ enum class ColorKey {
     PURPLE,
     BLUE,
     GREEN,
-    GRAY
+    GRAY,
+    IndicatorPrimary
 }

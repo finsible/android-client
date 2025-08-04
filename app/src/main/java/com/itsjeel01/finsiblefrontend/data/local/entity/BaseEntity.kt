@@ -1,8 +1,6 @@
 package com.itsjeel01.finsiblefrontend.data.local.entity
 
-import com.itsjeel01.finsiblefrontend.common.Constants.Companion.DEFAULT_TTL_MINUTES
-import com.itsjeel01.finsiblefrontend.common.Constants.Companion.MILLISECONDS_IN_SECOND
-import com.itsjeel01.finsiblefrontend.common.Constants.Companion.SECONDS_IN_MINUTE
+import com.itsjeel01.finsiblefrontend.ui.util.Duration
 
 abstract class BaseEntity {
 
@@ -13,13 +11,13 @@ abstract class BaseEntity {
         }
 
     private var cachedTime: Long = 0
-    private var cacheTtlMinutes: Long? = DEFAULT_TTL_MINUTES
+    private var cacheTtlMinutes: Long? = Duration.MIN_DEFAULT_TTL
 
     fun isStale(): Boolean {
         if (cachedTime == 0L) return true
 
         val expiryTime = if (cacheTtlMinutes != null) {
-            cachedTime + (cacheTtlMinutes!! * SECONDS_IN_MINUTE * MILLISECONDS_IN_SECOND)
+            cachedTime + (cacheTtlMinutes!! * Duration.SEC_60 * Duration.MSEC_1000)
         } else {
             Long.MAX_VALUE
         }

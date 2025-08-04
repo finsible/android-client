@@ -1,5 +1,6 @@
 package com.itsjeel01.finsiblefrontend.ui.screen
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.Crossfade
@@ -17,9 +18,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -30,12 +29,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -54,8 +51,14 @@ import com.itsjeel01.finsiblefrontend.ui.data.AuthState
 import com.itsjeel01.finsiblefrontend.ui.data.OnboardingData
 import com.itsjeel01.finsiblefrontend.ui.navigation.Routes
 import com.itsjeel01.finsiblefrontend.ui.theme.ColorKey
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.Size
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.height
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.paddingHorizontal
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.paddingVertical
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.width
 import com.itsjeel01.finsiblefrontend.ui.theme.getCustomColor
-import com.itsjeel01.finsiblefrontend.ui.util.Animations
+import com.itsjeel01.finsiblefrontend.ui.util.Animation
+import com.itsjeel01.finsiblefrontend.ui.util.Duration
 import com.itsjeel01.finsiblefrontend.ui.util.GoogleLoginUtil
 import com.itsjeel01.finsiblefrontend.ui.util.InAppNotificationManager
 import com.itsjeel01.finsiblefrontend.ui.util.InAppNotificationPosition
@@ -75,7 +78,6 @@ fun OnboardingScreen(navController: NavHostController) {
     val currentItem = onboardingViewModel.currentItem.collectAsState().value
     val authState = authViewModel.authState.collectAsState().value
     val context = LocalContext.current
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
     // --- Side Effects for Navigation ---
 
@@ -144,6 +146,7 @@ fun OnboardingScreen(navController: NavHostController) {
 
     // --- Main Scaffold Layout ---
 
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         contentWindowInsets = WindowInsets.systemBars,
@@ -153,13 +156,13 @@ fun OnboardingScreen(navController: NavHostController) {
                 modifier = Modifier
                     .fillMaxSize()
                     .background(gradient)
-                    .padding(horizontal = 32.dp, vertical = screenHeight * 0.1f),
+                    .paddingHorizontal(Size.S32)
+                    .paddingVertical(Size.S80),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Illustration(
                     currentItem = currentItem,
                     carouselItems = carouselItems,
-                    screenHeight = screenHeight
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 TextContent(
@@ -194,7 +197,7 @@ fun OnboardingScreen(navController: NavHostController) {
                         GoogleLoginUtil.login(context, authViewModel)
                     },
                     autoDismiss = true,
-                    autoDismissDelay = 2500,
+                    autoDismissDelay = Duration.MSEC_2500,
                     position = InAppNotificationPosition.TOP
                 )
             }
@@ -206,17 +209,16 @@ fun OnboardingScreen(navController: NavHostController) {
 private fun Illustration(
     currentItem: Int,
     carouselItems: List<OnboardingData>,
-    screenHeight: Dp,
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(screenHeight * 0.3f),
+            .height(Size.S200),
         contentAlignment = Alignment.TopCenter
     ) {
         Crossfade(
             targetState = currentItem,
-            animationSpec = Animations.fastOutSlowEasingSpec()
+            animationSpec = Animation.fastOutSlowEasingSpec()
         ) { index ->
             Image(
                 painter = painterResource(id = carouselItems[index].illustration),
@@ -240,8 +242,8 @@ private fun TextContent(
         AnimatedContent(
             targetState = currentItem,
             transitionSpec = {
-                (Animations.fadeInDelayed + Animations.scaleInDelayed)
-                    .togetherWith(Animations.fadeOutQuickly)
+                (Animation.fadeInDelayed + Animation.scaleInDelayed)
+                    .togetherWith(Animation.fadeOutQuickly)
                     .using(SizeTransform(clip = false))
             }
         ) { index ->
@@ -254,7 +256,7 @@ private fun TextContent(
             )
         }
 
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(Size.S24))
 
         Box(
             modifier = Modifier
@@ -264,7 +266,7 @@ private fun TextContent(
         ) {
             Crossfade(
                 targetState = currentItem,
-                animationSpec = Animations.fastOutSlowEasingSpec()
+                animationSpec = Animation.fastOutSlowEasingSpec()
             ) { index ->
                 Text(
                     carouselItems[index].description,
@@ -301,7 +303,7 @@ private fun NavigationButtons(
                 variant = if (currentItem == lastItem) ButtonVariant.WrapContent else ButtonVariant.FullWidth
             )
 
-            Spacer(Modifier.width(16.dp))
+            Spacer(Modifier.width(Size.S16))
         }
 
         BaseButton(

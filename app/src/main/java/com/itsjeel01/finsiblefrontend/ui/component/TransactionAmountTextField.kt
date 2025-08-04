@@ -13,7 +13,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.itsjeel01.finsiblefrontend.common.Constants
 import com.itsjeel01.finsiblefrontend.common.InputFieldSize
 import com.itsjeel01.finsiblefrontend.common.Strings
 import com.itsjeel01.finsiblefrontend.common.Utils
@@ -23,6 +22,7 @@ import com.itsjeel01.finsiblefrontend.ui.viewmodel.TransactionFormViewModel
 
 @Composable
 fun TransactionAmountTextField(modifier: Modifier) {
+    val maxTransactionAmount = 10000000.00
 
     // --- ViewModel and State Initialization ---
 
@@ -57,10 +57,10 @@ fun TransactionAmountTextField(modifier: Modifier) {
             input.matches(Regex(Strings.VALID_AMOUNT_PATTERN)) -> {
                 try {
                     val amount = input.toDouble()
-                    if (amount > Constants.MAX_TRANSACTION_AMOUNT) {
+                    if (amount > maxTransactionAmount) {
                         showError = true
                         errorMessage =
-                            "Exceeds ${Utils.formatNumber(Constants.MAX_TRANSACTION_AMOUNT.toDouble())}"
+                            "Exceeds $maxTransactionAmount"
                     } else {
                         inputText = input
                         viewModel.setTransactionAmount(amount)

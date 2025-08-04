@@ -8,10 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
@@ -33,12 +29,22 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import com.itsjeel01.finsiblefrontend.R
-import com.itsjeel01.finsiblefrontend.common.Constants
 import com.itsjeel01.finsiblefrontend.ui.theme.ColorKey
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.IconSize
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.Radius
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.Size
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.appDimensions
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.height
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.iconSize
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.paddingAll
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.paddingHorizontal
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.paddingVertical
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.roundedCornerShape
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.size
 import com.itsjeel01.finsiblefrontend.ui.theme.getCustomColor
-import com.itsjeel01.finsiblefrontend.ui.util.Animations
+import com.itsjeel01.finsiblefrontend.ui.util.Animation
+import com.itsjeel01.finsiblefrontend.ui.util.Duration
 import com.itsjeel01.finsiblefrontend.ui.util.InAppNotification
 import com.itsjeel01.finsiblefrontend.ui.util.InAppNotificationType
 import kotlinx.coroutines.delay
@@ -49,6 +55,7 @@ fun InAppNotificationView(
     isVisible: Boolean,
     onDismiss: () -> Unit
 ) {
+    val dims = appDimensions()
 
     // --- Auto Dismiss Logic ---
 
@@ -67,7 +74,7 @@ fun InAppNotificationView(
                     onDismiss()
                     break
                 }
-                delay(Constants.PROGRESS_BAR_UPDATE_INTERVAL)
+                delay(Duration.MSEC_8)
             }
         }
     }
@@ -76,24 +83,25 @@ fun InAppNotificationView(
 
     AnimatedVisibility(
         visible = isVisible,
-        enter = Animations.enterNotification(notification.position),
-        exit = Animations.exitNotification(notification.position)
+        enter = Animation.enterNotification(notification.position),
+        exit = Animation.exitNotification(notification.position)
     ) {
         Card(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
+            shape = dims.roundedCornerShape(Radius.LG),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.background
             ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+            elevation = CardDefaults.cardElevation(defaultElevation = dims.size(Size.S6))
         ) {
             Column {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                        .paddingHorizontal(Size.S16)
+                        .paddingVertical(Size.S8),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(dims.size(Size.S8))
                 ) {
                     // --- Icon (Custom or based on type) ---
 
@@ -120,13 +128,13 @@ fun InAppNotificationView(
 
                     IconButton(
                         onClick = onDismiss,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(Size.S24)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Close,
                             contentDescription = "Dismiss",
                             tint = MaterialTheme.colorScheme.outline,
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(Size.S16)
                         )
                     }
                 }
@@ -138,8 +146,13 @@ fun InAppNotificationView(
                         progress = { progress },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(3.dp)
-                            .clip(RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp)),
+                            .height(Size.S2)
+                            .clip(
+                                dims.roundedCornerShape(
+                                    bottomStart = Radius.LG,
+                                    bottomEnd = Radius.LG
+                                )
+                            ),
                         color = getContentColor(notification.type).copy(alpha = 0.8f),
                         trackColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
                     )
@@ -160,7 +173,7 @@ private fun NotificationIcon(
         ),
         contentDescription = null,
         tint = getContentColor(notification.type),
-        modifier = modifier.size(20.dp)
+        modifier = modifier.iconSize(IconSize.MD)
     )
 
 }
@@ -171,7 +184,7 @@ private fun NotificationContent(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.padding(horizontal = 8.dp),
+        modifier = modifier.paddingHorizontal(Size.S8),
     ) {
         // Title - Always rendered (mandatory)
         Text(
@@ -205,11 +218,11 @@ private fun ActionButton(label: String?, action: () -> Unit) {
                 )
                 .background(
                     MaterialTheme.colorScheme.onBackground,
-                    RoundedCornerShape(8.dp)
+                    appDimensions().roundedCornerShape(Radius.MD)
                 )
         ) {
             Text(
-                modifier = Modifier.padding(8.dp),
+                modifier = Modifier.paddingAll(Size.S8),
                 text = label,
                 color = MaterialTheme.colorScheme.background,
                 style = MaterialTheme.typography.labelMedium.copy(

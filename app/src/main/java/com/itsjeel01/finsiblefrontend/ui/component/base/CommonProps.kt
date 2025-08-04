@@ -1,13 +1,13 @@
 package com.itsjeel01.finsiblefrontend.ui.component.base
 
-import androidx.compose.foundation.layout.heightIn
+import android.annotation.SuppressLint
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import com.itsjeel01.finsiblefrontend.common.InputFieldSize
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.commonPropsModifier
 
 data class CommonProps(
     val modifier: Modifier = Modifier,
@@ -22,9 +22,9 @@ data class CommonProps(
     val accentColor: Color = Color.Unspecified,
     val size: InputFieldSize = InputFieldSize.Large,
 ) {
-    fun modifier() = modifier.heightIn(
-        min = if (size == InputFieldSize.Small) 48.dp else 56.dp
-    )
+    @SuppressLint("ModifierFactoryExtensionFunction")
+    @Composable
+    fun commonModifier() = modifier.commonPropsModifier(size)
 
     @Composable
     fun primaryTextStyle() = when (size) {

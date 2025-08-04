@@ -5,10 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -23,13 +19,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.itsjeel01.finsiblefrontend.common.Strings
 import com.itsjeel01.finsiblefrontend.common.Utils
 import com.itsjeel01.finsiblefrontend.data.local.entity.CategoryEntity
 import com.itsjeel01.finsiblefrontend.ui.component.base.BaseDropdownInput
 import com.itsjeel01.finsiblefrontend.ui.component.base.CommonProps
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.Radius
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.Size
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.appDimensions
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.roundedCornerShape
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.size
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.width
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.TransactionFormViewModel
 
 // --- TransactionCategoryDropdown Composable Function ---
@@ -102,7 +103,7 @@ private fun CategoryDropdownItem(
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         CategoryColorDot(color = Utils.getCategoryColor(category.color))
-        Spacer(modifier = Modifier.width(24.dp))
+        Spacer(modifier = Modifier.width(Size.S24))
         Text(text = category.name, style = commonProps.primaryTextStyle())
     }
 }
@@ -113,9 +114,9 @@ private fun CategoryColorDot(color: Color) {
         modifier = Modifier
             .background(
                 color = color,
-                shape = RoundedCornerShape(corner = CornerSize(100)),
+                shape = appDimensions().roundedCornerShape(Radius.FULL),
             )
-            .size(16.dp)
+            .size(Size.S16)
     )
 }
 
@@ -126,7 +127,7 @@ private fun CategoryDropdownFooter(
 ) {
     HorizontalDivider(
         modifier = Modifier.fillMaxWidth(),
-        thickness = 1.dp,
+        thickness = appDimensions().size(Size.S1),
         color = MaterialTheme.colorScheme.outlineVariant
     )
 

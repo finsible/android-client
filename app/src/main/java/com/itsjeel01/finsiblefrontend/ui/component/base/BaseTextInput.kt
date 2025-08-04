@@ -15,7 +15,7 @@ fun BaseTextInput(
     commonProps: CommonProps = CommonProps(),
 ) {
     TextField(
-        modifier = commonProps.modifier(),
+        modifier = commonProps.commonModifier(),
         value = value,
         label = commonProps.label(),
         onValueChange = onValueChange,

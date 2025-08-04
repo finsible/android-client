@@ -1,5 +1,6 @@
 package com.itsjeel01.finsiblefrontend.ui.screen
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -19,7 +20,7 @@ fun SettingsScreen(onLogout: () -> Unit) {
     val authViewModel: AuthViewModel = hiltViewModel()
     val coroutineScope = rememberCoroutineScope()
 
-    // logout button inside scaffold
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     Scaffold(modifier = Modifier.windowInsetsPadding(WindowInsets.systemBars)) { _ ->
         Button(
             onClick = {

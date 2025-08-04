@@ -1,6 +1,5 @@
 package com.itsjeel01.finsiblefrontend.ui.component
 
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -11,11 +10,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.itsjeel01.finsiblefrontend.ui.data.NavBarItem
 import com.itsjeel01.finsiblefrontend.ui.navigation.Routes
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.Size
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.size
 import com.itsjeel01.finsiblefrontend.ui.theme.finsibleNavigationBarItemColors
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.DashboardViewModel
 
@@ -43,7 +43,7 @@ fun NavigationBar(navController: NavHostController) {
                     if (!navigationItem.isNewTransactionForm)
                         Icon(
                             painter = painterResource(id = navigationItem.icon),
-                            modifier = Modifier.size(24.dp),
+                            modifier = Modifier.size(Size.S24),
                             contentDescription = navigationItem.label
                         )
                     else

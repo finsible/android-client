@@ -46,7 +46,7 @@ fun BaseDateInput(
 
     TextField(
         modifier = commonProps
-            .modifier()
+            .commonModifier()
             .pointerInput(date) {
                 awaitEachGesture {
                     awaitFirstDown(pass = PointerEventPass.Initial)

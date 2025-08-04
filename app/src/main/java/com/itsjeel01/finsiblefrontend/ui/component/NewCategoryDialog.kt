@@ -8,11 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
@@ -36,11 +32,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.itsjeel01.finsiblefrontend.common.Strings
 import com.itsjeel01.finsiblefrontend.ui.component.base.BaseTextInput
 import com.itsjeel01.finsiblefrontend.ui.component.base.CommonProps
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.Radius
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.Size
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.appDimensions
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.height
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.paddingTop
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.roundedCornerShape
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.size
 
 // --- NewCategoryDialog Composable Function ---
 
@@ -129,7 +131,7 @@ fun NewCategoryDialog(
             dismissOnBackPress = false
         ),
         containerColor = MaterialTheme.colorScheme.background,
-        shape = RoundedCornerShape(8.dp),
+        shape = appDimensions().roundedCornerShape(Radius.MD),
         onDismissRequest = onDismissRequest,
         confirmButton = confirmButton,
         dismissButton = dismissButton,
@@ -159,7 +161,7 @@ private fun FormContent(
             onColorSelected = onColorSelected
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(Size.S16))
 
         NameInput(
             name = name,
@@ -214,14 +216,14 @@ private fun ColorSelectionRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 4.dp),
+            .paddingTop(Size.S4),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         colors.forEach { color ->
             Box(
                 modifier = Modifier
-                    .size(24.dp)
+                    .size(Size.S24)
                     .clip(CircleShape)
                     .background(color)
                     .clickable { onColorSelected(color) },

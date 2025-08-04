@@ -2,6 +2,9 @@ package com.itsjeel01.finsiblefrontend.ui.util
 
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -11,7 +14,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 
 /** Utility class for common Compose animations. */
-class Animations {
+class Animation {
     companion object {
         val fadeInDelayed = fadeIn(tween(durationMillis = 300, delayMillis = 300))
 
@@ -47,6 +50,16 @@ class Animations {
         fun <T> springSpec() = spring<T>(
             dampingRatio = 0.5f,
             stiffness = 400f
+        )
+
+        fun <T> restartingInfiniteTween(duration: Int) = infiniteRepeatable<T>(
+            animation = tween(duration, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        )
+
+        fun <T> reversingInfiniteTween(duration: Int) = infiniteRepeatable<T>(
+            animation = tween(duration / 2, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
         )
     }
 }

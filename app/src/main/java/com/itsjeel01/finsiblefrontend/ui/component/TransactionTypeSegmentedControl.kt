@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,16 +14,22 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.itsjeel01.finsiblefrontend.common.TransactionType
 import com.itsjeel01.finsiblefrontend.common.Utils
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.BorderStroke
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.Radius
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.Size
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.appDimensions
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.borderWidth
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.paddingVertical
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.roundedCornerShape
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.size
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.TransactionFormViewModel
 
 @Composable
 fun TransactionTypeSegmentedControl(
     modifier: Modifier = Modifier,
-    screenWidth: Int,
 ) {
     val viewModel: TransactionFormViewModel = hiltViewModel()
     val types = TransactionType.entries.toTypedArray()
@@ -33,7 +37,7 @@ fun TransactionTypeSegmentedControl(
 
     Row(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy((0.025 * screenWidth).dp)
+        horizontalArrangement = Arrangement.spacedBy(appDimensions().size(Size.S12))
     ) {
         types.forEach { type ->
             SegmentItem(
@@ -53,6 +57,7 @@ private fun SegmentItem(
     onSelect: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val dims = appDimensions()
 
     // --- Styles Computation ---
 
@@ -76,9 +81,9 @@ private fun SegmentItem(
 
     val borderModifier = if (isSelected) {
         Modifier.border(
-            width = 1.dp,
+            width = dims.borderWidth(BorderStroke.MEDIUM),
             color = selectedColor,
-            shape = RoundedCornerShape(4.dp)
+            shape = dims.roundedCornerShape(Radius.SM)
         )
     } else {
         Modifier
@@ -92,9 +97,9 @@ private fun SegmentItem(
             .clickable(onClick = onSelect)
             .background(
                 color = backgroundColor,
-                shape = RoundedCornerShape(4.dp)
+                shape = dims.roundedCornerShape(Radius.SM)
             )
-            .padding(vertical = 8.dp),
+            .paddingVertical(Size.S8),
         contentAlignment = Alignment.Center
     ) {
         Text(

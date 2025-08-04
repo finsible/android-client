@@ -11,6 +11,7 @@ import com.itsjeel01.finsiblefrontend.ui.navigation.InAppNotificationHost
 import com.itsjeel01.finsiblefrontend.ui.navigation.Routes
 import com.itsjeel01.finsiblefrontend.ui.navigation.launchNavGraph
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleAppTheme
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.DimensionsProvider
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -23,11 +24,16 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
 
             FinsibleAppTheme {
-                InAppNotificationHost(
-                    inAppNotificationManager = hiltNotificationManager()
-                ) {
-                    NavHost(navController = navController, startDestination = Routes.LaunchScreen) {
-                        launchNavGraph(navController)
+                DimensionsProvider {
+                    InAppNotificationHost(
+                        inAppNotificationManager = hiltNotificationManager()
+                    ) {
+                        NavHost(
+                            navController = navController,
+                            startDestination = Routes.LaunchScreen
+                        ) {
+                            launchNavGraph(navController)
+                        }
                     }
                 }
             }

@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -36,6 +35,14 @@ import com.itsjeel01.finsiblefrontend.common.ButtonVariant
 import com.itsjeel01.finsiblefrontend.common.IconPosition
 import com.itsjeel01.finsiblefrontend.common.InputFieldSize
 import com.itsjeel01.finsiblefrontend.ui.theme.ColorKey
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.BorderStroke
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.Radius
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.Size
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.appDimensions
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.borderWidth
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.buttonPadding
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.cornerRadius
+import com.itsjeel01.finsiblefrontend.ui.theme.dime.spacing
 import com.itsjeel01.finsiblefrontend.ui.theme.getCustomColor
 
 /** Base composable for custom buttons with icon, style, and animation options.
@@ -65,6 +72,7 @@ fun BaseButton(
     pivotFractionY: Float = 0.5f,
     durationMillis: Int = 100,
 ) {
+    val dims = appDimensions()
 
     // --- Interaction and Animation Setup ---
 
@@ -78,10 +86,8 @@ fun BaseButton(
 
     // --- Button Properties ---
 
-    val buttonShape = RoundedCornerShape(2.dp)
+    val buttonShape = RoundedCornerShape(dims.cornerRadius(Radius.XS))
     val isSmall = commonProps.size == InputFieldSize.Small
-    val horizontalPadding = if (isSmall) 12.dp else 16.dp
-    val verticalPadding = if (isSmall) 12.dp else 16.dp
     val labelStyle = if (isSmall)
         MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
     else
@@ -100,9 +106,13 @@ fun BaseButton(
             .then(widthModifier)
             .addInteraction(commonProps.enabled, onClick, interactionSource)
             .applyScale(scale, pivotFractionX, pivotFractionY)
-            .border(width = 1.dp, color = buttonBorder, shape = buttonShape)
+            .border(
+                dims.borderWidth(BorderStroke.MEDIUM),
+                color = buttonBorder,
+                shape = buttonShape
+            )
             .background(color = buttonBackground, shape = buttonShape)
-            .padding(vertical = verticalPadding, horizontal = horizontalPadding),
+            .buttonPadding(commonProps.size),
         contentAlignment = Alignment.Center
     ) {
         ButtonContent(
@@ -186,7 +196,7 @@ private fun ButtonWithIconAtEdges(
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(appDimensions().spacing(Size.S8))
         ) {
             if (iconPosition == IconPosition.StartOfButton) iconComposable(modifier)
             labelComposable()
@@ -229,7 +239,7 @@ private fun ButtonWithIconAdjacentToLabel(
     Box(contentAlignment = Alignment.Center) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(appDimensions().spacing(Size.S8))
         ) {
             if (iconPosition == IconPosition.StartOfLabel) iconComposable(modifier)
             labelComposable()

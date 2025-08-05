@@ -1,4 +1,4 @@
-## API: Google Sign-In Success
+## API: Google Sign-In Error
 
 **Host:** `www.finsible.app`  
 **Path:** `/auth/googleSignIn`  

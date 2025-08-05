@@ -1,0 +1,27 @@
+## API: Google Sign-In Success
+
+**Host:** `www.finsible.app`  
+**Path:** `/auth/googleSignIn`  
+**Method:** `POST`  
+**Status:** `200 OK`
+
+### Response Body
+
+```json
+{
+  "message": "You are successfully logged in.",
+  "success": true,
+  "data": {
+    "isNewUser": true,
+    "userId": "100593673127133532461",
+    "email": "pateljeel123789@gmail.com",
+    "name": "Patel Jeel",
+    "picture": "https://lh3.googleusercontent.com/a-/ALV-UjVdM6CGAftnvEWofumC-j0HyOdhVQ7A3sDf2Cf8MvQcbwBg4npg=s96-c",
+    "accountCreated": "2025-03-03T23:42:10.984369",
+    "lastLoggedIn": "2025-03-03T23:42:10.984369",
+    "jwt": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDA1OTM2NzMxMjcxMzM1MzI0NjEiLCJpYXQiOjE3NDEwMjU1MzEsImV4cCI6MTc1NjU3NzUzMX0.7ZbfDjdb4t5AZCHnpHrCYSTYolI8CaTB9D6E6-r6mWU6UAE51WHzRwSEs-BjX0dIwrL1DyQ-Z1zDahETrdME7A"
+  },
+  "cache": false,
+  "cacheTtlMinutes": 10000
+}
+```

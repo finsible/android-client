@@ -22,6 +22,6 @@
     "jwt": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMDA1OTM2NzMxMjcxMzM1MzI0NjEiLCJpYXQiOjE3NDEwMjU1MzEsImV4cCI6MTc1NjU3NzUzMX0.7ZbfDjdb4t5AZCHnpHrCYSTYolI8CaTB9D6E6-r6mWU6UAE51WHzRwSEs-BjX0dIwrL1DyQ-Z1zDahETrdME7A"
   },
   "cache": false,
-  "cacheTtlMinutes": 10000
+  "cacheTtlMinutes": null
 }
 ```

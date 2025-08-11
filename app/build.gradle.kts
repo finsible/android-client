@@ -12,7 +12,7 @@ plugins {
 
 android {
     namespace = "com.itsjeel01.finsiblefrontend"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.itsjeel01.finsiblefrontend"

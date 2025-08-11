@@ -2,6 +2,7 @@ package com.itsjeel01.finsiblefrontend.data.local.entity
 
 import com.itsjeel01.finsiblefrontend.common.TransactionType
 import com.itsjeel01.finsiblefrontend.common.TransactionTypeConverter
+import com.itsjeel01.finsiblefrontend.ui.theme.ColorKey
 import io.objectbox.annotation.Convert
 import io.objectbox.annotation.Entity
 import io.objectbox.annotation.Id
@@ -16,5 +17,5 @@ data class CategoryEntity(
 
     var name: String = "",
 
-    var color: String = "#000000",
+    var color: String = ColorKey.GRAY.name,
 ) : BaseEntity()

@@ -1,9 +1,9 @@
 package com.itsjeel01.finsiblefrontend.data.local.entity
 
-import com.itsjeel01.finsiblefrontend.ui.util.Duration
+import com.itsjeel01.finsiblefrontend.ui.constants.Duration
 
 abstract class BaseEntity {
-
+    
     open var id: Long = 0
         set(value) {
             field = value
@@ -11,13 +11,13 @@ abstract class BaseEntity {
         }
 
     private var cachedTime: Long = 0
-    private var cacheTtlMinutes: Long? = Duration.MIN_DEFAULT_TTL
+    private var cacheTtlMinutes: Long? = Duration.DEFAULT_TTL_MINUTES
 
     fun isStale(): Boolean {
         if (cachedTime == 0L) return true
 
         val expiryTime = if (cacheTtlMinutes != null) {
-            cachedTime + (cacheTtlMinutes!! * Duration.SEC_60 * Duration.MSEC_1000)
+            cachedTime + (cacheTtlMinutes!! * Duration.MINUTE_AS_SECONDS * Duration.MS_1000)
         } else {
             Long.MAX_VALUE
         }

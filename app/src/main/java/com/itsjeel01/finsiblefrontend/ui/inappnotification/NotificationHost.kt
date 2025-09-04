@@ -1,16 +1,15 @@
-package com.itsjeel01.finsiblefrontend.ui.navigation
+package com.itsjeel01.finsiblefrontend.ui.inappnotification
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -18,35 +17,32 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.itsjeel01.finsiblefrontend.ui.component.base.InAppNotificationView
-import com.itsjeel01.finsiblefrontend.ui.util.InAppNotificationManager
-import com.itsjeel01.finsiblefrontend.ui.util.InAppNotificationPosition
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleNotification
+import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun InAppNotificationHost(
+fun NotificationHost(
     modifier: Modifier = Modifier,
-    inAppNotificationManager: InAppNotificationManager,
+    notificationManager: NotificationManager,
     content: @Composable () -> Unit
 ) {
-    val currentNotification by inAppNotificationManager.currentNotification.collectAsState()
+    val currentNotification by notificationManager.currentNotification.collectAsStateWithLifecycle()
     var isVisible by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(currentNotification) {
-        if (currentNotification != null) {
-            isVisible = true
-        }
+        if (currentNotification != null) isVisible = true
     }
 
     val handleDismiss = {
         isVisible = false
         coroutineScope.launch {
             delay(300)
-            inAppNotificationManager.dismiss()
+            notificationManager.dismiss()
         }
         Unit
     }
@@ -61,29 +57,16 @@ fun InAppNotificationHost(
             content()
 
             currentNotification?.let { notification ->
-                val isTop = notification.position == InAppNotificationPosition.TOP
-                val alignment = if (isTop) Alignment.TopCenter else Alignment.BottomCenter
-                val topPadding =
-                    if (isTop) WindowInsets.systemBars.asPaddingValues().calculateTopPadding()
-                    else 0.dp
-                val bottomPadding =
-                    if (!isTop) WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()
-                    else 0.dp
-
                 Box(
                     modifier = Modifier
-                        .align(alignment)
+                        .align(Alignment.TopCenter)
                         .fillMaxWidth()
-                        .padding(
-                            top = topPadding + 16.dp,
-                            bottom = bottomPadding + 16.dp,
-                            start = 16.dp,
-                            end = 16.dp
-                        ),
+                        .systemBarsPadding()
+                        .padding(FinsibleTheme.dimes.d16),
                     contentAlignment = Alignment.Center
                 ) {
-                    InAppNotificationView(
-                        notification = notification,
+                    FinsibleNotification(
+                        config = notification,
                         isVisible = isVisible,
                         onDismiss = handleDismiss
                     )

@@ -1,6 +1,8 @@
-package com.itsjeel01.finsiblefrontend.ui.util
+package com.itsjeel01.finsiblefrontend.ui.inappnotification
 
 import androidx.annotation.DrawableRes
+import com.itsjeel01.finsiblefrontend.ui.component.fin.NotificationConfig
+import com.itsjeel01.finsiblefrontend.ui.component.fin.NotificationType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -8,12 +10,13 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class InAppNotificationManager @Inject constructor() {
+class NotificationManager @Inject constructor() {
 
-    private val _currentNotification = MutableStateFlow<InAppNotification?>(null)
-    val currentNotification: StateFlow<InAppNotification?> = _currentNotification.asStateFlow()
+    private val _currentNotification = MutableStateFlow<NotificationConfig?>(null)
+    val currentNotification: StateFlow<NotificationConfig?> =
+        _currentNotification.asStateFlow()
 
-    fun show(notification: InAppNotification) {
+    fun show(notification: NotificationConfig) {
         _currentNotification.value = notification
     }
 
@@ -21,9 +24,8 @@ class InAppNotificationManager @Inject constructor() {
         _currentNotification.value = null
     }
 
-    fun hasActiveNotification(): Boolean = _currentNotification.value != null
+    fun isNotificationActive(): Boolean = _currentNotification.value != null
 
-    /** Shows a success notification with sensible defaults. */
     fun showSuccess(
         title: String,
         subtitle: String? = null,
@@ -31,25 +33,22 @@ class InAppNotificationManager @Inject constructor() {
         autoDismiss: Boolean = false,
         actionLabel: String? = null,
         onAction: (() -> Unit)? = null,
-        position: InAppNotificationPosition = InAppNotificationPosition.TOP,
         autoDismissDelay: Long = 5000L
     ) {
         show(
-            InAppNotification(
+            NotificationConfig(
                 title = title,
                 subtitle = subtitle,
-                type = InAppNotificationType.SUCCESS,
+                type = NotificationType.SUCCESS,
                 customIcon = customIcon,
                 autoDismiss = autoDismiss,
                 actionLabel = actionLabel,
                 onAction = onAction,
-                position = position,
                 autoDismissDelay = autoDismissDelay
             )
         )
     }
 
-    /** Shows an error notification with sensible defaults. */
     fun showError(
         title: String,
         subtitle: String? = null,
@@ -57,25 +56,22 @@ class InAppNotificationManager @Inject constructor() {
         autoDismiss: Boolean = false,
         actionLabel: String? = null,
         onAction: (() -> Unit)? = null,
-        position: InAppNotificationPosition = InAppNotificationPosition.TOP,
         autoDismissDelay: Long = 5000L
     ) {
         show(
-            InAppNotification(
+            NotificationConfig(
                 title = title,
                 subtitle = subtitle,
-                type = InAppNotificationType.ERROR,
+                type = NotificationType.ERROR,
                 customIcon = customIcon,
                 autoDismiss = autoDismiss,
                 actionLabel = actionLabel,
                 onAction = onAction,
-                position = position,
                 autoDismissDelay = autoDismissDelay
             )
         )
     }
 
-    /** Shows a warning notification with sensible defaults. */
     fun showWarning(
         title: String,
         subtitle: String? = null,
@@ -83,25 +79,22 @@ class InAppNotificationManager @Inject constructor() {
         autoDismiss: Boolean = false,
         actionLabel: String? = null,
         onAction: (() -> Unit)? = null,
-        position: InAppNotificationPosition = InAppNotificationPosition.TOP,
         autoDismissDelay: Long = 5000L
     ) {
         show(
-            InAppNotification(
+            NotificationConfig(
                 title = title,
                 subtitle = subtitle,
-                type = InAppNotificationType.WARNING,
+                type = NotificationType.WARNING,
                 customIcon = customIcon,
                 autoDismiss = autoDismiss,
                 actionLabel = actionLabel,
                 onAction = onAction,
-                position = position,
                 autoDismissDelay = autoDismissDelay
             )
         )
     }
 
-    /** Shows an info notification with sensible defaults. */
     fun showInfo(
         title: String,
         subtitle: String? = null,
@@ -109,19 +102,17 @@ class InAppNotificationManager @Inject constructor() {
         autoDismiss: Boolean = false,
         actionLabel: String? = null,
         onAction: (() -> Unit)? = null,
-        position: InAppNotificationPosition = InAppNotificationPosition.TOP,
         autoDismissDelay: Long = 5000L
     ) {
         show(
-            InAppNotification(
+            NotificationConfig(
                 title = title,
                 subtitle = subtitle,
-                type = InAppNotificationType.INFO,
+                type = NotificationType.INFO,
                 customIcon = customIcon,
                 autoDismiss = autoDismiss,
                 actionLabel = actionLabel,
                 onAction = onAction,
-                position = position,
                 autoDismissDelay = autoDismissDelay
             )
         )

@@ -1,12 +1,10 @@
-package com.itsjeel01.finsiblefrontend.ui.data
-
-import com.itsjeel01.finsiblefrontend.common.Strings
+package com.itsjeel01.finsiblefrontend.ui.model
 
 sealed class AuthState {
     data object Loading : AuthState()
 
     data class Negative(
-        val message: String = Strings.AUTH_FAILED_GENERIC_MESSAGE,
+        val message: String = "You are not logged in.",
         val isFailed: Boolean = false
     ) : AuthState()
 

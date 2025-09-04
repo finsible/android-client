@@ -6,18 +6,19 @@ import okhttp3.Response
 
 /** Interceptor that adds JWT Authorization header to requests except for auth endpoints. */
 class AuthInterceptor(private val preferenceManager: PreferenceManager) : Interceptor {
+
     override fun intercept(chain: Interceptor.Chain): Response {
-        val originalRequest = chain.request()
+        val request = chain.request()
         val token = preferenceManager.getJwt()
 
-        if (originalRequest.url().encodedPath().contains("auth")) {
-            return chain.proceed(originalRequest)
+        if (request.url().encodedPath().contains("auth")) {
+            return chain.proceed(request)
         }
 
-        val modifiedRequest = originalRequest.newBuilder()
+        val authorizedRequest = request.newBuilder()
             .header("Authorization", "Bearer $token")
             .build()
 
-        return chain.proceed(modifiedRequest)
+        return chain.proceed(authorizedRequest)
     }
 }

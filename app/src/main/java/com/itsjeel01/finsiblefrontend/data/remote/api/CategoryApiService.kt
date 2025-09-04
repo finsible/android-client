@@ -10,7 +10,6 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Query
 
-/** Service interface for managing categories in the application. Provides methods to get, add, remove, and rename categories. */
 interface CategoryApiService {
     @GET("categories")
     suspend fun getCategories(

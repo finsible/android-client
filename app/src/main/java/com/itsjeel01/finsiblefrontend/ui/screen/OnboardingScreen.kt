@@ -4,8 +4,17 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -14,211 +23,295 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.itsjeel01.finsiblefrontend.R
-import com.itsjeel01.finsiblefrontend.common.ButtonStyle
-import com.itsjeel01.finsiblefrontend.common.ButtonVariant
-import com.itsjeel01.finsiblefrontend.common.IconPosition
-import com.itsjeel01.finsiblefrontend.common.InputFieldSize
-import com.itsjeel01.finsiblefrontend.common.Strings
+import com.itsjeel01.finsiblefrontend.data.di.hiltLoadingManager
 import com.itsjeel01.finsiblefrontend.data.di.hiltNotificationManager
-import com.itsjeel01.finsiblefrontend.ui.component.base.BaseButton
-import com.itsjeel01.finsiblefrontend.ui.component.base.BaseCarouselIndicators
-import com.itsjeel01.finsiblefrontend.ui.component.base.CommonProps
-import com.itsjeel01.finsiblefrontend.ui.component.base.FullScreenLoadingIndicator
-import com.itsjeel01.finsiblefrontend.ui.data.AuthState
-import com.itsjeel01.finsiblefrontend.ui.data.OnboardingData
-import com.itsjeel01.finsiblefrontend.ui.navigation.Routes
-import com.itsjeel01.finsiblefrontend.ui.theme.ColorKey
-import com.itsjeel01.finsiblefrontend.ui.theme.dime.Size
-import com.itsjeel01.finsiblefrontend.ui.theme.dime.height
-import com.itsjeel01.finsiblefrontend.ui.theme.dime.paddingHorizontal
-import com.itsjeel01.finsiblefrontend.ui.theme.dime.paddingVertical
-import com.itsjeel01.finsiblefrontend.ui.theme.dime.width
-import com.itsjeel01.finsiblefrontend.ui.theme.getCustomColor
-import com.itsjeel01.finsiblefrontend.ui.util.Animation
-import com.itsjeel01.finsiblefrontend.ui.util.Duration
-import com.itsjeel01.finsiblefrontend.ui.util.GoogleLoginUtil
-import com.itsjeel01.finsiblefrontend.ui.util.InAppNotificationManager
-import com.itsjeel01.finsiblefrontend.ui.util.InAppNotificationPosition
+import com.itsjeel01.finsiblefrontend.ui.component.fin.ButtonConfig
+import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentSize
+import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentType
+import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleButton
+import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsiblePageIndicators
+import com.itsjeel01.finsiblefrontend.ui.component.fin.IconPosition
+import com.itsjeel01.finsiblefrontend.ui.constants.Duration
+import com.itsjeel01.finsiblefrontend.ui.model.AuthState
+import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.AuthViewModel
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.OnboardingViewModel
 
+private const val TAG = "OnboardingScreen"
+
 @Composable
-fun OnboardingScreen(navController: NavHostController) {
-
-    // --- ViewModel and State Initialization ---
-
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+fun OnboardingScreen(navigateToDashboard: () -> Unit) {
     val onboardingViewModel: OnboardingViewModel = hiltViewModel()
     val authViewModel: AuthViewModel = hiltViewModel()
-    val inAppNotificationManager: InAppNotificationManager = hiltNotificationManager()
-
-    val carouselItems = OnboardingData().get()
-    val currentItem = onboardingViewModel.currentItem.collectAsState().value
-    val authState = authViewModel.authState.collectAsState().value
+    val inAppNotificationManager = hiltNotificationManager()
+    val loadingManager = hiltLoadingManager()
     val context = LocalContext.current
 
-    // --- Side Effects for Navigation ---
+    val carouselItems = remember { OnboardingViewModel.CarouselItems().get() }
+    val currentItem by onboardingViewModel.currentCarouselItem.collectAsStateWithLifecycle()
+    val authState by authViewModel.authState.collectAsStateWithLifecycle()
 
     LaunchedEffect(authState) {
+        loadingManager.hide()
+
         when (authState) {
             is AuthState.Positive -> {
-                navController.navigate(Routes.DashboardScreen)
+                Log.d(TAG, "AuthState = Positive; navigating to dashboard")
+                navigateToDashboard()
             }
 
             is AuthState.Loading -> {
-                Log.d(Strings.ONBOARDING_SCREEN, "Loading...")
+                Log.d(TAG, "AuthState = Loading")
+                loadingManager.show("Please wait...")
             }
 
             is AuthState.Negative -> {
-                if (authState.isFailed) Log.d(
-                    Strings.ONBOARDING_SCREEN,
-                    "Auth status: ${authState.message}"
-                )
+                val authState = authState as AuthState.Negative
+
+                if (authState.isFailed) {
+                    Log.d(TAG, "Auth status: ${authState.message}")
+
+                    inAppNotificationManager.showError(
+                        title = "Authentication failed",
+                        subtitle = authState.message,
+                        autoDismiss = true,
+                        autoDismissDelay = Duration.MS_3000,
+                    )
+                }
             }
         }
     }
 
-    // --- UI Components ---
-
-    val gradient = Brush.linearGradient(
-        listOf(
-            getCustomColor(ColorKey.OnboardingGradientPrimaryColor),
-            getCustomColor(ColorKey.OnboardingGradientSecondaryColor),
-            getCustomColor(ColorKey.OnboardingGradientPrimaryColor)
-        ),
-    )
-
-    val (primaryButtonLabel, primaryButtonIcon, primaryButtonIconPosition) = when {
-        currentItem == 0 -> Triple(
-            Strings.GET_STARTED,
-            R.drawable.ic_right_arrow_dotted,
-            IconPosition.EndOfButton
-        )
-
-        onboardingViewModel.isLastItem() -> Triple(
-            Strings.SIGN_IN_WITH_GOOGLE,
-            R.drawable.ic_google,
-            IconPosition.StartOfLabel,
-        )
-
-        else -> Triple(
-            Strings.NEXT,
-            null,
-            IconPosition.EndOfLabel,
-        )
-    }
-
-    // --- Navigation Functions ---
-
-    fun onPrimaryButtonClick() {
-        if (!onboardingViewModel.isLastItem())
-            onboardingViewModel.nextItem()
-        else {
-            GoogleLoginUtil.login(context, authViewModel)
-        }
-    }
-
-    fun onSecondaryButtonClick() {
-        onboardingViewModel.previousItem()
-    }
-
-    // --- Main Scaffold Layout ---
-
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         contentWindowInsets = WindowInsets.systemBars,
-    ) { _ ->
+    ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(gradient)
-                    .paddingHorizontal(Size.S32)
-                    .paddingVertical(Size.S80),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Illustration(
-                    currentItem = currentItem,
-                    carouselItems = carouselItems,
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                TextContent(
-                    currentItem = currentItem,
-                    carouselItems = carouselItems
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                BaseCarouselIndicators(currentItem, carouselItems.size)
-                Spacer(modifier = Modifier.weight(1f))
-                NavigationButtons(
-                    currentItem = currentItem,
-                    lastItem = carouselItems.lastIndex,
-                    primaryButtonLabel = primaryButtonLabel,
-                    iconDrawable = primaryButtonIcon,
-                    tintedIcon = !onboardingViewModel.isLastItem(),
-                    iconPosition = primaryButtonIconPosition,
-                    onSecondaryButtonClick = { onSecondaryButtonClick() },
-                    onPrimaryButtonClick = { onPrimaryButtonClick() }
-                )
-            }
+            OnboardingBackground()
 
-            if (authState is AuthState.Loading) {
-                FullScreenLoadingIndicator()
-            }
-
-            if (authState is AuthState.Negative && authState.isFailed) {
-                inAppNotificationManager.showError(
-                    title = "Authentication Unsuccessful",
-                    subtitle = authState.message,
-                    actionLabel = "Retry",
-                    onAction = {
-                        GoogleLoginUtil.login(context, authViewModel)
-                    },
-                    autoDismiss = true,
-                    autoDismissDelay = Duration.MSEC_2500,
-                    position = InAppNotificationPosition.TOP
-                )
-            }
+            OnboardingContent(
+                currentItem = currentItem,
+                carouselItems = carouselItems,
+                isLastItem = onboardingViewModel::isLastCarouselItem,
+                onNextItem = onboardingViewModel::nextCarouselItem,
+                onPreviousItem = onboardingViewModel::previousCarouselItem,
+                onSkip = onboardingViewModel::skipToLastCarouselItem,
+                onGoogleLogin = { authViewModel.signInWithGoogle(context) }
+            )
         }
     }
 }
 
 @Composable
-private fun Illustration(
-    currentItem: Int,
-    carouselItems: List<OnboardingData>,
-) {
+private fun OnboardingBackground() {
+
+    // Vertical gradient
     Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(Size.S200),
-        contentAlignment = Alignment.TopCenter
+            .fillMaxSize()
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        FinsibleTheme.colors.brandAccent40,
+                        FinsibleTheme.colors.brandAccent20,
+                        FinsibleTheme.colors.brandAccent10,
+                        FinsibleTheme.colors.same,
+                        FinsibleTheme.colors.same,
+                    ),
+                    startY = 0f,
+                    endY = Float.POSITIVE_INFINITY,
+                    tileMode = TileMode.Clamp
+                )
+            )
+    )
+
+    // TopLeft radial gradient
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                brush = Brush.radialGradient(
+                    colors = listOf(
+                        FinsibleTheme.colors.brandAccent50,
+                        FinsibleTheme.colors.transparent
+                    ),
+                    center = Offset(0f, 0f),
+                    radius = FinsibleTheme.dimes.d800.value,
+                    tileMode = TileMode.Clamp
+                )
+            )
+    )
+
+    // TopRight radial gradient
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                brush = Brush.radialGradient(
+                    colors = listOf(
+                        FinsibleTheme.colors.brandAccent20,
+                        FinsibleTheme.colors.transparent,
+                    ),
+                    center = Offset(Float.POSITIVE_INFINITY, 0f),
+                    radius = FinsibleTheme.dimes.d800.value,
+                    tileMode = TileMode.Clamp
+                )
+            )
+    )
+
+    // Noise overlay
+    val noise = ImageBitmap.imageResource(R.drawable.noise)
+    Canvas(modifier = Modifier.fillMaxSize()) {
+        drawImage(
+            image = noise,
+            dstSize = IntSize(size.width.toInt(), size.height.toInt()),
+            alpha = 0.25f,
+        )
+    }
+}
+
+@Composable
+private fun OnboardingContent(
+    currentItem: Int,
+    carouselItems: List<OnboardingViewModel.CarouselItems>,
+    isLastItem: () -> Boolean,
+    onNextItem: () -> Unit,
+    onPreviousItem: () -> Unit,
+    onSkip: () -> Unit = {},
+    onGoogleLogin: () -> Unit
+) {
+
+    val illustrationWeight = 0.7f
+    val spacerBelowIllustrationWeight = 0.2f
+    val spacerBelowIndicatorsWeight = 0.2f
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .systemBarsPadding()
+            .padding(
+                horizontal = FinsibleTheme.dimes.d24,
+                vertical = FinsibleTheme.dimes.d12
+            ),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        OnboardingHeader(onSkip, isLastItem())
+
+        Spacer(Modifier.height(FinsibleTheme.dimes.d32))
+
+        OnboardingIllustration(
+            modifier = Modifier
+                .weight(illustrationWeight)
+                .padding(horizontal = FinsibleTheme.dimes.d8),
+            currentItem = currentItem,
+            carouselItems = carouselItems
+        )
+
+        Spacer(Modifier.weight(spacerBelowIllustrationWeight))
+
+        OnboardingTextContent(
+            currentItem = currentItem,
+            carouselItems = carouselItems
+        )
+
+        Spacer(Modifier.height(FinsibleTheme.dimes.d32))
+
+        FinsiblePageIndicators(
+            Modifier.align(Alignment.CenterHorizontally),
+            currentItem,
+            carouselItems.size
+        )
+
+        Spacer(Modifier.weight(spacerBelowIndicatorsWeight))
+
+        OnboardingNavigationButtons(
+            currentItem = currentItem,
+            isLastItem = isLastItem,
+            onSecondaryButtonClick = onPreviousItem,
+            onPrimaryButtonClick = if (isLastItem()) onGoogleLogin else onNextItem
+        )
+    }
+}
+
+@Composable
+private fun OnboardingHeader(onSkip: () -> Unit = {}, isLastItem: Boolean) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // --- Finsible Logo ---
+
+        Image(
+            painter = painterResource(id = R.drawable.ic_logo),
+            contentDescription = "Finsible Logo",
+            modifier = Modifier.height(FinsibleTheme.dimes.d64),
+            contentScale = ContentScale.Fit
+        )
+
+        // --- Skip Button ---
+
+        if (!isLastItem) {
+            FinsibleButton(
+                "Skip",
+                onClick = onSkip,
+                config = ButtonConfig(
+                    size = ComponentSize.Small,
+                    type = ComponentType.Tertiary,
+                    fullWidth = false
+                )
+            )
+        }
+    }
+}
+
+@Composable
+private fun OnboardingIllustration(
+    modifier: Modifier = Modifier,
+    currentItem: Int,
+    carouselItems: List<OnboardingViewModel.CarouselItems>
+) {
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
     ) {
         Crossfade(
             targetState = currentItem,
-            animationSpec = Animation.fastOutSlowEasingSpec()
+            animationSpec = tween(
+                durationMillis = Duration.MS_350.toInt(),
+                easing = FastOutSlowInEasing
+            )
         ) { index ->
             Image(
                 painter = painterResource(id = carouselItems[index].illustration),
@@ -231,95 +324,163 @@ private fun Illustration(
 }
 
 @Composable
-private fun TextContent(
+private fun OnboardingTextContent(
+    modifier: Modifier = Modifier,
     currentItem: Int,
-    carouselItems: List<OnboardingData>,
+    carouselItems: List<OnboardingViewModel.CarouselItems>
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.Top
     ) {
         AnimatedContent(
             targetState = currentItem,
             transitionSpec = {
-                (Animation.fadeInDelayed + Animation.scaleInDelayed)
-                    .togetherWith(Animation.fadeOutQuickly)
-                    .using(SizeTransform(clip = false))
+                fadeIn(
+                    animationSpec = tween(
+                        durationMillis = Duration.MS_250.toInt(),
+                        delayMillis = Duration.MS_100.toInt(),
+                        easing = LinearOutSlowInEasing
+                    )
+                ) + slideInVertically(
+                    animationSpec = tween(
+                        durationMillis = Duration.MS_250.toInt(),
+                        delayMillis = Duration.MS_100.toInt(),
+                        easing = LinearOutSlowInEasing
+                    ),
+                    initialOffsetY = { it / 3 }
+                ) togetherWith fadeOut(
+                    animationSpec = tween(
+                        durationMillis = Duration.MS_150.toInt(),
+                        easing = FastOutLinearInEasing
+                    )
+                ) + slideOutVertically(
+                    animationSpec = tween(
+                        durationMillis = Duration.MS_150.toInt(),
+                        easing = FastOutLinearInEasing
+                    ),
+                    targetOffsetY = { -it / 4 }
+                )
             }
         ) { index ->
             Text(
                 carouselItems[index].headline,
-                style = MaterialTheme.typography.displayLarge.copy(
-                    fontWeight = FontWeight.Bold
-                ),
-                textAlign = TextAlign.Center,
+                style = FinsibleTheme.typography.displayLarge.copy(fontWeight = FontWeight.Bold),
+                textAlign = TextAlign.Start,
             )
         }
 
-        Spacer(Modifier.height(Size.S24))
+        Spacer(Modifier.height(FinsibleTheme.dimes.d12))
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height((4 * MaterialTheme.typography.bodyLarge.lineHeight.value).dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Crossfade(
-                targetState = currentItem,
-                animationSpec = Animation.fastOutSlowEasingSpec()
-            ) { index ->
-                Text(
-                    carouselItems[index].description,
-                    modifier = Modifier.fillMaxHeight(),
-                    style = MaterialTheme.typography.bodyLarge,
-                    textAlign = TextAlign.Center,
+        AnimatedContent(
+            targetState = currentItem,
+            transitionSpec = {
+                fadeIn(
+                    animationSpec = tween(
+                        durationMillis = Duration.MS_200.toInt(),
+                        delayMillis = Duration.MS_200.toInt(),
+                        easing = LinearOutSlowInEasing
+                    )
+                ) + slideInVertically(
+                    animationSpec = tween(
+                        durationMillis = Duration.MS_200.toInt(),
+                        delayMillis = Duration.MS_200.toInt(),
+                        easing = LinearOutSlowInEasing
+                    ),
+                    initialOffsetY = { it / 4 }
+                ) togetherWith fadeOut(
+                    animationSpec = tween(
+                        durationMillis = 100,
+                        easing = LinearEasing
+                    )
                 )
             }
+        ) { index ->
+            Text(
+                carouselItems[index].description,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = FinsibleTheme.dimes.d2)
+                    .height((FinsibleTheme.typography.bodyLarge.lineHeight.value.times(3)).dp),
+                style = FinsibleTheme.typography.bodyLarge,
+                color = FinsibleTheme.colors.secondaryContent,
+                textAlign = TextAlign.Start,
+            )
         }
     }
 }
 
 @Composable
-private fun NavigationButtons(
+private fun OnboardingNavigationButtons(
     currentItem: Int,
-    lastItem: Int,
-    primaryButtonLabel: String,
-    iconDrawable: Int?,
-    tintedIcon: Boolean = true,
-    iconPosition: IconPosition,
+    isLastItem: () -> Boolean,
     onSecondaryButtonClick: () -> Unit,
-    onPrimaryButtonClick: () -> Unit,
+    onPrimaryButtonClick: () -> Unit
 ) {
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-        if (currentItem > 0 && currentItem <= lastItem) {
-            BaseButton(
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d24)
+    ) {
+        if (currentItem > 0 && !isLastItem()) {
+            FinsibleButton(
+                text = "Back",
                 onClick = onSecondaryButtonClick,
-                commonProps = CommonProps(
-                    modifier = if (currentItem == lastItem) Modifier else Modifier.weight(1f),
-                    label = Strings.BACK,
-                    size = InputFieldSize.Large
-                ),
-                style = ButtonStyle.Secondary,
-                variant = if (currentItem == lastItem) ButtonVariant.WrapContent else ButtonVariant.FullWidth
+                modifier = Modifier.weight(1f),
+                config = ButtonConfig(
+                    size = ComponentSize.Medium,
+                    type = ComponentType.Secondary,
+                    fullWidth = true
+                )
             )
-
-            Spacer(Modifier.width(Size.S16))
         }
 
-        BaseButton(
-            onClick = onPrimaryButtonClick,
-            commonProps = CommonProps(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                label = primaryButtonLabel,
-                size = InputFieldSize.Large
-            ),
-            style = ButtonStyle.Primary,
-            variant = ButtonVariant.FullWidth,
-            icon = iconDrawable,
-            tintedIcon = tintedIcon,
-            iconPosition = iconPosition
-        )
+        val label = if (currentItem == 0) "Get started"
+        else if (isLastItem()) "Continue with Google"
+        else "Next"
+
+        val icon = if (isLastItem()) R.drawable.ic_google
+        else if (currentItem == 0) R.drawable.ic_right_arrow_dotted
+        else null
+
+        val iconPosition = if (isLastItem()) IconPosition.BeforeLabel else IconPosition.Trailing
+
+        val type = if (currentItem == 0) ComponentType.Brand else ComponentType.Primary
+
+        Column(
+            Modifier
+                .wrapContentHeight()
+                .weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            FinsibleButton(
+                text = label,
+                onClick = onPrimaryButtonClick,
+                config = ButtonConfig(
+                    size = ComponentSize.Medium,
+                    icon = icon,
+                    iconPosition = iconPosition,
+                    type = type,
+                    fullWidth = true,
+                    tintIcon = !isLastItem()
+                )
+            )
+            Spacer(Modifier.height(FinsibleTheme.dimes.d8))
+
+            if (isLastItem()) {
+                FinsibleButton(
+                    modifier = Modifier.padding(vertical = FinsibleTheme.dimes.d8),
+                    text = "Go back",
+                    onClick = onSecondaryButtonClick,
+                    config = ButtonConfig(
+                        size = ComponentSize.Small,
+                        type = ComponentType.Tertiary,
+                        fullWidth = false
+                    )
+                )
+            } else {
+                Spacer(Modifier.height(FinsibleTheme.dimes.d48))
+            }
+        }
     }
 }

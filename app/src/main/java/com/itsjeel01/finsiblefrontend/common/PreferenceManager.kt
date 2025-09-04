@@ -9,13 +9,22 @@ import com.itsjeel01.finsiblefrontend.data.remote.model.AuthData
 import javax.inject.Inject
 
 class PreferenceManager @Inject constructor(context: Context) {
+    companion object {
+        private const val JWT = "jwt"
+        private const val IS_LOGGED_IN = "is_logged_in"
+        private const val USER_ID = "user_id"
+        private const val EMAIL = "email"
+        private const val NAME = "name"
+        private const val PREFS_FILE_NAME = "secret_shared_prefs"
+    }
+
     private var masterKey: MasterKey = MasterKey.Builder(context)
         .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
         .build()
 
     private var sharedPreferences: SharedPreferences = EncryptedSharedPreferences.create(
         context,
-        Strings.PREFS_FILE_NAME,
+        PREFS_FILE_NAME,
         masterKey,
         EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
         EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
@@ -24,28 +33,28 @@ class PreferenceManager @Inject constructor(context: Context) {
     /** Saves authentication data to encrypted shared preferences. */
     fun saveAuthData(authResponse: AuthData) {
         sharedPreferences.edit {
-            putString(Strings.JWT, authResponse.jwt)
-            putBoolean(Strings.IS_LOGGED_IN, true)
-            putString(Strings.USER_ID, authResponse.userId)
-            putString(Strings.EMAIL, authResponse.email)
-            putString(Strings.NAME, authResponse.name)
+            putString(JWT, authResponse.jwt)
+            putBoolean(IS_LOGGED_IN, true)
+            putString(USER_ID, authResponse.userId)
+            putString(EMAIL, authResponse.email)
+            putString(NAME, authResponse.name)
         }
     }
 
     /** Clears authentication data from encrypted shared preferences. */
     fun clearAuthData() {
         sharedPreferences.edit {
-            remove(Strings.JWT)
-            putBoolean(Strings.IS_LOGGED_IN, false)
-            remove(Strings.USER_ID)
-            remove(Strings.EMAIL)
-            remove(Strings.NAME)
+            remove(JWT)
+            putBoolean(IS_LOGGED_IN, false)
+            remove(USER_ID)
+            remove(EMAIL)
+            remove(NAME)
         }
     }
 
-    fun isLoggedIn(): Boolean = sharedPreferences.getBoolean(Strings.IS_LOGGED_IN, false)
-    fun getJwt(): String? = sharedPreferences.getString(Strings.JWT, null)
-    fun getUserId(): String? = sharedPreferences.getString(Strings.USER_ID, null)
-    fun getEmail(): String? = sharedPreferences.getString(Strings.EMAIL, null)
-    fun getName(): String? = sharedPreferences.getString(Strings.NAME, null)
+    fun isLoggedIn(): Boolean = sharedPreferences.getBoolean(IS_LOGGED_IN, false)
+    fun getJwt(): String? = sharedPreferences.getString(JWT, null)
+    fun getUserId(): String? = sharedPreferences.getString(USER_ID, null)
+    fun getEmail(): String? = sharedPreferences.getString(EMAIL, null)
+    fun getName(): String? = sharedPreferences.getString(NAME, null)
 }

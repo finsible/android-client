@@ -3,28 +3,13 @@ package com.itsjeel01.finsiblefrontend.ui.navigation
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class Routes {
+sealed class AppRoutes {
     @Serializable
-    data object OnboardingScreen : Routes()
+    data object Onboarding : AppRoutes()
 
     @Serializable
-    data object DashboardScreen : Routes()
+    data object Dashboard : AppRoutes()
 
     @Serializable
-    data object LaunchScreen : Routes()
-
-    @Serializable
-    data object HomeScreen : Routes()
-
-    @Serializable
-    data object InsightsScreen : Routes()
-
-    @Serializable
-    data object BalanceScreen : Routes()
-
-    @Serializable
-    data object SettingsScreen : Routes()
-
-    @Serializable
-    data object FormScreen : Routes()
+    data object Launch : AppRoutes()
 }

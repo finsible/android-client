@@ -9,14 +9,14 @@ import javax.inject.Singleton
 
 @Singleton
 class CacheManager @Inject constructor(
-    private val categoryLocalRepository: CategoryLocalRepository
+    private val categoryLocalRepo: CategoryLocalRepository
 ) {
     fun cacheData(response: BaseResponse<*>) {
         if (!response.success || response.data == null || !response.cache) return
 
         when (val data = response.data) {
             is CategoriesData -> {
-                categoryLocalRepository.addAll(
+                categoryLocalRepo.addAll(
                     data.categories,
                     additionalInfo = TransactionType.valueOf(data.type),
                     ttlMinutes = response.cacheTtlMinutes

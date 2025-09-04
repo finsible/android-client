@@ -6,7 +6,7 @@ import retrofit2.Converter
 /** Generic response converter that applies custom processing after deserialization. */
 class ResponseConverter<T>(
     private val delegate: Converter<ResponseBody, T>,
-    private val processor: ResponseProcessor?
+    private val processor: ResponseHandler?
 ) : Converter<ResponseBody, T> {
 
     override fun convert(value: ResponseBody): T? {

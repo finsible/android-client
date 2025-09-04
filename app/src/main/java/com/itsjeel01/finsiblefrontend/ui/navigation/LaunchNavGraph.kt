@@ -7,17 +7,40 @@ import com.itsjeel01.finsiblefrontend.ui.screen.DashboardScreen
 import com.itsjeel01.finsiblefrontend.ui.screen.LaunchScreen
 import com.itsjeel01.finsiblefrontend.ui.screen.OnboardingScreen
 
-fun NavGraphBuilder.launchNavGraph(navHostController: NavHostController) {
+fun NavGraphBuilder.appNavGraph(navHostController: NavHostController) {
 
-    composable<Routes.LaunchScreen> {
-        LaunchScreen(navHostController)
+    composable<AppRoutes.Launch> {
+        LaunchScreen(
+            navigateToOnboarding = {
+                navHostController.navigate(AppRoutes.Onboarding) {
+                    popUpTo<AppRoutes.Launch> { inclusive = true }
+                }
+            },
+            navigateToDashboard = {
+                navHostController.navigate(AppRoutes.Dashboard) {
+                    popUpTo<AppRoutes.Dashboard> { inclusive = true }
+                }
+            }
+        )
     }
 
-    composable<Routes.DashboardScreen> {
-        DashboardScreen(navHostController)
+    composable<AppRoutes.Onboarding> {
+        OnboardingScreen(
+            navigateToDashboard = {
+                navHostController.navigate(AppRoutes.Dashboard) {
+                    popUpTo<AppRoutes.Dashboard> { inclusive = true }
+                }
+            }
+        )
     }
 
-    composable<Routes.OnboardingScreen> {
-        OnboardingScreen(navHostController)
+    composable<AppRoutes.Dashboard> {
+        DashboardScreen(
+            navigateToOnboarding = {
+                navHostController.navigate(AppRoutes.Onboarding) {
+                    popUpTo<AppRoutes.Dashboard> { inclusive = true }
+                }
+            }
+        )
     }
 }

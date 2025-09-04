@@ -20,7 +20,6 @@ object CategoryModule {
         return store.boxFor(CategoryEntity::class.java)
     }
 
-
     @Provides
     @Singleton
     fun categoryLocalRepository(

@@ -18,7 +18,7 @@ hilt = "2.52"
 ksp = "2.1.0-1.0.29"
 activityKtx = "1.10.0"
 googleid = "1.1.1"
-objectBox = "4.0.3"
+objectBox = "4.3.1"
 
 [libraries]
 androidx-activity = { module = "androidx.activity:activity", version.ref = "activityCompose" }

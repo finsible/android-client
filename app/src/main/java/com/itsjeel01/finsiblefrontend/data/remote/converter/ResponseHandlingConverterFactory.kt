@@ -7,9 +7,9 @@ import retrofit2.Retrofit
 import java.lang.reflect.Type
 
 /** Generic custom converter factory that wraps existing converter and adds custom processing. */
-class ConverterFactory(
+class ResponseHandlingConverterFactory(
     private val factory: Converter.Factory,
-    private val processor: ResponseProcessor? = null
+    private val responseHandler: ResponseHandler? = null
 ) : Converter.Factory() {
 
     override fun responseBodyConverter(
@@ -20,7 +20,7 @@ class ConverterFactory(
         val delegateConverter = factory.responseBodyConverter(type, annotations, retrofit)
             ?: return null
 
-        return ResponseConverter(delegateConverter, processor)
+        return ResponseConverter(delegateConverter, responseHandler)
     }
 
     override fun requestBodyConverter(
@@ -35,9 +35,9 @@ class ConverterFactory(
     companion object {
         fun create(
             delegate: Converter.Factory,
-            processor: ResponseProcessor? = null
-        ): ConverterFactory {
-            return ConverterFactory(delegate, processor)
+            processor: ResponseHandler? = null
+        ): ResponseHandlingConverterFactory {
+            return ResponseHandlingConverterFactory(delegate, processor)
         }
     }
 }

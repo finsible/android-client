@@ -23,7 +23,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -53,6 +52,8 @@ private const val COMPLETE_FRACTION = 1f
 private const val EMPTY_FRACTION = 0f
 private const val ALPHA_REDUCTION_FACTOR = 0.5f
 private const val VERTICAL_THRESHOLD_FACTOR = 0.15f
+private const val PROGRESS_TRACKER_BACKGROUND_ALPHA = 0.4f
+private const val NOTIFICATION_ICON_BACKGROUND_ALPHA = 0.2f
 
 @Composable
 fun FinsibleNotification(
@@ -270,7 +271,9 @@ fun FinsibleNotification(
                                 )
                             ),
                         color = config.type.getColor().copy(alpha = 0.8f),
-                        trackColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
+                        trackColor = FinsibleTheme.colors.border.copy(
+                            alpha = PROGRESS_TRACKER_BACKGROUND_ALPHA
+                        ),
                     )
                 }
             }
@@ -287,7 +290,9 @@ private fun NotificationIcon(
         modifier = modifier
             .size(FinsibleTheme.dimes.d48)
             .background(
-                color = notification.type.getColor().copy(alpha = 0.2f),
+                color = notification.type.getColor().copy(
+                    alpha = NOTIFICATION_ICON_BACKGROUND_ALPHA
+                ),
                 shape = RoundedCornerShape(FinsibleTheme.dimes.d12)
             ),
         contentAlignment = Alignment.Center

@@ -10,6 +10,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
+private const val TAG = "DeviceInfo"
+
 @Immutable
 data class DeviceInfo(
     val width: Dp,
@@ -50,7 +52,7 @@ fun rememberDeviceInfo(): DeviceInfo {
         fontWeightAdjustment
     ) {
         Log.i(
-            "DeviceInfo",
+            TAG,
             "Width: ${configuration.screenWidthDp}dp, " +
                     "Height: ${configuration.screenHeightDp}dp, " +
                     "FontScale: ${configuration.fontScale}, " +

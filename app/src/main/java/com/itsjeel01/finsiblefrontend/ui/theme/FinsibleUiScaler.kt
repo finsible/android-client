@@ -75,27 +75,22 @@ class FinsibleUiScaler(private val deviceInfo: DeviceInfo) {
 
     fun scaleTypes(types: FinsibleTypes): FinsibleTypes {
         return FinsibleTypes(
-            displayXLarge = scaleText(types.displayXLarge),
-            displayLarge = scaleText(types.displayLarge),
-            displayMedium = scaleText(types.displayMedium),
-            displaySmall = scaleText(types.displaySmall),
-            displayXSmall = scaleText(types.displayXSmall),
-
-            headingXLarge = scaleText(types.headingXLarge),
-            headingLarge = scaleText(types.headingLarge),
-            headingMedium = scaleText(types.headingMedium),
-            headingSmall = scaleText(types.headingSmall),
-            headingXSmall = scaleText(types.headingXSmall),
-
-            uiXLarge = scaleText(types.uiXLarge),
-            uiLarge = scaleText(types.uiLarge),
-            uiMedium = scaleText(types.uiMedium),
-            uiSmall = scaleText(types.uiSmall),
-            uiXSmall = scaleText(types.uiXSmall),
-
-            bodyLarge = scaleText(types.bodyLarge),
-            bodyMedium = scaleText(types.bodyMedium),
-            bodySmall = scaleText(types.bodySmall)
+            t72 = scaleText(types.t72),
+            t64 = scaleText(types.t64),
+            t56 = scaleText(types.t56),
+            t48 = scaleText(types.t48),
+            t44 = scaleText(types.t44),
+            t40 = scaleText(types.t40),
+            t36 = scaleText(types.t36),
+            t32 = scaleText(types.t32),
+            t28 = scaleText(types.t28),
+            t24 = scaleText(types.t24),
+            t20 = scaleText(types.t20),
+            t16 = scaleText(types.t16),
+            t14 = scaleText(types.t14),
+            t12 = scaleText(types.t12),
+            t10 = scaleText(types.t10),
+            t8 = scaleText(types.t8)
         )
     }
 

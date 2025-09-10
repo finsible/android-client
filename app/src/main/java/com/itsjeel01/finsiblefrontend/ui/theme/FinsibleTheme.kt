@@ -1,15 +1,22 @@
 package com.itsjeel01.finsiblefrontend.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 
 private val LocalFinsibleColors = compositionLocalOf<FinsibleColors> {
     error("No FinsibleColors provided")
@@ -56,8 +63,35 @@ fun FinsibleTheme(
                 else colorResolver.lightColors(),
             typography = FinsibleTypes.materialTypography
         ) {
+            PreloadFonts()
             content()
         }
+    }
+}
+
+@Composable
+fun PreloadFonts() {
+    // Pre-render invisible text with all required weights
+    listOf(
+        FontWeight.Thin,
+        FontWeight.Light,
+        FontWeight.Normal,
+        FontWeight.Medium,
+        FontWeight.SemiBold,
+        FontWeight.Bold,
+        FontWeight.ExtraBold,
+        FontWeight.Black
+    ).forEach { weight ->
+        Text(
+            text = "Preload",
+            style = TextStyle(
+                fontFamily = FinsibleFontFamily.interfaceFont,
+                fontWeight = weight
+            ),
+            modifier = Modifier
+                .height(0.dp)
+                .width(0.dp)
+        )
     }
 }
 

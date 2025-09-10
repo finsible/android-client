@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.CircleShape
@@ -57,6 +58,7 @@ fun BottomNavigationBar(
     Box(
         modifier = Modifier
             .systemBarsPadding()
+            .padding(bottom = FinsibleTheme.dimes.d8)
             .fillMaxWidth()
             .background(Color.Transparent)
     ) {
@@ -157,7 +159,7 @@ private fun StandardNavigationTab(
             Icon(
                 painter = painterResource(id = if (isSelected) tab.activeIcon else tab.inactiveIcon),
                 contentDescription = tab.label,
-                tint = FinsibleTheme.colors.primaryContent,
+                tint = if (isSelected) FinsibleTheme.colors.primaryContent else FinsibleTheme.colors.primaryContent80,
                 modifier = Modifier.size(FinsibleTheme.dimes.d24)
             )
         }
@@ -234,7 +236,7 @@ private fun CentralFABTab(
                 ambientShadowColor = FinsibleTheme.colors.primaryContent
             )
             .background(
-                color = FinsibleTheme.colors.primaryContent,
+                color = if (isSelected) FinsibleTheme.colors.primaryContent else FinsibleTheme.colors.primaryContent80,
                 shape = CircleShape
             )
             .clickable(

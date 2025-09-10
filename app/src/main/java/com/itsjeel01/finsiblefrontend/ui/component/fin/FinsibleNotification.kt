@@ -44,6 +44,7 @@ import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.ui.component.fin.NotificationType.Companion.getColor
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
+import com.itsjeel01.finsiblefrontend.ui.theme.condensed
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -319,14 +320,14 @@ private fun NotificationContent(
     ) {
         Text(
             text = notification.title,
-            style = FinsibleTheme.typography.uiSmall,
+            style = FinsibleTheme.typography.t16,
             color = FinsibleTheme.colors.primaryContent
         )
 
         notification.subtitle?.let { subtitle ->
             Text(
                 text = subtitle,
-                style = FinsibleTheme.typography.uiSmall,
+                style = FinsibleTheme.typography.t16.condensed(),
                 color = FinsibleTheme.colors.secondaryContent,
                 softWrap = true
             )

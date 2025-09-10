@@ -66,9 +66,9 @@ enum class ComponentSize {
     @Composable
     fun typography(): TextStyle {
         return when (this) {
-            Small -> FinsibleTheme.typography.uiSmall
-            Medium -> FinsibleTheme.typography.uiMedium
-            Large -> FinsibleTheme.typography.uiLarge
+            Small -> FinsibleTheme.typography.t16
+            Medium -> FinsibleTheme.typography.t20
+            Large -> FinsibleTheme.typography.t24
         }
     }
 }

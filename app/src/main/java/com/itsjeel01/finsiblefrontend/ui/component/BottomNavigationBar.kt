@@ -29,10 +29,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
 import com.itsjeel01.finsiblefrontend.ui.navigation.NavigationTab
 import com.itsjeel01.finsiblefrontend.ui.navigation.NavigationTabs
@@ -55,15 +57,36 @@ fun BottomNavigationBar(
 ) {
     val tabs = NavigationTabs.getAll()
 
+    val shadowHeight = FinsibleTheme.dimes.d8
+    val shadowColor = FinsibleTheme.colors.shadow
+
     Box(
         modifier = Modifier
             .systemBarsPadding()
-            .padding(bottom = FinsibleTheme.dimes.d8)
             .fillMaxWidth()
-            .background(Color.Transparent)
+            .background(FinsibleTheme.colors.primaryBackground)
+            .drawBehind {
+                val shadowHeight = shadowHeight.toPx()
+
+                repeat(shadowHeight.toInt()) { i ->
+                    val distance = i.toFloat()
+                    val normalizedDistance = distance / shadowHeight
+
+                    val alpha = kotlin.math.exp(-normalizedDistance * 4) * 0.06f
+
+                    drawLine(
+                        color = shadowColor.copy(alpha = alpha),
+                        start = Offset(0f, -distance),
+                        end = Offset(size.width, -distance),
+                        strokeWidth = 1.dp.toPx()
+                    )
+                }
+            }
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = FinsibleTheme.dimes.d6),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {

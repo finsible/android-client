@@ -1,7 +1,9 @@
 package com.itsjeel01.finsiblefrontend.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.itsjeel01.finsiblefrontend.BuildConfig
 import com.itsjeel01.finsiblefrontend.common.TransactionRecurringFrequency
 import com.itsjeel01.finsiblefrontend.common.TransactionType
 import com.itsjeel01.finsiblefrontend.common.convertUTCToLocal
@@ -26,6 +28,7 @@ class NewTransactionViewModel @Inject constructor(
 ) : ViewModel() {
 
     companion object {
+        private const val TAG = "NewTransactionViewModel"
         private const val TOTAL_STEPS = 5
         private const val MAX_INTEGER_DIGITS = 15
         private const val MAX_DECIMAL_DIGITS = 4
@@ -253,6 +256,14 @@ class NewTransactionViewModel @Inject constructor(
         _transactionToAccountId.value = null
         _transactionDescription.value = ""
     }
+
+    fun submit(uiFeedBack: () -> Unit) {
+        uiFeedBack()
+        if (BuildConfig.DEBUG) Log.d(TAG, this.toTxString())
+        this.reset()
+    }
+
+    fun totalSteps(): Int = TOTAL_STEPS
 
     private fun getCategory(id: Long?): CategoryEntity? = id?.let { categoryLocalRepository.get(it) }
 

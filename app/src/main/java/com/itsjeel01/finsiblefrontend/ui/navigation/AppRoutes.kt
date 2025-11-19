@@ -8,7 +8,7 @@ sealed class AppRoutes {
     data object Onboarding : AppRoutes()
 
     @Serializable
-    data object Dashboard : AppRoutes()
+    data object Home : AppRoutes()
 
     @Serializable
     data object Launch : AppRoutes()

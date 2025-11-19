@@ -3,6 +3,8 @@ package com.itsjeel01.finsiblefrontend.ui.constants
 class Duration {
     companion object {
         const val MS_16 = 16L // 16 milliseconds
+        const val MS_50 = 50L // 50 milliseconds
+        const val MS_75 = 75L // 75 milliseconds
         const val MS_100 = 100L // 100 milliseconds
         const val MS_150 = 150L // 150 milliseconds
         const val MS_200 = 200L // 200 milliseconds

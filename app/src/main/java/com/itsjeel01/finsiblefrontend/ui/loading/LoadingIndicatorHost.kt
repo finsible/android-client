@@ -69,7 +69,7 @@ private fun FullScreenLoadingOverlay(
             message?.let { msg ->
                 Text(
                     text = msg,
-                    style = FinsibleTheme.typography.uiSmall,
+                    style = FinsibleTheme.typography.t20,
                     color = FinsibleTheme.colors.secondaryContent,
                     textAlign = TextAlign.Center
                 )

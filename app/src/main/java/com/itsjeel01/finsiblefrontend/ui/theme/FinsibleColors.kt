@@ -26,6 +26,7 @@ data class FinsibleColors(
     val link: Color,
     val selection: Color,
     val shadow: Color,
+    val ripple: Color,
     val overlay: Color,
     val error: Color,
     val success: Color,
@@ -40,6 +41,9 @@ data class FinsibleColors(
     val brandAccent30: Color,
     val brandAccent20: Color,
     val brandAccent10: Color,
+    val income: Color,
+    val expense: Color,
+    val transfer: Color,
 ) {
     companion object {
         val light = FinsibleColors(
@@ -59,6 +63,7 @@ data class FinsibleColors(
             link = Color(0xFF1B5E20),
             selection = Color(0xFFC8E6C9),
             shadow = Color(0x26010B13),
+            ripple = Color(0x41636363),
             overlay = Color(0x99010B13),
             error = Color(0xFFD72D25),
             success = Color(0xFF03C03C),
@@ -73,6 +78,9 @@ data class FinsibleColors(
             brandAccent30 = Color(0xFFCBEEDA),
             brandAccent20 = Color(0xFFDCF3E6),
             brandAccent10 = Color(0xFFEEF9F3),
+            income = Color(0xFF4A8B2E),
+            expense = Color(0xFFC13C26),
+            transfer = Color(0xFF348599),
         )
 
         val dark = FinsibleColors(
@@ -91,7 +99,8 @@ data class FinsibleColors(
             secondaryButton = Color(0xFF404040),
             link = Color(0xFF4CAF50),
             selection = Color(0xFF1F3A2B),
-            shadow = Color(0x40000000),
+            shadow = Color(0x40D7D7D7),
+            ripple = Color(0x4DBDBDBD),
             overlay = Color(0xB3000000),
             error = Color(0xFFFF513E),
             success = Color(0xFF03C03C),
@@ -106,6 +115,9 @@ data class FinsibleColors(
             brandAccent30 = Color(0xFF10311F),
             brandAccent20 = Color(0xFF0A1E12),
             brandAccent10 = Color(0xFF07140C),
+            income = Color(0xFF7BC86F),
+            expense = Color(0xFFFF6E54),
+            transfer = Color(0xFF61A4B5),
         )
     }
 }

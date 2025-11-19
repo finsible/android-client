@@ -7,7 +7,6 @@ plugins {
     alias(libs.plugins.hiltAndroid)
     id("kotlin-parcelize") // needed only for non-primitive classes
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
-    id("io.objectbox")
 }
 
 android {
@@ -79,6 +78,7 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.kotlinx.serialization)
     implementation(libs.androidx.security.crypto)
+    implementation(libs.androidx.compose.material3)
 
     ksp(libs.hilt.compiler)
 
@@ -98,4 +98,8 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    debugImplementation("io.objectbox:objectbox-android-objectbrowser:4.3.1")
+    releaseImplementation("io.objectbox:objectbox-android:4.3.1")
 }
+
+apply(plugin = "io.objectbox")

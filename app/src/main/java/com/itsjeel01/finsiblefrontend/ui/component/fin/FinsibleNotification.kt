@@ -23,7 +23,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -45,6 +44,7 @@ import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.ui.component.fin.NotificationType.Companion.getColor
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
+import com.itsjeel01.finsiblefrontend.ui.theme.condensed
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -53,6 +53,8 @@ private const val COMPLETE_FRACTION = 1f
 private const val EMPTY_FRACTION = 0f
 private const val ALPHA_REDUCTION_FACTOR = 0.5f
 private const val VERTICAL_THRESHOLD_FACTOR = 0.15f
+private const val PROGRESS_TRACKER_BACKGROUND_ALPHA = 0.4f
+private const val NOTIFICATION_ICON_BACKGROUND_ALPHA = 0.2f
 
 @Composable
 fun FinsibleNotification(
@@ -270,7 +272,9 @@ fun FinsibleNotification(
                                 )
                             ),
                         color = config.type.getColor().copy(alpha = 0.8f),
-                        trackColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
+                        trackColor = FinsibleTheme.colors.border.copy(
+                            alpha = PROGRESS_TRACKER_BACKGROUND_ALPHA
+                        ),
                     )
                 }
             }
@@ -287,7 +291,9 @@ private fun NotificationIcon(
         modifier = modifier
             .size(FinsibleTheme.dimes.d48)
             .background(
-                color = notification.type.getColor().copy(alpha = 0.2f),
+                color = notification.type.getColor().copy(
+                    alpha = NOTIFICATION_ICON_BACKGROUND_ALPHA
+                ),
                 shape = RoundedCornerShape(FinsibleTheme.dimes.d12)
             ),
         contentAlignment = Alignment.Center
@@ -314,14 +320,14 @@ private fun NotificationContent(
     ) {
         Text(
             text = notification.title,
-            style = FinsibleTheme.typography.uiSmall,
+            style = FinsibleTheme.typography.t16,
             color = FinsibleTheme.colors.primaryContent
         )
 
         notification.subtitle?.let { subtitle ->
             Text(
                 text = subtitle,
-                style = FinsibleTheme.typography.uiSmall,
+                style = FinsibleTheme.typography.t16.condensed(),
                 color = FinsibleTheme.colors.secondaryContent,
                 softWrap = true
             )

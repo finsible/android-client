@@ -46,7 +46,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -64,6 +63,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.fin.IconPosition
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
 import com.itsjeel01.finsiblefrontend.ui.model.AuthState
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
+import com.itsjeel01.finsiblefrontend.ui.theme.bold
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.AuthViewModel
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.OnboardingViewModel
 
@@ -366,7 +366,7 @@ private fun OnboardingTextContent(
         ) { index ->
             Text(
                 carouselItems[index].headline,
-                style = FinsibleTheme.typography.displayLarge.copy(fontWeight = FontWeight.Bold),
+                style = FinsibleTheme.typography.t56.bold(),
                 textAlign = TextAlign.Start,
             )
         }
@@ -397,13 +397,15 @@ private fun OnboardingTextContent(
                 )
             }
         ) { index ->
+            val textStyle = FinsibleTheme.typography.t16
+
             Text(
                 carouselItems[index].description,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = FinsibleTheme.dimes.d2)
-                    .height((FinsibleTheme.typography.bodyLarge.lineHeight.value.times(3)).dp),
-                style = FinsibleTheme.typography.bodyLarge,
+                    .height((textStyle.lineHeight.value.times(3)).dp),
+                style = textStyle,
                 color = FinsibleTheme.colors.secondaryContent,
                 textAlign = TextAlign.Start,
             )

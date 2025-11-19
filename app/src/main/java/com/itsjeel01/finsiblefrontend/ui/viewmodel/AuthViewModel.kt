@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.itsjeel01.finsiblefrontend.BuildConfig
 import com.itsjeel01.finsiblefrontend.data.repository.AuthRepository
+import com.itsjeel01.finsiblefrontend.data.sync.PostAuthInitializer
 import com.itsjeel01.finsiblefrontend.ui.model.AuthState
 import com.itsjeel01.finsiblefrontend.ui.util.GoogleAuthManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authRepo: AuthRepository,
-    private val googleAuthManager: GoogleAuthManager
+    private val googleAuthManager: GoogleAuthManager,
+    private val postAuthInitializer: PostAuthInitializer,
 ) : ViewModel() {
 
     private val _authState = MutableStateFlow<AuthState>(AuthState.Negative())
@@ -48,8 +50,9 @@ class AuthViewModel @Inject constructor(
 
     private suspend fun authenticateWithBackend(clientId: String, idToken: String) {
         authRepo.authenticate(clientId, idToken)
-            .onSuccess { authData ->
+            .onSuccess { _ ->
                 _authState.value = AuthState.Positive
+                postAuthInitializer.initialize()
             }
             .onFailure { exception ->
                 handleAuthError(exception)
@@ -73,5 +76,9 @@ class AuthViewModel @Inject constructor(
             authRepo.logout()
             _authState.value = AuthState.Negative()
         }
+    }
+
+    companion object {
+        private const val TAG = "AuthViewModel"
     }
 }

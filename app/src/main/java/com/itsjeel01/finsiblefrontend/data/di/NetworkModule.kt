@@ -2,6 +2,8 @@ package com.itsjeel01.finsiblefrontend.data.di
 
 import com.itsjeel01.finsiblefrontend.BuildConfig
 import com.itsjeel01.finsiblefrontend.common.PreferenceManager
+import com.itsjeel01.finsiblefrontend.data.remote.api.AccountApiService
+import com.itsjeel01.finsiblefrontend.data.remote.api.AccountGroupApiService
 import com.itsjeel01.finsiblefrontend.data.remote.api.AuthApiService
 import com.itsjeel01.finsiblefrontend.data.remote.api.CategoryApiService
 import com.itsjeel01.finsiblefrontend.data.remote.converter.ResponseHandler
@@ -32,6 +34,14 @@ object NetworkModule {
         retrofit.create(AuthApiService::class.java)
 
     @Provides
+    fun accountGroupApiService(retrofit: Retrofit): AccountGroupApiService =
+        retrofit.create(AccountGroupApiService::class.java)
+
+    @Provides
+    fun accountApiService(retrofit: Retrofit): AccountApiService =
+        retrofit.create(AccountApiService::class.java)
+
+    @Provides
     @Singleton
     fun okHttpClient(preferenceManager: PreferenceManager): OkHttpClient {
         return OkHttpClient.Builder()
@@ -58,3 +68,4 @@ object NetworkModule {
             .build()
     }
 }
+

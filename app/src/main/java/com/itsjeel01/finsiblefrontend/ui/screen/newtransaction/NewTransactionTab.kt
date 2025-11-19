@@ -47,8 +47,6 @@ import com.itsjeel01.finsiblefrontend.ui.theme.bold
 import com.itsjeel01.finsiblefrontend.ui.theme.extraBold
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.NewTransactionViewModel
 
-private const val TAG = "NewTransactionTab"
-
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun NewTransactionTab(

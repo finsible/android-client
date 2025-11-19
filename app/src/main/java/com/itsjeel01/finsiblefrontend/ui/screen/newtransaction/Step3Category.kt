@@ -28,13 +28,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.TransactionType
 import com.itsjeel01.finsiblefrontend.data.local.entity.CategoryEntity
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleDimes.Companion.inverted
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.extraBold
 import com.itsjeel01.finsiblefrontend.ui.theme.medium
-import com.itsjeel01.finsiblefrontend.ui.util.resolveCategoryIcon
+import com.itsjeel01.finsiblefrontend.ui.util.resolveIcon
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.NewTransactionViewModel
 
 /** Stateless category selection step with hoisted state. */
@@ -197,7 +198,7 @@ private fun CategoryChip(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d6)
         ) {
-            val iconDrawable = resolveCategoryIcon(category.icon)
+            val iconDrawable = resolveIcon(category.icon, fallbackIcon = R.drawable.ic_close)
             Icon(
                 modifier = Modifier.size(FinsibleTheme.dimes.d20),
                 painter = painterResource(id = iconDrawable),

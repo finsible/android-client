@@ -72,26 +72,27 @@ fun FinsibleTheme(
 @Composable
 fun PreloadFonts() {
     // Pre-render invisible text with all required weights
-    listOf(
-        FontWeight.Thin,
-        FontWeight.Light,
-        FontWeight.Normal,
-        FontWeight.Medium,
-        FontWeight.SemiBold,
-        FontWeight.Bold,
-        FontWeight.ExtraBold,
-        FontWeight.Black
-    ).forEach { weight ->
-        Text(
-            text = "Preload",
-            style = TextStyle(
-                fontFamily = FinsibleFontFamily.interfaceFont,
-                fontWeight = weight
-            ),
-            modifier = Modifier
-                .height(0.dp)
-                .width(0.dp)
-        )
+    listOf(FinsibleFontFamily.displayFont, FinsibleFontFamily.interfaceFont).forEach { fontFamily ->
+        listOf(
+            FontWeight.ExtraLight,
+            FontWeight.Light,
+            FontWeight.Normal,
+            FontWeight.Medium,
+            FontWeight.SemiBold,
+            FontWeight.Bold,
+            FontWeight.ExtraBold,
+        ).forEach { weight ->
+            Text(
+                text = "Preload",
+                style = TextStyle(
+                    fontFamily = fontFamily,
+                    fontWeight = weight
+                ),
+                modifier = Modifier
+                    .height(0.dp)
+                    .width(0.dp)
+            )
+        }
     }
 }
 

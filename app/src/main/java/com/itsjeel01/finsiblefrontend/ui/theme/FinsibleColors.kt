@@ -41,6 +41,9 @@ data class FinsibleColors(
     val brandAccent30: Color,
     val brandAccent20: Color,
     val brandAccent10: Color,
+    val income: Color,
+    val expense: Color,
+    val transfer: Color,
 ) {
     companion object {
         val light = FinsibleColors(
@@ -75,6 +78,9 @@ data class FinsibleColors(
             brandAccent30 = Color(0xFFCBEEDA),
             brandAccent20 = Color(0xFFDCF3E6),
             brandAccent10 = Color(0xFFEEF9F3),
+            income = Color(0xFF4A8B2E),
+            expense = Color(0xFFC13C26),
+            transfer = Color(0xFF348599),
         )
 
         val dark = FinsibleColors(
@@ -109,6 +115,9 @@ data class FinsibleColors(
             brandAccent30 = Color(0xFF10311F),
             brandAccent20 = Color(0xFF0A1E12),
             brandAccent10 = Color(0xFF07140C),
+            income = Color(0xFF7BC86F),
+            expense = Color(0xFFFF6E54),
+            transfer = Color(0xFF61A4B5),
         )
     }
 }

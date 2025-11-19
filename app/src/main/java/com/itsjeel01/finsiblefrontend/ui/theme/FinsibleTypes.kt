@@ -18,6 +18,7 @@ data class FinsibleTypes(
     val t28: TextStyle,    // Section titles
     val t24: TextStyle,    // Subsections
     val t20: TextStyle,    // Large text
+    val t18: TextStyle,    // Large text
     val t16: TextStyle,    // Base text
     val t14: TextStyle,    // Small text
     val t12: TextStyle,    // Fine text
@@ -109,6 +110,13 @@ data class FinsibleTypes(
                     lineHeight = 28.sp,
                     letterSpacing = 0.01.em
                 ),
+                t18 = bodyLarge.copy(
+                    fontFamily = interfaceFont,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Normal,
+                    lineHeight = 24.sp,
+                    letterSpacing = 0.01.em
+                ),
                 t16 = bodyLarge.copy(
                     fontFamily = interfaceFont,
                     fontSize = 16.sp,
@@ -150,14 +158,13 @@ data class FinsibleTypes(
 }
 
 /** Weight modifiers for complete flexibility */
-fun TextStyle.thin() = this.copy(fontWeight = FontWeight.Thin)
+fun TextStyle.extraLight() = this.copy(fontWeight = FontWeight.ExtraLight)
 fun TextStyle.light() = this.copy(fontWeight = FontWeight.Light)
 fun TextStyle.normal() = this.copy(fontWeight = FontWeight.Normal)
 fun TextStyle.medium() = this.copy(fontWeight = FontWeight.Medium)
 fun TextStyle.semiBold() = this.copy(fontWeight = FontWeight.SemiBold)
 fun TextStyle.bold() = this.copy(fontWeight = FontWeight.Bold)
 fun TextStyle.extraBold() = this.copy(fontWeight = FontWeight.ExtraBold)
-fun TextStyle.black() = this.copy(fontWeight = FontWeight.Black)
 
 /** Line height modifiers */
 fun TextStyle.tight() = this.copy(lineHeight = this.fontSize * 1.1)
@@ -167,3 +174,6 @@ fun TextStyle.loose() = this.copy(lineHeight = this.fontSize * 1.8)
 /** Letter spacing modifiers */
 fun TextStyle.condensed() = this.copy(letterSpacing = (-0.02).em)
 fun TextStyle.expanded() = this.copy(letterSpacing = 0.1.em)
+
+fun TextStyle.displayFont() = this.copy(fontFamily = FinsibleFontFamily.displayFont)
+fun TextStyle.interfaceFont() = this.copy(fontFamily = FinsibleFontFamily.interfaceFont)

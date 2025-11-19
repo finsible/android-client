@@ -86,6 +86,7 @@ class FinsibleUiScaler(private val deviceInfo: DeviceInfo) {
             t28 = scaleText(types.t28),
             t24 = scaleText(types.t24),
             t20 = scaleText(types.t20),
+            t18 = scaleText(types.t18),
             t16 = scaleText(types.t16),
             t14 = scaleText(types.t14),
             t12 = scaleText(types.t12),

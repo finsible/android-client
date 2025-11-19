@@ -15,14 +15,13 @@ object FinsibleFontFamily {
     )
 
     private fun interFont(weight: FontWeight, style: FontStyle) = Font(
-        googleFont = GoogleFont("Inter"),
+        googleFont = GoogleFont("Manrope"),
         fontProvider = googleFontProvider,
         weight = weight,
         style = style
     )
 
     val interfaceFont = FontFamily(
-        interFont(FontWeight.Thin, FontStyle.Normal),
         interFont(FontWeight.ExtraLight, FontStyle.Normal),
         interFont(FontWeight.Light, FontStyle.Normal),
         interFont(FontWeight.Normal, FontStyle.Normal),
@@ -30,8 +29,6 @@ object FinsibleFontFamily {
         interFont(FontWeight.SemiBold, FontStyle.Normal),
         interFont(FontWeight.Bold, FontStyle.Normal),
         interFont(FontWeight.ExtraBold, FontStyle.Normal),
-        interFont(FontWeight.Black, FontStyle.Normal),
-        interFont(FontWeight.Thin, FontStyle.Italic),
         interFont(FontWeight.ExtraLight, FontStyle.Italic),
         interFont(FontWeight.Light, FontStyle.Italic),
         interFont(FontWeight.Normal, FontStyle.Italic),
@@ -39,7 +36,6 @@ object FinsibleFontFamily {
         interFont(FontWeight.SemiBold, FontStyle.Italic),
         interFont(FontWeight.Bold, FontStyle.Italic),
         interFont(FontWeight.ExtraBold, FontStyle.Italic),
-        interFont(FontWeight.Black, FontStyle.Italic)
     )
 
     val displayFont = FontFamily(

@@ -106,5 +106,9 @@ data class FinsibleDimes(
             d300 = 300.dp,
             d800 = 800.dp,
         )
+
+        fun Dp.inverted(): Dp {
+            return this.times(-1)
+        }
     }
 }

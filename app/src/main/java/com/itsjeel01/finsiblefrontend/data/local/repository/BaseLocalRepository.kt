@@ -1,15 +1,32 @@
 package com.itsjeel01.finsiblefrontend.data.local.repository
 
-interface BaseLocalRepository<Model, Entity> {
-    fun add(entity: Entity)
+import com.itsjeel01.finsiblefrontend.data.local.entity.BaseEntity
+import io.objectbox.Box
 
-    fun remove(entity: Entity)
+interface BaseLocalRepository<DTO, Entity : BaseEntity> {
+    val box: Box<Entity>
 
-    fun addAll(models: List<Model>, additionalInfo: Any? = null, ttlMinutes: Long? = null)
+    fun get(id: Long): Entity {
+        return box.get(id)
+    }
 
-    fun getAll(): List<Entity>
+    fun add(entity: Entity) {
+        box.put(entity)
+    }
 
-    fun isStale(): Boolean
+    fun remove(entity: Entity) {
+        box.remove(entity.id)
+    }
+
+    fun addAll(data: List<DTO>, additionalInfo: Any? = null, ttlMinutes: Long? = null)
+
+    fun getAll(): List<Entity> {
+        return box.all
+    }
+
+    fun isStale(): Boolean {
+        return box.isEmpty || box.all.any { it.isStale() }
+    }
 
     fun syncToServer(entity: Entity)
 }

@@ -3,7 +3,7 @@ package com.itsjeel01.finsiblefrontend.data.local.entity
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
 
 abstract class BaseEntity {
-    
+
     open var id: Long = 0
         set(value) {
             field = value
@@ -25,7 +25,7 @@ abstract class BaseEntity {
     }
 
     fun updateCacheTime(ttlMinutes: Long? = null) {
-        cachedTime = System.currentTimeMillis()
-        cacheTtlMinutes = ttlMinutes ?: this.cacheTtlMinutes
+        this.cachedTime = System.currentTimeMillis()
+        this.cacheTtlMinutes = ttlMinutes ?: this.cacheTtlMinutes
     }
 }

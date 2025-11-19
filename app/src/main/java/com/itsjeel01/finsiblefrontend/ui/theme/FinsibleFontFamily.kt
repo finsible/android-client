@@ -14,7 +14,7 @@ object FinsibleFontFamily {
         certificates = R.array.com_google_android_gms_fonts_certs
     )
 
-    private fun interFont(weight: FontWeight, style: FontStyle) = Font(
+    private fun manropeFont(weight: FontWeight, style: FontStyle) = Font(
         googleFont = GoogleFont("Manrope"),
         fontProvider = googleFontProvider,
         weight = weight,
@@ -22,20 +22,20 @@ object FinsibleFontFamily {
     )
 
     val interfaceFont = FontFamily(
-        interFont(FontWeight.ExtraLight, FontStyle.Normal),
-        interFont(FontWeight.Light, FontStyle.Normal),
-        interFont(FontWeight.Normal, FontStyle.Normal),
-        interFont(FontWeight.Medium, FontStyle.Normal),
-        interFont(FontWeight.SemiBold, FontStyle.Normal),
-        interFont(FontWeight.Bold, FontStyle.Normal),
-        interFont(FontWeight.ExtraBold, FontStyle.Normal),
-        interFont(FontWeight.ExtraLight, FontStyle.Italic),
-        interFont(FontWeight.Light, FontStyle.Italic),
-        interFont(FontWeight.Normal, FontStyle.Italic),
-        interFont(FontWeight.Medium, FontStyle.Italic),
-        interFont(FontWeight.SemiBold, FontStyle.Italic),
-        interFont(FontWeight.Bold, FontStyle.Italic),
-        interFont(FontWeight.ExtraBold, FontStyle.Italic),
+        manropeFont(FontWeight.ExtraLight, FontStyle.Normal),
+        manropeFont(FontWeight.Light, FontStyle.Normal),
+        manropeFont(FontWeight.Normal, FontStyle.Normal),
+        manropeFont(FontWeight.Medium, FontStyle.Normal),
+        manropeFont(FontWeight.SemiBold, FontStyle.Normal),
+        manropeFont(FontWeight.Bold, FontStyle.Normal),
+        manropeFont(FontWeight.ExtraBold, FontStyle.Normal),
+        manropeFont(FontWeight.ExtraLight, FontStyle.Italic),
+        manropeFont(FontWeight.Light, FontStyle.Italic),
+        manropeFont(FontWeight.Normal, FontStyle.Italic),
+        manropeFont(FontWeight.Medium, FontStyle.Italic),
+        manropeFont(FontWeight.SemiBold, FontStyle.Italic),
+        manropeFont(FontWeight.Bold, FontStyle.Italic),
+        manropeFont(FontWeight.ExtraBold, FontStyle.Italic),
     )
 
     val displayFont = FontFamily(

@@ -93,9 +93,10 @@ fun Step4Accounts(viewModel: NewTransactionViewModel) {
     val transactionType = viewModel.transactionType.collectAsStateWithLifecycle().value
     val fromAccountId = viewModel.transactionFromAccountId.collectAsStateWithLifecycle().value
     val toAccountId = viewModel.transactionToAccountId.collectAsStateWithLifecycle().value
+    val accounts = viewModel.accounts.collectAsStateWithLifecycle().value
     Step4Accounts(
         transactionType = transactionType,
-        accounts = viewModel.accounts,
+        accounts = accounts,
         fromAccountId = fromAccountId,
         toAccountId = toAccountId,
         onFromAccountSelected = { viewModel.setTransactionFromAccountId(it) },

@@ -39,4 +39,5 @@ google-services.json
 /scratch
 
 default.json
-default.json.bak
+default.json.bak*.class
+META-INF/

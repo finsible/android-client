@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -77,8 +78,17 @@ class NewTransactionViewModel @Inject constructor(
         )
 
     /** Available accounts for transaction. */
-    val accounts: List<AccountEntity> by lazy {
-        accountLocalRepository.getAll()
+    private val _accounts = MutableStateFlow<List<AccountEntity>>(emptyList())
+    val accounts: StateFlow<List<AccountEntity>> = _accounts.stateFlow()
+
+    init {
+        loadAccounts()
+    }
+
+    private fun loadAccounts() {
+        viewModelScope.launch {
+            _accounts.value = accountLocalRepository.getAll()
+        }
     }
 
     /** Combined validation state for current step. */

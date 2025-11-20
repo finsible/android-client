@@ -37,7 +37,7 @@ data class CategoryEntity(
     }
 }
 
-private fun CategoryEntity.toDTO(): Category {
+fun CategoryEntity.toDTO(): Category {
     return Category(
         id = id,
         name = name,

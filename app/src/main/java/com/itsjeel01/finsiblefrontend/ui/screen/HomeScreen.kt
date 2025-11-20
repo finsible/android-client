@@ -54,7 +54,7 @@ fun HomeScreen(navigateToOnboarding: () -> Unit) {
             navigateToTab = homeNavGraph(
                 navController,
                 onNewTransactionBackPressed = { homeViewModel.updateActiveTab(previousTab) },
-                previousTab,
+                getPreviousTabIndex = { previousTab },
             )
         }
     }

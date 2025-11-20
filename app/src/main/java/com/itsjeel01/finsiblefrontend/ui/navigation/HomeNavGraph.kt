@@ -21,7 +21,7 @@ import com.itsjeel01.finsiblefrontend.ui.screen.newtransaction.NewTransactionTab
 fun NavGraphBuilder.homeNavGraph(
     navController: NavHostController,
     onNewTransactionBackPressed: () -> Unit,
-    previousTabIndex: Int,
+    getPreviousTabIndex: () -> Int,
 ): (Int) -> Unit {
     instantComposable<HomeRoutes.Dashboard> { DashboardTab() }
 
@@ -39,7 +39,7 @@ fun NavGraphBuilder.homeNavGraph(
             onNavigateBack = {
                 keyboardController?.hide()
 
-                val route = NavigationTabs.getRouteFromTabIndex(previousTabIndex)
+                val route = NavigationTabs.getRouteFromTabIndex(getPreviousTabIndex())
                 navController.navigate(route) {
                     popUpTo(navController.graph.startDestinationId) {
                         saveState = true

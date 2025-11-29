@@ -31,8 +31,12 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
 
             // Determine start destination based on build type and debug preferences
-            val startDestination = if (BuildConfig.DEBUG && !testPrefs.shouldSkipDebugScreen()) {
-                AppRoutes.Test
+            val startDestination = if (BuildConfig.DEBUG) {
+                if (!testPrefs.shouldSkipDebugScreen()) {
+                    AppRoutes.Test
+                } else {
+                    AppRoutes.Launch
+                }
             } else {
                 AppRoutes.Launch
             }

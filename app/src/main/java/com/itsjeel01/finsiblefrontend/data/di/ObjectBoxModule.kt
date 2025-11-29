@@ -83,6 +83,7 @@ object ObjectBoxModule {
     }
 
     /** Returns true if the database was cleared during initialization due to schema conflicts. */
+    @Synchronized
     fun wasDatabaseCleared(): Boolean = databaseWasCleared
 
     /** Resets the cleared flag (useful for testing or after successful re-sync). */

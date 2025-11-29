@@ -21,7 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class TestViewModel @Inject constructor(
     private val preferenceManager: PreferenceManager,
-    private val debugPrefs: TestPreferenceManager,
+    private val testPrefs: TestPreferenceManager,
     private val boxStore: BoxStore,
     private val categoryBox: Box<CategoryEntity>,
     private val accountBox: Box<AccountEntity>,
@@ -31,32 +31,32 @@ class TestViewModel @Inject constructor(
     private val _operationStatus = MutableStateFlow<OperationStatus>(OperationStatus.Idle)
     val operationStatus: StateFlow<OperationStatus> = _operationStatus
 
-    private val _mockApiEnabled = MutableStateFlow(debugPrefs.isMockApiEnabled())
+    private val _mockApiEnabled = MutableStateFlow(testPrefs.isMockApiEnabled())
     val mockApiEnabled: StateFlow<Boolean> = _mockApiEnabled
 
-    private val _skipDebugScreen = MutableStateFlow(debugPrefs.shouldSkipDebugScreen())
+    private val _skipDebugScreen = MutableStateFlow(testPrefs.shouldSkipDebugScreen())
     val skipDebugScreen: StateFlow<Boolean> = _skipDebugScreen
 
     // Individual endpoint toggles
-    private val _mockAuth = MutableStateFlow(debugPrefs.isMockAuthEnabled())
+    private val _mockAuth = MutableStateFlow(testPrefs.isMockAuthEnabled())
     val mockAuth: StateFlow<Boolean> = _mockAuth
 
-    private val _mockIncomeCategories = MutableStateFlow(debugPrefs.isMockIncomeCategoriesEnabled())
+    private val _mockIncomeCategories = MutableStateFlow(testPrefs.isMockIncomeCategoriesEnabled())
     val mockIncomeCategories: StateFlow<Boolean> = _mockIncomeCategories
 
-    private val _mockExpenseCategories = MutableStateFlow(debugPrefs.isMockExpenseCategoriesEnabled())
+    private val _mockExpenseCategories = MutableStateFlow(testPrefs.isMockExpenseCategoriesEnabled())
     val mockExpenseCategories: StateFlow<Boolean> = _mockExpenseCategories
 
-    private val _mockTransferCategories = MutableStateFlow(debugPrefs.isMockTransferCategoriesEnabled())
+    private val _mockTransferCategories = MutableStateFlow(testPrefs.isMockTransferCategoriesEnabled())
     val mockTransferCategories: StateFlow<Boolean> = _mockTransferCategories
 
-    private val _mockAccountGroups = MutableStateFlow(debugPrefs.isMockAccountGroupsEnabled())
+    private val _mockAccountGroups = MutableStateFlow(testPrefs.isMockAccountGroupsEnabled())
     val mockAccountGroups: StateFlow<Boolean> = _mockAccountGroups
 
-    private val _mockAccounts = MutableStateFlow(debugPrefs.isMockAccountsEnabled())
+    private val _mockAccounts = MutableStateFlow(testPrefs.isMockAccountsEnabled())
     val mockAccounts: StateFlow<Boolean> = _mockAccounts
 
-    private val _mockAccountsFresh = MutableStateFlow(debugPrefs.isMockAccountsFreshEnabled())
+    private val _mockAccountsFresh = MutableStateFlow(testPrefs.isMockAccountsFreshEnabled())
     val mockAccountsFresh: StateFlow<Boolean> = _mockAccountsFresh
 
     /** Clears all app data including preferences and ObjectBox database. */
@@ -130,49 +130,49 @@ class TestViewModel @Inject constructor(
 
     /** Toggles mock API globally. */
     fun toggleMockApi(enabled: Boolean) {
-        debugPrefs.setMockApiEnabled(enabled)
+        testPrefs.setMockApiEnabled(enabled)
         _mockApiEnabled.value = enabled
     }
 
     /** Toggles skip debug screen preference. */
     fun toggleSkipDebugScreen(skip: Boolean) {
-        debugPrefs.setSkipDebugScreen(skip)
+        testPrefs.setSkipDebugScreen(skip)
         _skipDebugScreen.value = skip
     }
 
     /** Toggles individual endpoint mocks. */
     fun toggleMockAuth(enabled: Boolean) {
-        debugPrefs.setMockAuthEnabled(enabled)
+        testPrefs.setMockAuthEnabled(enabled)
         _mockAuth.value = enabled
     }
 
     fun toggleMockIncomeCategories(enabled: Boolean) {
-        debugPrefs.setMockIncomeCategoriesEnabled(enabled)
+        testPrefs.setMockIncomeCategoriesEnabled(enabled)
         _mockIncomeCategories.value = enabled
     }
 
     fun toggleMockExpenseCategories(enabled: Boolean) {
-        debugPrefs.setMockExpenseCategoriesEnabled(enabled)
+        testPrefs.setMockExpenseCategoriesEnabled(enabled)
         _mockExpenseCategories.value = enabled
     }
 
     fun toggleMockTransferCategories(enabled: Boolean) {
-        debugPrefs.setMockTransferCategoriesEnabled(enabled)
+        testPrefs.setMockTransferCategoriesEnabled(enabled)
         _mockTransferCategories.value = enabled
     }
 
     fun toggleMockAccountGroups(enabled: Boolean) {
-        debugPrefs.setMockAccountGroupsEnabled(enabled)
+        testPrefs.setMockAccountGroupsEnabled(enabled)
         _mockAccountGroups.value = enabled
     }
 
     fun toggleMockAccounts(enabled: Boolean) {
-        debugPrefs.setMockAccountsEnabled(enabled)
+        testPrefs.setMockAccountsEnabled(enabled)
         _mockAccounts.value = enabled
     }
 
     fun toggleMockAccountsFresh(enabled: Boolean) {
-        debugPrefs.setMockAccountsFreshEnabled(enabled)
+        testPrefs.setMockAccountsFreshEnabled(enabled)
         _mockAccountsFresh.value = enabled
     }
 
@@ -181,18 +181,18 @@ class TestViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _operationStatus.value = OperationStatus.Loading("Resetting to defaults...")
-                debugPrefs.resetToDefaults()
+                testPrefs.resetToDefaults()
 
                 // Update all state flows
-                _mockApiEnabled.value = debugPrefs.isMockApiEnabled()
-                _skipDebugScreen.value = debugPrefs.shouldSkipDebugScreen()
-                _mockAuth.value = debugPrefs.isMockAuthEnabled()
-                _mockIncomeCategories.value = debugPrefs.isMockIncomeCategoriesEnabled()
-                _mockExpenseCategories.value = debugPrefs.isMockExpenseCategoriesEnabled()
-                _mockTransferCategories.value = debugPrefs.isMockTransferCategoriesEnabled()
-                _mockAccountGroups.value = debugPrefs.isMockAccountGroupsEnabled()
-                _mockAccounts.value = debugPrefs.isMockAccountsEnabled()
-                _mockAccountsFresh.value = debugPrefs.isMockAccountsFreshEnabled()
+                _mockApiEnabled.value = testPrefs.isMockApiEnabled()
+                _skipDebugScreen.value = testPrefs.shouldSkipDebugScreen()
+                _mockAuth.value = testPrefs.isMockAuthEnabled()
+                _mockIncomeCategories.value = testPrefs.isMockIncomeCategoriesEnabled()
+                _mockExpenseCategories.value = testPrefs.isMockExpenseCategoriesEnabled()
+                _mockTransferCategories.value = testPrefs.isMockTransferCategoriesEnabled()
+                _mockAccountGroups.value = testPrefs.isMockAccountGroupsEnabled()
+                _mockAccounts.value = testPrefs.isMockAccountsEnabled()
+                _mockAccountsFresh.value = testPrefs.isMockAccountsFreshEnabled()
 
                 _operationStatus.value = OperationStatus.Success("Settings reset to defaults")
             } catch (e: Exception) {

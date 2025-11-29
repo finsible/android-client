@@ -19,8 +19,8 @@ object MockNetworkModule {
     @Singleton
     fun provideMockInterceptor(
         @ApplicationContext context: Context,
-        debugPrefs: TestPreferenceManager
+        testPrefs: TestPreferenceManager
     ): MockInterceptor {
-        return MockInterceptor(context, debugPrefs)
+        return MockInterceptor(context, testPrefs)
     }
 }

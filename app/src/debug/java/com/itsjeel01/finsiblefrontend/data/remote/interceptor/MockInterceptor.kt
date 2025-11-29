@@ -15,7 +15,7 @@ import javax.inject.Inject
 /** Intercepts network requests and returns mock responses when enabled. */
 class MockInterceptor @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val debugPrefs: TestPreferenceManager
+    private val testPrefs: TestPreferenceManager
 ) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -23,7 +23,7 @@ class MockInterceptor @Inject constructor(
         val url = request.url.toString()
 
         // Skip mocking if disabled
-        if (!debugPrefs.isMockApiEnabled()) {
+        if (!testPrefs.isMockApiEnabled()) {
             return chain.proceed(request)
         }
 
@@ -39,37 +39,37 @@ class MockInterceptor @Inject constructor(
             val rules = listOf(
                 MockRule(
                     matches = { it.contains("/auth/googleSignIn") },
-                    isEnabled = { debugPrefs.isMockAuthEnabled() },
+                    isEnabled = { testPrefs.isMockAuthEnabled() },
                     resId = R.raw.mock_auth
                 ),
                 MockRule(
                     matches = { it.contains("/categories") && it.contains("type=INCOME") },
-                    isEnabled = { debugPrefs.isMockIncomeCategoriesEnabled() },
+                    isEnabled = { testPrefs.isMockIncomeCategoriesEnabled() },
                     resId = R.raw.mock_income_categories
                 ),
                 MockRule(
                     matches = { it.contains("/categories") && it.contains("type=EXPENSE") },
-                    isEnabled = { debugPrefs.isMockExpenseCategoriesEnabled() },
+                    isEnabled = { testPrefs.isMockExpenseCategoriesEnabled() },
                     resId = R.raw.mock_expense_categories
                 ),
                 MockRule(
                     matches = { it.contains("/categories") && it.contains("type=TRANSFER") },
-                    isEnabled = { debugPrefs.isMockTransferCategoriesEnabled() },
+                    isEnabled = { testPrefs.isMockTransferCategoriesEnabled() },
                     resId = R.raw.mock_transfer_categories
                 ),
                 MockRule(
                     matches = { it.contains("/account-groups/all") },
-                    isEnabled = { debugPrefs.isMockAccountGroupsEnabled() },
+                    isEnabled = { testPrefs.isMockAccountGroupsEnabled() },
                     resId = R.raw.mock_account_groups
                 ),
                 MockRule(
                     matches = { it.contains("/accounts/all") },
-                    isEnabled = { debugPrefs.isMockAccountsFreshEnabled() },
+                    isEnabled = { testPrefs.isMockAccountsFreshEnabled() },
                     resId = R.raw.mock_accounts_fresh
                 ),
                 MockRule(
                     matches = { it.contains("/accounts/all") },
-                    isEnabled = { debugPrefs.isMockAccountsEnabled() && !debugPrefs.isMockAccountsFreshEnabled() },
+                    isEnabled = { testPrefs.isMockAccountsEnabled() && !testPrefs.isMockAccountsFreshEnabled() },
                     resId = R.raw.mock_accounts
                 )
             )

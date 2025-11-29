@@ -23,13 +23,13 @@ data class DeviceInfo(
         width < 360.dp -> 0.85f   // Compact phones: maximize content
         width < 480.dp -> 1.0f    // Standard phones: baseline
         width < 720.dp -> 1.15f   // Large phones/small tablets: more breathing room
-        else -> 1.3f                      // Tablets: generous spacing
+        else -> 1.3f              // Tablets: generous spacing
     }
 
     val textScaleFactor = when {
         width < 360.dp -> 0.95f    // Compact phones: slightly smaller text
         width >= 600.dp -> 1.08f   // Large screens: slightly larger text
-        else -> 1.0f                       // Standard phones: baseline
+        else -> 1.0f               // Standard phones: baseline
     } * fontScale
 
     fun adjustFontWeight(originalWeight: FontWeight): FontWeight {

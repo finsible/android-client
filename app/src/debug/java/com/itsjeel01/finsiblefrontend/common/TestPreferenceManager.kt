@@ -85,17 +85,19 @@ class TestPreferenceManager @Inject constructor(@ApplicationContext context: Con
         sharedPreferences.edit { putBoolean(MOCK_ACCOUNTS_FRESH, enabled) }
     }
 
-    /** Resets all debug preferences to defaults. */
+    /** Resets all debug preferences to defaults in a single atomic transaction. */
     fun resetToDefaults() {
-        sharedPreferences.edit { clear() }
-        // Re-apply defaults
-        setMockAuthEnabled(true)
-        setMockIncomeCategoriesEnabled(true)
-        setMockExpenseCategoriesEnabled(true)
-        setMockTransferCategoriesEnabled(true)
-        setMockAccountGroupsEnabled(true)
-        setMockAccountsEnabled(true)
-        setMockAccountsFreshEnabled(false)
+        sharedPreferences.edit {
+            putBoolean(SKIP_DEBUG_SCREEN, false)
+            putBoolean(MOCK_API_ENABLED, false)
+            putBoolean(MOCK_AUTH, true)
+            putBoolean(MOCK_INCOME_CATEGORIES, true)
+            putBoolean(MOCK_EXPENSE_CATEGORIES, true)
+            putBoolean(MOCK_TRANSFER_CATEGORIES, true)
+            putBoolean(MOCK_ACCOUNT_GROUPS, true)
+            putBoolean(MOCK_ACCOUNTS, true)
+            putBoolean(MOCK_ACCOUNTS_FRESH, false)
+        }
     }
 }
 

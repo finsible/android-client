@@ -18,6 +18,54 @@ class MockInterceptor @Inject constructor(
     private val testPrefs: TestPreferenceManager
 ) : Interceptor {
 
+    /** Data class representing a mock endpoint configuration. */
+    private data class MockRule(
+        val matches: (String) -> Boolean,
+        val isEnabled: () -> Boolean,
+        val resId: Int
+    )
+
+    /** Mock rules for each endpoint. */
+    private val rules by lazy {
+        listOf(
+            MockRule(
+                matches = { it.contains("/auth/googleSignIn") },
+                isEnabled = { testPrefs.isMockAuthEnabled() },
+                resId = R.raw.mock_auth
+            ),
+            MockRule(
+                matches = { it.contains("/categories") && it.contains("type=INCOME") },
+                isEnabled = { testPrefs.isMockIncomeCategoriesEnabled() },
+                resId = R.raw.mock_income_categories
+            ),
+            MockRule(
+                matches = { it.contains("/categories") && it.contains("type=EXPENSE") },
+                isEnabled = { testPrefs.isMockExpenseCategoriesEnabled() },
+                resId = R.raw.mock_expense_categories
+            ),
+            MockRule(
+                matches = { it.contains("/categories") && it.contains("type=TRANSFER") },
+                isEnabled = { testPrefs.isMockTransferCategoriesEnabled() },
+                resId = R.raw.mock_transfer_categories
+            ),
+            MockRule(
+                matches = { it.contains("/account-groups/all") },
+                isEnabled = { testPrefs.isMockAccountGroupsEnabled() },
+                resId = R.raw.mock_account_groups
+            ),
+            MockRule(
+                matches = { it.contains("/accounts/all") },
+                isEnabled = { testPrefs.isMockAccountsFreshEnabled() },
+                resId = R.raw.mock_accounts_fresh
+            ),
+            MockRule(
+                matches = { it.contains("/accounts/all") },
+                isEnabled = { testPrefs.isMockAccountsEnabled() && !testPrefs.isMockAccountsFreshEnabled() },
+                resId = R.raw.mock_accounts
+            )
+        )
+    }
+
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
         val url = request.url.toString()
@@ -28,54 +76,8 @@ class MockInterceptor @Inject constructor(
         }
 
         // Check each endpoint and return mock response if enabled
-        val mockResponse = run {
-            /** Data class representing a mock endpoint configuration. */
-            data class MockRule(
-                val matches: (String) -> Boolean,
-                val isEnabled: () -> Boolean,
-                val resId: Int
-            )
-
-            val rules = listOf(
-                MockRule(
-                    matches = { it.contains("/auth/googleSignIn") },
-                    isEnabled = { testPrefs.isMockAuthEnabled() },
-                    resId = R.raw.mock_auth
-                ),
-                MockRule(
-                    matches = { it.contains("/categories") && it.contains("type=INCOME") },
-                    isEnabled = { testPrefs.isMockIncomeCategoriesEnabled() },
-                    resId = R.raw.mock_income_categories
-                ),
-                MockRule(
-                    matches = { it.contains("/categories") && it.contains("type=EXPENSE") },
-                    isEnabled = { testPrefs.isMockExpenseCategoriesEnabled() },
-                    resId = R.raw.mock_expense_categories
-                ),
-                MockRule(
-                    matches = { it.contains("/categories") && it.contains("type=TRANSFER") },
-                    isEnabled = { testPrefs.isMockTransferCategoriesEnabled() },
-                    resId = R.raw.mock_transfer_categories
-                ),
-                MockRule(
-                    matches = { it.contains("/account-groups/all") },
-                    isEnabled = { testPrefs.isMockAccountGroupsEnabled() },
-                    resId = R.raw.mock_account_groups
-                ),
-                MockRule(
-                    matches = { it.contains("/accounts/all") },
-                    isEnabled = { testPrefs.isMockAccountsFreshEnabled() },
-                    resId = R.raw.mock_accounts_fresh
-                ),
-                MockRule(
-                    matches = { it.contains("/accounts/all") },
-                    isEnabled = { testPrefs.isMockAccountsEnabled() && !testPrefs.isMockAccountsFreshEnabled() },
-                    resId = R.raw.mock_accounts
-                )
-            )
-
-            rules.firstOrNull { it.matches(url) && it.isEnabled() }?.let { loadMockResponse(it.resId) }
-        }
+        val mockResponse = rules.firstOrNull { it.matches(url) && it.isEnabled() }
+            ?.let { loadMockResponse(it.resId) }
 
         return if (mockResponse != null) {
             Logger.Network.d("Returning mock response for: $url")

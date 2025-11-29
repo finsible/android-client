@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -44,24 +43,21 @@ fun rememberDeviceInfo(): DeviceInfo {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) configuration.fontWeightAdjustment
         else 0
 
-    val width = LocalWindowInfo.current.containerSize.width
-    val height = LocalWindowInfo.current.containerSize.height
-
     return remember(
-        width,
-        height,
+        configuration.screenWidthDp,
+        configuration.screenHeightDp,
         configuration.fontScale,
         fontWeightAdjustment
     ) {
         Logger.UI.i(
-            "Device info: Width=${width}dp, " +
-                    "Height=${height}dp, " +
+            "Device info: Width=${configuration.screenWidthDp}dp, " +
+                    "Height=${configuration.screenHeightDp}dp, " +
                     "FontScale=${configuration.fontScale}, " +
                     "FontWeightAdjustment=$fontWeightAdjustment"
         )
         DeviceInfo(
-            width = width.dp,
-            height = height.dp,
+            width = configuration.screenWidthDp.dp,
+            height = configuration.screenHeightDp.dp,
             fontScale = configuration.fontScale,
             fontWeightAdjustment = fontWeightAdjustment
         )

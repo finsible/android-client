@@ -1,8 +1,8 @@
 package com.itsjeel01.finsiblefrontend.data.di
 
 import android.content.Context
-import android.util.Log
 import com.itsjeel01.finsiblefrontend.BuildConfig
+import com.itsjeel01.finsiblefrontend.common.logging.Logger
 import com.itsjeel01.finsiblefrontend.data.local.entity.MyObjectBox
 import dagger.Module
 import dagger.Provides
@@ -26,7 +26,7 @@ object ObjectBoxModule {
 
     fun startAdmin(context: Context) {
         val started = Admin(store).start(context)
-        Log.d("ObjectBox", "Admin started: $started")
+        Logger.Database.d("ObjectBox admin started: $started")
     }
 
     @Provides

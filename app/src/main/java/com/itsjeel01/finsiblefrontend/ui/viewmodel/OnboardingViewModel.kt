@@ -1,8 +1,8 @@
 package com.itsjeel01.finsiblefrontend.ui.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.itsjeel01.finsiblefrontend.R
+import com.itsjeel01.finsiblefrontend.common.logging.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,17 +18,17 @@ class OnboardingViewModel @Inject constructor() : ViewModel() {
 
     fun nextCarouselItem() {
         if (_currentCarouselItem.value < carouselItems.size - 1) _currentCarouselItem.value++
-        Log.d(TAG, "Next Carousel Item: ${_currentCarouselItem.value}")
+        Logger.UI.d("Next Carousel Item: ${_currentCarouselItem.value}")
     }
 
     fun previousCarouselItem() {
         if (_currentCarouselItem.value > 0) _currentCarouselItem.value--
-        Log.d(TAG, "Previous Carousel Item: ${_currentCarouselItem.value}")
+        Logger.UI.d("Previous Carousel Item: ${_currentCarouselItem.value}")
     }
 
     fun skipToLastCarouselItem() {
         _currentCarouselItem.value = carouselItems.size - 1
-        Log.d(TAG, "Skip to Last Carousel Item: ${_currentCarouselItem.value}")
+        Logger.UI.d("Skip to Last Carousel Item: ${_currentCarouselItem.value}")
     }
 
     fun isLastCarouselItem(): Boolean {

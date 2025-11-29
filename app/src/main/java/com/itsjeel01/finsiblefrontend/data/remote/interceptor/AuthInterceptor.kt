@@ -10,18 +10,18 @@ class AuthInterceptor(private val preferenceManager: PreferenceManager) : Interc
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
-        val url = request.url.toString()
+        val path = request.url.encodedPath
         val token = preferenceManager.getJwt()
 
-        if (request.url.encodedPath.contains("auth")) {
-            Logger.Network.d("Auth request, skipping token: $url")
+        if (path.contains("auth")) {
+            Logger.Network.d("Auth request, skipping token: $path")
             return chain.proceed(request)
         }
 
         if (token.isNullOrEmpty()) {
-            Logger.Network.w("No JWT token available for request: $url")
+            Logger.Network.w("No JWT token available for request: $path")
         } else {
-            Logger.Network.d("Adding auth token to request: $url")
+            Logger.Network.d("Adding auth token to request: $path")
         }
 
         val authorizedRequest = request.newBuilder()

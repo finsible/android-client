@@ -11,8 +11,8 @@ class ReleaseLogTree : Timber.Tree() {
         // In production, only log warnings and errors
         // Future: Add breadcrumb logging for crash reporting here
         when (priority) {
-            Log.WARN -> Timber.tag(tag.toString()).w(t, message)
-            Log.ERROR -> Timber.tag(tag.toString()).e(t, message)
+            Log.WARN -> Log.w(tag, message, t)
+            Log.ERROR -> Log.e(tag, message, t)
         }
     }
 }

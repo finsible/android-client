@@ -3,11 +3,26 @@ package com.itsjeel01.finsiblefrontend.ui.navigation
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import com.itsjeel01.finsiblefrontend.BuildConfig
 import com.itsjeel01.finsiblefrontend.ui.screen.HomeScreen
 import com.itsjeel01.finsiblefrontend.ui.screen.LaunchScreen
 import com.itsjeel01.finsiblefrontend.ui.screen.OnboardingScreen
+import com.itsjeel01.finsiblefrontend.ui.screen.TestScreen
 
 fun NavGraphBuilder.appNavGraph(navController: NavHostController) {
+
+    // Test screen (debug builds only)
+    if (BuildConfig.DEBUG) {
+        composable<AppRoutes.Test> {
+            TestScreen(
+                onNavigateToApp = {
+                    navController.navigate(AppRoutes.Launch) {
+                        popUpTo<AppRoutes.Test> { inclusive = true }
+                    }
+                }
+            )
+        }
+    }
 
     composable<AppRoutes.Launch> {
         LaunchScreen(

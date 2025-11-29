@@ -24,3 +24,18 @@
 -keep class androidx.credentials.playservices.** {
   *;
 }
+
+# ObjectBox rules - prevent obfuscation of entity classes and generated code
+-keep class io.objectbox.BoxStore { *; }
+-keep class io.objectbox.Box { *; }
+-keep class io.objectbox.Cursor { *; }
+-keep class io.objectbox.exception.* { *; }
+-keep interface io.objectbox.annotation.* { *; }
+-keep @io.objectbox.annotation.Entity class * { *; }
+-keep class * extends io.objectbox.EntityInfo { *; }
+-keep class com.itsjeel01.finsiblefrontend.data.local.entity.MyObjectBox { *; }
+-keep class com.itsjeel01.finsiblefrontend.data.local.entity.**Entity { *; }
+-keep class com.itsjeel01.finsiblefrontend.data.local.entity.**Entity_ { *; }
+-keep class * implements io.objectbox.converter.PropertyConverter { *; }
+-keepattributes *Annotation*
+

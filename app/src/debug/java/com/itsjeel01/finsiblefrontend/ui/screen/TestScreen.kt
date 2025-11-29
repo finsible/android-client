@@ -83,26 +83,39 @@ fun TestScreen(
     }
 
     // Define checkbox actions - add new ones here
-    val checkboxActions = listOf(
-        CheckboxAction("Clear all data", true) { viewModel.clearAllAppData() },
-        CheckboxAction("Clear preferences", false) { viewModel.clearPreferences() },
-        CheckboxAction("Flush database", true) { viewModel.flushEntireDatabase() },
-        CheckboxAction("Flush categories", false) { viewModel.flushEntity("Categories") },
-        CheckboxAction("Flush accounts", false) { viewModel.flushEntity("Accounts") },
-        CheckboxAction("Flush account groups", false) { viewModel.flushEntity("Account Groups") },
-        CheckboxAction("Reset settings", false) { viewModel.resetToDefaults() }
-    )
+    val checkboxActions = remember {
+        listOf(
+            CheckboxAction("Clear all data", true) { viewModel.clearAllAppData() },
+            CheckboxAction("Clear preferences", false) { viewModel.clearPreferences() },
+            CheckboxAction("Flush database", true) { viewModel.flushEntireDatabase() },
+            CheckboxAction("Flush categories", false) { viewModel.flushEntity("Categories") },
+            CheckboxAction("Flush accounts", false) { viewModel.flushEntity("Accounts") },
+            CheckboxAction("Flush account groups", false) { viewModel.flushEntity("Account Groups") },
+            CheckboxAction("Reset settings", false) { viewModel.resetToDefaults() }
+        )
+    }
 
     // Define endpoint checkboxes
-    val endpointToggles = if (mockApiEnabled) listOf(
-        CheckboxToggle("Authentication", mockAuth) { viewModel.toggleMockAuth(it) },
-        CheckboxToggle("Income categories", mockIncomeCategories) { viewModel.toggleMockIncomeCategories(it) },
-        CheckboxToggle("Expense categories", mockExpenseCategories) { viewModel.toggleMockExpenseCategories(it) },
-        CheckboxToggle("Transfer categories", mockTransferCategories) { viewModel.toggleMockTransferCategories(it) },
-        CheckboxToggle("Account groups", mockAccountGroups) { viewModel.toggleMockAccountGroups(it) },
-        CheckboxToggle("Accounts", mockAccounts) { viewModel.toggleMockAccounts(it) },
-        CheckboxToggle("Accounts (fresh)", mockAccountsFresh) { viewModel.toggleMockAccountsFresh(it) }
-    ) else emptyList()
+    val endpointToggles = remember(
+        mockApiEnabled,
+        mockAuth,
+        mockIncomeCategories,
+        mockExpenseCategories,
+        mockTransferCategories,
+        mockAccountGroups,
+        mockAccounts,
+        mockAccountsFresh
+    ) {
+        if (mockApiEnabled) listOf(
+            CheckboxToggle("Authentication", mockAuth) { viewModel.toggleMockAuth(it) },
+            CheckboxToggle("Income categories", mockIncomeCategories) { viewModel.toggleMockIncomeCategories(it) },
+            CheckboxToggle("Expense categories", mockExpenseCategories) { viewModel.toggleMockExpenseCategories(it) },
+            CheckboxToggle("Transfer categories", mockTransferCategories) { viewModel.toggleMockTransferCategories(it) },
+            CheckboxToggle("Account groups", mockAccountGroups) { viewModel.toggleMockAccountGroups(it) },
+            CheckboxToggle("Accounts", mockAccounts) { viewModel.toggleMockAccounts(it) },
+            CheckboxToggle("Accounts (fresh)", mockAccountsFresh) { viewModel.toggleMockAccountsFresh(it) }
+        ) else emptyList()
+    }
 
     val safeDrawingPadding = WindowInsets.safeDrawing.asPaddingValues()
 

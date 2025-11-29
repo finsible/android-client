@@ -99,7 +99,7 @@ class MockInterceptor @Inject constructor(
             context.resources.openRawResource(resourceId).bufferedReader().use { it.readText() }
         } catch (e: Exception) {
             Logger.Network.e("Error loading mock response", e)
-            """{"success":false,"message":"Mock response loading error","data":null}"""
+            """{"success":false,"message":"Mock response loading error: ${e.message}","resourceId":$resourceId,"data":null}"""
         }
     }
 }

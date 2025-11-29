@@ -1,7 +1,6 @@
 package com.itsjeel01.finsiblefrontend.ui.theme
 
 import android.os.Build
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
@@ -9,8 +8,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-
-private const val TAG = "DeviceInfo"
+import com.itsjeel01.finsiblefrontend.common.logging.Logger
 
 @Immutable
 data class DeviceInfo(
@@ -51,12 +49,11 @@ fun rememberDeviceInfo(): DeviceInfo {
         configuration.fontScale,
         fontWeightAdjustment
     ) {
-        Log.i(
-            TAG,
-            "Width: ${configuration.screenWidthDp}dp, " +
-                    "Height: ${configuration.screenHeightDp}dp, " +
-                    "FontScale: ${configuration.fontScale}, " +
-                    "FontWeightAdjustment: $fontWeightAdjustment"
+        Logger.UI.i(
+            "Device info: Width=${configuration.screenWidthDp}dp, " +
+                    "Height=${configuration.screenHeightDp}dp, " +
+                    "FontScale=${configuration.fontScale}, " +
+                    "FontWeightAdjustment=$fontWeightAdjustment"
         )
         DeviceInfo(
             width = configuration.screenWidthDp.dp,

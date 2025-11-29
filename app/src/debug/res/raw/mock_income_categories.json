@@ -1,0 +1,167 @@
+{
+  "message": "User categories returned",
+  "success": true,
+  "cache": true,
+  "timestamp": "2025-11-12T18:00:00+05:30",
+  "data": {
+    "type": "INCOME",
+    "categories": [
+      {
+        "id": 1000,
+        "name": "Job Income",
+        "icon": "job_group_icon",
+        "createdBy": null,
+        "parentCategory": null,
+        "createdAt": "2025-11-12T18:00:00+05:30",
+        "updatedAt": "2025-11-12T18:00:00+05:30",
+        "updatedBy": null,
+        "readOnly": true,
+        "subCategory": false
+      },
+      {
+        "id": 1001,
+        "name": "Salary",
+        "icon": "salary_icon",
+        "createdBy": null,
+        "parentCategory": 1000,
+        "createdAt": "2025-11-12T18:00:00+05:30",
+        "updatedAt": "2025-11-12T18:00:00+05:30",
+        "updatedBy": null,
+        "readOnly": true,
+        "subCategory": true
+      },
+      {
+        "id": 1002,
+        "name": "Bonus / Incentives",
+        "icon": "bonus_icon",
+        "createdBy": null,
+        "parentCategory": 1000,
+        "createdAt": "2025-11-12T18:00:00+05:30",
+        "updatedAt": "2025-11-12T18:00:00+05:30",
+        "updatedBy": null,
+        "readOnly": true,
+        "subCategory": true
+      },
+      {
+        "id": 1003,
+        "name": "Business Income",
+        "icon": "business_group_icon",
+        "createdBy": null,
+        "parentCategory": null,
+        "createdAt": "2025-11-12T18:00:00+05:30",
+        "updatedAt": "2025-11-12T18:00:00+05:30",
+        "updatedBy": null,
+        "readOnly": true,
+        "subCategory": false
+      },
+      {
+        "id": 1004,
+        "name": "Freelance / Self-Employed",
+        "icon": "freelance_icon",
+        "createdBy": null,
+        "parentCategory": 1003,
+        "createdAt": "2025-11-12T18:00:00+05:30",
+        "updatedAt": "2025-11-12T18:00:00+05:30",
+        "updatedBy": null,
+        "readOnly": true,
+        "subCategory": true
+      },
+      {
+        "id": 1005,
+        "name": "Business Profit",
+        "icon": "profit_icon",
+        "createdBy": null,
+        "parentCategory": 1003,
+        "createdAt": "2025-11-12T18:00:00+05:30",
+        "updatedAt": "2025-11-12T18:00:00+05:30",
+        "updatedBy": null,
+        "readOnly": true,
+        "subCategory": true
+      },
+      {
+        "id": 1006,
+        "name": "Investments",
+        "icon": "investment_group_icon",
+        "createdBy": null,
+        "parentCategory": null,
+        "createdAt": "2025-11-12T18:00:00+05:30",
+        "updatedAt": "2025-11-12T18:00:00+05:30",
+        "updatedBy": null,
+        "readOnly": true,
+        "subCategory": false
+      },
+      {
+        "id": 1007,
+        "name": "Dividends / Interest",
+        "icon": "dividend_icon",
+        "createdBy": null,
+        "parentCategory": 1006,
+        "createdAt": "2025-11-12T18:00:00+05:30",
+        "updatedAt": "2025-11-12T18:00:00+05:30",
+        "updatedBy": null,
+        "readOnly": true,
+        "subCategory": true
+      },
+      {
+        "id": 1008,
+        "name": "Capital Gains",
+        "icon": "capital_gain_icon",
+        "createdBy": null,
+        "parentCategory": 1006,
+        "createdAt": "2025-11-12T18:00:00+05:30",
+        "updatedAt": "2025-11-12T18:00:00+05:30",
+        "updatedBy": null,
+        "readOnly": true,
+        "subCategory": true
+      },
+      {
+        "id": 1009,
+        "name": "Property Income",
+        "icon": "property_group_icon",
+        "createdBy": null,
+        "parentCategory": null,
+        "createdAt": "2025-11-12T18:00:00+05:30",
+        "updatedAt": "2025-11-12T18:00:00+05:30",
+        "updatedBy": null,
+        "readOnly": true,
+        "subCategory": false
+      },
+      {
+        "id": 1010,
+        "name": "Rent Income",
+        "icon": "rent_icon",
+        "createdBy": null,
+        "parentCategory": 1009,
+        "createdAt": "2025-11-12T18:00:00+05:30",
+        "updatedAt": "2025-11-12T18:00:00+05:30",
+        "updatedBy": null,
+        "readOnly": true,
+        "subCategory": true
+      },
+      {
+        "id": 1011,
+        "name": "Other Income (Misc)",
+        "icon": "other_income_icon",
+        "createdBy": null,
+        "parentCategory": null,
+        "createdAt": "2025-11-12T18:00:00+05:30",
+        "updatedAt": "2025-11-12T18:00:00+05:30",
+        "updatedBy": null,
+        "readOnly": true,
+        "subCategory": false
+      },
+      {
+        "id": 1012,
+        "name": "Gift / Cashback / Refund",
+        "icon": "gift_cashback_refund_icon",
+        "createdBy": null,
+        "parentCategory": 1011,
+        "createdAt": "2025-11-12T18:00:00+05:30",
+        "updatedAt": "2025-11-12T18:00:00+05:30",
+        "updatedBy": null,
+        "readOnly": true,
+        "subCategory": true
+      }
+    ]
+  }
+}

@@ -16,7 +16,7 @@ android {
     defaultConfig {
         applicationId = "com.itsjeel01.finsiblefrontend"
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -24,6 +24,9 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        // Database schema version for ObjectBox - increment when making breaking schema changes
+        buildConfigField("int", "DATABASE_SCHEMA_VERSION", "1")
     }
 
     buildTypes {
@@ -79,6 +82,8 @@ dependencies {
     implementation(libs.converter.kotlinx.serialization)
     implementation(libs.androidx.security.crypto)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.timber)
+    debugImplementation(libs.okhttp.logging.interceptor)
 
     ksp(libs.hilt.compiler)
 
@@ -98,8 +103,8 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    debugImplementation("io.objectbox:objectbox-android-objectbrowser:4.3.1")
-    releaseImplementation("io.objectbox:objectbox-android:4.3.1")
+    debugImplementation(libs.objectbox.android.objectbrowser)
+    releaseImplementation(libs.objectbox.android)
 }
 
 apply(plugin = "io.objectbox")

@@ -1,11 +1,11 @@
 package com.itsjeel01.finsiblefrontend.ui.util
 
 import android.content.Context
-import android.util.Log
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.itsjeel01.finsiblefrontend.common.logging.Logger
 import java.security.MessageDigest
 import java.util.UUID
 import javax.inject.Inject
@@ -16,6 +16,7 @@ class GoogleAuthManager @Inject constructor() {
 
     suspend fun fetchGoogleIdToken(context: Context, clientId: String): Result<String> {
         return try {
+            Logger.Auth.d("Fetching Google ID token for clientId: $clientId")
             val credentialsManager = CredentialManager.create(context)
             val request = createCredentialRequest(clientId)
 
@@ -23,10 +24,10 @@ class GoogleAuthManager @Inject constructor() {
             val credential = result.credential
             val idToken = GoogleIdTokenCredential.createFrom(credential.data).idToken
 
-            Log.d(TAG, "Google ID token fetched: $idToken")
+            Logger.Auth.i("Google ID token fetched successfully")
             Result.success(idToken)
         } catch (e: Exception) {
-            Log.e(TAG, "Error fetching Google ID token", e)
+            Logger.Auth.e("Error fetching Google ID token", e)
             Result.failure(e)
         }
     }
@@ -46,9 +47,5 @@ class GoogleAuthManager @Inject constructor() {
         return GetCredentialRequest.Builder()
             .addCredentialOption(googleIdOption)
             .build()
-    }
-
-    companion object {
-        private const val TAG = "GoogleAuthManager"
     }
 }

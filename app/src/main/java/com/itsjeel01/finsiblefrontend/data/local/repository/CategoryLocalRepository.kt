@@ -1,6 +1,7 @@
 package com.itsjeel01.finsiblefrontend.data.local.repository
 
 import com.itsjeel01.finsiblefrontend.common.TransactionType
+import com.itsjeel01.finsiblefrontend.common.logging.Logger
 import com.itsjeel01.finsiblefrontend.data.local.entity.CategoryEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.CategoryEntity_
 import com.itsjeel01.finsiblefrontend.data.model.Category
@@ -12,6 +13,8 @@ class CategoryLocalRepository @Inject constructor(override val box: Box<Category
     BaseLocalRepository<Category, CategoryEntity> {
 
     override fun addAll(data: List<Category>, additionalInfo: Any?, ttlMinutes: Long?) {
+        super.addAll(data, additionalInfo, ttlMinutes)
+
         val type = additionalInfo as TransactionType
 
         val parentCategories = data.filter { it.parentCategory == null }
@@ -53,6 +56,8 @@ class CategoryLocalRepository @Inject constructor(override val box: Box<Category
             .build()
             .find()
 
+        Logger.Database.d("Found ${parentCategories.size} parent categories of type $type")
+
         parentCategories.forEach { parent ->
             categories[parent] = parent.subCategories.toList()
         }
@@ -61,17 +66,23 @@ class CategoryLocalRepository @Inject constructor(override val box: Box<Category
     }
 
     fun getParentCategories(type: TransactionType): List<CategoryEntity> {
-        return box.query()
+        val parents = box.query()
             .equal(CategoryEntity_.type, type.ordinal.toLong())
             .equal(CategoryEntity_.parentCategoryId, 0L)
             .build()
             .find()
+
+        Logger.Database.d("Fetched ${parents.size} parent categories of type $type")
+        return parents
     }
 
     fun getSubCategories(parentId: Long): List<CategoryEntity> {
-        return box.query()
+        val subs = box.query()
             .equal(CategoryEntity_.parentCategoryId, parentId)
             .build()
             .find()
+
+        Logger.Database.d("Fetched ${subs.size} subcategories for parent id=$parentId")
+        return subs
     }
 }

@@ -12,4 +12,7 @@ sealed class AppRoutes {
 
     @Serializable
     data object Launch : AppRoutes()
+
+    @Serializable
+    data object Test : AppRoutes()
 }

@@ -9,14 +9,16 @@ import com.itsjeel01.finsiblefrontend.data.remote.api.CategoryApiService
 import com.itsjeel01.finsiblefrontend.data.remote.converter.ResponseHandler
 import com.itsjeel01.finsiblefrontend.data.remote.converter.ResponseHandlingConverterFactory
 import com.itsjeel01.finsiblefrontend.data.remote.interceptor.AuthInterceptor
+import com.itsjeel01.finsiblefrontend.data.remote.interceptor.MockInterceptor
 import com.itsjeel01.finsiblefrontend.data.sync.CacheManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
-import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import javax.inject.Singleton
@@ -43,15 +45,32 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun okHttpClient(preferenceManager: PreferenceManager): OkHttpClient {
+    fun okHttpClient(
+        preferenceManager: PreferenceManager,
+        mockInterceptor: MockInterceptor?
+    ): OkHttpClient {
         return OkHttpClient.Builder()
+            .apply {
+                // Add MockInterceptor first (if available in debug build)
+                if (BuildConfig.DEBUG && mockInterceptor != null) {
+                    addInterceptor(mockInterceptor)
+                }
+
+                // Add HTTP logging interceptor for debug builds
+                if (BuildConfig.DEBUG) {
+                    val loggingInterceptor = HttpLoggingInterceptor().apply {
+                        level = HttpLoggingInterceptor.Level.BODY
+                    }
+                    addInterceptor(loggingInterceptor)
+                }
+            }
             .addInterceptor(AuthInterceptor(preferenceManager))
             .build()
     }
 
     @Provides
     fun retrofit(okHttpClient: OkHttpClient, cacheManager: CacheManager): Retrofit {
-        val contentType = MediaType.get("application/json")
+        val contentType = "application/json".toMediaType()
         val json = Json {
             ignoreUnknownKeys = true
             coerceInputValues = true

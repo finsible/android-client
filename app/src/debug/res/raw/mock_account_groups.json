@@ -1,0 +1,50 @@
+{
+  "message": "Account groups fetched successfully",
+  "success": true,
+  "timestamp": "2025-11-28T10:30:00+05:30",
+  "cache": true,
+  "data": [
+    {
+      "id": 4000,
+      "name": "Cash",
+      "description": "Physical cash and petty cash",
+      "icon": "piggy_bank",
+      "isSystemDefault": true
+    },
+    {
+      "id": 4001,
+      "name": "Bank Accounts",
+      "description": "Savings and current accounts",
+      "icon": "piggybank_filled",
+      "isSystemDefault": true
+    },
+    {
+      "id": 4002,
+      "name": "Credit Cards",
+      "description": "Credit card liabilities",
+      "icon": "transactions",
+      "isSystemDefault": true
+    },
+    {
+      "id": 4003,
+      "name": "Investments",
+      "description": "Stocks, mutual funds, and other investments",
+      "icon": "stats",
+      "isSystemDefault": false
+    },
+    {
+      "id": 4004,
+      "name": "Loans & Debts",
+      "description": "Personal loans, mortgages, and liabilities",
+      "icon": "warning",
+      "isSystemDefault": true
+    },
+    {
+      "id": 4005,
+      "name": "Digital Wallets",
+      "description": "UPI wallets and e-wallets",
+      "icon": "transfer",
+      "isSystemDefault": false
+    }
+  ]
+}

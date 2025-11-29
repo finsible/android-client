@@ -1,0 +1,228 @@
+{
+  "message": "Accounts fetched successfully",
+  "success": true,
+  "timestamp": "2025-11-28T10:30:00+05:30",
+  "cache": true,
+  "data": [
+    {
+      "id": 5000,
+      "name": "Cash in Wallet",
+      "description": "Daily spending cash",
+      "balance": "2450.00",
+      "accountGroupId": 4000,
+      "icon": "piggy_bank",
+      "currencyCode": "INR",
+      "isActive": true,
+      "isSystemDefault": true
+    },
+    {
+      "id": 5001,
+      "name": "Petty Cash",
+      "description": "Emergency cash reserve",
+      "balance": "500.00",
+      "accountGroupId": 4000,
+      "icon": "piggy_bank",
+      "currencyCode": "INR",
+      "isActive": true,
+      "isSystemDefault": false
+    },
+    {
+      "id": 5002,
+      "name": "HDFC Salary Account",
+      "description": "Primary salary account",
+      "balance": "125680.50",
+      "accountGroupId": 4001,
+      "icon": "piggybank_filled",
+      "currencyCode": "INR",
+      "isActive": true,
+      "isSystemDefault": false
+    },
+    {
+      "id": 5003,
+      "name": "ICICI Savings",
+      "description": "Emergency fund savings",
+      "balance": "450000.00",
+      "accountGroupId": 4001,
+      "icon": "piggybank_filled",
+      "currencyCode": "INR",
+      "isActive": true,
+      "isSystemDefault": false
+    },
+    {
+      "id": 5004,
+      "name": "SBI Savings",
+      "description": "Secondary savings account",
+      "balance": "18750.25",
+      "accountGroupId": 4001,
+      "icon": "piggybank_filled",
+      "currencyCode": "INR",
+      "isActive": true,
+      "isSystemDefault": false
+    },
+    {
+      "id": 5005,
+      "name": "Axis Bank Current",
+      "description": "Business transactions account",
+      "balance": "89200.00",
+      "accountGroupId": 4001,
+      "icon": "piggybank_filled",
+      "currencyCode": "INR",
+      "isActive": true,
+      "isSystemDefault": false
+    },
+    {
+      "id": 5006,
+      "name": "HDFC Credit Card",
+      "description": "Primary credit card",
+      "balance": "-24850.75",
+      "accountGroupId": 4002,
+      "icon": "transactions",
+      "currencyCode": "INR",
+      "isActive": true,
+      "isSystemDefault": false
+    },
+    {
+      "id": 5007,
+      "name": "SBI Credit Card",
+      "description": "Travel and shopping card",
+      "balance": "-8920.50",
+      "accountGroupId": 4002,
+      "icon": "transactions",
+      "currencyCode": "INR",
+      "isActive": true,
+      "isSystemDefault": false
+    },
+    {
+      "id": 5008,
+      "name": "Amazon Pay ICICI",
+      "description": "Online shopping credit card",
+      "balance": "-1250.00",
+      "accountGroupId": 4002,
+      "icon": "transactions",
+      "currencyCode": "INR",
+      "isActive": true,
+      "isSystemDefault": false
+    },
+    {
+      "id": 5009,
+      "name": "Zerodha Equity",
+      "description": "Stock market investments",
+      "balance": "285600.00",
+      "accountGroupId": 4003,
+      "icon": "stats",
+      "currencyCode": "INR",
+      "isActive": true,
+      "isSystemDefault": false
+    },
+    {
+      "id": 5010,
+      "name": "Groww Mutual Funds",
+      "description": "SIP and mutual fund investments",
+      "balance": "156750.50",
+      "accountGroupId": 4003,
+      "icon": "stats",
+      "currencyCode": "INR",
+      "isActive": true,
+      "isSystemDefault": false
+    },
+    {
+      "id": 5011,
+      "name": "Fixed Deposit - HDFC",
+      "description": "5-year FD @ 6.5% p.a.",
+      "balance": "500000.00",
+      "accountGroupId": 4003,
+      "icon": "stats",
+      "currencyCode": "INR",
+      "isActive": true,
+      "isSystemDefault": false
+    },
+    {
+      "id": 5012,
+      "name": "Home Loan",
+      "description": "ICICI home loan",
+      "balance": "-3250000.00",
+      "accountGroupId": 4004,
+      "icon": "warning",
+      "currencyCode": "INR",
+      "isActive": true,
+      "isSystemDefault": false
+    },
+    {
+      "id": 5013,
+      "name": "Car Loan",
+      "description": "HDFC car loan",
+      "balance": "-425000.00",
+      "accountGroupId": 4004,
+      "icon": "warning",
+      "currencyCode": "INR",
+      "isActive": true,
+      "isSystemDefault": false
+    },
+    {
+      "id": 5014,
+      "name": "Personal Loan",
+      "description": "Personal loan from SBI",
+      "balance": "-185000.00",
+      "accountGroupId": 4004,
+      "icon": "warning",
+      "currencyCode": "INR",
+      "isActive": true,
+      "isSystemDefault": false
+    },
+    {
+      "id": 5015,
+      "name": "PhonePe Wallet",
+      "description": "UPI and daily payments",
+      "balance": "1850.00",
+      "accountGroupId": 4005,
+      "icon": "transfer",
+      "currencyCode": "INR",
+      "isActive": true,
+      "isSystemDefault": false
+    },
+    {
+      "id": 5016,
+      "name": "Google Pay",
+      "description": "UPI payments",
+      "balance": "420.00",
+      "accountGroupId": 4005,
+      "icon": "transfer",
+      "currencyCode": "INR",
+      "isActive": true,
+      "isSystemDefault": false
+    },
+    {
+      "id": 5017,
+      "name": "Paytm Wallet",
+      "description": "Recharges and bill payments",
+      "balance": "125.50",
+      "accountGroupId": 4005,
+      "icon": "transfer",
+      "currencyCode": "INR",
+      "isActive": true,
+      "isSystemDefault": false
+    },
+    {
+      "id": 5018,
+      "name": "Kotak 811",
+      "description": "Old account (inactive)",
+      "balance": "0.00",
+      "accountGroupId": 4001,
+      "icon": "piggybank_filled",
+      "currencyCode": "INR",
+      "isActive": false,
+      "isSystemDefault": false
+    },
+    {
+      "id": 5019,
+      "name": "Old Credit Card",
+      "description": "Closed credit card",
+      "balance": "0.00",
+      "accountGroupId": 4002,
+      "icon": "transactions",
+      "currencyCode": "INR",
+      "isActive": false,
+      "isSystemDefault": false
+    }
+  ]
+}

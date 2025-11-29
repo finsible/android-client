@@ -1,6 +1,6 @@
 package com.itsjeel01.finsiblefrontend.data.remote.converter
 
-import android.util.Log
+import com.itsjeel01.finsiblefrontend.common.logging.Logger
 import com.itsjeel01.finsiblefrontend.data.remote.model.BaseResponse
 import com.itsjeel01.finsiblefrontend.data.sync.CacheManager
 
@@ -10,14 +10,15 @@ class ResponseHandler(private val cacheManager: CacheManager) {
     fun process(response: Any?) {
         if (response is BaseResponse<*>) {
             try {
-                cacheManager.cacheData(response)
+                if (response.cache && response.success && response.data != null) {
+                    Logger.Cache.d("Caching response: ${response.data::class.simpleName}")
+                    cacheManager.cacheData(response)
+                } else {
+                    Logger.Cache.d("Skipping cache: success=${response.success}, cache=${response.cache}, hasData=${response.data != null}")
+                }
             } catch (e: Exception) {
-                Log.e(TAG, "Error processing response: $e")
+                Logger.Cache.e("Error processing response for caching", e)
             }
         }
-    }
-
-    companion object {
-        private const val TAG = "ResponseHandler"
     }
 }

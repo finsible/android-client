@@ -1,7 +1,6 @@
 package com.itsjeel01.finsiblefrontend.ui.screen
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.FastOutLinearInEasing
@@ -52,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.itsjeel01.finsiblefrontend.R
+import com.itsjeel01.finsiblefrontend.common.logging.Logger
 import com.itsjeel01.finsiblefrontend.data.di.hiltLoadingManager
 import com.itsjeel01.finsiblefrontend.data.di.hiltNotificationManager
 import com.itsjeel01.finsiblefrontend.ui.component.fin.ButtonConfig
@@ -66,8 +66,6 @@ import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.bold
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.AuthViewModel
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.OnboardingViewModel
-
-private const val TAG = "OnboardingScreen"
 
 @Composable
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -87,12 +85,12 @@ fun OnboardingScreen(navigateToDashboard: () -> Unit) {
 
         when (authState) {
             is AuthState.Positive -> {
-                Log.d(TAG, "AuthState = Positive; navigating to dashboard")
+                Logger.UI.d("AuthState = Positive; navigating to dashboard")
                 navigateToDashboard()
             }
 
             is AuthState.Loading -> {
-                Log.d(TAG, "AuthState = Loading")
+                Logger.UI.d("AuthState = Loading")
                 loadingManager.show("Please wait...")
             }
 
@@ -100,7 +98,7 @@ fun OnboardingScreen(navigateToDashboard: () -> Unit) {
                 val authState = authState as AuthState.Negative
 
                 if (authState.isFailed) {
-                    Log.d(TAG, "Auth status: ${authState.message}")
+                    Logger.UI.d("Auth status: ${authState.message}")
 
                     inAppNotificationManager.showError(
                         title = "Authentication failed",

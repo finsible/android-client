@@ -1,11 +1,11 @@
 package com.itsjeel01.finsiblefrontend.ui.theme
 
-import android.util.Log
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 import androidx.core.graphics.toColorInt
+import com.itsjeel01.finsiblefrontend.common.logging.Logger
 
 class FinsibleColorResolver(private val colors: FinsibleColors) {
 
@@ -16,7 +16,7 @@ class FinsibleColorResolver(private val colors: FinsibleColors) {
             resolveColorToken(colorReference)
                 ?: parseHexColor(colorReference)
                 ?: fallbackColor
-                ?: Color.Companion.Gray
+                ?: Color.Gray
         }
     }
 
@@ -120,12 +120,8 @@ class FinsibleColorResolver(private val colors: FinsibleColors) {
                 Color("#$hex".toColorInt())
             else null
         } catch (e: IllegalArgumentException) {
-            Log.e(TAG, "Invalid color format: $colorString", e)
+            Logger.UI.e("Invalid color format: $colorString", e)
             null
         }
-    }
-
-    companion object {
-        const val TAG = "FinsibleColorResolver"
     }
 }

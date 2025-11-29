@@ -1,0 +1,18 @@
+{
+  "message": "Accounts fetched successfully",
+  "success": true,
+  "timestamp": "2025-11-15T09:00:00+05:30",
+  "data": [
+    {
+      "id": 5000,
+      "name": "Cash",
+      "description": "Default cash account",
+      "balance": "0.0000",
+      "accountGroupId": 4000,
+      "icon": "cash_icon",
+      "currencyCode": "INR",
+      "isActive": true,
+      "isSystemDefault": true
+    }
+  ]
+}

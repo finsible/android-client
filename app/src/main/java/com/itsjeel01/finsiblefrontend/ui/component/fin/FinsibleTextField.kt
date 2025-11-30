@@ -74,7 +74,7 @@ fun FinsibleTextField(
     }
 
     val textColor = when {
-        !config.enabled -> FinsibleTheme.colors.disabled
+        !config.enabled -> FinsibleTheme.colors.disabledContent
         else -> FinsibleTheme.colors.primaryContent
     }
 

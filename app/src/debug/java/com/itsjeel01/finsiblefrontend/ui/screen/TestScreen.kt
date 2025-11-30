@@ -169,7 +169,7 @@ fun TestScreen(
                 SwitchRow("Enable mocking", mockApiEnabled) { viewModel.toggleMockApi(it) }
                 if (mockApiEnabled) {
                     Spacer(modifier = Modifier.height(FinsibleTheme.dimes.d6))
-                    HorizontalDivider(color = FinsibleTheme.colors.border.copy(alpha = 0.3f))
+                    HorizontalDivider(color = FinsibleTheme.colors.divider)
                     Spacer(modifier = Modifier.height(FinsibleTheme.dimes.d6))
                     endpointToggles.forEach { CheckboxRow(it.label, it.checked, it.onToggle) }
                 }

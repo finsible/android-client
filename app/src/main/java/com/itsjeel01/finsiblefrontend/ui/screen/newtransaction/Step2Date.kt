@@ -91,12 +91,12 @@ fun Step2Date(
                 state = datePickerState,
                 modifier = Modifier
                     .clip(RoundedCornerShape(FinsibleTheme.dimes.d16))
-                    .background(FinsibleTheme.colors.card),
+                    .background(FinsibleTheme.colors.surface),
                 showModeToggle = false,
                 title = null,
                 headline = null,
                 colors = DatePickerDefaults.colors().copy(
-                    containerColor = FinsibleTheme.colors.card,
+                    containerColor = FinsibleTheme.colors.surface,
                     selectedDayContainerColor = FinsibleTheme.colors.brandAccent,
                     todayContentColor = FinsibleTheme.colors.brandAccent,
                     todayDateBorderColor = FinsibleTheme.colors.brandAccent,
@@ -114,7 +114,7 @@ fun Step2Date(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(
-                        FinsibleTheme.colors.card,
+                        FinsibleTheme.colors.surface,
                         RoundedCornerShape(FinsibleTheme.dimes.d12)
                     )
                     .padding(FinsibleTheme.dimes.d16),
@@ -224,7 +224,7 @@ private fun RecurringFrequencyDropdown(
         ExposedDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            modifier = Modifier.background(FinsibleTheme.colors.card)
+            modifier = Modifier.background(FinsibleTheme.colors.surface)
         ) {
             options.forEach { option ->
                 DropdownMenuItem(
@@ -241,7 +241,7 @@ private fun RecurringFrequencyDropdown(
                         onFrequencySelected(option)
                     },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                    modifier = Modifier.background(FinsibleTheme.colors.card)
+                    modifier = Modifier.background(FinsibleTheme.colors.surface)
                 )
             }
         }

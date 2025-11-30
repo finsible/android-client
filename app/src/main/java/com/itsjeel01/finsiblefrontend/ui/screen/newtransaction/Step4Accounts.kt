@@ -118,7 +118,7 @@ private fun AccountSelector(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(FinsibleTheme.colors.card, RoundedCornerShape(FinsibleTheme.dimes.d12))
+            .background(FinsibleTheme.colors.surface, RoundedCornerShape(FinsibleTheme.dimes.d12))
             .padding(FinsibleTheme.dimes.d16),
         verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d12)
     ) {

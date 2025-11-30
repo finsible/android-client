@@ -74,7 +74,7 @@ fun FinsibleTextField(
     }
 
     val textColor = when {
-        !config.enabled -> FinsibleTheme.colors.disabled
+        !config.enabled -> FinsibleTheme.colors.disabledContent
         else -> FinsibleTheme.colors.primaryContent
     }
 
@@ -133,7 +133,7 @@ fun FinsibleTextField(
                             Icon(
                                 painter = painterResource(id = it),
                                 contentDescription = null,
-                                tint = if (effectiveError) FinsibleTheme.colors.error else FinsibleTheme.colors.primaryContent60,
+                                tint = if (effectiveError) FinsibleTheme.colors.error else FinsibleTheme.colors.onSurfaceVariant,
                                 modifier = Modifier.padding(end = FinsibleTheme.dimes.d4)
                             )
                         }
@@ -156,7 +156,7 @@ fun FinsibleTextField(
                             Icon(
                                 painter = painterResource(id = it),
                                 contentDescription = null,
-                                tint = if (effectiveError) FinsibleTheme.colors.error else FinsibleTheme.colors.primaryContent60,
+                                tint = if (effectiveError) FinsibleTheme.colors.error else FinsibleTheme.colors.onSurfaceVariant,
                                 modifier = Modifier.padding(start = FinsibleTheme.dimes.d4)
                             )
                         }

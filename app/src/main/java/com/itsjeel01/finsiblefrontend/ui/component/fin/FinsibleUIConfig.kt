@@ -10,8 +10,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
-// --- ComponentSize Enum - Defines sizes for components ---
-
+/* Component sizes for Finsible components. */
 enum class ComponentSize {
     Small, Medium, Large;
 
@@ -73,8 +72,7 @@ enum class ComponentSize {
     }
 }
 
-// --- ComponentType Enum - Defines visual styles for components ---
-
+/* Component types for Finsible components. */
 enum class ComponentType {
     Brand, Primary, Secondary, Tertiary;
 
@@ -91,7 +89,7 @@ enum class ComponentType {
         Brand -> FinsibleTheme.colors.primaryBackground
         Primary -> FinsibleTheme.colors.primaryBackground
         Secondary -> FinsibleTheme.colors.primaryContent
-        Tertiary -> FinsibleTheme.colors.primaryContent60
+        Tertiary -> FinsibleTheme.colors.tertiaryContent
     }
 
     @Composable
@@ -101,12 +99,10 @@ enum class ComponentType {
     }
 }
 
-// --- IconPosition Enum - Defines icon placement relative to text in FinsibleButton ---
-
+/* Icon positions for Finsible components. */
 enum class IconPosition { Leading, Trailing, BeforeLabel, AfterLabel }
 
-// --- IconButtonShape Enum - Defines shapes for FinsibleIconButton ---
-
+/* Icon shapes for Finsible components. */
 enum class IconButtonShape {
     Circle, Square, Rounded;
 
@@ -118,8 +114,7 @@ enum class IconButtonShape {
     }
 }
 
-// --- LoadingSpeed Enum - Defines animation speeds for loading indicators ---
-
+/* Finsible Loading speeds. */
 enum class LoadingSpeed(val durationMs: Int) {
     FAST(1200),
     NORMAL(2000),

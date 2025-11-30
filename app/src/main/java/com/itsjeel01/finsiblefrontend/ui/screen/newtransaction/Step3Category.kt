@@ -67,7 +67,7 @@ fun Step3Category(
                     onClick = { if (!isSelected) onTransactionTypeChange(type) },
                     colors = SegmentedButtonDefaults.colors().copy(
                         activeContentColor = FinsibleTheme.colors.primaryContent,
-                        activeContainerColor = FinsibleTheme.colors.card,
+                        activeContainerColor = FinsibleTheme.colors.surface,
                         inactiveContentColor = FinsibleTheme.colors.secondaryContent,
                         inactiveBorderColor = FinsibleTheme.colors.transparent,
                         inactiveContainerColor = FinsibleTheme.colors.input
@@ -135,7 +135,7 @@ private fun CategoryGroup(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(FinsibleTheme.colors.card, RoundedCornerShape(FinsibleTheme.dimes.d12))
+            .background(FinsibleTheme.colors.surface, RoundedCornerShape(FinsibleTheme.dimes.d12))
             .padding(FinsibleTheme.dimes.d16),
         verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d12)
     ) {

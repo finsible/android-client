@@ -363,7 +363,7 @@ enum class NotificationType(val icon: Int) {
                 SUCCESS -> FinsibleTheme.colors.success
                 ERROR -> FinsibleTheme.colors.error
                 WARNING -> FinsibleTheme.colors.warning
-                INFO -> FinsibleTheme.colors.primaryContent60
+                INFO -> FinsibleTheme.colors.info
             }
         }
     }

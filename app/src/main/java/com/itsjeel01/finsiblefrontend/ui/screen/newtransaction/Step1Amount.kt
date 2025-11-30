@@ -89,7 +89,7 @@ fun Step1Amount(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
-                    FinsibleTheme.colors.surfaceContainerDim,
+                    FinsibleTheme.colors.surfaceContainerLow,
                     RoundedCornerShape(FinsibleTheme.dimes.d16)
                 )
                 .padding(

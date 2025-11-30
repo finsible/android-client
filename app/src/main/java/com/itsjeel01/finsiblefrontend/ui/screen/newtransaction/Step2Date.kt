@@ -114,7 +114,7 @@ fun Step2Date(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(
-                        FinsibleTheme.colors.surfaceContainer,
+                        FinsibleTheme.colors.surface,
                         RoundedCornerShape(FinsibleTheme.dimes.d12)
                     )
                     .padding(FinsibleTheme.dimes.d16),

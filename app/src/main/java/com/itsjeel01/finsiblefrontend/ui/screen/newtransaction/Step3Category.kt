@@ -135,7 +135,7 @@ private fun CategoryGroup(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(FinsibleTheme.colors.surfaceContainer, RoundedCornerShape(FinsibleTheme.dimes.d12))
+            .background(FinsibleTheme.colors.surface, RoundedCornerShape(FinsibleTheme.dimes.d12))
             .padding(FinsibleTheme.dimes.d16),
         verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d12)
     ) {

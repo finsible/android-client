@@ -162,6 +162,10 @@ class FinsibleColorResolver(private val colors: FinsibleColors) {
             "gradientneutral2" -> colors.gradientNeutral2
             "gradientpremium1" -> colors.gradientPremium1
             "gradientpremium2" -> colors.gradientPremium2
+            // Transaction types
+            "income" -> colors.income
+            "expense" -> colors.expense
+            "transfer" -> colors.transfer
 
             else -> null
         }

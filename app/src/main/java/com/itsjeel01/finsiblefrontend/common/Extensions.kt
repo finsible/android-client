@@ -45,4 +45,14 @@ fun String.toReadableCurrency(): String {
     }
 }
 
+fun BigDecimal.toLocaleCurrency(): String {
+    val locale = Locale.forLanguageTag("en-IN")
+    val currencySymbol = Currency.getInstance(locale).symbol
+    val formatted = FinsibleUtils.INDIAN_CURRENCY_FORMATTER.format(this)
+    return "$currencySymbol$formatted"
+
+}
+
+fun String.toLocaleCurrency(): String = BigDecimal(this).toLocaleCurrency()
+
 fun BigDecimal.toReadableCurrency(): String = this.toString().toReadableCurrency()

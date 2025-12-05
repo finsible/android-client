@@ -4,6 +4,7 @@ import android.icu.math.BigDecimal
 import android.icu.math.MathContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.itsjeel01.finsiblefrontend.common.toLocaleCurrency
 import com.itsjeel01.finsiblefrontend.common.toReadableCurrency
 import com.itsjeel01.finsiblefrontend.data.local.entity.AccountEntity
 import com.itsjeel01.finsiblefrontend.data.local.repository.AccountLocalRepository
@@ -73,7 +74,7 @@ class BalanceViewModel @Inject constructor(
         cards.add(
             AccountCardData(
                 title = "Net Worth",
-                largeText = netWorth.toReadableCurrency(),
+                largeText = netWorth.toLocaleCurrency(),
                 statistics = listOf(
                     StatisticsModel("Assets", totalAssets.toReadableCurrency()),
                     StatisticsModel("Liabilities", totalLiabilities.toReadableCurrency())
@@ -87,7 +88,7 @@ class BalanceViewModel @Inject constructor(
             cards.add(
                 AccountCardData(
                     title = "Total Assets",
-                    largeText = totalAssets.toReadableCurrency(),
+                    largeText = totalAssets.toLocaleCurrency(),
                     statistics = assetStats
                 )
             )
@@ -99,7 +100,7 @@ class BalanceViewModel @Inject constructor(
             cards.add(
                 AccountCardData(
                     title = "Total Liabilities",
-                    largeText = totalLiabilities.toReadableCurrency(),
+                    largeText = totalLiabilities.toLocaleCurrency(),
                     statistics = liabilityStats
                 )
             )

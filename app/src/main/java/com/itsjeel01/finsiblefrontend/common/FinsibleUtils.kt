@@ -23,6 +23,7 @@ class FinsibleUtils {
             roundingMode = MathContext.ROUND_HALF_EVEN
             maximumFractionDigits = 2
             minimumFractionDigits = 0
+            isGroupingUsed = true
         }
     }
 }

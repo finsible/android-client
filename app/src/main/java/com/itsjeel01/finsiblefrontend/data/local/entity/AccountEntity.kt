@@ -1,6 +1,9 @@
 package com.itsjeel01.finsiblefrontend.data.local.entity
 
+import android.icu.math.BigDecimal
+import com.itsjeel01.finsiblefrontend.data.local.BigDecimalConverter
 import com.itsjeel01.finsiblefrontend.data.model.Account
+import io.objectbox.annotation.Convert
 import io.objectbox.annotation.Entity
 import io.objectbox.annotation.Id
 import io.objectbox.relation.ToOne
@@ -9,11 +12,18 @@ import io.objectbox.relation.ToOne
 data class AccountEntity(
     @Id(assignable = true) override var id: Long = 0,
     var name: String = "",
+
     var description: String = "",
-    var balance: Double = 0.0,
+
+    @Convert(converter = BigDecimalConverter::class, dbType = String::class)
+    var balance: BigDecimal = BigDecimal.ZERO,
+
     var currencyCode: String = "",
+
     var icon: String = "",
+
     var isActive: Boolean = false,
+
     var isSystemDefault: Boolean = false,
 ) : BaseEntity() {
     lateinit var accountGroup: ToOne<AccountGroupEntity>
@@ -24,8 +34,8 @@ fun AccountEntity.toDTO(): Account {
         id = id,
         name = name,
         description = description,
-        accountGroupId = accountGroup.target.id,
-        balance = balance,
+        accountGroupId = accountGroup.target?.id,
+        balance = balance.toString(),
         currencyCode = currencyCode,
         icon = icon,
         isActive = isActive,

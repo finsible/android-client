@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.itsjeel01.finsiblefrontend.common.toReadableCurrency
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.bold
 import com.itsjeel01.finsiblefrontend.ui.theme.displayFont
@@ -46,7 +47,6 @@ fun Step1Amount(
     onAmountChange: (String) -> Unit,
     focusRequester: FocusRequester,
     modifier: Modifier = Modifier,
-    currencySymbol: String = "₹"
 ) {
     LaunchedEffect(focusRequester) { focusRequester.requestFocus() }
 
@@ -72,9 +72,8 @@ fun Step1Amount(
         label = "topPadding"
     )
 
-    // Formatted amount derived only when amount or currency changes.
-    val formattedAmount by remember(amount, currencySymbol) {
-        derivedStateOf { formatAmountWithCommas(amount, currencySymbol) }
+    val formattedAmount by remember(amount) {
+        derivedStateOf { amount.toReadableCurrency() }
     }
 
     Column(
@@ -171,7 +170,6 @@ fun Step1Amount(
     modifier: Modifier = Modifier,
     focusRequester: FocusRequester,
     viewModel: NewTransactionViewModel,
-    currencySymbol: String = "₹"
 ) {
     val amount by viewModel.transactionAmountString.collectAsStateWithLifecycle()
     Step1Amount(
@@ -182,7 +180,6 @@ fun Step1Amount(
         },
         focusRequester = focusRequester,
         modifier = modifier,
-        currencySymbol = currencySymbol
     )
 }
 
@@ -197,13 +194,13 @@ private val indianFormatter: NumberFormat by lazy {
 /** Format amount with Indian number system commas (lakhs and crores). */
 private fun formatAmountWithCommas(amount: String, currencySymbol: String): String {
     if (amount.isBlank()) return ""
-    val numericValue = try {
+    try {
         BigDecimal(amount)
     } catch (_: Exception) {
         return amount
     }
     return try {
-        "$currencySymbol ${indianFormatter.format(numericValue)}"
+        amount.toReadableCurrency()
     } catch (_: Exception) {
         "$currencySymbol $amount"
     }

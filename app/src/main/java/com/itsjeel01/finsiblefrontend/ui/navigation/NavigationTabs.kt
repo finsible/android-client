@@ -36,7 +36,7 @@ object NavigationTabs {
         ),
         NavigationTab(
             label = "Accounts",
-            route = HomeRoutes.Accounts,
+            route = HomeRoutes.Balance,
             inactiveIcon = R.drawable.ic_piggybank_outlined,
             activeIcon = R.drawable.ic_piggybank_filled
         ),

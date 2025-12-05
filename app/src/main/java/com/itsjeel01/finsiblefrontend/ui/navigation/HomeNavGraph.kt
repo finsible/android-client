@@ -11,8 +11,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
-import com.itsjeel01.finsiblefrontend.ui.screen.AccountsTab
 import com.itsjeel01.finsiblefrontend.ui.screen.AnalyticsTab
+import com.itsjeel01.finsiblefrontend.ui.screen.BalanceTab
 import com.itsjeel01.finsiblefrontend.ui.screen.DashboardTab
 import com.itsjeel01.finsiblefrontend.ui.screen.SettingsTab
 import com.itsjeel01.finsiblefrontend.ui.screen.newtransaction.NewTransactionTab
@@ -54,7 +54,7 @@ fun NavGraphBuilder.homeNavGraph(
         )
     }
 
-    instantComposable<HomeRoutes.Accounts> { AccountsTab() }
+    instantComposable<HomeRoutes.Balance> { BalanceTab() }
 
     instantComposable<HomeRoutes.Settings> { SettingsTab() }
 

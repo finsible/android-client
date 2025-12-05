@@ -13,7 +13,7 @@ sealed class HomeRoutes {
     data object NewTransaction : HomeRoutes()
 
     @Serializable
-    data object Accounts : HomeRoutes()
+    data object Balance : HomeRoutes()
 
     @Serializable
     data object Settings : HomeRoutes()

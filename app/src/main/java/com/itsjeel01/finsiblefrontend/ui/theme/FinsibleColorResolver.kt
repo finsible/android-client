@@ -142,26 +142,8 @@ class FinsibleColorResolver(private val colors: FinsibleColors) {
             "divider" -> colors.divider
 
             // Financial card gradients
-            "gradientbrand1" -> colors.gradientBrand1
-            "gradientbrand2" -> colors.gradientBrand2
-            "gradientsuccess1" -> colors.gradientSuccess1
-            "gradientsuccess2" -> colors.gradientSuccess2
-            "gradientwarning1" -> colors.gradientWarning1
-            "gradientwarning2" -> colors.gradientWarning2
-            "gradientincome1" -> colors.gradientIncome1
-            "gradientincome2" -> colors.gradientIncome2
-            "gradientexpense1" -> colors.gradientExpense1
-            "gradientexpense2" -> colors.gradientExpense2
-            "gradientsavings1" -> colors.gradientSavings1
-            "gradientsavings2" -> colors.gradientSavings2
-            "gradientinvestment1" -> colors.gradientInvestment1
-            "gradientinvestment2" -> colors.gradientInvestment2
-            "gradientbudget1" -> colors.gradientBudget1
-            "gradientbudget2" -> colors.gradientBudget2
-            "gradientneutral1" -> colors.gradientNeutral1
-            "gradientneutral2" -> colors.gradientNeutral2
-            "gradientpremium1" -> colors.gradientPremium1
-            "gradientpremium2" -> colors.gradientPremium2
+
+
             // Transaction types
             "income" -> colors.income
             "expense" -> colors.expense

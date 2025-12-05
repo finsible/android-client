@@ -86,26 +86,12 @@ data class FinsibleColors(
     val transfer: Color,
 
     // Financial card gradients (pairs)
-    val gradientBrand1: Color,
-    val gradientBrand2: Color,
-    val gradientSuccess1: Color,
-    val gradientSuccess2: Color,
-    val gradientWarning1: Color,
-    val gradientWarning2: Color,
-    val gradientIncome1: Color,
-    val gradientIncome2: Color,
-    val gradientExpense1: Color,
-    val gradientExpense2: Color,
-    val gradientSavings1: Color,
-    val gradientSavings2: Color,
-    val gradientInvestment1: Color,
-    val gradientInvestment2: Color,
-    val gradientBudget1: Color,
-    val gradientBudget2: Color,
-    val gradientNeutral1: Color,
-    val gradientNeutral2: Color,
-    val gradientPremium1: Color,
-    val gradientPremium2: Color,
+    val netWorthGradientStart: Color,
+    val netWorthGradientEnd: Color,
+    val assetsGradientStart: Color,
+    val assetsGradientEnd: Color,
+    val liabilitiesGradientStart: Color,
+    val liabilitiesGradientEnd: Color,
 ) {
     companion object {
         val light = FinsibleColors(
@@ -182,27 +168,13 @@ data class FinsibleColors(
             expense = Color(0xFFC13C26),
             transfer = Color(0xFF348599),
 
-            // Financial card gradients
-            gradientBrand1 = Color(0xFF2E8B57),
-            gradientBrand2 = Color(0xFF73D09C),
-            gradientSuccess1 = Color(0xFF2ECC71),
-            gradientSuccess2 = Color(0xFF27AE60),
-            gradientWarning1 = Color(0xFFE74C3C),
-            gradientWarning2 = Color(0xFFC0392B),
-            gradientIncome1 = Color(0xFF4CAF50),
-            gradientIncome2 = Color(0xFF2E7D32),
-            gradientExpense1 = Color(0xFFFF6B6B),
-            gradientExpense2 = Color(0xFFEE5A52),
-            gradientSavings1 = Color(0xFFFFB300),
-            gradientSavings2 = Color(0xFFFF8F00),
-            gradientInvestment1 = Color(0xFF1976D2),
-            gradientInvestment2 = Color(0xFF1565C0),
-            gradientBudget1 = Color(0xFF4A47E8),
-            gradientBudget2 = Color(0xFF8E6DD9),
-            gradientNeutral1 = Color(0xFF607D8B),
-            gradientNeutral2 = Color(0xFF455A64),
-            gradientPremium1 = Color(0xFFE67E22),
-            gradientPremium2 = Color(0xFFD35400),
+            // Financial card gradients - optimized for white content & light mode vibe
+            netWorthGradientStart = Color(0xFF1B8035),
+            netWorthGradientEnd = Color(0xFF34C759),
+            assetsGradientStart = Color(0xFFE67E00),
+            assetsGradientEnd = Color(0xFFFFAB00),
+            liabilitiesGradientStart = Color(0xFF4A4A52),
+            liabilitiesGradientEnd = Color(0xFF6B6B78),
         )
 
         val dark = FinsibleColors(
@@ -279,27 +251,13 @@ data class FinsibleColors(
             expense = Color(0xFFFF6E54),
             transfer = Color(0xFF61A4B5),
 
-            // Financial card gradients
-            gradientBrand1 = Color(0xFF5BB95E),
-            gradientBrand2 = Color(0xFF1E5A35),
-            gradientSuccess1 = Color(0xFF66BB6A),
-            gradientSuccess2 = Color(0xFF2E7D32),
-            gradientWarning1 = Color(0xFFEF5350),
-            gradientWarning2 = Color(0xFFC62828),
-            gradientIncome1 = Color(0xFF7BC86F),
-            gradientIncome2 = Color(0xFF4A8B3D),
-            gradientExpense1 = Color(0xFFFF8A80),
-            gradientExpense2 = Color(0xFFFF5252),
-            gradientSavings1 = Color(0xFFFFD54F),
-            gradientSavings2 = Color(0xFFFFB300),
-            gradientInvestment1 = Color(0xFF42A5F5),
-            gradientInvestment2 = Color(0xFF1976D2),
-            gradientBudget1 = Color(0xFF7C7ADB),
-            gradientBudget2 = Color(0xFF5753C9),
-            gradientNeutral1 = Color(0xFF90A4AE),
-            gradientNeutral2 = Color(0xFF607D8B),
-            gradientPremium1 = Color(0xFFFF9800),
-            gradientPremium2 = Color(0xFFE67E22),
+            // Financial card gradients - richer saturation for dark mode
+            netWorthGradientStart = Color(0xFF1A7532),
+            netWorthGradientEnd = Color(0xFF30B350),
+            assetsGradientStart = Color(0xFFD97000),
+            assetsGradientEnd = Color(0xFFF59E00),
+            liabilitiesGradientStart = Color(0xFF3D3D45),
+            liabilitiesGradientEnd = Color(0xFF5A5A65),
         )
     }
 }

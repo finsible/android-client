@@ -9,42 +9,48 @@
       "name": "Cash",
       "description": "Physical cash and petty cash",
       "icon": "piggy_bank",
-      "isSystemDefault": true
+      "isSystemDefault": true,
+      "color": "#FFC107"
     },
     {
       "id": 4001,
       "name": "Bank Accounts",
       "description": "Savings and current accounts",
       "icon": "piggybank_filled",
-      "isSystemDefault": true
+      "isSystemDefault": true,
+      "color": "#2196F3"
     },
     {
       "id": 4002,
       "name": "Credit Cards",
       "description": "Credit card liabilities",
       "icon": "transactions",
-      "isSystemDefault": true
+      "isSystemDefault": true,
+      "color": "#E91E63"
     },
     {
       "id": 4003,
       "name": "Investments",
       "description": "Stocks, mutual funds, and other investments",
       "icon": "stats",
-      "isSystemDefault": false
+      "isSystemDefault": false,
+      "color": "#4CAF50"
     },
     {
       "id": 4004,
       "name": "Loans & Debts",
       "description": "Personal loans, mortgages, and liabilities",
       "icon": "warning",
-      "isSystemDefault": true
+      "isSystemDefault": true,
+      "color": "#F44336"
     },
     {
       "id": 4005,
       "name": "Digital Wallets",
       "description": "UPI wallets and e-wallets",
       "icon": "transfer",
-      "isSystemDefault": false
+      "isSystemDefault": false,
+      "color": "#9C27B0"
     }
   ]
 }

@@ -282,6 +282,7 @@ private fun AccountGroupFilterChip(
 
 @Composable
 private fun TransactionsContent(viewModel: BalanceViewModel) {
+    /** TODO: Implement transactions UI. */
 }
 
 @Composable

@@ -37,9 +37,6 @@ import com.itsjeel01.finsiblefrontend.ui.theme.bold
 import com.itsjeel01.finsiblefrontend.ui.theme.displayFont
 import com.itsjeel01.finsiblefrontend.ui.theme.medium
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.NewTransactionViewModel
-import java.math.BigDecimal
-import java.text.NumberFormat
-import java.util.Locale
 
 @Composable
 fun Step1Amount(
@@ -181,27 +178,4 @@ fun Step1Amount(
         focusRequester = focusRequester,
         modifier = modifier,
     )
-}
-
-/** Cached Indian number formatter (lakhs and crores). */
-private val indianFormatter: NumberFormat by lazy {
-    NumberFormat.getInstance(Locale.forLanguageTag("en-IN")).apply {
-        minimumFractionDigits = 0
-        maximumFractionDigits = 4
-    }
-}
-
-/** Format amount with Indian number system commas (lakhs and crores). */
-private fun formatAmountWithCommas(amount: String, currencySymbol: String): String {
-    if (amount.isBlank()) return ""
-    try {
-        BigDecimal(amount)
-    } catch (_: Exception) {
-        return amount
-    }
-    return try {
-        amount.toReadableCurrency()
-    } catch (_: Exception) {
-        "$currencySymbol $amount"
-    }
 }

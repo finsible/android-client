@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -146,7 +147,7 @@ private fun AccountsContent(
     if (flippableCards.isEmpty()) return
 
     // Pre-compute gradients in Composable context, cache with remember
-    val gradients = androidx.compose.runtime.remember(flippableCards) {
+    val gradients =
         flippableCards.mapIndexed { index, _ ->
             val gradientType = when (index) {
                 0 -> CardGradientType.NET_WORTH
@@ -156,7 +157,6 @@ private fun AccountsContent(
             }
             FinsibleGradients.getLinearGradient(gradientType)
         }
-    }
 
     // Flatten accounts into list items with headers
     val accountListItems = remember(filteredAccounts, selectedGroupId) {

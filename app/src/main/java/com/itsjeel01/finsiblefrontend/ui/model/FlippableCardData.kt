@@ -12,5 +12,3 @@ data class StatisticsModel(
     val title: String,
     val value: String
 )
-
-

@@ -1,7 +1,7 @@
 package com.itsjeel01.finsiblefrontend.data.local.entity
 
 import com.itsjeel01.finsiblefrontend.common.TransactionType
-import com.itsjeel01.finsiblefrontend.common.TransactionTypeConverter
+import com.itsjeel01.finsiblefrontend.data.local.TransactionTypeConverter
 import com.itsjeel01.finsiblefrontend.data.model.Category
 import io.objectbox.annotation.Backlink
 import io.objectbox.annotation.Convert

@@ -18,7 +18,9 @@ class AccountLocalRepository @Inject constructor(
         for (account in data) {
             val entity = account.toEntity().apply {
                 updateCacheTime(ttlMinutes)
-                accountGroup.targetId = account.accountGroupId
+                account.accountGroupId?.let { groupId ->
+                    accountGroup.targetId = groupId
+                }
             }
             add(entity)
         }

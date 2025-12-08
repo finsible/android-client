@@ -31,14 +31,12 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.itsjeel01.finsiblefrontend.common.toReadableCurrency
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.bold
 import com.itsjeel01.finsiblefrontend.ui.theme.displayFont
 import com.itsjeel01.finsiblefrontend.ui.theme.medium
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.NewTransactionViewModel
-import java.math.BigDecimal
-import java.text.NumberFormat
-import java.util.Locale
 
 @Composable
 fun Step1Amount(
@@ -46,7 +44,6 @@ fun Step1Amount(
     onAmountChange: (String) -> Unit,
     focusRequester: FocusRequester,
     modifier: Modifier = Modifier,
-    currencySymbol: String = "₹"
 ) {
     LaunchedEffect(focusRequester) { focusRequester.requestFocus() }
 
@@ -72,9 +69,8 @@ fun Step1Amount(
         label = "topPadding"
     )
 
-    // Formatted amount derived only when amount or currency changes.
-    val formattedAmount by remember(amount, currencySymbol) {
-        derivedStateOf { formatAmountWithCommas(amount, currencySymbol) }
+    val formattedAmount by remember(amount) {
+        derivedStateOf { amount.toReadableCurrency() }
     }
 
     Column(
@@ -171,7 +167,6 @@ fun Step1Amount(
     modifier: Modifier = Modifier,
     focusRequester: FocusRequester,
     viewModel: NewTransactionViewModel,
-    currencySymbol: String = "₹"
 ) {
     val amount by viewModel.transactionAmountString.collectAsStateWithLifecycle()
     Step1Amount(
@@ -182,29 +177,5 @@ fun Step1Amount(
         },
         focusRequester = focusRequester,
         modifier = modifier,
-        currencySymbol = currencySymbol
     )
-}
-
-/** Cached Indian number formatter (lakhs and crores). */
-private val indianFormatter: NumberFormat by lazy {
-    NumberFormat.getInstance(Locale.forLanguageTag("en-IN")).apply {
-        minimumFractionDigits = 0
-        maximumFractionDigits = 4
-    }
-}
-
-/** Format amount with Indian number system commas (lakhs and crores). */
-private fun formatAmountWithCommas(amount: String, currencySymbol: String): String {
-    if (amount.isBlank()) return ""
-    val numericValue = try {
-        BigDecimal(amount)
-    } catch (_: Exception) {
-        return amount
-    }
-    return try {
-        "$currencySymbol ${indianFormatter.format(numericValue)}"
-    } catch (_: Exception) {
-        "$currencySymbol $amount"
-    }
 }

@@ -12,6 +12,7 @@ data class AccountGroupEntity(
     var name: String = "",
     var description: String = "",
     var icon: String = "",
+    var color: String = "neutral",
     var isSystemDefault: Boolean = true,
 ) : BaseEntity() {
     @Backlink(to = "accountGroup")
@@ -24,6 +25,7 @@ fun AccountGroupEntity.toDTO(): AccountGroup {
         name = name,
         description = description,
         icon = icon,
+        color = color,
         isSystemDefault = isSystemDefault
     )
 }

@@ -9,6 +9,7 @@ data class AccountGroup(
     val name: String,
     val description: String,
     val icon: String,
+    val color: String,
     val isSystemDefault: Boolean
 )
 
@@ -18,6 +19,7 @@ fun AccountGroup.toEntity(): AccountGroupEntity {
         name = name,
         description = description,
         icon = icon,
+        color = color,
         isSystemDefault = isSystemDefault
     )
 }

@@ -53,6 +53,12 @@ fun BigDecimal.toLocaleCurrency(): String {
     return "$sign$currencySymbol$formatted"
 }
 
-fun String.toLocaleCurrency(): String = BigDecimal(this).toLocaleCurrency()
+fun String.toLocaleCurrency(): String {
+    return try {
+        BigDecimal(this).toLocaleCurrency()
+    } catch (_: NumberFormatException) {
+        this
+    }
+}
 
 fun BigDecimal.toReadableCurrency(): String = this.toString().toReadableCurrency()

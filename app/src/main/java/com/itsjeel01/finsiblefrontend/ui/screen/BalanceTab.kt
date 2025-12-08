@@ -158,10 +158,21 @@ private fun AccountsContent(
         }
     }
 
-    // Group accounts by their account group
-    val groupedAccounts = remember(filteredAccounts) {
-        filteredAccounts.groupBy { account ->
+    // Flatten accounts into list items with headers
+    val accountListItems = remember(filteredAccounts, selectedGroupId) {
+        val grouped = filteredAccounts.groupBy { account ->
             account.accountGroup.target?.name ?: "Others"
+        }
+        
+        buildList {
+            grouped.forEach { (groupName, accountsInGroup) ->
+                if (selectedGroupId == null) {
+                    add(AccountListItem.Header(groupName))
+                }
+                accountsInGroup.forEach { account ->
+                    add(AccountListItem.Account(account))
+                }
+            }
         }
     }
 
@@ -189,19 +200,23 @@ private fun AccountsContent(
             )
         }
 
-        groupedAccounts.forEach { (groupName, accountsInGroup) ->
-            if (selectedGroupId == null) {
-                item(key = "header_$groupName") {
-                    AccountGroupHeader(groupName = groupName)
+        items(
+            items = accountListItems,
+            key = { item ->
+                when (item) {
+                    is AccountListItem.Header -> "header_${item.groupName}"
+                    is AccountListItem.Account -> item.account.id
                 }
             }
-
-            items(
-                items = accountsInGroup,
-                key = { it.id }
-            ) { account ->
-                AccountItem(account = account)
-                Spacer(Modifier.height(FinsibleTheme.dimes.d8))
+        ) { item ->
+            when (item) {
+                is AccountListItem.Header -> {
+                    AccountGroupHeader(groupName = item.groupName)
+                }
+                is AccountListItem.Account -> {
+                    AccountItem(account = item.account)
+                    Spacer(Modifier.height(FinsibleTheme.dimes.d8))
+                }
             }
         }
 
@@ -379,6 +394,15 @@ private fun AccountItem(
     }
 }
 
+
+/** Sealed class for representing items in the accounts list. */
+private sealed class AccountListItem {
+    /** Header item for account group name. */
+    data class Header(val groupName: String) : AccountListItem()
+    
+    /** Account item. */
+    data class Account(val account: AccountEntity) : AccountListItem()
+}
 
 enum class BalanceTabType(
     val displayText: String,

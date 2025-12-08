@@ -10,7 +10,7 @@ data class Account(
     val id: Long,
     val name: String,
     val description: String,
-    val accountGroupId: Long?,
+    val accountGroupId: Long? = null,
     val balance: String,
     val currencyCode: String,
     val icon: String,

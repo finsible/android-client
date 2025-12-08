@@ -145,15 +145,17 @@ private fun AccountsContent(
 ) {
     if (flippableCards.isEmpty()) return
 
-    // Pre-compute gradients in Composable context
-    val gradients = flippableCards.mapIndexed { index, _ ->
-        val gradientType = when (index) {
-            0 -> CardGradientType.NET_WORTH
-            1 -> CardGradientType.ASSETS
-            2 -> CardGradientType.LIABILITIES
-            else -> CardGradientType.BRAND
+    // Pre-compute gradients in Composable context, cache with remember
+    val gradients = androidx.compose.runtime.remember(flippableCards) {
+        flippableCards.mapIndexed { index, _ ->
+            val gradientType = when (index) {
+                0 -> CardGradientType.NET_WORTH
+                1 -> CardGradientType.ASSETS
+                2 -> CardGradientType.LIABILITIES
+                else -> CardGradientType.BRAND
+            }
+            FinsibleGradients.getLinearGradient(gradientType)
         }
-        FinsibleGradients.getLinearGradient(gradientType)
     }
 
     // Group accounts by their account group

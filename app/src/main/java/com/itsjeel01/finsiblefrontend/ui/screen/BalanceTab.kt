@@ -336,7 +336,7 @@ private fun AccountItem(
             ) {
                 Icon(
                     painter = painterResource(resolveIcon(account.icon, R.drawable.ic_piggy_bank)),
-                    contentDescription = null,
+                    contentDescription = "Account icon for ${account.name}",
                     modifier = Modifier.size(FinsibleTheme.dimes.d24),
                     tint = FinsibleTheme.colors.primaryContent,
                 )

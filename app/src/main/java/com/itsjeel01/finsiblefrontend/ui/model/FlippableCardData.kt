@@ -1,7 +1,7 @@
 package com.itsjeel01.finsiblefrontend.ui.model
 
-/** Represents data for a single AccountsCard display from ViewModel. */
-data class AccountCardData(
+/** Represents data for a single FlippableCard display from ViewModel. */
+data class FlippableCardData(
     val title: String,
     val largeText: String,
     val statistics: List<StatisticsModel>

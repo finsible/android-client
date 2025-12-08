@@ -42,8 +42,8 @@ import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.toLocaleCurrency
 import com.itsjeel01.finsiblefrontend.data.local.entity.AccountEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.AccountGroupEntity
-import com.itsjeel01.finsiblefrontend.ui.component.AccountsCard
-import com.itsjeel01.finsiblefrontend.ui.model.AccountCardData
+import com.itsjeel01.finsiblefrontend.ui.component.FlippableCard
+import com.itsjeel01.finsiblefrontend.ui.model.FlippableCardData
 import com.itsjeel01.finsiblefrontend.ui.navigation.TabBackHandler
 import com.itsjeel01.finsiblefrontend.ui.theme.CardGradientType
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleDimes.Companion.inverted
@@ -84,14 +84,14 @@ fun BalanceTab() {
 
         when (selectedTab) {
             BalanceTabType.ACCOUNTS -> AccountsContent(
-                accountCards = accountCards,
+                flippableCards = accountCards,
                 accountGroups = accountGroups,
                 selectedGroupId = selectedGroupId,
                 filteredAccounts = filteredAccounts,
                 onGroupSelected = viewModel::selectGroupFilter
             )
 
-            BalanceTabType.TRANSACTIONS -> TransactionsContent()
+            BalanceTabType.TRANSACTIONS -> TransactionsContent(viewModel)
         }
     }
 }
@@ -136,17 +136,17 @@ private fun BalanceTabSelector(
 
 @Composable
 private fun AccountsContent(
-    accountCards: List<AccountCardData>,
+    flippableCards: List<FlippableCardData>,
     accountGroups: List<AccountGroupEntity>,
     selectedGroupId: Long?,
     filteredAccounts: List<AccountEntity>,
     onGroupSelected: (Long?) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    if (accountCards.isEmpty()) return
+    if (flippableCards.isEmpty()) return
 
     // Pre-compute gradients in Composable context
-    val gradients = accountCards.mapIndexed { index, _ ->
+    val gradients = flippableCards.mapIndexed { index, _ ->
         val gradientType = when (index) {
             0 -> CardGradientType.NET_WORTH
             1 -> CardGradientType.ASSETS
@@ -166,8 +166,8 @@ private fun AccountsContent(
         verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d8)
     ) {
         item(key = "accounts_card") {
-            AccountsCard(
-                cards = accountCards,
+            FlippableCard(
+                items = flippableCards,
                 gradients = gradients,
                 modifier = Modifier.padding(top = FinsibleTheme.dimes.d16)
             )
@@ -281,9 +281,7 @@ private fun AccountGroupFilterChip(
 }
 
 @Composable
-private fun TransactionsContent() {
-    // TODO: Implement transactions list
-    Text("Transactions content", modifier = Modifier.padding(FinsibleTheme.dimes.d16))
+private fun TransactionsContent(viewModel: BalanceViewModel) {
 }
 
 @Composable

@@ -9,7 +9,7 @@ import com.itsjeel01.finsiblefrontend.data.local.entity.AccountEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.AccountGroupEntity
 import com.itsjeel01.finsiblefrontend.data.local.repository.AccountGroupLocalRepository
 import com.itsjeel01.finsiblefrontend.data.local.repository.AccountLocalRepository
-import com.itsjeel01.finsiblefrontend.ui.model.AccountCardData
+import com.itsjeel01.finsiblefrontend.ui.model.FlippableCardData
 import com.itsjeel01.finsiblefrontend.ui.model.StatisticsModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,8 +31,8 @@ class BalanceViewModel @Inject constructor(
     private val _accountGroups = MutableStateFlow<List<AccountGroupEntity>>(emptyList())
     val accountGroups: StateFlow<List<AccountGroupEntity>> = _accountGroups.asStateFlow()
 
-    private val _accountCards = MutableStateFlow<List<AccountCardData>>(emptyList())
-    val accountCards: StateFlow<List<AccountCardData>> = _accountCards.asStateFlow()
+    private val _accountCards = MutableStateFlow<List<FlippableCardData>>(emptyList())
+    val accountCards: StateFlow<List<FlippableCardData>> = _accountCards.asStateFlow()
 
     private val _selectedGroupId = MutableStateFlow<Long?>(null)
     val selectedGroupId: StateFlow<Long?> = _selectedGroupId.asStateFlow()
@@ -102,7 +102,7 @@ class BalanceViewModel @Inject constructor(
         }
     }
 
-    private fun createNetWorthCard(netWorth: BigDecimal) = AccountCardData(
+    private fun createNetWorthCard(netWorth: BigDecimal) = FlippableCardData(
         title = "Net Worth",
         largeText = netWorth.toLocaleCurrency(),
         statistics = listOf(
@@ -111,13 +111,13 @@ class BalanceViewModel @Inject constructor(
         )
     )
 
-    private fun createAssetsCard(statistics: List<StatisticsModel>) = AccountCardData(
+    private fun createAssetsCard(statistics: List<StatisticsModel>) = FlippableCardData(
         title = "Total Assets",
         largeText = totalAssets.toLocaleCurrency(),
         statistics = statistics
     )
 
-    private fun createLiabilitiesCard(statistics: List<StatisticsModel>) = AccountCardData(
+    private fun createLiabilitiesCard(statistics: List<StatisticsModel>) = FlippableCardData(
         title = "Total Liabilities",
         largeText = totalLiabilities.toLocaleCurrency(),
         statistics = statistics

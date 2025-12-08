@@ -36,7 +36,7 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import com.itsjeel01.finsiblefrontend.R
-import com.itsjeel01.finsiblefrontend.ui.model.AccountCardData
+import com.itsjeel01.finsiblefrontend.ui.model.FlippableCardData
 import com.itsjeel01.finsiblefrontend.ui.model.StatisticsModel
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.bold
@@ -46,12 +46,12 @@ import com.itsjeel01.finsiblefrontend.ui.theme.semiBold
 import kotlinx.coroutines.launch
 
 @Composable
-fun AccountsCard(
-    cards: List<AccountCardData>,
+fun FlippableCard(
+    items: List<FlippableCardData>,
     gradients: List<Brush>,
     modifier: Modifier = Modifier
 ) {
-    if (cards.isEmpty()) return
+    if (items.isEmpty()) return
 
     var displayedIndex by remember { mutableIntStateOf(0) }
     var isFlipping by remember { mutableStateOf(false) }
@@ -62,10 +62,10 @@ fun AccountsCard(
     val elasticEasing = CubicBezierEasing(0.68f, -0.55f, 0.265f, 1.55f)
 
     val frontIndex = displayedIndex
-    val backIndex = (displayedIndex + 1) % cards.size
+    val backIndex = (displayedIndex + 1) % items.size
 
-    val frontCard = cards[frontIndex]
-    val backCard = cards[backIndex]
+    val frontItem = items[frontIndex]
+    val backItem = items[backIndex]
 
     val frontGradient = gradients.getOrElse(frontIndex) { gradients.first() }
     val backGradient = gradients.getOrElse(backIndex) { gradients.first() }
@@ -114,9 +114,9 @@ fun AccountsCard(
             elevation = CardDefaults.cardElevation(defaultElevation = FinsibleTheme.dimes.d4)
         ) {
             CardFace(
-                title = backCard.title,
-                largeText = backCard.largeText,
-                statistics = backCard.statistics,
+                title = backItem.title,
+                largeText = backItem.largeText,
+                statistics = backItem.statistics,
                 gradientBrush = backGradient,
                 onRotateClick = ::onRotateClick
             )
@@ -134,9 +134,9 @@ fun AccountsCard(
             elevation = CardDefaults.cardElevation(defaultElevation = FinsibleTheme.dimes.d4)
         ) {
             CardFace(
-                title = frontCard.title,
-                largeText = frontCard.largeText,
-                statistics = frontCard.statistics,
+                title = frontItem.title,
+                largeText = frontItem.largeText,
+                statistics = frontItem.statistics,
                 gradientBrush = frontGradient,
                 onRotateClick = ::onRotateClick
             )

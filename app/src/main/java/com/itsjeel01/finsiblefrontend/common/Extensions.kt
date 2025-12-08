@@ -37,7 +37,7 @@ fun String.toReadableCurrency(): String {
             absoluteValue.divide(threshold.first, 4, MathContext.ROUND_HALF_EVEN) to threshold.second
         } ?: (absoluteValue to "")
 
-        val formatted = FinsibleUtils.INDIAN_CURRENCY_FORMATTER.format(scaledValue)
+        val formatted = FinsibleUtils.INDIAN_CURRENCY_FORMATTER.format(scaledValue.abs())
         val sign = if (value.signum() < 0) "-" else ""
         "$sign$currencySymbol$formatted$suffix"
     } catch (_: NumberFormatException) {

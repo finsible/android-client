@@ -48,9 +48,9 @@ fun String.toReadableCurrency(): String {
 fun BigDecimal.toLocaleCurrency(): String {
     val locale = Locale.forLanguageTag("en-IN")
     val currencySymbol = Currency.getInstance(locale).symbol
-    val formatted = FinsibleUtils.INDIAN_CURRENCY_FORMATTER.format(this)
-    return "$currencySymbol$formatted"
-
+    val sign = if (this.signum() < 0) "-" else ""
+    val formatted = FinsibleUtils.INDIAN_CURRENCY_FORMATTER.format(this.abs())
+    return "$sign$currencySymbol$formatted"
 }
 
 fun String.toLocaleCurrency(): String = BigDecimal(this).toLocaleCurrency()

@@ -157,8 +157,10 @@ private fun AccountsContent(
     }
 
     // Group accounts by their account group
-    val groupedAccounts = filteredAccounts.groupBy { account ->
-        account.accountGroup.target?.name ?: "Others"
+    val groupedAccounts = remember(filteredAccounts) {
+        filteredAccounts.groupBy { account ->
+            account.accountGroup.target?.name ?: "Others"
+        }
     }
 
     LazyColumn(

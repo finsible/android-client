@@ -1,5 +1,6 @@
 package com.itsjeel01.finsiblefrontend.data.serializer
 
+import com.itsjeel01.finsiblefrontend.common.logging.Logger
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
@@ -28,9 +29,22 @@ object FlexibleBalanceSerializer : KSerializer<String> {
         return when (decoder) {
             is JsonDecoder -> {
                 val element = decoder.decodeJsonElement()
-                when (val primitive = element as? JsonPrimitive) {
-                    null -> "0.0"
-                    else -> primitive.doubleOrNull?.toString() ?: primitive.content
+                val primitive = element as? JsonPrimitive
+                
+                if (primitive == null) {
+                    Logger.Network.w("Balance field is null or not a primitive, defaulting to 0.0")
+                    return "0.0"
+                }
+                
+                // First check if it's already a string to avoid unnecessary parsing
+                if (primitive.isString) {
+                    return primitive.content
+                }
+                
+                // Otherwise, try to parse as a number
+                primitive.doubleOrNull?.toString() ?: run {
+                    Logger.Network.w("Balance field could not be parsed as number: ${primitive.content}, defaulting to 0.0")
+                    "0.0"
                 }
             }
             else -> decoder.decodeString()

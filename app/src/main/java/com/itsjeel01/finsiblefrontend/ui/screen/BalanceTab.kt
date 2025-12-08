@@ -160,20 +160,18 @@ private fun AccountsContent(
 
     // Flatten accounts into list items with headers
     val accountListItems = remember(filteredAccounts, selectedGroupId) {
-        val grouped = filteredAccounts.groupBy { account ->
-            account.accountGroup.target?.name ?: "Others"
-        }
-        
-        buildList {
-            grouped.forEach { (groupName, accountsInGroup) ->
-                if (selectedGroupId == null) {
-                    add(AccountListItem.Header(groupName))
-                }
-                accountsInGroup.forEach { account ->
-                    add(AccountListItem.Account(account))
+        filteredAccounts
+            .groupBy { account -> account.accountGroup.target?.name ?: "Others" }
+            .flatMap { (groupName, accountsInGroup) ->
+                buildList {
+                    if (selectedGroupId == null) {
+                        add(AccountListItem.Header(groupName))
+                    }
+                    accountsInGroup.forEach { account ->
+                        add(AccountListItem.Account(account))
+                    }
                 }
             }
-        }
     }
 
     LazyColumn(

@@ -18,19 +18,24 @@ import com.itsjeel01.finsiblefrontend.ui.component.fin.TextFieldConfig
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.NewTransactionViewModel
 
+/** Stateless description step with hoisted state. */
 @Composable
-fun Step5Description(viewModel: NewTransactionViewModel, focusRequester: FocusRequester) {
-    val description by viewModel.transactionDescription.collectAsStateWithLifecycle()
+fun Step5Description(
+    description: String,
+    onDescriptionChange: (String) -> Unit,
+    focusRequester: FocusRequester,
+    modifier: Modifier = Modifier
+) {
     val interactionSource = remember { MutableInteractionSource() }
 
     LaunchedEffect(focusRequester) {
         focusRequester.requestFocus()
     }
 
-    Column(Modifier.padding(vertical = FinsibleTheme.dimes.d8)) {
+    Column(modifier.padding(vertical = FinsibleTheme.dimes.d8)) {
         FinsibleTextFieldWithCounter(
             value = description,
-            onValueChange = { viewModel.setTransactionDescription(it) },
+            onValueChange = onDescriptionChange,
             maxLength = 256,
             modifier = Modifier
                 .fillMaxWidth()
@@ -47,4 +52,15 @@ fun Step5Description(viewModel: NewTransactionViewModel, focusRequester: FocusRe
             interactionSource = interactionSource
         )
     }
+}
+
+/** ViewModel wrapper preserving original signature. */
+@Composable
+fun Step5Description(viewModel: NewTransactionViewModel, focusRequester: FocusRequester) {
+    val description by viewModel.transactionDescription.collectAsStateWithLifecycle()
+    Step5Description(
+        description = description,
+        onDescriptionChange = { viewModel.setTransactionDescription(it) },
+        focusRequester = focusRequester
+    )
 }

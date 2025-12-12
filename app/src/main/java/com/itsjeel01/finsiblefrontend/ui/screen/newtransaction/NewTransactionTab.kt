@@ -53,8 +53,14 @@ fun NewTransactionTab(
     onNavigateBack: () -> Unit = {},
 ) {
     val viewModel: NewTransactionViewModel = hiltViewModel()
-    val currentStep = viewModel.currentStep.collectAsStateWithLifecycle()
     val focusRequester = remember { FocusRequester() }
+
+    // Hoist all state at the screen level
+    val currentStep by viewModel.currentStep.collectAsStateWithLifecycle()
+    val showBackButton by viewModel.showBackButton.collectAsStateWithLifecycle()
+    val canContinue by viewModel.canContinue.collectAsStateWithLifecycle()
+    val canGoBack by viewModel.canGoBack.collectAsStateWithLifecycle()
+    val totalSteps = viewModel.totalSteps()
 
     TabBackHandler {
         onNavigateBack()
@@ -87,10 +93,10 @@ fun NewTransactionTab(
             ) {
                 TabHeader(onClose = onNavigateBack)
 
-                StepTitle(currentStep.value, viewModel.totalSteps())
+                StepTitle(currentStep = currentStep, totalSteps = totalSteps)
 
                 Column(modifier = Modifier.weight(1f)) {
-                    when (currentStep.value) {
+                    when (currentStep) {
                         0 -> Step1Amount(
                             modifier = Modifier.weight(1f),
                             focusRequester = focusRequester,
@@ -120,7 +126,15 @@ fun NewTransactionTab(
                     }
                 }
 
-                StepControlButtons(viewModel = viewModel, onNavigateBack)
+                StepControlButtons(
+                    currentStep = currentStep,
+                    showBackButton = showBackButton,
+                    canContinue = canContinue,
+                    canGoBack = canGoBack,
+                    onBack = viewModel::previousStep,
+                    onContinue = viewModel::nextStep,
+                    onSubmit = { viewModel.submit(onNavigateBack) }
+                )
             }
         }
     }
@@ -209,13 +223,17 @@ private fun StepTitle(currentStep: Int, totalSteps: Int) {
     }
 }
 
+/** Stateless step control buttons with hoisted state. */
 @Composable
-private fun StepControlButtons(viewModel: NewTransactionViewModel, onNavigateBack: () -> Unit) {
-    val showBackButton = viewModel.showBackButton.collectAsStateWithLifecycle().value
-    val canContinue = viewModel.canContinue.collectAsStateWithLifecycle().value
-    val canGoBack = viewModel.canGoBack.collectAsStateWithLifecycle().value
-    val currentStep = viewModel.currentStep.collectAsStateWithLifecycle().value
-
+private fun StepControlButtons(
+    currentStep: Int,
+    showBackButton: Boolean,
+    canContinue: Boolean,
+    canGoBack: Boolean,
+    onBack: () -> Unit,
+    onContinue: () -> Unit,
+    onSubmit: () -> Unit
+) {
     val continueButtonText = if (currentStep == 4) "Confirm" else "Continue"
 
     Row(
@@ -228,7 +246,7 @@ private fun StepControlButtons(viewModel: NewTransactionViewModel, onNavigateBac
         if (showBackButton) {
             FinsibleButton(
                 text = "Back",
-                onClick = { viewModel.previousStep() },
+                onClick = onBack,
                 config = ButtonConfig(
                     type = ComponentType.Tertiary,
                     size = ComponentSize.Medium,
@@ -240,10 +258,7 @@ private fun StepControlButtons(viewModel: NewTransactionViewModel, onNavigateBac
 
         FinsibleButton(
             text = continueButtonText,
-            onClick = {
-                if (currentStep < 4) viewModel.nextStep()
-                else viewModel.submit(onNavigateBack)
-            },
+            onClick = { if (currentStep < 4) onContinue() else onSubmit() },
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),

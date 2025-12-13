@@ -34,7 +34,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -76,7 +75,7 @@ fun OnboardingScreen(navigateToDashboard: () -> Unit) {
     val loadingManager = hiltLoadingManager()
     val context = LocalContext.current
 
-    val carouselItems = remember { OnboardingViewModel.CarouselItems().get() }
+    val carouselItems = onboardingViewModel.carouselItems
     val currentItem by onboardingViewModel.currentCarouselItem.collectAsStateWithLifecycle()
     val authState by authViewModel.authState.collectAsStateWithLifecycle()
 
@@ -202,7 +201,7 @@ private fun OnboardingBackground() {
 @Composable
 private fun OnboardingContent(
     currentItem: Int,
-    carouselItems: List<OnboardingViewModel.CarouselItems>,
+    carouselItems: List<OnboardingViewModel.CarouselItem>,
     isLastItem: () -> Boolean,
     onNextItem: () -> Unit,
     onPreviousItem: () -> Unit,
@@ -298,7 +297,7 @@ private fun OnboardingHeader(onSkip: () -> Unit = {}, isLastItem: Boolean) {
 private fun OnboardingIllustration(
     modifier: Modifier = Modifier,
     currentItem: Int,
-    carouselItems: List<OnboardingViewModel.CarouselItems>
+    carouselItems: List<OnboardingViewModel.CarouselItem>
 ) {
     Box(
         modifier = modifier.fillMaxSize(),
@@ -325,7 +324,7 @@ private fun OnboardingIllustration(
 private fun OnboardingTextContent(
     modifier: Modifier = Modifier,
     currentItem: Int,
-    carouselItems: List<OnboardingViewModel.CarouselItems>
+    carouselItems: List<OnboardingViewModel.CarouselItem>
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),

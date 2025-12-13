@@ -9,6 +9,7 @@ import com.itsjeel01.finsiblefrontend.data.local.entity.AccountEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.AccountGroupEntity
 import com.itsjeel01.finsiblefrontend.data.local.repository.AccountGroupLocalRepository
 import com.itsjeel01.finsiblefrontend.data.local.repository.AccountLocalRepository
+import com.itsjeel01.finsiblefrontend.ui.model.AccountListItem
 import com.itsjeel01.finsiblefrontend.ui.model.FlippableCardData
 import com.itsjeel01.finsiblefrontend.ui.model.StatisticsModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -40,6 +41,9 @@ class BalanceViewModel @Inject constructor(
     private val _filteredAccounts = MutableStateFlow<List<AccountEntity>>(emptyList())
     val filteredAccounts: StateFlow<List<AccountEntity>> = _filteredAccounts.asStateFlow()
 
+    private val _accountListItems = MutableStateFlow<List<AccountListItem>>(emptyList())
+    val accountListItems: StateFlow<List<AccountListItem>> = _accountListItems.asStateFlow()
+
     init {
         loadData()
     }
@@ -51,6 +55,7 @@ class BalanceViewModel @Inject constructor(
             _filteredAccounts.value = accounts
             recalculateTotals()
             generateAccountCards()
+            updateAccountListItems()
         }
     }
 
@@ -62,6 +67,24 @@ class BalanceViewModel @Inject constructor(
         } else {
             accounts.filter { it.accountGroup.target?.id == groupId }
         }
+        updateAccountListItems()
+    }
+
+    /** Transforms filtered accounts into list items with headers for display. */
+    private fun updateAccountListItems() {
+        val selectedGroup = _selectedGroupId.value
+        _accountListItems.value = _filteredAccounts.value
+            .groupBy { account -> account.accountGroup.target?.name ?: "Others" }
+            .flatMap { (groupName, accountsInGroup) ->
+                buildList {
+                    if (selectedGroup == null) {
+                        add(AccountListItem.Header(groupName))
+                    }
+                    accountsInGroup.forEach { account ->
+                        add(AccountListItem.Account(account))
+                    }
+                }
+            }
     }
 
     private fun recalculateTotals() {

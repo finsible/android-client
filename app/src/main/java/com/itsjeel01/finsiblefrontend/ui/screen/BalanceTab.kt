@@ -28,7 +28,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -44,6 +43,7 @@ import com.itsjeel01.finsiblefrontend.common.toLocaleCurrency
 import com.itsjeel01.finsiblefrontend.data.local.entity.AccountEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.AccountGroupEntity
 import com.itsjeel01.finsiblefrontend.ui.component.FlippableCard
+import com.itsjeel01.finsiblefrontend.ui.model.AccountListItem
 import com.itsjeel01.finsiblefrontend.ui.model.FlippableCardData
 import com.itsjeel01.finsiblefrontend.ui.navigation.TabBackHandler
 import com.itsjeel01.finsiblefrontend.ui.theme.CardGradientType
@@ -65,7 +65,7 @@ fun BalanceTab() {
     val accountCards by viewModel.accountCards.collectAsStateWithLifecycle()
     val accountGroups by viewModel.accountGroups.collectAsStateWithLifecycle()
     val selectedGroupId by viewModel.selectedGroupId.collectAsStateWithLifecycle()
-    val filteredAccounts by viewModel.filteredAccounts.collectAsStateWithLifecycle()
+    val accountListItems by viewModel.accountListItems.collectAsStateWithLifecycle()
     var selectedTab by rememberSaveable { mutableStateOf(BalanceTabType.ACCOUNTS) }
 
     TabBackHandler()
@@ -88,7 +88,7 @@ fun BalanceTab() {
                 flippableCards = accountCards,
                 accountGroups = accountGroups,
                 selectedGroupId = selectedGroupId,
-                filteredAccounts = filteredAccounts,
+                accountListItems = accountListItems,
                 onGroupSelected = viewModel::selectGroupFilter
             )
 
@@ -140,7 +140,7 @@ private fun AccountsContent(
     flippableCards: List<FlippableCardData>,
     accountGroups: List<AccountGroupEntity>,
     selectedGroupId: Long?,
-    filteredAccounts: List<AccountEntity>,
+    accountListItems: List<AccountListItem>,
     onGroupSelected: (Long?) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -157,22 +157,6 @@ private fun AccountsContent(
             }
             FinsibleGradients.getLinearGradient(gradientType)
         }
-
-    // Flatten accounts into list items with headers
-    val accountListItems = remember(filteredAccounts, selectedGroupId) {
-        filteredAccounts
-            .groupBy { account -> account.accountGroup.target?.name ?: "Others" }
-            .flatMap { (groupName, accountsInGroup) ->
-                buildList {
-                    if (selectedGroupId == null) {
-                        add(AccountListItem.Header(groupName))
-                    }
-                    accountsInGroup.forEach { account ->
-                        add(AccountListItem.Account(account))
-                    }
-                }
-            }
-    }
 
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -390,16 +374,6 @@ private fun AccountItem(
             )
         }
     }
-}
-
-
-/** Sealed class for representing items in the accounts list. */
-private sealed class AccountListItem {
-    /** Header item for account group name. */
-    data class Header(val groupName: String) : AccountListItem()
-    
-    /** Account item. */
-    data class Account(val account: AccountEntity) : AccountListItem()
 }
 
 enum class BalanceTabType(

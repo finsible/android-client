@@ -61,6 +61,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsiblePageIndicators
 import com.itsjeel01.finsiblefrontend.ui.component.fin.IconPosition
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
 import com.itsjeel01.finsiblefrontend.ui.model.AuthState
+import com.itsjeel01.finsiblefrontend.ui.model.CarouselItem
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.bold
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.AuthViewModel
@@ -201,7 +202,7 @@ private fun OnboardingBackground() {
 @Composable
 private fun OnboardingContent(
     currentItem: Int,
-    carouselItems: List<OnboardingViewModel.CarouselItem>,
+    carouselItems: List<CarouselItem>,
     isLastItem: () -> Boolean,
     onNextItem: () -> Unit,
     onPreviousItem: () -> Unit,
@@ -297,7 +298,7 @@ private fun OnboardingHeader(onSkip: () -> Unit = {}, isLastItem: Boolean) {
 private fun OnboardingIllustration(
     modifier: Modifier = Modifier,
     currentItem: Int,
-    carouselItems: List<OnboardingViewModel.CarouselItem>
+    carouselItems: List<CarouselItem>
 ) {
     Box(
         modifier = modifier.fillMaxSize(),
@@ -324,7 +325,7 @@ private fun OnboardingIllustration(
 private fun OnboardingTextContent(
     modifier: Modifier = Modifier,
     currentItem: Int,
-    carouselItems: List<OnboardingViewModel.CarouselItem>
+    carouselItems: List<CarouselItem>
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),

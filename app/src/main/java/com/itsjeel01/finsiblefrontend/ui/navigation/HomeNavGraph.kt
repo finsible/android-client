@@ -17,12 +17,17 @@ import com.itsjeel01.finsiblefrontend.ui.screen.DashboardTab
 import com.itsjeel01.finsiblefrontend.ui.screen.SettingsTab
 import com.itsjeel01.finsiblefrontend.ui.screen.newtransaction.NewTransactionTab
 
-/** HomeNavGraph handles all internal navigation logic, similar to LaunchNavGraph */
+/** HomeNavGraph handles all internal navigation logic with improved navigation coordinator pattern. */
 fun NavGraphBuilder.homeNavGraph(
     navController: NavHostController,
     onNewTransactionBackPressed: () -> Unit,
     previousTabIndex: Int,
 ): (Int) -> Unit {
+    val navigationCoordinator = HomeNavigationCoordinator(
+        navController = navController,
+        onTabChanged = {} // Tab changes are handled by HomeViewModel
+    )
+
     instantComposable<HomeRoutes.Dashboard> { DashboardTab() }
 
     instantComposable<HomeRoutes.Analytics> { AnalyticsTab() }
@@ -38,17 +43,7 @@ fun NavGraphBuilder.homeNavGraph(
         NewTransactionTab(
             onNavigateBack = {
                 keyboardController?.hide()
-
-                val route = NavigationTabs.getRouteFromTabIndex(previousTabIndex)
-                navController.navigate(route) {
-                    popUpTo(navController.graph.startDestinationId) {
-                        saveState = true
-                        inclusive = false
-                    }
-                    launchSingleTop = true
-                    restoreState = true
-                }
-
+                navigationCoordinator.navigateBackFromNewTransaction(previousTabIndex)
                 onNewTransactionBackPressed()
             }
         )
@@ -59,15 +54,7 @@ fun NavGraphBuilder.homeNavGraph(
     instantComposable<HomeRoutes.Settings> { SettingsTab() }
 
     return { tabIndex ->
-        val route = NavigationTabs.getRouteFromTabIndex(tabIndex)
-        navController.navigate(route) {
-            popUpTo(navController.graph.startDestinationId) {
-                saveState = true
-                inclusive = false
-            }
-            launchSingleTop = true
-            restoreState = true
-        }
+        navigationCoordinator.navigateToTab(tabIndex)
     }
 }
 

@@ -9,14 +9,16 @@ import com.itsjeel01.finsiblefrontend.ui.screen.LaunchScreen
 import com.itsjeel01.finsiblefrontend.ui.screen.OnboardingScreen
 import com.itsjeel01.finsiblefrontend.ui.screen.TestScreen
 
+/** App-level navigation graph with navigation coordinator for better separation of concerns. */
 fun NavGraphBuilder.appNavGraph(navController: NavHostController) {
+    val navigationCoordinator = AppNavigationCoordinator(navController)
 
     // Test screen (debug builds only)
     if (BuildConfig.DEBUG) {
         composable<AppRoutes.Test> {
             TestScreen(
                 onNavigateToApp = {
-                    navController.navigate(AppRoutes.Launch) {
+                    navigationCoordinator.navigateTo(AppRoutes.Launch) {
                         popUpTo<AppRoutes.Test> { inclusive = true }
                     }
                 }
@@ -27,14 +29,10 @@ fun NavGraphBuilder.appNavGraph(navController: NavHostController) {
     composable<AppRoutes.Launch> {
         LaunchScreen(
             navigateToOnboarding = {
-                navController.navigate(AppRoutes.Onboarding) {
-                    popUpTo<AppRoutes.Launch> { inclusive = true }
-                }
+                navigationCoordinator.navigateToOnboarding()
             },
             navigateToDashboard = {
-                navController.navigate(AppRoutes.Home) {
-                    popUpTo<AppRoutes.Launch> { inclusive = true }
-                }
+                navigationCoordinator.navigateToHome(AppRoutes.Launch)
             }
         )
     }
@@ -42,9 +40,7 @@ fun NavGraphBuilder.appNavGraph(navController: NavHostController) {
     composable<AppRoutes.Onboarding> {
         OnboardingScreen(
             navigateToDashboard = {
-                navController.navigate(AppRoutes.Home) {
-                    popUpTo<AppRoutes.Onboarding> { inclusive = true }
-                }
+                navigationCoordinator.navigateToHome(AppRoutes.Onboarding)
             }
         )
     }
@@ -52,9 +48,7 @@ fun NavGraphBuilder.appNavGraph(navController: NavHostController) {
     composable<AppRoutes.Home> {
         HomeScreen(
             navigateToOnboarding = {
-                navController.navigate(AppRoutes.Onboarding) {
-                    popUpTo<AppRoutes.Home> { inclusive = true }
-                }
+                navigationCoordinator.navigateToOnboardingFromHome()
             },
         )
     }

@@ -8,6 +8,23 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
+/**
+ * ViewModel for managing navigation state in the Home screen.
+ * 
+ * Lifecycle Scope: Screen-scoped to HomeScreen composable.
+ * - Created when HomeScreen is first composed
+ * - Survives tab navigation within HomeScreen
+ * - Cleared when user navigates away from HomeScreen (e.g., logout)
+ * - State persisted via SavedStateHandle across process death
+ * 
+ * State Management:
+ * - activeTab: Current selected tab index
+ * - previousTab: Previously selected tab index (for back navigation from modal screens)
+ * 
+ * Memory Optimization:
+ * - Uses SavedStateHandle for automatic state restoration
+ * - Cleared automatically when HomeScreen is removed from back stack
+ */
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle

@@ -1,6 +1,5 @@
 package com.itsjeel01.finsiblefrontend.ui.navigation
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -19,7 +18,6 @@ import com.itsjeel01.finsiblefrontend.ui.screen.SettingsTab
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.BalanceViewModel
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun NavigationHome() {
     val navigationState = rememberBottomNavState(

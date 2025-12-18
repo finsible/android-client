@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        hasShownTestScreen = savedInstanceState?.getBoolean(KEY_HAS_SHOWN_TEST_SCREEN, false) ?: false
+        hasShownTestScreen = savedInstanceState?.getBoolean(KEY_HAS_SHOWN_TEST_SCREEN) ?: false
 
         val startDestination = if (BuildConfig.DEBUG) {
             if (!testPrefs.shouldSkipDebugScreen() && !hasShownTestScreen) {

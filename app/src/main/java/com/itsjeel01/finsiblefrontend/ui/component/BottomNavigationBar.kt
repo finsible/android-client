@@ -91,18 +91,18 @@ fun BottomNavigationBar(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            tabs.forEach { (index, tab) ->
+            tabs.forEach { (route, tab) ->
                 if (!tab.isFAB) {
                     StandardNavigationTab(
-                        isSelected = index == activeTab,
+                        isSelected = route == activeTab,
                         tab = tab,
-                        onClick = { onTabSelected(index) }
+                        onClick = { onTabSelected(route) }
                     )
                 } else {
                     CentralFABTab(
-                        isSelected = index == activeTab,
+                        isSelected = route == activeTab,
                         tab = tab,
-                        onClick = { onTabSelected(index) }
+                        onClick = { onTabSelected(route) }
                     )
                 }
             }

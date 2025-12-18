@@ -14,7 +14,7 @@ class BottomTabNavigator(val state: BottomNavState) {
     fun goBack() {
         val currentStack = state.tabsBackStacks[state.activeTab] ?: run {
             Logger.App.e("No back stack found for active tab: ${state.activeTab}")
-            throw IllegalStateException()
+            throw IllegalStateException("No back stack found for active tab: ${state.activeTab}")
         }
 
         val currentRoute = currentStack.last()

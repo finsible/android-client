@@ -131,7 +131,7 @@ class NewTransactionViewModel @Inject constructor(
         }
 
         Route.Home.NewTransaction.Description -> flowOf(true)
-        else -> flowOf(false)
+        else -> throw UnsupportedOperationException("Unrecognized transaction step: $step. Please add handling for this step in isStepValid().")
     }
 
     /** State setters with optimized patterns. */

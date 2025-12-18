@@ -27,13 +27,17 @@ import com.itsjeel01.finsiblefrontend.ui.theme.extraBold
 
 @Composable
 fun StepTitle(currentStep: Int, totalSteps: Int) {
-    val title = when (currentStep) {
-        0 -> "Enter Amount"
-        1 -> "Date & Schedule"
-        2 -> "Select Category"
-        3 -> "Select Accounts"
-        4 -> "Add Description (Optional)"
-        else -> "Enter Amount"
+    val stepTitles = listOf(
+        "Enter Amount",
+        "Date & Schedule",
+        "Select Category",
+        "Select Accounts",
+        "Add Description (Optional)"
+    )
+    val title = if (currentStep in stepTitles.indices) {
+        stepTitles[currentStep]
+    } else {
+        stepTitles.first()
     }
 
     Spacer(Modifier.height(FinsibleTheme.dimes.d16))

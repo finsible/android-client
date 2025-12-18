@@ -37,7 +37,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.toLocaleCurrency
@@ -45,7 +44,6 @@ import com.itsjeel01.finsiblefrontend.data.local.entity.AccountEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.AccountGroupEntity
 import com.itsjeel01.finsiblefrontend.ui.component.FlippableCard
 import com.itsjeel01.finsiblefrontend.ui.model.FlippableCardData
-import com.itsjeel01.finsiblefrontend.ui.navigation.TabBackHandler
 import com.itsjeel01.finsiblefrontend.ui.theme.CardGradientType
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleDimes.Companion.inverted
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleGradients
@@ -58,8 +56,7 @@ import com.itsjeel01.finsiblefrontend.ui.viewmodel.BalanceViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BalanceTab() {
-    val viewModel: BalanceViewModel = hiltViewModel()
+fun BalanceTab(viewModel: BalanceViewModel) {
 
     // Hoist all state at the screen level
     val accountCards by viewModel.accountCards.collectAsStateWithLifecycle()
@@ -68,7 +65,6 @@ fun BalanceTab() {
     val filteredAccounts by viewModel.filteredAccounts.collectAsStateWithLifecycle()
     var selectedTab by rememberSaveable { mutableStateOf(BalanceTabType.ACCOUNTS) }
 
-    TabBackHandler()
 
     Column(
         Modifier.padding(horizontal = FinsibleTheme.dimes.d16, vertical = FinsibleTheme.dimes.d12)
@@ -211,6 +207,7 @@ private fun AccountsContent(
                 is AccountListItem.Header -> {
                     AccountGroupHeader(groupName = item.groupName)
                 }
+
                 is AccountListItem.Account -> {
                     AccountItem(account = item.account)
                     Spacer(Modifier.height(FinsibleTheme.dimes.d8))
@@ -397,7 +394,7 @@ private fun AccountItem(
 private sealed class AccountListItem {
     /** Header item for account group name. */
     data class Header(val groupName: String) : AccountListItem()
-    
+
     /** Account item. */
     data class Account(val account: AccountEntity) : AccountListItem()
 }

@@ -11,11 +11,14 @@ import com.itsjeel01.finsiblefrontend.data.local.entity.AccountEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.CategoryEntity
 import com.itsjeel01.finsiblefrontend.data.local.repository.AccountLocalRepository
 import com.itsjeel01.finsiblefrontend.data.local.repository.CategoryLocalRepository
+import com.itsjeel01.finsiblefrontend.ui.navigation.Route
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -28,16 +31,12 @@ class NewTransactionViewModel @Inject constructor(
 ) : ViewModel() {
 
     companion object {
-        private const val TOTAL_STEPS = 5
         private const val MAX_INTEGER_DIGITS = 15
         private const val MAX_DECIMAL_DIGITS = 4
         private const val SUBSCRIPTION_TIMEOUT = 5000L
     }
 
     /** Transaction form state. */
-    private val _currentStep = MutableStateFlow(0)
-    val currentStep: StateFlow<Int> = _currentStep.stateFlow()
-
     private val _transactionAmountString = MutableStateFlow("")
     val transactionAmountString: StateFlow<String> = _transactionAmountString.stateFlow()
 
@@ -89,69 +88,6 @@ class NewTransactionViewModel @Inject constructor(
         }
     }
 
-    /** Combined validation state for current step. */
-    private data class ValidationState(
-        val step: Int,
-        val amountString: String,
-        val date: Long?,
-        val categoryId: Long?,
-        val type: TransactionType,
-        val fromAccountId: Long?,
-        val toAccountId: Long?
-    )
-
-    /** Partial validation holder for the first 5 flows. */
-    private data class PartialValidationState(
-        val step: Int,
-        val amountString: String,
-        val date: Long?,
-        val categoryId: Long?,
-        val type: TransactionType
-    )
-
-    /** Computed state for step validation and navigation control. */
-    private val firstFiveCombined = combine(
-        currentStep,
-        transactionAmountString,
-        transactionDate,
-        transactionCategoryId,
-        transactionType
-    ) { step, amount, date, categoryId, type ->
-        PartialValidationState(step, amount, date, categoryId, type)
-    }
-
-    val canContinue: StateFlow<Boolean> = combine(
-        firstFiveCombined,
-        transactionFromAccountId,
-        transactionToAccountId
-    ) { partial, fromId, toId ->
-        ValidationState(partial.step, partial.amountString, partial.date, partial.categoryId, partial.type, fromId, toId)
-    }.map { state ->
-        validateCurrentStep(state)
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(SUBSCRIPTION_TIMEOUT),
-        initialValue = false
-    )
-
-    val canGoBack: StateFlow<Boolean> = currentStep.map { it > 0 }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(SUBSCRIPTION_TIMEOUT),
-        initialValue = false
-    )
-
-    val showBackButton: StateFlow<Boolean> = canGoBack
-
-    /** Validate current step based on collected state. */
-    private fun validateCurrentStep(state: ValidationState): Boolean = when (state.step) {
-        0 -> validateAmountStep(state.amountString)
-        1 -> validateDateStep(state.date)
-        2 -> validateCategoryStep(state.categoryId)
-        3 -> validateAccountStep(state.type, state.fromAccountId, state.toAccountId)
-        4 -> true // Confirmation step
-        else -> false
-    }
-
     /** Validate amount input and return sanitized value or current value if invalid. */
     fun validateAmount(input: String): String {
         if (input.isEmpty()) return ""
@@ -186,17 +122,16 @@ class NewTransactionViewModel @Inject constructor(
             TransactionType.TRANSFER -> fromAccountId != null && toAccountId != null && fromAccountId != toAccountId
         }
 
-    /** Navigation methods. */
-    fun nextStep() {
-        if (_currentStep.value < TOTAL_STEPS - 1 && canContinue.value) {
-            _currentStep.value += 1
+    fun isStepValid(step: Any): Flow<Boolean> = when (step) {
+        Route.Home.NewTransaction.Amount -> transactionAmountString.map { validateAmountStep(it) }
+        Route.Home.NewTransaction.Date -> transactionDate.map { validateDateStep(it) }
+        Route.Home.NewTransaction.Category -> transactionCategoryId.map { validateCategoryStep(it) }
+        Route.Home.NewTransaction.Accounts -> combine(transactionType, transactionFromAccountId, transactionToAccountId) { type, from, to ->
+            validateAccountStep(type, from, to)
         }
-    }
 
-    fun previousStep() {
-        if (_currentStep.value > 0) {
-            _currentStep.value -= 1
-        }
+        Route.Home.NewTransaction.Description -> flowOf(true)
+        else -> flowOf(false)
     }
 
     /** State setters with optimized patterns. */
@@ -253,7 +188,6 @@ class NewTransactionViewModel @Inject constructor(
     }
 
     fun reset() {
-        _currentStep.value = 0
         _transactionAmountString.value = ""
         _transactionDate.value = System.currentTimeMillis().convertUTCToLocal()
         _isRecurring.value = false
@@ -271,7 +205,6 @@ class NewTransactionViewModel @Inject constructor(
         this.reset()
     }
 
-    fun totalSteps(): Int = TOTAL_STEPS
 
     private fun getCategory(id: Long?): CategoryEntity? = id?.let { categoryLocalRepository.get(it) }
 

@@ -1,6 +1,5 @@
 package com.itsjeel01.finsiblefrontend.ui.screen
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.FastOutLinearInEasing
@@ -21,15 +20,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -48,7 +44,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.logging.Logger
@@ -68,10 +63,11 @@ import com.itsjeel01.finsiblefrontend.ui.viewmodel.AuthViewModel
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.OnboardingViewModel
 
 @Composable
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-fun OnboardingScreen(navigateToDashboard: () -> Unit) {
-    val onboardingViewModel: OnboardingViewModel = hiltViewModel()
-    val authViewModel: AuthViewModel = hiltViewModel()
+fun Onboarding(
+    navigateToHome: () -> Unit,
+    onboardingViewModel: OnboardingViewModel,
+    authViewModel: AuthViewModel
+) {
     val inAppNotificationManager = hiltNotificationManager()
     val loadingManager = hiltLoadingManager()
     val context = LocalContext.current
@@ -86,7 +82,7 @@ fun OnboardingScreen(navigateToDashboard: () -> Unit) {
         when (authState) {
             is AuthState.Positive -> {
                 Logger.UI.d("AuthState = Positive; navigating to dashboard")
-                navigateToDashboard()
+                navigateToHome()
             }
 
             is AuthState.Loading -> {
@@ -111,23 +107,18 @@ fun OnboardingScreen(navigateToDashboard: () -> Unit) {
         }
     }
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        contentWindowInsets = WindowInsets.systemBars,
-    ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            OnboardingBackground()
+    Box(modifier = Modifier.fillMaxSize()) {
+        OnboardingBackground()
 
-            OnboardingContent(
-                currentItem = currentItem,
-                carouselItems = carouselItems,
-                isLastItem = onboardingViewModel::isLastCarouselItem,
-                onNextItem = onboardingViewModel::nextCarouselItem,
-                onPreviousItem = onboardingViewModel::previousCarouselItem,
-                onSkip = onboardingViewModel::skipToLastCarouselItem,
-                onGoogleLogin = { authViewModel.signInWithGoogle(context) }
-            )
-        }
+        OnboardingContent(
+            currentItem = currentItem,
+            carouselItems = carouselItems,
+            isLastItem = onboardingViewModel::isLastCarouselItem,
+            onNextItem = onboardingViewModel::nextCarouselItem,
+            onPreviousItem = onboardingViewModel::previousCarouselItem,
+            onSkip = onboardingViewModel::skipToLastCarouselItem,
+            onGoogleLogin = { authViewModel.signInWithGoogle(context) }
+        )
     }
 }
 

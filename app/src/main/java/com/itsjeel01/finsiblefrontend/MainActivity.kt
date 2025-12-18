@@ -22,12 +22,16 @@ class MainActivity : ComponentActivity() {
     lateinit var testPrefs: TestPreferenceManager
 
     companion object {
-        private var hasShownTestScreen = false
+        private const val KEY_HAS_SHOWN_TEST_SCREEN = "has_shown_test_screen"
     }
+
+    private var hasShownTestScreen = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        hasShownTestScreen = savedInstanceState?.getBoolean(KEY_HAS_SHOWN_TEST_SCREEN) ?: false
 
         val startDestination = if (BuildConfig.DEBUG) {
             if (!testPrefs.shouldSkipDebugScreen() && !hasShownTestScreen) {
@@ -49,5 +53,10 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean(KEY_HAS_SHOWN_TEST_SCREEN, hasShownTestScreen)
     }
 }

@@ -25,14 +25,17 @@ class MainActivity : ComponentActivity() {
         private const val KEY_HAS_SHOWN_TEST_SCREEN = "has_shown_test_screen"
     }
 
+    private var hasShownTestScreen = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        val hasShownTestScreen = savedInstanceState?.getBoolean(KEY_HAS_SHOWN_TEST_SCREEN, false) ?: false
+        hasShownTestScreen = savedInstanceState?.getBoolean(KEY_HAS_SHOWN_TEST_SCREEN, false) ?: false
 
         val startDestination = if (BuildConfig.DEBUG) {
             if (!testPrefs.shouldSkipDebugScreen() && !hasShownTestScreen) {
+                hasShownTestScreen = true
                 Route.Test
             } else {
                 Route.Launch
@@ -54,6 +57,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putBoolean(KEY_HAS_SHOWN_TEST_SCREEN, true)
+        outState.putBoolean(KEY_HAS_SHOWN_TEST_SCREEN, hasShownTestScreen)
     }
 }

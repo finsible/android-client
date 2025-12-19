@@ -153,8 +153,8 @@ private fun calculateBalanceTransition(
 ): ContentTransform {
     val tabOrder = listOf(Route.Home.Balance.Accounts, Route.Home.Balance.Transactions)
 
-    val initialIndex = tabOrder.indexOfFirst { it == initialKey || it.toString() == initialKey.toString() }
-    val targetIndex = tabOrder.indexOfFirst { it == targetKey || it.toString() == targetKey.toString() }
+    val initialIndex = tabOrder.indexOfFirst { it == initialKey }
+    val targetIndex = tabOrder.indexOfFirst { it == targetKey }
 
     val slideSpec = tween<IntOffset>(durationMillis = Duration.MS_300.toInt(), easing = FastOutSlowInEasing)
 

@@ -36,8 +36,9 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
-import com.itsjeel01.finsiblefrontend.ui.navigation.NavigationTab
-import com.itsjeel01.finsiblefrontend.ui.navigation.NavigationTabs
+import com.itsjeel01.finsiblefrontend.ui.navigation.BottomNavItem
+import com.itsjeel01.finsiblefrontend.ui.navigation.BottomNavItems
+import com.itsjeel01.finsiblefrontend.ui.navigation.Route
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import kotlinx.coroutines.launch
 
@@ -52,10 +53,10 @@ private const val FAB_UNSELECTED_ELEVATION = 0f
 
 @Composable
 fun BottomNavigationBar(
-    activeTab: Int,
-    onTabSelected: (Int) -> Unit
+    activeTab: Route,
+    onTabSelected: (Route) -> Unit
 ) {
-    val tabs = NavigationTabs.getAll()
+    val tabs = BottomNavItems.toMap()
 
     val shadowHeight = FinsibleTheme.dimes.d8
     val shadowColor = FinsibleTheme.colors.shadow
@@ -90,18 +91,18 @@ fun BottomNavigationBar(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            tabs.forEachIndexed { index, tab ->
+            tabs.forEach { (route, tab) ->
                 if (!tab.isFAB) {
                     StandardNavigationTab(
-                        isSelected = index == activeTab,
+                        isSelected = route == activeTab,
                         tab = tab,
-                        onClick = { onTabSelected(index) }
+                        onClick = { onTabSelected(route) }
                     )
                 } else {
                     CentralFABTab(
-                        isSelected = index == activeTab,
+                        isSelected = route == activeTab,
                         tab = tab,
-                        onClick = { onTabSelected(index) }
+                        onClick = { onTabSelected(route) }
                     )
                 }
             }
@@ -112,7 +113,7 @@ fun BottomNavigationBar(
 @Composable
 private fun StandardNavigationTab(
     isSelected: Boolean,
-    tab: NavigationTab,
+    tab: BottomNavItem,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -202,7 +203,7 @@ private fun StandardNavigationTab(
 @Composable
 private fun CentralFABTab(
     isSelected: Boolean,
-    tab: NavigationTab,
+    tab: BottomNavItem,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {

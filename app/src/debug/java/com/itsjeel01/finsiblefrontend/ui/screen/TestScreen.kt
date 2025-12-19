@@ -26,7 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.ui.component.fin.ButtonConfig
@@ -60,7 +59,7 @@ private data class CheckboxToggle(
 @Composable
 fun TestScreen(
     onNavigateToApp: () -> Unit,
-    viewModel: TestViewModel = hiltViewModel()
+    viewModel: TestViewModel
 ) {
     val operationStatus by viewModel.operationStatus.collectAsStateWithLifecycle()
     val mockApiEnabled by viewModel.mockApiEnabled.collectAsStateWithLifecycle()

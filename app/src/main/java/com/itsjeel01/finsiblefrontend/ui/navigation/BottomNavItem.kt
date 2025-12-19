@@ -3,9 +3,9 @@ package com.itsjeel01.finsiblefrontend.ui.navigation
 import com.itsjeel01.finsiblefrontend.R
 
 /** Navigation tab configuration data class */
-data class NavigationTab(
+data class BottomNavItem(
     val label: String,
-    val route: HomeRoutes,
+    val route: Route,
     val isFAB: Boolean = false,
     val inactiveIcon: Int = 0,
     val activeIcon: Int = 0,
@@ -13,46 +13,46 @@ data class NavigationTab(
 )
 
 /** Navigation tabs configuration */
-object NavigationTabs {
+object BottomNavItems {
     private val navigationTabs = listOf(
-        NavigationTab(
+        BottomNavItem(
             label = "Dashboard",
-            route = HomeRoutes.Dashboard,
+            route = Route.Home.Dashboard,
             inactiveIcon = R.drawable.ic_home_outlined,
             activeIcon = R.drawable.ic_home_filled
         ),
-        NavigationTab(
+        BottomNavItem(
             label = "Analytics",
-            route = HomeRoutes.Analytics,
+            route = Route.Home.Analytics,
             inactiveIcon = R.drawable.ic_analytics_outlined,
             activeIcon = R.drawable.ic_analytics_filled
         ),
-        NavigationTab(
+        BottomNavItem(
             label = "New Transaction",
-            route = HomeRoutes.NewTransaction,
+            route = Route.Home.NewTransaction,
             isFAB = true,
             inactiveIcon = 0,
             activeIcon = R.drawable.ic_plus
         ),
-        NavigationTab(
+        BottomNavItem(
             label = "Accounts",
-            route = HomeRoutes.Balance,
+            route = Route.Home.Balance,
             inactiveIcon = R.drawable.ic_piggybank_outlined,
             activeIcon = R.drawable.ic_piggybank_filled
         ),
-        NavigationTab(
+        BottomNavItem(
             label = "Settings",
-            route = HomeRoutes.Settings,
+            route = Route.Home.Settings,
             inactiveIcon = R.drawable.ic_settings_outlined,
             activeIcon = R.drawable.ic_settings_filled
         )
     )
 
-    fun getAll(): List<NavigationTab> {
+    fun getAll(): List<BottomNavItem> {
         return navigationTabs
     }
 
-    fun getRouteFromTabIndex(index: Int): HomeRoutes {
-        return navigationTabs.getOrNull(index)?.route ?: HomeRoutes.Dashboard
+    fun toMap(): Map<Route, BottomNavItem> {
+        return navigationTabs.associateBy { it.route }
     }
 }

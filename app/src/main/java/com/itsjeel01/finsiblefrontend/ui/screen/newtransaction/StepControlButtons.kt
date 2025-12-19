@@ -26,7 +26,7 @@ fun StepControlButtons(
     val canGoBack = stepIndex > 0
 
     val isLastStep = stepIndex == NewTransactionSteps.lastIndex
-    val continueButtonText = if (isLastStep) "Confirm" else "Continue"
+    val continueButtonText = if (isLastStep) "Confirm" else "Next"
 
     Row(
         horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d16),

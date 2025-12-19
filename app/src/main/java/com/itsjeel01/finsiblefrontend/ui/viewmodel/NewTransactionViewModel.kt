@@ -126,7 +126,7 @@ class NewTransactionViewModel @Inject constructor(
         Route.Home.NewTransaction.Amount -> transactionAmountString.map { validateAmountStep(it) }
         Route.Home.NewTransaction.Date -> transactionDate.map { validateDateStep(it) }
         Route.Home.NewTransaction.Category -> transactionCategoryId.map { validateCategoryStep(it) }
-        Route.Home.NewTransaction.Accounts -> combine(transactionType, transactionFromAccountId, transactionToAccountId) { type, from, to ->
+        Route.Home.NewTransaction.TransactionAccounts -> combine(transactionType, transactionFromAccountId, transactionToAccountId) { type, from, to ->
             validateAccountStep(type, from, to)
         }
 

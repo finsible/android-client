@@ -16,7 +16,7 @@ val NewTransactionSteps = listOf(
     Route.Home.NewTransaction.Amount,
     Route.Home.NewTransaction.Date,
     Route.Home.NewTransaction.Category,
-    Route.Home.NewTransaction.Accounts,
+    Route.Home.NewTransaction.TransactionAccounts,
     Route.Home.NewTransaction.Description
 )
 

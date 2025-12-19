@@ -102,7 +102,7 @@ fun NavigationNewTransaction(
                                     viewModel = viewModel
                                 )
                             }
-                            entry<Route.Home.NewTransaction.Accounts> {
+                            entry<Route.Home.NewTransaction.TransactionAccounts> {
                                 Step4Accounts(
                                     viewModel = viewModel
                                 )

@@ -13,6 +13,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.fin.ButtonConfig
 import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentSize
 import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentType
 import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleButton
+import com.itsjeel01.finsiblefrontend.ui.navigation.NewTransactionSteps
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
 @Composable

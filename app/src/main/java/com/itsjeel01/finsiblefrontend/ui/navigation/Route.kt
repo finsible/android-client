@@ -34,7 +34,7 @@ sealed interface Route : NavKey {
             data object Category : Route
 
             @Serializable
-            data object Accounts : Route
+            data object TransactionAccounts : Route
 
             @Serializable
             data object Description : Route

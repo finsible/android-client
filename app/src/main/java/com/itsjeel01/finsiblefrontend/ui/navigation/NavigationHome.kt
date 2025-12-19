@@ -37,7 +37,7 @@ fun NavigationHome() {
         bottomTabs = BottomNavItems.toMap().keys
     )
 
-    val navigator = remember { BottomTabNavigator(navigationState) }
+    val navigator = remember(navigationState) { BottomTabNavigator(navigationState) }
 
     Scaffold(
         modifier = Modifier

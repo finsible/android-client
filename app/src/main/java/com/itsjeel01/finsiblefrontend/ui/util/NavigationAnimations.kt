@@ -9,19 +9,31 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.ui.unit.IntOffset
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
 
-/** Calculates a horizontal slide transition based on the index order of routes. */
+/**
+ * Calculates a horizontal slide transition based on the index order of routes.
+ *
+ * @param routeOrder List of routes in the desired order
+ * @param initialKey The initial route (current state)
+ * @param targetKey The target route (destination state)
+ * @param durationMillis Duration of the transition animation in milliseconds
+ * @return ContentTransform with horizontal slide animation based on route order
+ *
+ * If either route is not found in routeOrder, defaults to left-to-right slide animation.
+ */
 fun calculateIndexedTransition(
     routeOrder: List<Any>,
     initialKey: Any?,
     targetKey: Any?,
     durationMillis: Int = Duration.MS_300.toInt()
 ): ContentTransform {
-    val initialIndex = routeOrder.indexOfFirst { route ->
-        route == initialKey || (initialKey != null && route.toString() == initialKey.toString())
+    fun findRouteIndex(key: Any?): Int {
+        return routeOrder.indexOfFirst { route ->
+            route == key || (key != null && route.toString() == key.toString())
+        }
     }
-    val targetIndex = routeOrder.indexOfFirst { route ->
-        route == targetKey || (targetKey != null && route.toString() == targetKey.toString())
-    }
+
+    val initialIndex = findRouteIndex(initialKey)
+    val targetIndex = findRouteIndex(targetKey)
 
     val slideSpec = tween<IntOffset>(durationMillis = durationMillis, easing = FastOutSlowInEasing)
 

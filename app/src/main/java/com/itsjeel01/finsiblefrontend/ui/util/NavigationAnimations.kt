@@ -16,12 +16,16 @@ fun calculateIndexedTransition(
     targetKey: Any?,
     durationMillis: Int = Duration.MS_300.toInt()
 ): ContentTransform {
-    val initialIndex = routeOrder.indexOfFirst { it == initialKey || it.toString() == initialKey.toString() }
-    val targetIndex = routeOrder.indexOfFirst { it == targetKey || it.toString() == targetKey.toString() }
+    val initialIndex = routeOrder.indexOfFirst { 
+        it == initialKey || (initialKey != null && it.toString() == initialKey.toString())
+    }
+    val targetIndex = routeOrder.indexOfFirst { 
+        it == targetKey || (targetKey != null && it.toString() == targetKey.toString())
+    }
 
     val slideSpec = tween<IntOffset>(durationMillis = durationMillis, easing = FastOutSlowInEasing)
 
-    return if (targetIndex > initialIndex) {
+    return if (initialIndex != -1 && targetIndex != -1 && targetIndex > initialIndex) {
         slideInHorizontally(slideSpec) { width -> width } togetherWith
             slideOutHorizontally(slideSpec) { width -> -width }
     } else {

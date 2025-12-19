@@ -1,6 +1,12 @@
-package com.itsjeel01.finsiblefrontend.ui.screen.balance
+package com.itsjeel01.finsiblefrontend.ui.screen
 
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.ContentTransform
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,12 +22,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.IntOffset
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.itsjeel01.finsiblefrontend.R
+import com.itsjeel01.finsiblefrontend.ui.constants.Duration
 import com.itsjeel01.finsiblefrontend.ui.navigation.Route
+import com.itsjeel01.finsiblefrontend.ui.screen.balance.AccountsScreen
+import com.itsjeel01.finsiblefrontend.ui.screen.balance.TransactionsScreen
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleDimes.Companion.inverted
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.extraBold
@@ -70,6 +80,9 @@ fun BalanceTab(viewModel: BalanceViewModel) {
 
         NavDisplay(
             backStack = backStack,
+            transitionSpec = {
+                calculateBalanceTransition(initialState.key, targetState.key)
+            },
             entryProvider = entryProvider {
                 entry<Route.Home.Balance.Accounts> {
                     AccountsScreen(
@@ -126,7 +139,6 @@ private fun BalanceTabSelector(
     }
 }
 
-
 enum class BalanceTabType(
     val displayText: String,
     @param:DrawableRes val icon: Int
@@ -134,3 +146,22 @@ enum class BalanceTabType(
     ACCOUNTS("Accounts", R.drawable.ic_piggy_bank),
     TRANSACTIONS("Transactions", R.drawable.ic_transactions)
 }
+
+private fun calculateBalanceTransition(
+    initialKey: Any?,
+    targetKey: Any?
+): ContentTransform {
+    val tabOrder = listOf(Route.Home.Balance.Accounts, Route.Home.Balance.Transactions)
+
+    val initialIndex = tabOrder.indexOfFirst { it == initialKey || it.toString() == initialKey.toString() }
+    val targetIndex = tabOrder.indexOfFirst { it == targetKey || it.toString() == targetKey.toString() }
+
+    val slideSpec = tween<IntOffset>(durationMillis = Duration.MS_300.toInt(), easing = FastOutSlowInEasing)
+
+    return if (targetIndex > initialIndex) {
+        slideInHorizontally(slideSpec) { width -> width } togetherWith slideOutHorizontally(slideSpec) { width -> -width }
+    } else {
+        slideInHorizontally(slideSpec) { width -> -width } togetherWith slideOutHorizontally(slideSpec) { width -> width }
+    }
+}
+

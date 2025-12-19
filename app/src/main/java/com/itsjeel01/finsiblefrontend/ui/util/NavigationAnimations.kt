@@ -7,7 +7,6 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.ui.unit.IntOffset
-import com.itsjeel01.finsiblefrontend.ui.constants.Duration
 
 /**
  * Calculates a horizontal slide transition based on the index order of routes.
@@ -15,16 +14,17 @@ import com.itsjeel01.finsiblefrontend.ui.constants.Duration
  * @param routeOrder List of routes in the desired order
  * @param initialKey The initial route (current state)
  * @param targetKey The target route (destination state)
- * @param durationMillis Duration of the transition animation in milliseconds
+ * @param durationMillis Duration of the transition animation in milliseconds (default: 300ms)
  * @return ContentTransform with horizontal slide animation based on route order
  *
  * If either route is not found in routeOrder, defaults to left-to-right slide animation.
+ * String comparison is used as a fallback to match routes that may have been serialized/deserialized.
  */
 fun calculateIndexedTransition(
     routeOrder: List<Any>,
     initialKey: Any?,
     targetKey: Any?,
-    durationMillis: Int = Duration.MS_300.toInt()
+    durationMillis: Int = 300
 ): ContentTransform {
     fun findRouteIndex(key: Any?): Int {
         return routeOrder.indexOfFirst { route ->

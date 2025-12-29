@@ -38,3 +38,28 @@ enum class TransactionRecurringFrequency(val displayText: String) {
         }
     }
 }
+
+sealed class SyncState {
+    data object Idle : SyncState()
+    data class Syncing(val remaining: Int) : SyncState()
+    data class Error(val message: String) : SyncState()
+}
+
+enum class EntityType {
+    TRANSACTION,
+    ACCOUNT,
+    CATEGORY,
+}
+
+enum class OperationType {
+    CREATE,
+    UPDATE,
+    DELETE,
+}
+
+enum class Status {
+    PENDING,
+    SYNCING,
+    FAILED,
+    COMPLETED
+}

@@ -1,0 +1,223 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:36553080464490998",
+      "lastPropertyId": "9:3798427125761117976",
+      "name": "AccountEntity",
+      "properties": [
+        {
+          "id": "1:1058006565558947712",
+          "name": "id",
+          "type": 6,
+          "flags": 129
+        },
+        {
+          "id": "2:3780035084888424327",
+          "name": "name",
+          "type": 9
+        },
+        {
+          "id": "3:4401009694744929550",
+          "name": "description",
+          "type": 9
+        },
+        {
+          "id": "4:4480711609445654992",
+          "name": "balance",
+          "type": 9
+        },
+        {
+          "id": "5:2089800335052208818",
+          "name": "currencyCode",
+          "type": 9
+        },
+        {
+          "id": "6:9165745087724474390",
+          "name": "icon",
+          "type": 9
+        },
+        {
+          "id": "7:7357196607818087448",
+          "name": "isActive",
+          "type": 1
+        },
+        {
+          "id": "8:2644817289342382453",
+          "name": "isSystemDefault",
+          "type": 1
+        },
+        {
+          "id": "9:3798427125761117976",
+          "name": "accountGroupId",
+          "indexId": "1:5822709340570074625",
+          "type": 11,
+          "flags": 520,
+          "relationTarget": "AccountGroupEntity"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "2:7368046151551549444",
+      "lastPropertyId": "7:4153419291246027839",
+      "name": "AccountGroupEntity",
+      "properties": [
+        {
+          "id": "1:895658194240739708",
+          "name": "id",
+          "type": 6,
+          "flags": 129
+        },
+        {
+          "id": "2:7688130585418148413",
+          "name": "name",
+          "type": 9
+        },
+        {
+          "id": "3:4075785853950157520",
+          "name": "description",
+          "type": 9
+        },
+        {
+          "id": "4:2053663533840178283",
+          "name": "icon",
+          "type": 9
+        },
+        {
+          "id": "5:3545391668362356281",
+          "name": "isSystemDefault",
+          "type": 1
+        },
+        {
+          "id": "7:4153419291246027839",
+          "name": "color",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "3:5871642001295074462",
+      "lastPropertyId": "6:3342119977911513536",
+      "name": "CategoryEntity",
+      "properties": [
+        {
+          "id": "1:3469121546852165697",
+          "name": "id",
+          "type": 6,
+          "flags": 129
+        },
+        {
+          "id": "2:5301997883664094372",
+          "name": "type",
+          "type": 5
+        },
+        {
+          "id": "3:505971947842327554",
+          "name": "name",
+          "type": 9
+        },
+        {
+          "id": "4:5249263161931434025",
+          "name": "icon",
+          "type": 9
+        },
+        {
+          "id": "5:2352641445893941993",
+          "name": "readOnly",
+          "type": 1
+        },
+        {
+          "id": "6:3342119977911513536",
+          "name": "parentCategoryId",
+          "indexId": "2:1732055873534834238",
+          "type": 11,
+          "flags": 520,
+          "relationTarget": "CategoryEntity"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "4:7824650354570744645",
+      "lastPropertyId": "10:780184699393623222",
+      "name": "PendingOperationEntity",
+      "properties": [
+        {
+          "id": "1:8188090066166363042",
+          "name": "localId",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:5080046570742386870",
+          "name": "entityType",
+          "indexId": "3:4104008363458638896",
+          "type": 5,
+          "flags": 8
+        },
+        {
+          "id": "3:4586508779587152261",
+          "name": "operationType",
+          "type": 5
+        },
+        {
+          "id": "4:8571396475636559315",
+          "name": "entityId",
+          "type": 6
+        },
+        {
+          "id": "5:8296888291495233356",
+          "name": "localEntityId",
+          "type": 6
+        },
+        {
+          "id": "6:5619789414625017808",
+          "name": "payload",
+          "type": 9
+        },
+        {
+          "id": "7:1841751128890477048",
+          "name": "createdAt",
+          "indexId": "4:7852976736432077778",
+          "type": 6,
+          "flags": 8
+        },
+        {
+          "id": "8:667465932678301913",
+          "name": "retryCount",
+          "type": 5
+        },
+        {
+          "id": "9:5521201265034387840",
+          "name": "lastError",
+          "type": 9
+        },
+        {
+          "id": "10:780184699393623222",
+          "name": "status",
+          "indexId": "5:668552313088343717",
+          "type": 5,
+          "flags": 8
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "lastEntityId": "4:7824650354570744645",
+  "lastIndexId": "5:668552313088343717",
+  "lastRelationId": "0:0",
+  "lastSequenceId": "0:0",
+  "modelVersion": 5,
+  "modelVersionParserMinimum": 5,
+  "retiredEntityUids": [],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [
+    8650068926350279347
+  ],
+  "retiredRelationUids": [],
+  "version": 1
+}

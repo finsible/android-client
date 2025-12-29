@@ -10,11 +10,15 @@ import javax.inject.Inject
 
 class PreferenceManager @Inject constructor(context: Context) {
     companion object {
-        private const val JWT = "jwt"
-        private const val IS_LOGGED_IN = "is_logged_in"
-        private const val USER_ID = "user_id"
-        private const val EMAIL = "email"
-        private const val NAME = "name"
+        private const val KEY_JWT = "jwt"
+        private const val KEY_IS_LOGGED_IN = "is_logged_in"
+        private const val KEY_USER_ID = "user_id"
+        private const val KEY_USER_EMAIL = "email"
+        private const val KEY_USER_NAME = "name"
+        private const val KEY_LOCAL_ID_COUNTER = "local_id_counter"
+        private const val KEY_SYNC_ENABLED = "sync_enabled"
+        private const val KEY_BACKUP_ENABLED = "backup_enabled"
+        private const val KEY_WIFI_ONLY_SYNC = "wifi_only_sync"
         private const val PREFS_FILE_NAME = "secret_shared_prefs"
     }
 
@@ -33,28 +37,59 @@ class PreferenceManager @Inject constructor(context: Context) {
     /** Saves authentication data to encrypted shared preferences. */
     fun saveAuthData(authResponse: AuthData) {
         sharedPreferences.edit {
-            putString(JWT, authResponse.jwt)
-            putBoolean(IS_LOGGED_IN, true)
-            putString(USER_ID, authResponse.userId)
-            putString(EMAIL, authResponse.email)
-            putString(NAME, authResponse.name)
+            putString(KEY_JWT, authResponse.jwt)
+            putBoolean(KEY_IS_LOGGED_IN, true)
+            putString(KEY_USER_ID, authResponse.userId)
+            putString(KEY_USER_EMAIL, authResponse.email)
+            putString(KEY_USER_NAME, authResponse.name)
         }
     }
 
-    /** Clears authentication data from encrypted shared preferences. */
     fun clearAuthData() {
         sharedPreferences.edit {
-            remove(JWT)
-            putBoolean(IS_LOGGED_IN, false)
-            remove(USER_ID)
-            remove(EMAIL)
-            remove(NAME)
+            remove(KEY_JWT)
+            putBoolean(KEY_IS_LOGGED_IN, false)
+            remove(KEY_USER_ID)
+            remove(KEY_USER_EMAIL)
+            remove(KEY_USER_NAME)
         }
     }
 
-    fun isLoggedIn(): Boolean = sharedPreferences.getBoolean(IS_LOGGED_IN, false)
-    fun getJwt(): String? = sharedPreferences.getString(JWT, null)
-    fun getUserId(): String? = sharedPreferences.getString(USER_ID, null)
-    fun getEmail(): String? = sharedPreferences.getString(EMAIL, null)
-    fun getName(): String? = sharedPreferences.getString(NAME, null)
+    fun getLocalIdCounter(): Long {
+        return sharedPreferences.getLong(KEY_LOCAL_ID_COUNTER, 0L)
+    }
+
+    fun saveLocalIdCounter(counter: Long) {
+        sharedPreferences.edit().putLong(KEY_LOCAL_ID_COUNTER, counter).apply()
+    }
+
+    fun isSyncEnabled(): Boolean {
+        return sharedPreferences.getBoolean(KEY_SYNC_ENABLED, false)
+    }
+
+    fun setSyncEnabled(enabled: Boolean) {
+        sharedPreferences.edit().putBoolean(KEY_SYNC_ENABLED, enabled).apply()
+    }
+
+    fun isBackupEnabled(): Boolean {
+        return sharedPreferences.getBoolean(KEY_BACKUP_ENABLED, false)
+    }
+
+    fun setBackupEnabled(enabled: Boolean) {
+        sharedPreferences.edit().putBoolean(KEY_BACKUP_ENABLED, enabled).apply()
+    }
+
+    fun isWifiOnlySyncEnabled(): Boolean {
+        return sharedPreferences.getBoolean(KEY_WIFI_ONLY_SYNC, true)
+    }
+
+    fun setWifiOnlySyncEnabled(enabled: Boolean) {
+        sharedPreferences.edit().putBoolean(KEY_WIFI_ONLY_SYNC, enabled).apply()
+    }
+
+    fun isLoggedIn(): Boolean = sharedPreferences.getBoolean(KEY_IS_LOGGED_IN, false)
+    fun getJwt(): String? = sharedPreferences.getString(KEY_JWT, null)
+    fun getUserId(): String? = sharedPreferences.getString(KEY_USER_ID, null)
+    fun getEmail(): String? = sharedPreferences.getString(KEY_USER_EMAIL, null)
+    fun getName(): String? = sharedPreferences.getString(KEY_USER_NAME, null)
 }

@@ -2,6 +2,7 @@ package com.itsjeel01.finsiblefrontend.data.di
 
 import com.itsjeel01.finsiblefrontend.data.local.entity.PendingOperationEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.SyncMetadataEntity
+import com.itsjeel01.finsiblefrontend.data.local.repository.PendingOperationRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,5 +24,13 @@ class SyncModule {
     @Singleton
     fun provideSyncMetadataBox(store: BoxStore): Box<SyncMetadataEntity> {
         return store.boxFor(SyncMetadataEntity::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun providePendingOperationRepository(
+        pendingOperationBox: Box<PendingOperationEntity>
+    ): PendingOperationRepository {
+        return PendingOperationRepository(pendingOperationBox)
     }
 }

@@ -2,11 +2,13 @@ package com.itsjeel01.finsiblefrontend.data.local.repository
 
 import com.itsjeel01.finsiblefrontend.common.TransactionType
 import com.itsjeel01.finsiblefrontend.common.logging.Logger
+import com.itsjeel01.finsiblefrontend.data.local.TransactionTypeConverter
 import com.itsjeel01.finsiblefrontend.data.local.entity.CategoryEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.CategoryEntity_
 import com.itsjeel01.finsiblefrontend.data.model.Category
 import com.itsjeel01.finsiblefrontend.data.model.toEntity
 import io.objectbox.Box
+import io.objectbox.kotlin.equal
 import javax.inject.Inject
 
 class CategoryLocalRepository @Inject constructor(override val box: Box<CategoryEntity>) :
@@ -51,7 +53,7 @@ class CategoryLocalRepository @Inject constructor(override val box: Box<Category
         val categories = HashMap<CategoryEntity, List<CategoryEntity>>()
 
         val parentCategories = box.query()
-            .equal(CategoryEntity_.type, type.ordinal.toLong())
+            .equal(CategoryEntity_.type, TransactionTypeConverter().convertToDatabaseValue(type)!!)
             .equal(CategoryEntity_.parentCategoryId, 0L)
             .build()
             .find()
@@ -67,7 +69,7 @@ class CategoryLocalRepository @Inject constructor(override val box: Box<Category
 
     fun getParentCategories(type: TransactionType): List<CategoryEntity> {
         val parents = box.query()
-            .equal(CategoryEntity_.type, type.ordinal.toLong())
+            .equal(CategoryEntity_.type, TransactionTypeConverter().convertToDatabaseValue(type)!!)
             .equal(CategoryEntity_.parentCategoryId, 0L)
             .build()
             .find()

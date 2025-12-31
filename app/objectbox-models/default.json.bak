@@ -205,10 +205,151 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "5:6551058013786594843",
+      "lastPropertyId": "5:1259847168904331729",
+      "name": "SyncMetadataEntity",
+      "properties": [
+        {
+          "id": "1:1304933345668673609",
+          "name": "localId",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:4648368035987455136",
+          "name": "entityType",
+          "indexId": "6:715497229392411252",
+          "type": 5,
+          "flags": 40
+        },
+        {
+          "id": "3:8664804153958251931",
+          "name": "period",
+          "type": 9
+        },
+        {
+          "id": "4:4522232263756840346",
+          "name": "lastSyncTime",
+          "type": 6
+        },
+        {
+          "id": "5:1259847168904331729",
+          "name": "lastFullSyncTime",
+          "type": 6
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "6:6297331166862476803",
+      "lastPropertyId": "18:4042880049046244444",
+      "name": "TransactionEntity",
+      "properties": [
+        {
+          "id": "1:6535295201450048590",
+          "name": "id",
+          "type": 6,
+          "flags": 129
+        },
+        {
+          "id": "2:2198274159466277857",
+          "name": "type",
+          "type": 5
+        },
+        {
+          "id": "3:2521166742728888635",
+          "name": "totalAmount",
+          "type": 9
+        },
+        {
+          "id": "4:2662661078709497583",
+          "name": "transactionDate",
+          "indexId": "7:2365433086039832229",
+          "type": 6,
+          "flags": 8
+        },
+        {
+          "id": "5:3204969547010595238",
+          "name": "categoryId",
+          "type": 6
+        },
+        {
+          "id": "6:4920132113607817760",
+          "name": "categoryName",
+          "type": 9
+        },
+        {
+          "id": "7:3042605271206442117",
+          "name": "description",
+          "type": 9
+        },
+        {
+          "id": "8:8267661360558778926",
+          "name": "currency",
+          "type": 9
+        },
+        {
+          "id": "9:7185900333499558796",
+          "name": "fromAccountId",
+          "indexId": "8:4951901483789596214",
+          "type": 6,
+          "flags": 8
+        },
+        {
+          "id": "10:7525679039484019981",
+          "name": "toAccountId",
+          "indexId": "9:7059000698431375794",
+          "type": 6,
+          "flags": 8
+        },
+        {
+          "id": "11:962634001898964754",
+          "name": "syncStatus",
+          "type": 5
+        },
+        {
+          "id": "12:84446355918655650",
+          "name": "lastSyncAttempt",
+          "type": 6
+        },
+        {
+          "id": "13:4733277871178640452",
+          "name": "syncError",
+          "type": 9
+        },
+        {
+          "id": "14:5293204965154620592",
+          "name": "spaceId",
+          "type": 6
+        },
+        {
+          "id": "15:143327194536192384",
+          "name": "userShare",
+          "type": 9
+        },
+        {
+          "id": "16:4985289428304389260",
+          "name": "isSplit",
+          "type": 1
+        },
+        {
+          "id": "17:5264902117481397694",
+          "name": "paidByUserId",
+          "type": 6
+        },
+        {
+          "id": "18:4042880049046244444",
+          "name": "paidByUserName",
+          "type": 9
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "4:7824650354570744645",
-  "lastIndexId": "5:668552313088343717",
+  "lastEntityId": "6:6297331166862476803",
+  "lastIndexId": "9:7059000698431375794",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 5,

@@ -2,9 +2,11 @@ package com.itsjeel01.finsiblefrontend.data.local.repository
 
 import com.itsjeel01.finsiblefrontend.common.Status
 import com.itsjeel01.finsiblefrontend.common.TransactionType
+import com.itsjeel01.finsiblefrontend.data.local.entity.PendingOperationEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.SyncMetadataEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.TransactionEntity
 import com.itsjeel01.finsiblefrontend.data.model.Transaction
+import com.itsjeel01.finsiblefrontend.data.sync.LocalIdGenerator
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -20,13 +22,22 @@ class TransactionLocalRepositoryTest {
 
     private lateinit var mockTransactionBox: Box<TransactionEntity>
     private lateinit var mockSyncMetadataBox: Box<SyncMetadataEntity>
+    private lateinit var mockPendingOperationBox: Box<PendingOperationEntity>
+    private lateinit var mockLocalIdGenerator: LocalIdGenerator
     private lateinit var repository: TransactionLocalRepository
 
     @Before
     fun setUp() {
         mockTransactionBox = mockk(relaxed = true)
         mockSyncMetadataBox = mockk(relaxed = true)
-        repository = TransactionLocalRepository(mockTransactionBox, mockSyncMetadataBox)
+        mockPendingOperationBox = mockk(relaxed = true)
+        mockLocalIdGenerator = mockk(relaxed = true)
+        repository = TransactionLocalRepository(
+            mockTransactionBox,
+            mockSyncMetadataBox,
+            mockPendingOperationBox,
+            mockLocalIdGenerator
+        )
     }
 
     @Test
@@ -134,7 +145,7 @@ class TransactionLocalRepositoryTest {
 
     @Test
     fun `test remove deletes transaction by ID`() {
-        repository.remove(123L)
+        repository.removeById(123L)
 
         verify { mockTransactionBox.remove(123L) }
     }

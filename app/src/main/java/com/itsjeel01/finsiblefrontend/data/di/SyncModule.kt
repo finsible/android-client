@@ -1,19 +1,23 @@
 package com.itsjeel01.finsiblefrontend.data.di
 
+import com.itsjeel01.finsiblefrontend.common.EntityType
 import com.itsjeel01.finsiblefrontend.data.local.entity.PendingOperationEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.SyncMetadataEntity
-import com.itsjeel01.finsiblefrontend.data.local.repository.PendingOperationRepository
+import com.itsjeel01.finsiblefrontend.data.sync.EntitySyncHandler
+import com.itsjeel01.finsiblefrontend.data.sync.TransactionSyncHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.objectbox.Box
 import io.objectbox.BoxStore
+import kotlinx.serialization.json.Json
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class SyncModule {
+object SyncModule {
+
     @Provides
     @Singleton
     fun providePendingOperationBox(store: BoxStore): Box<PendingOperationEntity> {
@@ -28,9 +32,21 @@ class SyncModule {
 
     @Provides
     @Singleton
-    fun providePendingOperationRepository(
-        pendingOperationBox: Box<PendingOperationEntity>
-    ): PendingOperationRepository {
-        return PendingOperationRepository(pendingOperationBox)
+    fun provideSyncHandlers(
+        transactionSyncHandler: TransactionSyncHandler
+    ): Map<EntityType, EntitySyncHandler> {
+        return mapOf(
+            EntityType.TRANSACTION to transactionSyncHandler
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideJson(): Json {
+        return Json {
+            ignoreUnknownKeys = true
+            encodeDefaults = true
+            isLenient = true
+        }
     }
 }

@@ -32,9 +32,9 @@ data class TransactionEntity(
     @Index var toAccountId: Long? = null,
 
     @Convert(converter = StatusConverter::class, dbType = Int::class)
-    var syncStatus: Status = Status.COMPLETED,
-    var lastSyncAttempt: Long? = null,
-    var syncError: String? = null,
+    override var syncStatus: Status = Status.COMPLETED,
+    override var lastSyncAttempt: Long? = null,
+    override var syncError: String? = null,
 
     // Split expense fields (future scope)
     var spaceId: Long? = null,
@@ -42,7 +42,7 @@ data class TransactionEntity(
     var isSplit: Boolean = false,
     var paidByUserId: Long? = null,
     var paidByUserName: String? = null,
-) : BaseEntity() {
+) : BaseEntity(), SyncableEntity {
 
     val periodKey: String
         get() {

@@ -28,6 +28,16 @@ class PendingOperationRepository @Inject constructor(
             .find()
     }
 
+    fun getFailed(): List<PendingOperationEntity> {
+        return box.query()
+            .equal(
+                PendingOperationEntity_.status,
+                StatusConverter().convertToDatabaseValue(Status.FAILED)!!
+            )
+            .build()
+            .find()
+    }
+
     fun getPendingCount(): Long {
         return box.query()
             .equal(PendingOperationEntity_.status, StatusConverter().convertToDatabaseValue(Status.PENDING)!!)

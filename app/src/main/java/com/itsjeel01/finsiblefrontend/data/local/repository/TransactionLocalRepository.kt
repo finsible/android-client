@@ -1,26 +1,34 @@
 package com.itsjeel01.finsiblefrontend.data.local.repository
 
 import com.itsjeel01.finsiblefrontend.common.EntityType
-import com.itsjeel01.finsiblefrontend.common.Status
 import com.itsjeel01.finsiblefrontend.common.logging.Logger
-import com.itsjeel01.finsiblefrontend.data.local.EntityTypeConverter
-import com.itsjeel01.finsiblefrontend.data.local.StatusConverter
+import com.itsjeel01.finsiblefrontend.data.local.entity.PendingOperationEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.SyncMetadataEntity
-import com.itsjeel01.finsiblefrontend.data.local.entity.SyncMetadataEntity_
 import com.itsjeel01.finsiblefrontend.data.local.entity.TransactionEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.TransactionEntity_
 import com.itsjeel01.finsiblefrontend.data.model.Transaction
 import com.itsjeel01.finsiblefrontend.data.model.toEntity
+import com.itsjeel01.finsiblefrontend.data.sync.LocalIdGenerator
 import io.objectbox.Box
-import io.objectbox.kotlin.equal
-import io.objectbox.kotlin.notEqual
+import io.objectbox.Property
 import java.util.Calendar
 import javax.inject.Inject
 
 class TransactionLocalRepository @Inject constructor(
     override val box: Box<TransactionEntity>,
-    private val syncMetadataBox: Box<SyncMetadataEntity>
-) : BaseLocalRepository<Transaction, TransactionEntity> {
+    syncMetadataBox: Box<SyncMetadataEntity>,
+    pendingOperationBox: Box<PendingOperationEntity>,
+    localIdGenerator: LocalIdGenerator
+) : SyncableLocalRepository<Transaction, TransactionEntity>(
+    box,
+    syncMetadataBox,
+    pendingOperationBox,
+    localIdGenerator
+) {
+
+    override val entityType: EntityType = EntityType.TRANSACTION
+    override fun idProperty(): Property<TransactionEntity> = TransactionEntity_.id
+    override fun syncStatusProperty(): Property<TransactionEntity> = TransactionEntity_.syncStatus
 
     override fun addAll(data: List<Transaction>, additionalInfo: Any?, ttlMinutes: Long?) {
         super.addAll(data, additionalInfo, ttlMinutes)
@@ -86,105 +94,16 @@ class TransactionLocalRepository @Inject constructor(
             .also { Logger.Database.d("Fetched ${it.size} transactions for account $accountId") }
     }
 
-    fun getPendingTransactions(): List<TransactionEntity> {
-        return box.query()
-            .equal(TransactionEntity_.syncStatus, StatusConverter().convertToDatabaseValue(Status.PENDING)!!)
-            .build()
-            .find()
-    }
-
-    fun getFailedTransactions(): List<TransactionEntity> {
-        return box.query()
-            .equal(TransactionEntity_.syncStatus, StatusConverter().convertToDatabaseValue(Status.FAILED)!!)
-            .build()
-            .find()
-    }
-
-    fun getLocalOnlyTransactions(): List<TransactionEntity> {
-        return box.query()
-            .less(TransactionEntity_.id, 0)
-            .build()
-            .find()
-    }
-
-    fun updateSyncStatus(id: Long, status: Status, error: String? = null) {
-        val entity = box.get(id)
-        entity?.let {
-            it.syncStatus = status
-            it.syncError = error
-            box.put(it)
-            Logger.Database.d("Updated sync status for transaction $id: $status")
-        }
-    }
-
-    /** Remap local ID to server ID after successful sync. */
-    fun remapId(oldId: Long, newId: Long, updatedEntity: TransactionEntity) {
-        box.remove(oldId)
-
-        updatedEntity.syncStatus = Status.COMPLETED
-        updatedEntity.syncError = null
-        box.put(updatedEntity)
-
-        Logger.Database.i("Remapped transaction ID: $oldId → $newId")
-    }
-
-    /** Upsert (update or insert) a transaction. */
-    fun upsert(entity: TransactionEntity) {
-        box.put(entity)
-        Logger.Database.d("Upserted transaction ${entity.id}")
-    }
-
-    /** Remove a transaction by ID. */
-    fun remove(id: Long) {
-        box.remove(id)
-        Logger.Database.d("Removed transaction $id")
-    }
-
-    /** Replace all transactions for a period (full sync). */
+    /** Replace all transactions for a period (full sync). Uses base replaceMatching method. */
     fun replaceAllForPeriod(periodKey: String, entities: List<TransactionEntity>) {
         val (startMs, endMs) = periodKey.toPeriodBounds()
 
-        box.query()
+        val queryBuilder = box.query()
             .between(TransactionEntity_.transactionDate, startMs, endMs)
-            .notEqual(TransactionEntity_.syncStatus, StatusConverter().convertToDatabaseValue(Status.PENDING)!!)
-            .build()
-            .remove()
 
-        box.put(entities)
+        replaceMatching(queryBuilder, entities)
 
         Logger.Database.i("Replaced ${entities.size} transactions for period $periodKey")
-    }
-
-
-    fun getLastSyncTime(periodKey: String?): Long? {
-        val syncKey = SyncMetadataEntity.buildSyncKey(EntityType.TRANSACTION, periodKey)
-        return syncMetadataBox.query(SyncMetadataEntity_.syncKey equal syncKey)
-            .build()
-            .findFirst()
-            ?.lastSyncTime
-    }
-
-    fun updateLastSyncTime(periodKey: String?, serverTime: Long) {
-        val syncKey = SyncMetadataEntity.buildSyncKey(EntityType.TRANSACTION, periodKey)
-
-        val existing = syncMetadataBox.query(SyncMetadataEntity_.syncKey equal syncKey)
-            .build()
-            .findFirst()
-
-        val metadata = existing ?: SyncMetadataEntity.forScope(EntityType.TRANSACTION, periodKey)
-        metadata.lastSyncTime = serverTime
-        syncMetadataBox.put(metadata)
-
-        Logger.Database.d("Updated sync time for $syncKey: $serverTime")
-    }
-
-    fun clearAll() {
-        box.removeAll()
-        syncMetadataBox.query()
-            .equal(SyncMetadataEntity_.entityType, EntityTypeConverter().convertToDatabaseValue(EntityType.TRANSACTION)!!)
-            .build()
-            .remove()
-        Logger.Database.i("Cleared all transaction data")
     }
 }
 

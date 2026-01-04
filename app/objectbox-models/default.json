@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:36553080464490998",
-      "lastPropertyId": "9:3798427125761117976",
+      "lastPropertyId": "12:8267619782700735346",
       "name": "AccountEntity",
       "properties": [
         {
@@ -56,13 +56,28 @@
           "type": 11,
           "flags": 520,
           "relationTarget": "AccountGroupEntity"
+        },
+        {
+          "id": "10:895874324304979569",
+          "name": "syncStatus",
+          "type": 5
+        },
+        {
+          "id": "11:7813238861931728595",
+          "name": "lastSyncAttempt",
+          "type": 6
+        },
+        {
+          "id": "12:8267619782700735346",
+          "name": "syncError",
+          "type": 9
         }
       ],
       "relations": []
     },
     {
       "id": "2:7368046151551549444",
-      "lastPropertyId": "7:4153419291246027839",
+      "lastPropertyId": "10:8556354421461280899",
       "name": "AccountGroupEntity",
       "properties": [
         {
@@ -95,13 +110,28 @@
           "id": "7:4153419291246027839",
           "name": "color",
           "type": 9
+        },
+        {
+          "id": "8:6093340448463310117",
+          "name": "syncStatus",
+          "type": 5
+        },
+        {
+          "id": "9:103838674188763162",
+          "name": "lastSyncAttempt",
+          "type": 6
+        },
+        {
+          "id": "10:8556354421461280899",
+          "name": "syncError",
+          "type": 9
         }
       ],
       "relations": []
     },
     {
       "id": "3:5871642001295074462",
-      "lastPropertyId": "6:3342119977911513536",
+      "lastPropertyId": "9:5214877657357606756",
       "name": "CategoryEntity",
       "properties": [
         {
@@ -137,6 +167,21 @@
           "type": 11,
           "flags": 520,
           "relationTarget": "CategoryEntity"
+        },
+        {
+          "id": "7:5236418690861165911",
+          "name": "syncStatus",
+          "type": 5
+        },
+        {
+          "id": "8:7316278624835019433",
+          "name": "lastSyncAttempt",
+          "type": 6
+        },
+        {
+          "id": "9:5214877657357606756",
+          "name": "syncError",
+          "type": 9
         }
       ],
       "relations": []

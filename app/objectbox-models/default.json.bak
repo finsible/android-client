@@ -208,7 +208,7 @@
     },
     {
       "id": "5:6551058013786594843",
-      "lastPropertyId": "5:1259847168904331729",
+      "lastPropertyId": "6:9196209529055799685",
       "name": "SyncMetadataEntity",
       "properties": [
         {
@@ -222,12 +222,7 @@
           "name": "entityType",
           "indexId": "6:715497229392411252",
           "type": 5,
-          "flags": 40
-        },
-        {
-          "id": "3:8664804153958251931",
-          "name": "period",
-          "type": 9
+          "flags": 8
         },
         {
           "id": "4:4522232263756840346",
@@ -238,6 +233,13 @@
           "id": "5:1259847168904331729",
           "name": "lastFullSyncTime",
           "type": 6
+        },
+        {
+          "id": "6:9196209529055799685",
+          "name": "syncKey",
+          "indexId": "10:8469686178105220491",
+          "type": 9,
+          "flags": 2080
         }
       ],
       "relations": []
@@ -349,7 +351,7 @@
     }
   ],
   "lastEntityId": "6:6297331166862476803",
-  "lastIndexId": "9:7059000698431375794",
+  "lastIndexId": "10:8469686178105220491",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 5,
@@ -357,7 +359,8 @@
   "retiredEntityUids": [],
   "retiredIndexUids": [],
   "retiredPropertyUids": [
-    8650068926350279347
+    8650068926350279347,
+    8664804153958251931
   ],
   "retiredRelationUids": [],
   "version": 1

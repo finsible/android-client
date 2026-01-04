@@ -6,9 +6,9 @@ import com.itsjeel01.finsiblefrontend.common.logging.Logger
 import com.itsjeel01.finsiblefrontend.data.local.entity.PendingOperationEntity
 import com.itsjeel01.finsiblefrontend.data.local.repository.TransactionLocalRepository
 import com.itsjeel01.finsiblefrontend.data.model.toEntity
-import com.itsjeel01.finsiblefrontend.data.remote.api.TransactionApiService
 import com.itsjeel01.finsiblefrontend.data.remote.model.TransactionCreateRequest
 import com.itsjeel01.finsiblefrontend.data.remote.model.TransactionUpdateRequest
+import com.itsjeel01.finsiblefrontend.data.repository.TransactionRepository
 import kotlinx.serialization.json.Json
 import retrofit2.HttpException
 import java.io.IOException
@@ -18,7 +18,7 @@ import javax.inject.Singleton
 /** Handles Transaction sync operations. Pattern for other entity handlers. */
 @Singleton
 class TransactionSyncHandler @Inject constructor(
-    private val apiService: TransactionApiService,
+    private val repository: TransactionRepository,
     private val localRepository: TransactionLocalRepository,
     private val json: Json
 ) : EntitySyncHandler {
@@ -31,7 +31,7 @@ class TransactionSyncHandler @Inject constructor(
         val request = json.decodeFromString<TransactionCreateRequest>(operation.payload)
 
         try {
-            val response = apiService.createTransaction(request)
+            val response = repository.createTransaction(request)
 
             if (response.success) {
                 val serverTx = response.data
@@ -60,7 +60,7 @@ class TransactionSyncHandler @Inject constructor(
         val request = json.decodeFromString<TransactionUpdateRequest>(operation.payload)
 
         try {
-            val response = apiService.updateTransaction(operation.entityId, request)
+            val response = repository.updateTransaction(operation.entityId, request)
 
             if (response.success) {
                 val entity = response.data.toEntity(Status.COMPLETED)
@@ -81,7 +81,7 @@ class TransactionSyncHandler @Inject constructor(
         Logger.Sync.d("Processing DELETE: id=${operation.entityId}")
 
         try {
-            val response = apiService.deleteTransaction(operation.entityId)
+            val response = repository.deleteTransaction(operation.entityId)
 
             if (response.success) {
                 localRepository.removeById(operation.entityId)

@@ -15,6 +15,7 @@ import com.itsjeel01.finsiblefrontend.data.sync.LocalIdGenerator
 import io.objectbox.Box
 import io.objectbox.kotlin.equal
 import io.objectbox.query.QueryBuilder
+import kotlinx.serialization.json.Json
 
 /**
  * Base repository for entities that support offline-first sync with pending operations.
@@ -85,12 +86,22 @@ abstract class SyncableLocalRepository<DTO, Entity>(
         )
     }
 
+    /** Queue CREATE operation with automatic JSON serialization. */
+    protected inline fun <reified T> queueCreate(localEntityId: Long, request: T) {
+        queueCreateOperation(localEntityId, Json.encodeToString(request))
+    }
+
     protected fun queueUpdateOperation(entityId: Long, payload: String) {
         queueOperation(
             operationType = OperationType.UPDATE,
             entityId = entityId,
             payload = payload
         )
+    }
+
+    /** Queue UPDATE operation with automatic JSON serialization. */
+    protected inline fun <reified T> queueUpdate(entityId: Long, request: T) {
+        queueUpdateOperation(entityId, Json.encodeToString(request))
     }
 
     protected fun queueDeleteOperation(entityId: Long) {
@@ -139,6 +150,11 @@ abstract class SyncableLocalRepository<DTO, Entity>(
         syncMetadataBox.put(metadata)
 
         Logger.Database.d("Updated sync time for $syncKey: $serverTime")
+    }
+
+    /** Check if scope data exists (using syncKey). Returns true if data has been synced. */
+    fun hasDataForScope(scopeKey: String? = null): Boolean {
+        return getLastSyncTime(scopeKey) != null
     }
 
     fun upsert(entity: Entity) {

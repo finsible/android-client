@@ -48,6 +48,7 @@ sealed class SyncState {
 enum class EntityType {
     TRANSACTION,
     ACCOUNT,
+    ACCOUNT_GROUP,
     CATEGORY,
 }
 

@@ -1,7 +1,10 @@
 package com.itsjeel01.finsiblefrontend.data.local.entity
 
+import com.itsjeel01.finsiblefrontend.common.Status
+import com.itsjeel01.finsiblefrontend.data.local.StatusConverter
 import com.itsjeel01.finsiblefrontend.data.model.AccountGroup
 import io.objectbox.annotation.Backlink
+import io.objectbox.annotation.Convert
 import io.objectbox.annotation.Entity
 import io.objectbox.annotation.Id
 import io.objectbox.relation.ToMany
@@ -14,7 +17,14 @@ data class AccountGroupEntity(
     var icon: String = "",
     var color: String = "neutral",
     var isSystemDefault: Boolean = true,
-) : BaseEntity() {
+
+    @Convert(converter = StatusConverter::class, dbType = Int::class)
+    override var syncStatus: Status = Status.COMPLETED,
+
+    override var lastSyncAttempt: Long? = null,
+
+    override var syncError: String? = null,
+) : BaseEntity(), SyncableEntity {
     @Backlink(to = "accountGroup")
     lateinit var accounts: ToMany<AccountEntity>
 }

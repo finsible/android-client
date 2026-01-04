@@ -1,6 +1,8 @@
 package com.itsjeel01.finsiblefrontend.data.local.entity
 
+import com.itsjeel01.finsiblefrontend.common.Status
 import com.itsjeel01.finsiblefrontend.common.TransactionType
+import com.itsjeel01.finsiblefrontend.data.local.StatusConverter
 import com.itsjeel01.finsiblefrontend.data.local.TransactionTypeConverter
 import com.itsjeel01.finsiblefrontend.data.model.Category
 import io.objectbox.annotation.Backlink
@@ -25,7 +27,14 @@ data class CategoryEntity(
     var readOnly: Boolean = false,
 
     var parentCategoryId: Long = 0L,
-) : BaseEntity() {
+
+    @Convert(converter = StatusConverter::class, dbType = Int::class)
+    override var syncStatus: Status = Status.COMPLETED,
+
+    override var lastSyncAttempt: Long? = null,
+
+    override var syncError: String? = null,
+) : BaseEntity(), SyncableEntity {
 
     lateinit var parentCategory: ToOne<CategoryEntity>
 

@@ -11,6 +11,9 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.objectbox.Box
 import io.objectbox.BoxStore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.serialization.json.Json
 import javax.inject.Singleton
 
@@ -28,6 +31,12 @@ object SyncModule {
     @Singleton
     fun provideSyncMetadataBox(store: BoxStore): Box<SyncMetadataEntity> {
         return store.boxFor(SyncMetadataEntity::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCoroutineScope(): CoroutineScope {
+        return CoroutineScope(SupervisorJob() + Dispatchers.IO)
     }
 
     @Provides
@@ -50,3 +59,4 @@ object SyncModule {
         }
     }
 }
+

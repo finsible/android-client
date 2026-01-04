@@ -5,10 +5,10 @@ import com.itsjeel01.finsiblefrontend.common.OperationType
 import com.itsjeel01.finsiblefrontend.data.local.entity.PendingOperationEntity
 import com.itsjeel01.finsiblefrontend.data.local.repository.TransactionLocalRepository
 import com.itsjeel01.finsiblefrontend.data.model.Transaction
-import com.itsjeel01.finsiblefrontend.data.remote.api.TransactionApiService
 import com.itsjeel01.finsiblefrontend.data.remote.model.BaseResponse
 import com.itsjeel01.finsiblefrontend.data.remote.model.TransactionCreateRequest
 import com.itsjeel01.finsiblefrontend.data.remote.model.TransactionUpdateRequest
+import com.itsjeel01.finsiblefrontend.data.repository.TransactionRepository
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -31,17 +31,17 @@ import java.io.IOException
 /** Unit tests for TransactionSyncHandler. */
 class TransactionSyncHandlerTest {
 
-    private lateinit var mockApiService: TransactionApiService
+    private lateinit var mockRepository: TransactionRepository
     private lateinit var mockLocalRepository: TransactionLocalRepository
     private lateinit var json: Json
     private lateinit var syncHandler: TransactionSyncHandler
 
     @Before
     fun setUp() {
-        mockApiService = mockk()
+        mockRepository = mockk()
         mockLocalRepository = mockk(relaxed = true)
         json = Json { ignoreUnknownKeys = true }
-        syncHandler = TransactionSyncHandler(mockApiService, mockLocalRepository, json)
+        syncHandler = TransactionSyncHandler(mockRepository, mockLocalRepository, json)
     }
 
     // ============================================
@@ -94,14 +94,14 @@ class TransactionSyncHandlerTest {
             cache = false
         )
 
-        coEvery { mockApiService.createTransaction(any()) } returns response
+        coEvery { mockRepository.createTransaction(any()) } returns response
         every { mockLocalRepository.remapId(any(), any(), any()) } just Runs
 
         // Act
         syncHandler.processCreate(operation)
 
         // Assert
-        coVerify(exactly = 1) { mockApiService.createTransaction(any()) }
+        coVerify(exactly = 1) { mockRepository.createTransaction(any()) }
         verify(exactly = 1) { mockLocalRepository.remapId(localId, serverId, any()) }
     }
 
@@ -126,7 +126,7 @@ class TransactionSyncHandlerTest {
         every { response.success } returns false
         every { response.message } returns "Creation failed"
 
-        coEvery { mockApiService.createTransaction(any()) } returns response
+        coEvery { mockRepository.createTransaction(any()) } returns response
 
         // Act & Assert
         try {
@@ -154,7 +154,7 @@ class TransactionSyncHandlerTest {
             this.payload = payload
         }
 
-        coEvery { mockApiService.createTransaction(any()) } throws IOException("Network unreachable")
+        coEvery { mockRepository.createTransaction(any()) } throws IOException("Network unreachable")
 
         // Act & Assert
         try {
@@ -184,7 +184,7 @@ class TransactionSyncHandlerTest {
         }
 
         val httpException = HttpException(Response.error<Transaction>(401, mockk(relaxed = true)))
-        coEvery { mockApiService.createTransaction(any()) } throws httpException
+        coEvery { mockRepository.createTransaction(any()) } throws httpException
 
         // Act & Assert
         try {
@@ -214,7 +214,7 @@ class TransactionSyncHandlerTest {
         }
 
         val httpException = HttpException(Response.error<Transaction>(409, mockk(relaxed = true)))
-        coEvery { mockApiService.createTransaction(any()) } throws httpException
+        coEvery { mockRepository.createTransaction(any()) } throws httpException
 
         // Act & Assert
         try {
@@ -261,14 +261,14 @@ class TransactionSyncHandlerTest {
             cache = false
         )
 
-        coEvery { mockApiService.updateTransaction(entityId, any()) } returns response
+        coEvery { mockRepository.updateTransaction(entityId, any()) } returns response
         every { mockLocalRepository.upsert(any()) } just Runs
 
         // Act
         syncHandler.processUpdate(operation)
 
         // Assert
-        coVerify(exactly = 1) { mockApiService.updateTransaction(entityId, any()) }
+        coVerify(exactly = 1) { mockRepository.updateTransaction(entityId, any()) }
         verify(exactly = 1) { mockLocalRepository.upsert(any()) }
     }
 
@@ -289,7 +289,7 @@ class TransactionSyncHandlerTest {
         every { response.success } returns false
         every { response.message } returns "Update failed"
 
-        coEvery { mockApiService.updateTransaction(entityId, any()) } returns response
+        coEvery { mockRepository.updateTransaction(entityId, any()) } returns response
 
         // Act & Assert
         try {
@@ -313,7 +313,7 @@ class TransactionSyncHandlerTest {
             this.payload = payload
         }
 
-        coEvery { mockApiService.updateTransaction(entityId, any()) } throws IOException("Timeout")
+        coEvery { mockRepository.updateTransaction(entityId, any()) } throws IOException("Timeout")
 
         // Act & Assert
         try {
@@ -339,7 +339,7 @@ class TransactionSyncHandlerTest {
         }
 
         val httpException = HttpException(Response.error<Transaction>(404, mockk(relaxed = true)))
-        coEvery { mockApiService.updateTransaction(entityId, any()) } throws httpException
+        coEvery { mockRepository.updateTransaction(entityId, any()) } throws httpException
 
         // Act & Assert
         try {
@@ -373,14 +373,14 @@ class TransactionSyncHandlerTest {
             cache = false
         )
 
-        coEvery { mockApiService.deleteTransaction(entityId) } returns response
+        coEvery { mockRepository.deleteTransaction(entityId) } returns response
         every { mockLocalRepository.removeById(entityId) } just Runs
 
         // Act
         syncHandler.processDelete(operation)
 
         // Assert
-        coVerify(exactly = 1) { mockApiService.deleteTransaction(entityId) }
+        coVerify(exactly = 1) { mockRepository.deleteTransaction(entityId) }
         verify(exactly = 1) { mockLocalRepository.removeById(entityId) }
     }
 
@@ -399,7 +399,7 @@ class TransactionSyncHandlerTest {
         every { response.success } returns false
         every { response.message } returns "Delete failed"
 
-        coEvery { mockApiService.deleteTransaction(entityId) } returns response
+        coEvery { mockRepository.deleteTransaction(entityId) } returns response
 
         // Act & Assert
         try {
@@ -421,7 +421,7 @@ class TransactionSyncHandlerTest {
             payload = "{}"
         }
 
-        coEvery { mockApiService.deleteTransaction(entityId) } throws IOException("Connection reset")
+        coEvery { mockRepository.deleteTransaction(entityId) } throws IOException("Connection reset")
 
         // Act & Assert
         try {
@@ -445,14 +445,14 @@ class TransactionSyncHandlerTest {
         }
 
         val httpException = HttpException(Response.error<Unit>(404, mockk(relaxed = true)))
-        coEvery { mockApiService.deleteTransaction(entityId) } throws httpException
+        coEvery { mockRepository.deleteTransaction(entityId) } throws httpException
         every { mockLocalRepository.removeById(entityId) } just Runs
 
         // Act - should not throw, should remove local copy
         syncHandler.processDelete(operation)
 
         // Assert
-        coVerify(exactly = 1) { mockApiService.deleteTransaction(entityId) }
+        coVerify(exactly = 1) { mockRepository.deleteTransaction(entityId) }
         verify(exactly = 1) { mockLocalRepository.removeById(entityId) }
     }
 
@@ -468,7 +468,7 @@ class TransactionSyncHandlerTest {
         }
 
         val httpException = HttpException(Response.error<Unit>(500, mockk(relaxed = true)))
-        coEvery { mockApiService.deleteTransaction(entityId) } throws httpException
+        coEvery { mockRepository.deleteTransaction(entityId) } throws httpException
 
         // Act & Assert
         try {

@@ -6,7 +6,9 @@ import com.itsjeel01.finsiblefrontend.data.di.ObjectBoxModule
 import com.itsjeel01.finsiblefrontend.data.local.entity.AccountEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.AccountGroupEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.CategoryEntity
-import com.itsjeel01.finsiblefrontend.data.remote.model.BaseResponse
+import com.itsjeel01.finsiblefrontend.data.local.repository.AccountGroupLocalRepository
+import com.itsjeel01.finsiblefrontend.data.local.repository.AccountLocalRepository
+import com.itsjeel01.finsiblefrontend.data.local.repository.CategoryLocalRepository
 import com.itsjeel01.finsiblefrontend.data.repository.AccountGroupRepository
 import com.itsjeel01.finsiblefrontend.data.repository.AccountRepository
 import com.itsjeel01.finsiblefrontend.data.repository.CategoryRepository
@@ -23,6 +25,10 @@ class PostAuthInitializer @Inject constructor(
     private val categoryRepository: CategoryRepository,
     private val accountGroupRepository: AccountGroupRepository,
     private val accountRepository: AccountRepository,
+    private val categoryLocalRepository: CategoryLocalRepository,
+    private val accountGroupLocalRepository: AccountGroupLocalRepository,
+    private val accountLocalRepository: AccountLocalRepository,
+    private val dataFetcher: DataFetcher,
     private val boxStore: BoxStore
 ) {
     private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -48,11 +54,16 @@ class PostAuthInitializer @Inject constructor(
             Logger.Sync.i("Starting post-authentication initialization")
         }
 
-        fetchAndCacheCategories(TransactionType.INCOME.name, "Income categories", shouldForceRefresh)
-        fetchAndCacheCategories(TransactionType.EXPENSE.name, "Expense categories", shouldForceRefresh)
-        fetchAndCacheCategories(TransactionType.TRANSFER.name, "Transfer categories", shouldForceRefresh)
-        fetchAndCache("Account groups", shouldForceRefresh) { accountGroupRepository.getAccountGroups() }
-        fetchAndCache("Accounts", shouldForceRefresh) { accountRepository.getAccounts() }
+        // Fetch categories using DataFetcher
+        fetchCategories(TransactionType.INCOME, shouldForceRefresh)
+        fetchCategories(TransactionType.EXPENSE, shouldForceRefresh)
+        fetchCategories(TransactionType.TRANSFER, shouldForceRefresh)
+
+        // Fetch account groups using DataFetcher
+        fetchAccountGroups(shouldForceRefresh)
+
+        // Fetch accounts using DataFetcher
+        fetchAccounts(shouldForceRefresh)
 
         Logger.Sync.i("Post-authentication initialization tasks dispatched")
     }
@@ -74,23 +85,83 @@ class PostAuthInitializer @Inject constructor(
         }
     }
 
-    private fun fetchAndCacheCategories(type: String, resourceName: String, forceRefresh: Boolean = false) {
-        fetchAndCache(resourceName, forceRefresh) { categoryRepository.getCategories(type) }
+    private fun fetchCategories(type: TransactionType, forceRefresh: Boolean) {
+        applicationScope.launch {
+            val action = if (forceRefresh) "Force refreshing" else "Ensuring"
+            Logger.Sync.d("$action ${type.name} categories")
+
+            val success = if (forceRefresh) {
+                dataFetcher.refreshData(
+                    localRepo = categoryLocalRepository,
+                    scopeKey = type.name,
+                    fetcher = { categoryRepository.getCategories(type.name) }
+                )
+            } else {
+                dataFetcher.ensureDataFetched(
+                    localRepo = categoryLocalRepository,
+                    scopeKey = type.name,
+                    fetcher = { categoryRepository.getCategories(type.name) }
+                )
+            }
+
+            if (success) {
+                Logger.Sync.i("${type.name} categories synced successfully")
+            } else {
+                Logger.Sync.w("${type.name} categories sync unsuccessful")
+            }
+        }
     }
 
-    private fun <T> fetchAndCache(resourceName: String, forceRefresh: Boolean = false, fetcher: suspend () -> BaseResponse<T>) {
+    private fun fetchAccountGroups(forceRefresh: Boolean) {
         applicationScope.launch {
-            val logPrefix = if (forceRefresh) "Force fetching" else "Fetching"
-            Logger.Sync.d("$logPrefix $resourceName")
-            runCatching {
-                val result = fetcher()
-                if (result.success) {
-                    Logger.Sync.i("$resourceName cached successfully")
-                } else {
-                    Logger.Sync.w("$resourceName fetch unsuccessful: ${result.message}")
-                }
-            }.onFailure { e ->
-                Logger.Sync.e("Error fetching ${resourceName.lowercase()}", e)
+            val action = if (forceRefresh) "Force refreshing" else "Ensuring"
+            Logger.Sync.d("$action account groups")
+
+            val success = if (forceRefresh) {
+                dataFetcher.refreshData(
+                    localRepo = accountGroupLocalRepository,
+                    scopeKey = null,
+                    fetcher = { accountGroupRepository.getAccountGroups() }
+                )
+            } else {
+                dataFetcher.ensureDataFetched(
+                    localRepo = accountGroupLocalRepository,
+                    scopeKey = null,
+                    fetcher = { accountGroupRepository.getAccountGroups() }
+                )
+            }
+
+            if (success) {
+                Logger.Sync.i("Account groups synced successfully")
+            } else {
+                Logger.Sync.w("Account groups sync unsuccessful")
+            }
+        }
+    }
+
+    private fun fetchAccounts(forceRefresh: Boolean) {
+        applicationScope.launch {
+            val action = if (forceRefresh) "Force refreshing" else "Ensuring"
+            Logger.Sync.d("$action accounts")
+
+            val success = if (forceRefresh) {
+                dataFetcher.refreshData(
+                    localRepo = accountLocalRepository,
+                    scopeKey = null,
+                    fetcher = { accountRepository.getAccounts() }
+                )
+            } else {
+                dataFetcher.ensureDataFetched(
+                    localRepo = accountLocalRepository,
+                    scopeKey = null,
+                    fetcher = { accountRepository.getAccounts() }
+                )
+            }
+
+            if (success) {
+                Logger.Sync.i("Accounts synced successfully")
+            } else {
+                Logger.Sync.w("Accounts sync unsuccessful")
             }
         }
     }

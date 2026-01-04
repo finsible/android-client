@@ -9,6 +9,9 @@ import com.itsjeel01.finsiblefrontend.data.local.entity.AccountEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.AccountGroupEntity
 import com.itsjeel01.finsiblefrontend.data.local.repository.AccountGroupLocalRepository
 import com.itsjeel01.finsiblefrontend.data.local.repository.AccountLocalRepository
+import com.itsjeel01.finsiblefrontend.data.repository.AccountGroupRepository
+import com.itsjeel01.finsiblefrontend.data.repository.AccountRepository
+import com.itsjeel01.finsiblefrontend.data.sync.DataFetcher
 import com.itsjeel01.finsiblefrontend.ui.model.FlippableCardData
 import com.itsjeel01.finsiblefrontend.ui.model.StatisticsModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,7 +24,10 @@ import javax.inject.Inject
 @HiltViewModel
 class BalanceViewModel @Inject constructor(
     private val accountLocalRepository: AccountLocalRepository,
-    private val accountGroupLocalRepository: AccountGroupLocalRepository
+    private val accountGroupLocalRepository: AccountGroupLocalRepository,
+    private val accountRepository: AccountRepository,
+    private val accountGroupRepository: AccountGroupRepository,
+    private val dataFetcher: DataFetcher
 ) : ViewModel() {
 
     private var accounts: List<AccountEntity> = emptyList()
@@ -40,8 +46,12 @@ class BalanceViewModel @Inject constructor(
     private val _filteredAccounts = MutableStateFlow<List<AccountEntity>>(emptyList())
     val filteredAccounts: StateFlow<List<AccountEntity>> = _filteredAccounts.asStateFlow()
 
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+
     init {
         loadData()
+        ensureDataFetched()
     }
 
     private fun loadData() {
@@ -51,6 +61,47 @@ class BalanceViewModel @Inject constructor(
             _filteredAccounts.value = accounts
             recalculateTotals()
             generateAccountCards()
+        }
+    }
+
+    /** Auto-fetch accounts and account groups if never synced. */
+    private fun ensureDataFetched() {
+        viewModelScope.launch {
+            dataFetcher.ensureDataFetched(
+                localRepo = accountLocalRepository,
+                scopeKey = null,
+                fetcher = { accountRepository.getAccounts() }
+            )
+            dataFetcher.ensureDataFetched(
+                localRepo = accountGroupLocalRepository,
+                scopeKey = null,
+                fetcher = { accountGroupRepository.getAccountGroups() }
+            )
+        }
+    }
+
+    /** Refresh accounts and account groups from server. */
+    fun refreshData() {
+        if (_isRefreshing.value) return
+
+        viewModelScope.launch {
+            _isRefreshing.value = true
+            try {
+                dataFetcher.refreshData(
+                    localRepo = accountLocalRepository,
+                    scopeKey = null,
+                    fetcher = { accountRepository.getAccounts() }
+                )
+                dataFetcher.refreshData(
+                    localRepo = accountGroupLocalRepository,
+                    scopeKey = null,
+                    fetcher = { accountGroupRepository.getAccountGroups() }
+                )
+                // Reload from local after refresh
+                loadData()
+            } finally {
+                _isRefreshing.value = false
+            }
         }
     }
 

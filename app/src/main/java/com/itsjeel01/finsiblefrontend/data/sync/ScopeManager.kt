@@ -12,7 +12,9 @@ import javax.inject.Singleton
 /** Manages the lifecycle of the application-level CoroutineScope for sync operations. */
 @Singleton
 class ScopeManager @Inject constructor() {
+    @Volatile
     private var job: Job = SupervisorJob()
+    @Volatile
     private var _scope: CoroutineScope = CoroutineScope(job + Dispatchers.IO)
 
     /** The application-level CoroutineScope for background sync operations. */
@@ -20,6 +22,7 @@ class ScopeManager @Inject constructor() {
         get() = _scope
 
     /** Cancels all ongoing coroutines and creates a new scope. Called on logout. */
+    @Synchronized
     fun reset() {
         Logger.Sync.i("Resetting CoroutineScope - cancelling all ongoing operations")
         _scope.cancel()
@@ -28,6 +31,7 @@ class ScopeManager @Inject constructor() {
     }
 
     /** Cancels all ongoing coroutines. Called on application termination. */
+    @Synchronized
     fun shutdown() {
         Logger.Sync.i("Shutting down CoroutineScope - cancelling all operations")
         _scope.cancel()

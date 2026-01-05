@@ -27,6 +27,9 @@ class FinsibleApp : Application() {
 
     override fun onTerminate() {
         super.onTerminate()
+        // Note: onTerminate() is only called in emulated environments, not on actual devices.
+        // This cleanup is primarily for testing. Production apps should rely on the logout
+        // cleanup path in AuthRepository for proper resource management.
         networkMonitor.cleanup()
         scopeManager.shutdown()
     }

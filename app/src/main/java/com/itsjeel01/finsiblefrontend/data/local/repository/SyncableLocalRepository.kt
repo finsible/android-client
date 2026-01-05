@@ -16,6 +16,7 @@ import io.objectbox.Box
 import io.objectbox.kotlin.equal
 import io.objectbox.query.QueryBuilder
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.serializer
 
 /**
  * Base repository for entities that support offline-first sync with pending operations.
@@ -88,7 +89,7 @@ abstract class SyncableLocalRepository<DTO, Entity>(
 
     /** Queue CREATE operation with automatic JSON serialization. */
     protected inline fun <reified T> queueCreate(localEntityId: Long, request: T) {
-        queueCreateOperation(localEntityId, Json.encodeToString(request))
+        queueCreateOperation(localEntityId, Json.encodeToString(serializer<T>(), request))
     }
 
     protected fun queueUpdateOperation(entityId: Long, payload: String) {
@@ -101,7 +102,7 @@ abstract class SyncableLocalRepository<DTO, Entity>(
 
     /** Queue UPDATE operation with automatic JSON serialization. */
     protected inline fun <reified T> queueUpdate(entityId: Long, request: T) {
-        queueUpdateOperation(entityId, Json.encodeToString(request))
+        queueUpdateOperation(entityId, Json.encodeToString(serializer<T>(), request))
     }
 
     protected fun queueDeleteOperation(entityId: Long) {

@@ -4,6 +4,7 @@ import com.itsjeel01.finsiblefrontend.common.EntityType
 import com.itsjeel01.finsiblefrontend.data.local.entity.PendingOperationEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.SyncMetadataEntity
 import com.itsjeel01.finsiblefrontend.data.sync.EntitySyncHandler
+import com.itsjeel01.finsiblefrontend.data.sync.ScopeManager
 import com.itsjeel01.finsiblefrontend.data.sync.TransactionSyncHandler
 import dagger.Module
 import dagger.Provides
@@ -12,8 +13,6 @@ import dagger.hilt.components.SingletonComponent
 import io.objectbox.Box
 import io.objectbox.BoxStore
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.serialization.json.Json
 import javax.inject.Singleton
 
@@ -35,8 +34,8 @@ object SyncModule {
 
     @Provides
     @Singleton
-    fun provideCoroutineScope(): CoroutineScope {
-        return CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    fun provideCoroutineScope(scopeManager: ScopeManager): CoroutineScope {
+        return scopeManager.scope
     }
 
     @Provides

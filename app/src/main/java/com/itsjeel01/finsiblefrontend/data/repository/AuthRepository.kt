@@ -5,13 +5,17 @@ import com.itsjeel01.finsiblefrontend.common.logging.Logger
 import com.itsjeel01.finsiblefrontend.data.remote.api.AuthApiService
 import com.itsjeel01.finsiblefrontend.data.remote.model.AuthData
 import com.itsjeel01.finsiblefrontend.data.remote.model.AuthLoginRequest
+import com.itsjeel01.finsiblefrontend.data.sync.NetworkMonitor
+import com.itsjeel01.finsiblefrontend.data.sync.ScopeManager
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class AuthRepository @Inject constructor(
     private val apiService: AuthApiService,
-    private val prefsManager: PreferenceManager
+    private val prefsManager: PreferenceManager,
+    private val scopeManager: ScopeManager,
+    private val networkMonitor: NetworkMonitor
 ) {
 
     suspend fun authenticate(clientId: String, idToken: String): Result<AuthData> {
@@ -33,6 +37,10 @@ class AuthRepository @Inject constructor(
     }
 
     fun logout(): Result<Unit> {
+        // Cancel all ongoing sync operations and cleanup resources before logout
+        // Order matters: cancel coroutines first, then cleanup network callback
+        scopeManager.reset()
+        networkMonitor.cleanup()
         // TODO: Inform backend about logout if necessary
         prefsManager.clearAuthData()
         Logger.Auth.i("User logged out successfully")

@@ -27,6 +27,8 @@ class NetworkMonitor @Inject constructor(
     private val _isOnline = MutableStateFlow(checkConnectivity())
     val isOnline: StateFlow<Boolean> = _isOnline.asStateFlow()
 
+    private var networkCallback: ConnectivityManager.NetworkCallback? = null
+
     init {
         registerNetworkCallback()
     }
@@ -42,23 +44,36 @@ class NetworkMonitor @Inject constructor(
             .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
             .build()
 
-        connectivityManager.registerNetworkCallback(
-            request,
-            object : ConnectivityManager.NetworkCallback() {
-                override fun onAvailable(network: Network) {
-                    coroutineScope.launch {
-                        _isOnline.emit(true)
-                    }
-                    Logger.Network.d("Network status: Online")
+        val callback = object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network) {
+                coroutineScope.launch {
+                    _isOnline.emit(true)
                 }
-
-                override fun onLost(network: Network) {
-                    coroutineScope.launch {
-                        _isOnline.emit(false)
-                    }
-                    Logger.Network.d("Network status: Offline")
-                }
+                Logger.Network.d("Network status: Online")
             }
-        )
+
+            override fun onLost(network: Network) {
+                coroutineScope.launch {
+                    _isOnline.emit(false)
+                }
+                Logger.Network.d("Network status: Offline")
+            }
+        }
+
+        networkCallback = callback
+        connectivityManager.registerNetworkCallback(request, callback)
+    }
+
+    /** Unregisters the network callback. Called during cleanup. */
+    fun cleanup() {
+        networkCallback?.let {
+            try {
+                connectivityManager.unregisterNetworkCallback(it)
+                Logger.Network.d("Network callback unregistered")
+            } catch (e: IllegalArgumentException) {
+                Logger.Network.w("Network callback already unregistered", e)
+            }
+        }
+        networkCallback = null
     }
 }

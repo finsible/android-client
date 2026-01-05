@@ -35,5 +35,7 @@ class ScopeManager @Inject constructor() {
     fun shutdown() {
         Logger.Sync.i("Shutting down CoroutineScope - cancelling all operations")
         _scope.cancel()
+        // Note: We don't recreate the scope after shutdown since this is terminal (app termination).
+        // If the scope is needed again, the app will be restarted and a new ScopeManager created.
     }
 }

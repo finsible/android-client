@@ -24,9 +24,9 @@ import androidx.navigation3.ui.NavDisplay
 import com.itsjeel01.finsiblefrontend.ui.component.BottomNavigationBar
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
 import com.itsjeel01.finsiblefrontend.ui.screen.AnalyticsTab
+import com.itsjeel01.finsiblefrontend.ui.screen.BalanceTab
 import com.itsjeel01.finsiblefrontend.ui.screen.DashboardTab
 import com.itsjeel01.finsiblefrontend.ui.screen.SettingsTab
-import com.itsjeel01.finsiblefrontend.ui.screen.balance.BalanceTab
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.BalanceViewModel
 

@@ -1,6 +1,7 @@
-package com.itsjeel01.finsiblefrontend.ui.screen.balance
+package com.itsjeel01.finsiblefrontend.ui.screen
 
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.ContentTransform
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,9 +23,12 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.ui.navigation.Route
+import com.itsjeel01.finsiblefrontend.ui.screen.balance.AccountsScreen
+import com.itsjeel01.finsiblefrontend.ui.screen.balance.TransactionsScreen
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleDimes.Companion.inverted
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.extraBold
+import com.itsjeel01.finsiblefrontend.ui.util.calculateIndexedTransition
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.BalanceViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -70,6 +74,9 @@ fun BalanceTab(viewModel: BalanceViewModel) {
 
         NavDisplay(
             backStack = backStack,
+            transitionSpec = {
+                calculateBalanceTransition(initialState.key, targetState.key)
+            },
             entryProvider = entryProvider {
                 entry<Route.Home.Balance.Accounts> {
                     AccountsScreen(
@@ -126,7 +133,6 @@ private fun BalanceTabSelector(
     }
 }
 
-
 enum class BalanceTabType(
     val displayText: String,
     @param:DrawableRes val icon: Int
@@ -134,3 +140,17 @@ enum class BalanceTabType(
     ACCOUNTS("Accounts", R.drawable.ic_piggy_bank),
     TRANSACTIONS("Transactions", R.drawable.ic_transactions)
 }
+
+private fun calculateBalanceTransition(
+    initialKey: Any?,
+    targetKey: Any?
+): ContentTransform {
+    val tabOrder = listOf(Route.Home.Balance.Accounts, Route.Home.Balance.Transactions)
+
+    return calculateIndexedTransition(
+        routeOrder = tabOrder,
+        initialKey = initialKey,
+        targetKey = targetKey
+    )
+}
+

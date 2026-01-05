@@ -1,0 +1,412 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:36553080464490998",
+      "lastPropertyId": "12:8267619782700735346",
+      "name": "AccountEntity",
+      "properties": [
+        {
+          "id": "1:1058006565558947712",
+          "name": "id",
+          "type": 6,
+          "flags": 129
+        },
+        {
+          "id": "2:3780035084888424327",
+          "name": "name",
+          "type": 9
+        },
+        {
+          "id": "3:4401009694744929550",
+          "name": "description",
+          "type": 9
+        },
+        {
+          "id": "4:4480711609445654992",
+          "name": "balance",
+          "type": 9
+        },
+        {
+          "id": "5:2089800335052208818",
+          "name": "currencyCode",
+          "type": 9
+        },
+        {
+          "id": "6:9165745087724474390",
+          "name": "icon",
+          "type": 9
+        },
+        {
+          "id": "7:7357196607818087448",
+          "name": "isActive",
+          "type": 1
+        },
+        {
+          "id": "8:2644817289342382453",
+          "name": "isSystemDefault",
+          "type": 1
+        },
+        {
+          "id": "9:3798427125761117976",
+          "name": "accountGroupId",
+          "indexId": "1:5822709340570074625",
+          "type": 11,
+          "flags": 520,
+          "relationTarget": "AccountGroupEntity"
+        },
+        {
+          "id": "10:895874324304979569",
+          "name": "syncStatus",
+          "type": 5
+        },
+        {
+          "id": "11:7813238861931728595",
+          "name": "lastSyncAttempt",
+          "type": 6
+        },
+        {
+          "id": "12:8267619782700735346",
+          "name": "syncError",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "2:7368046151551549444",
+      "lastPropertyId": "10:8556354421461280899",
+      "name": "AccountGroupEntity",
+      "properties": [
+        {
+          "id": "1:895658194240739708",
+          "name": "id",
+          "type": 6,
+          "flags": 129
+        },
+        {
+          "id": "2:7688130585418148413",
+          "name": "name",
+          "type": 9
+        },
+        {
+          "id": "3:4075785853950157520",
+          "name": "description",
+          "type": 9
+        },
+        {
+          "id": "4:2053663533840178283",
+          "name": "icon",
+          "type": 9
+        },
+        {
+          "id": "5:3545391668362356281",
+          "name": "isSystemDefault",
+          "type": 1
+        },
+        {
+          "id": "7:4153419291246027839",
+          "name": "color",
+          "type": 9
+        },
+        {
+          "id": "8:6093340448463310117",
+          "name": "syncStatus",
+          "type": 5
+        },
+        {
+          "id": "9:103838674188763162",
+          "name": "lastSyncAttempt",
+          "type": 6
+        },
+        {
+          "id": "10:8556354421461280899",
+          "name": "syncError",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "3:5871642001295074462",
+      "lastPropertyId": "9:5214877657357606756",
+      "name": "CategoryEntity",
+      "properties": [
+        {
+          "id": "1:3469121546852165697",
+          "name": "id",
+          "type": 6,
+          "flags": 129
+        },
+        {
+          "id": "2:5301997883664094372",
+          "name": "type",
+          "type": 5
+        },
+        {
+          "id": "3:505971947842327554",
+          "name": "name",
+          "type": 9
+        },
+        {
+          "id": "4:5249263161931434025",
+          "name": "icon",
+          "type": 9
+        },
+        {
+          "id": "5:2352641445893941993",
+          "name": "readOnly",
+          "type": 1
+        },
+        {
+          "id": "6:3342119977911513536",
+          "name": "parentCategoryId",
+          "indexId": "2:1732055873534834238",
+          "type": 11,
+          "flags": 520,
+          "relationTarget": "CategoryEntity"
+        },
+        {
+          "id": "7:5236418690861165911",
+          "name": "syncStatus",
+          "type": 5
+        },
+        {
+          "id": "8:7316278624835019433",
+          "name": "lastSyncAttempt",
+          "type": 6
+        },
+        {
+          "id": "9:5214877657357606756",
+          "name": "syncError",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "4:7824650354570744645",
+      "lastPropertyId": "10:780184699393623222",
+      "name": "PendingOperationEntity",
+      "properties": [
+        {
+          "id": "1:8188090066166363042",
+          "name": "localId",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:5080046570742386870",
+          "name": "entityType",
+          "indexId": "3:4104008363458638896",
+          "type": 5,
+          "flags": 8
+        },
+        {
+          "id": "3:4586508779587152261",
+          "name": "operationType",
+          "type": 5
+        },
+        {
+          "id": "4:8571396475636559315",
+          "name": "entityId",
+          "type": 6
+        },
+        {
+          "id": "5:8296888291495233356",
+          "name": "localEntityId",
+          "type": 6
+        },
+        {
+          "id": "6:5619789414625017808",
+          "name": "payload",
+          "type": 9
+        },
+        {
+          "id": "7:1841751128890477048",
+          "name": "createdAt",
+          "indexId": "4:7852976736432077778",
+          "type": 6,
+          "flags": 8
+        },
+        {
+          "id": "8:667465932678301913",
+          "name": "retryCount",
+          "type": 5
+        },
+        {
+          "id": "9:5521201265034387840",
+          "name": "lastError",
+          "type": 9
+        },
+        {
+          "id": "10:780184699393623222",
+          "name": "status",
+          "indexId": "5:668552313088343717",
+          "type": 5,
+          "flags": 8
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "5:6551058013786594843",
+      "lastPropertyId": "6:9196209529055799685",
+      "name": "SyncMetadataEntity",
+      "properties": [
+        {
+          "id": "1:1304933345668673609",
+          "name": "localId",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:4648368035987455136",
+          "name": "entityType",
+          "indexId": "6:715497229392411252",
+          "type": 5,
+          "flags": 8
+        },
+        {
+          "id": "4:4522232263756840346",
+          "name": "lastSyncTime",
+          "type": 6
+        },
+        {
+          "id": "5:1259847168904331729",
+          "name": "lastFullSyncTime",
+          "type": 6
+        },
+        {
+          "id": "6:9196209529055799685",
+          "name": "syncKey",
+          "indexId": "10:8469686178105220491",
+          "type": 9,
+          "flags": 2080
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "6:6297331166862476803",
+      "lastPropertyId": "18:4042880049046244444",
+      "name": "TransactionEntity",
+      "properties": [
+        {
+          "id": "1:6535295201450048590",
+          "name": "id",
+          "type": 6,
+          "flags": 129
+        },
+        {
+          "id": "2:2198274159466277857",
+          "name": "type",
+          "type": 5
+        },
+        {
+          "id": "3:2521166742728888635",
+          "name": "totalAmount",
+          "type": 9
+        },
+        {
+          "id": "4:2662661078709497583",
+          "name": "transactionDate",
+          "indexId": "7:2365433086039832229",
+          "type": 6,
+          "flags": 8
+        },
+        {
+          "id": "5:3204969547010595238",
+          "name": "categoryId",
+          "type": 6
+        },
+        {
+          "id": "6:4920132113607817760",
+          "name": "categoryName",
+          "type": 9
+        },
+        {
+          "id": "7:3042605271206442117",
+          "name": "description",
+          "type": 9
+        },
+        {
+          "id": "8:8267661360558778926",
+          "name": "currency",
+          "type": 9
+        },
+        {
+          "id": "9:7185900333499558796",
+          "name": "fromAccountId",
+          "indexId": "8:4951901483789596214",
+          "type": 6,
+          "flags": 8
+        },
+        {
+          "id": "10:7525679039484019981",
+          "name": "toAccountId",
+          "indexId": "9:7059000698431375794",
+          "type": 6,
+          "flags": 8
+        },
+        {
+          "id": "11:962634001898964754",
+          "name": "syncStatus",
+          "type": 5
+        },
+        {
+          "id": "12:84446355918655650",
+          "name": "lastSyncAttempt",
+          "type": 6
+        },
+        {
+          "id": "13:4733277871178640452",
+          "name": "syncError",
+          "type": 9
+        },
+        {
+          "id": "14:5293204965154620592",
+          "name": "spaceId",
+          "type": 6
+        },
+        {
+          "id": "15:143327194536192384",
+          "name": "userShare",
+          "type": 9
+        },
+        {
+          "id": "16:4985289428304389260",
+          "name": "isSplit",
+          "type": 1
+        },
+        {
+          "id": "17:5264902117481397694",
+          "name": "paidByUserId",
+          "type": 6
+        },
+        {
+          "id": "18:4042880049046244444",
+          "name": "paidByUserName",
+          "type": 9
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "lastEntityId": "6:6297331166862476803",
+  "lastIndexId": "10:8469686178105220491",
+  "lastRelationId": "0:0",
+  "lastSequenceId": "0:0",
+  "modelVersion": 5,
+  "modelVersionParserMinimum": 5,
+  "retiredEntityUids": [],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [
+    8650068926350279347,
+    8664804153958251931
+  ],
+  "retiredRelationUids": [],
+  "version": 1
+}

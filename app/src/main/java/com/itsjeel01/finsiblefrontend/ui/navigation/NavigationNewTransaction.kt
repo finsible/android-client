@@ -123,7 +123,14 @@ fun NavigationNewTransaction(
                     canContinue = canContinue,
                     stepIndex = stepIndex,
                     onBack = { navigator.back(onNavigateBack) },
-                    onNext = { navigator.next { viewModel.submit(onNavigateBack) } }
+                    onNext = {
+                        navigator.next {
+                            viewModel.submit(
+                                onSuccess = onNavigateBack,
+                                onError = { /* TODO: Show error notification */ }
+                            )
+                        }
+                    }
                 )
             }
         }

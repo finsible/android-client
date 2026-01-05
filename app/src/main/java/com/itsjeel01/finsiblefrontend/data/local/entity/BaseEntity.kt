@@ -10,8 +10,8 @@ abstract class BaseEntity {
             cachedTime = System.currentTimeMillis()
         }
 
-    private var cachedTime: Long = 0
-    private var cacheTtlMinutes: Long? = Duration.DEFAULT_TTL_MINUTES
+    var cachedTime: Long = 0
+    var cacheTtlMinutes: Long? = Duration.DEFAULT_TTL_MINUTES
 
     fun isStale(): Boolean {
         if (cachedTime == 0L) return true

@@ -1,7 +1,9 @@
 package com.itsjeel01.finsiblefrontend.data.local.entity
 
 import android.icu.math.BigDecimal
+import com.itsjeel01.finsiblefrontend.common.Status
 import com.itsjeel01.finsiblefrontend.data.local.BigDecimalConverter
+import com.itsjeel01.finsiblefrontend.data.local.StatusConverter
 import com.itsjeel01.finsiblefrontend.data.model.Account
 import io.objectbox.annotation.Convert
 import io.objectbox.annotation.Entity
@@ -25,7 +27,14 @@ data class AccountEntity(
     var isActive: Boolean = false,
 
     var isSystemDefault: Boolean = false,
-) : BaseEntity() {
+
+    @Convert(converter = StatusConverter::class, dbType = Int::class)
+    override var syncStatus: Status = Status.COMPLETED,
+
+    override var lastSyncAttempt: Long? = null,
+
+    override var syncError: String? = null,
+) : BaseEntity(), SyncableEntity {
     lateinit var accountGroup: ToOne<AccountGroupEntity>
 }
 

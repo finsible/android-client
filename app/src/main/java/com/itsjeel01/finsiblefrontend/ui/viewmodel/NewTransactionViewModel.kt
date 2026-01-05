@@ -5,12 +5,15 @@ import androidx.lifecycle.viewModelScope
 import com.itsjeel01.finsiblefrontend.common.TransactionRecurringFrequency
 import com.itsjeel01.finsiblefrontend.common.TransactionType
 import com.itsjeel01.finsiblefrontend.common.convertUTCToLocal
-import com.itsjeel01.finsiblefrontend.common.logging.Logger
 import com.itsjeel01.finsiblefrontend.common.toReadableDate
 import com.itsjeel01.finsiblefrontend.data.local.entity.AccountEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.CategoryEntity
 import com.itsjeel01.finsiblefrontend.data.local.repository.AccountLocalRepository
 import com.itsjeel01.finsiblefrontend.data.local.repository.CategoryLocalRepository
+import com.itsjeel01.finsiblefrontend.data.local.repository.TransactionLocalRepository
+import com.itsjeel01.finsiblefrontend.data.repository.AccountRepository
+import com.itsjeel01.finsiblefrontend.data.repository.CategoryRepository
+import com.itsjeel01.finsiblefrontend.data.sync.DataFetcher
 import com.itsjeel01.finsiblefrontend.ui.navigation.Route
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -27,7 +30,11 @@ import javax.inject.Inject
 @HiltViewModel
 class NewTransactionViewModel @Inject constructor(
     private val categoryLocalRepository: CategoryLocalRepository,
-    private val accountLocalRepository: AccountLocalRepository
+    private val accountLocalRepository: AccountLocalRepository,
+    private val transactionLocalRepository: TransactionLocalRepository,
+    private val categoryRepository: CategoryRepository,
+    private val accountRepository: AccountRepository,
+    private val dataFetcher: DataFetcher
 ) : ViewModel() {
 
     companion object {
@@ -80,11 +87,40 @@ class NewTransactionViewModel @Inject constructor(
 
     init {
         loadAccounts()
+        ensureDataFetched()
     }
 
     private fun loadAccounts() {
         viewModelScope.launch {
             _accounts.value = accountLocalRepository.getAll()
+        }
+    }
+
+    /** Auto-fetch categories and accounts if never synced. */
+    private fun ensureDataFetched() {
+        viewModelScope.launch {
+            // Fetch categories for all transaction types
+            dataFetcher.ensureDataFetched(
+                localRepo = categoryLocalRepository,
+                scopeKey = TransactionType.EXPENSE.name,
+                fetcher = { categoryRepository.getCategories(TransactionType.EXPENSE.name) }
+            )
+            dataFetcher.ensureDataFetched(
+                localRepo = categoryLocalRepository,
+                scopeKey = TransactionType.INCOME.name,
+                fetcher = { categoryRepository.getCategories(TransactionType.INCOME.name) }
+            )
+            dataFetcher.ensureDataFetched(
+                localRepo = categoryLocalRepository,
+                scopeKey = TransactionType.TRANSFER.name,
+                fetcher = { categoryRepository.getCategories(TransactionType.TRANSFER.name) }
+            )
+            // Fetch accounts
+            dataFetcher.ensureDataFetched(
+                localRepo = accountLocalRepository,
+                scopeKey = null,
+                fetcher = { accountRepository.getAccounts() }
+            )
         }
     }
 
@@ -126,7 +162,11 @@ class NewTransactionViewModel @Inject constructor(
         Route.Home.NewTransaction.Amount -> transactionAmountString.map { validateAmountStep(it) }
         Route.Home.NewTransaction.Date -> transactionDate.map { validateDateStep(it) }
         Route.Home.NewTransaction.Category -> transactionCategoryId.map { validateCategoryStep(it) }
-        Route.Home.NewTransaction.TransactionAccounts -> combine(transactionType, transactionFromAccountId, transactionToAccountId) { type, from, to ->
+        Route.Home.NewTransaction.TransactionAccounts -> combine(
+            transactionType,
+            transactionFromAccountId,
+            transactionToAccountId
+        ) { type, from, to ->
             validateAccountStep(type, from, to)
         }
 
@@ -199,10 +239,25 @@ class NewTransactionViewModel @Inject constructor(
         _transactionDescription.value = ""
     }
 
-    fun submit(uiFeedBack: () -> Unit) {
-        uiFeedBack()
-        Logger.UI.d(this.toTxString())
-        this.reset()
+    fun submit(onSuccess: () -> Unit, onError: (String) -> Unit) {
+        viewModelScope.launch {
+            try {
+                transactionLocalRepository.createTransaction(
+                    type = transactionType.value,
+                    totalAmount = transactionAmountString.value,
+                    transactionDate = transactionDate.value ?: System.currentTimeMillis(),
+                    categoryId = transactionCategoryId.value ?: 0L,
+                    categoryName = getCategory(transactionCategoryId.value)?.name ?: "",
+                    fromAccountId = transactionFromAccountId.value ?: 0L,
+                    toAccountId = transactionToAccountId.value,
+                    description = transactionDescription.value.takeIf { it.isNotBlank() }
+                )
+                reset()
+                onSuccess()
+            } catch (e: Exception) {
+                onError(e.message ?: "Failed to create transaction")
+            }
+        }
     }
 
 

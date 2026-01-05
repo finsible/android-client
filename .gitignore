@@ -10,6 +10,9 @@ debug.properties
 # Log/OS Files
 *.log
 
+# Backup files
+*.bak
+
 # Android Studio generated files and folders
 captures/
 .externalNativeBuild/
@@ -38,6 +41,4 @@ google-services.json
 
 /scratch
 
-default.json
-default.json.bak*.class
 META-INF/

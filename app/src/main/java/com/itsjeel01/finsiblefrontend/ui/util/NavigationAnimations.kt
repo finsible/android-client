@@ -8,18 +8,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.ui.unit.IntOffset
 
-/**
- * Calculates a horizontal slide transition based on the index order of routes.
- *
- * @param routeOrder List of routes in the desired order
- * @param initialKey The initial route (current state)
- * @param targetKey The target route (destination state)
- * @param durationMillis Duration of the transition animation in milliseconds (default: 300ms)
- * @return ContentTransform with horizontal slide animation based on route order
- *
- * If either route is not found in routeOrder, defaults to left-to-right slide animation.
- * String comparison is used as a fallback to match routes that may have been serialized/deserialized.
- */
+/** Calculates a horizontal slide transition based on the index order of routes. */
 fun calculateIndexedTransition(
     routeOrder: List<Any>,
     initialKey: Any?,

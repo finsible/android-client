@@ -2,11 +2,6 @@ package com.itsjeel01.finsiblefrontend.ui.screen
 
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.ContentTransform
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,19 +17,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.IntOffset
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.itsjeel01.finsiblefrontend.R
-import com.itsjeel01.finsiblefrontend.ui.constants.Duration
 import com.itsjeel01.finsiblefrontend.ui.navigation.Route
 import com.itsjeel01.finsiblefrontend.ui.screen.balance.AccountsScreen
 import com.itsjeel01.finsiblefrontend.ui.screen.balance.TransactionsScreen
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleDimes.Companion.inverted
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.extraBold
+import com.itsjeel01.finsiblefrontend.ui.util.calculateIndexedTransition
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.BalanceViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -153,15 +147,10 @@ private fun calculateBalanceTransition(
 ): ContentTransform {
     val tabOrder = listOf(Route.Home.Balance.Accounts, Route.Home.Balance.Transactions)
 
-    val initialIndex = tabOrder.indexOfFirst { it == initialKey }
-    val targetIndex = tabOrder.indexOfFirst { it == targetKey }
-
-    val slideSpec = tween<IntOffset>(durationMillis = Duration.MS_300.toInt(), easing = FastOutSlowInEasing)
-
-    return if (targetIndex > initialIndex) {
-        slideInHorizontally(slideSpec) { width -> width } togetherWith slideOutHorizontally(slideSpec) { width -> -width }
-    } else {
-        slideInHorizontally(slideSpec) { width -> -width } togetherWith slideOutHorizontally(slideSpec) { width -> width }
-    }
+    return calculateIndexedTransition(
+        routeOrder = tabOrder,
+        initialKey = initialKey,
+        targetKey = targetKey
+    )
 }
 

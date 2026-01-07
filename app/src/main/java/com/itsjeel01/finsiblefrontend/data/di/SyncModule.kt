@@ -3,6 +3,8 @@ package com.itsjeel01.finsiblefrontend.data.di
 import com.itsjeel01.finsiblefrontend.common.EntityType
 import com.itsjeel01.finsiblefrontend.data.local.entity.PendingOperationEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.SyncMetadataEntity
+import com.itsjeel01.finsiblefrontend.data.sync.AccountGroupSyncHandler
+import com.itsjeel01.finsiblefrontend.data.sync.CategorySyncHandler
 import com.itsjeel01.finsiblefrontend.data.sync.EntitySyncHandler
 import com.itsjeel01.finsiblefrontend.data.sync.ScopeManager
 import com.itsjeel01.finsiblefrontend.data.sync.TransactionSyncHandler
@@ -41,10 +43,14 @@ object SyncModule {
     @Provides
     @Singleton
     fun provideSyncHandlers(
-        transactionSyncHandler: TransactionSyncHandler
+        transactionSyncHandler: TransactionSyncHandler,
+        accountGroupSyncHandler: AccountGroupSyncHandler,
+        categorySyncHandler: CategorySyncHandler
     ): Map<EntityType, EntitySyncHandler> {
         return mapOf(
-            EntityType.TRANSACTION to transactionSyncHandler
+            EntityType.TRANSACTION to transactionSyncHandler,
+            EntityType.ACCOUNT_GROUP to accountGroupSyncHandler,
+            EntityType.CATEGORY to categorySyncHandler
         )
     }
 

@@ -252,44 +252,6 @@
       "relations": []
     },
     {
-      "id": "5:6551058013786594843",
-      "lastPropertyId": "6:9196209529055799685",
-      "name": "SyncMetadataEntity",
-      "properties": [
-        {
-          "id": "1:1304933345668673609",
-          "name": "localId",
-          "type": 6,
-          "flags": 1
-        },
-        {
-          "id": "2:4648368035987455136",
-          "name": "entityType",
-          "indexId": "6:715497229392411252",
-          "type": 5,
-          "flags": 8
-        },
-        {
-          "id": "4:4522232263756840346",
-          "name": "lastSyncTime",
-          "type": 6
-        },
-        {
-          "id": "5:1259847168904331729",
-          "name": "lastFullSyncTime",
-          "type": 6
-        },
-        {
-          "id": "6:9196209529055799685",
-          "name": "syncKey",
-          "indexId": "10:8469686178105220491",
-          "type": 9,
-          "flags": 2080
-        }
-      ],
-      "relations": []
-    },
-    {
       "id": "6:6297331166862476803",
       "lastPropertyId": "18:4042880049046244444",
       "name": "TransactionEntity",
@@ -401,11 +363,21 @@
   "lastSequenceId": "0:0",
   "modelVersion": 5,
   "modelVersionParserMinimum": 5,
-  "retiredEntityUids": [],
-  "retiredIndexUids": [],
+  "retiredEntityUids": [
+    6551058013786594843
+  ],
+  "retiredIndexUids": [
+    715497229392411252,
+    8469686178105220491
+  ],
   "retiredPropertyUids": [
     8650068926350279347,
-    8664804153958251931
+    8664804153958251931,
+    1304933345668673609,
+    4648368035987455136,
+    4522232263756840346,
+    1259847168904331729,
+    9196209529055799685
   ],
   "retiredRelationUids": [],
   "version": 1

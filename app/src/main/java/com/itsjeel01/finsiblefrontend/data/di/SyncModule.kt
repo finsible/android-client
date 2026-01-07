@@ -2,7 +2,6 @@ package com.itsjeel01.finsiblefrontend.data.di
 
 import com.itsjeel01.finsiblefrontend.common.EntityType
 import com.itsjeel01.finsiblefrontend.data.local.entity.PendingOperationEntity
-import com.itsjeel01.finsiblefrontend.data.local.entity.SyncMetadataEntity
 import com.itsjeel01.finsiblefrontend.data.sync.AccountGroupSyncHandler
 import com.itsjeel01.finsiblefrontend.data.sync.AccountSyncHandler
 import com.itsjeel01.finsiblefrontend.data.sync.CategorySyncHandler
@@ -29,11 +28,6 @@ object SyncModule {
         return store.boxFor(PendingOperationEntity::class.java)
     }
 
-    @Provides
-    @Singleton
-    fun provideSyncMetadataBox(store: BoxStore): Box<SyncMetadataEntity> {
-        return store.boxFor(SyncMetadataEntity::class.java)
-    }
 
     @Provides
     @Singleton

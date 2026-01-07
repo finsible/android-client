@@ -60,7 +60,7 @@ class PreferenceManager @Inject constructor(context: Context) {
     }
 
     fun saveLocalIdCounter(counter: Long) {
-        sharedPreferences.edit().putLong(KEY_LOCAL_ID_COUNTER, counter).apply()
+        sharedPreferences.edit { putLong(KEY_LOCAL_ID_COUNTER, counter) }
     }
 
     fun isSyncEnabled(): Boolean {
@@ -68,7 +68,7 @@ class PreferenceManager @Inject constructor(context: Context) {
     }
 
     fun setSyncEnabled(enabled: Boolean) {
-        sharedPreferences.edit().putBoolean(KEY_SYNC_ENABLED, enabled).apply()
+        sharedPreferences.edit { putBoolean(KEY_SYNC_ENABLED, enabled) }
     }
 
     fun isBackupEnabled(): Boolean {
@@ -76,7 +76,7 @@ class PreferenceManager @Inject constructor(context: Context) {
     }
 
     fun setBackupEnabled(enabled: Boolean) {
-        sharedPreferences.edit().putBoolean(KEY_BACKUP_ENABLED, enabled).apply()
+        sharedPreferences.edit { putBoolean(KEY_BACKUP_ENABLED, enabled) }
     }
 
     fun isWifiOnlySyncEnabled(): Boolean {
@@ -84,7 +84,7 @@ class PreferenceManager @Inject constructor(context: Context) {
     }
 
     fun setWifiOnlySyncEnabled(enabled: Boolean) {
-        sharedPreferences.edit().putBoolean(KEY_WIFI_ONLY_SYNC, enabled).apply()
+        sharedPreferences.edit { putBoolean(KEY_WIFI_ONLY_SYNC, enabled) }
     }
 
     fun isLoggedIn(): Boolean = sharedPreferences.getBoolean(KEY_IS_LOGGED_IN, false)

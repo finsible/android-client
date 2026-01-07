@@ -3,7 +3,6 @@ package com.itsjeel01.finsiblefrontend.data.local.repository
 import com.itsjeel01.finsiblefrontend.common.Status
 import com.itsjeel01.finsiblefrontend.common.TransactionType
 import com.itsjeel01.finsiblefrontend.data.local.entity.PendingOperationEntity
-import com.itsjeel01.finsiblefrontend.data.local.entity.SyncMetadataEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.TransactionEntity
 import com.itsjeel01.finsiblefrontend.data.model.Transaction
 import com.itsjeel01.finsiblefrontend.data.sync.LocalIdGenerator
@@ -21,7 +20,6 @@ import org.junit.Test
 class TransactionLocalRepositoryTest {
 
     private lateinit var mockTransactionBox: Box<TransactionEntity>
-    private lateinit var mockSyncMetadataBox: Box<SyncMetadataEntity>
     private lateinit var mockPendingOperationBox: Box<PendingOperationEntity>
     private lateinit var mockLocalIdGenerator: LocalIdGenerator
     private lateinit var repository: TransactionLocalRepository
@@ -29,12 +27,10 @@ class TransactionLocalRepositoryTest {
     @Before
     fun setUp() {
         mockTransactionBox = mockk(relaxed = true)
-        mockSyncMetadataBox = mockk(relaxed = true)
         mockPendingOperationBox = mockk(relaxed = true)
         mockLocalIdGenerator = mockk(relaxed = true)
         repository = TransactionLocalRepository(
             mockTransactionBox,
-            mockSyncMetadataBox,
             mockPendingOperationBox,
             mockLocalIdGenerator
         )
@@ -48,7 +44,7 @@ class TransactionLocalRepositoryTest {
             createTransactionDTO(id = 3L)
         )
 
-        repository.addAll(transactions, null, null)
+        repository.addAll(transactions, null)
 
         verify { mockTransactionBox.put(any<List<TransactionEntity>>()) }
     }
@@ -63,7 +59,7 @@ class TransactionLocalRepositoryTest {
             createTransactionDTO(id = 2L, totalAmount = "200.00")
         )
 
-        repository.addAll(transactions, null, null)
+        repository.addAll(transactions, null)
 
         assertEquals(2, capturedEntities.captured.size)
         assertEquals(1L, capturedEntities.captured[0].id)
@@ -83,7 +79,7 @@ class TransactionLocalRepositoryTest {
             createTransactionDTO(id = 3L, type = "TRANSFER")
         )
 
-        repository.addAll(transactions, null, null)
+        repository.addAll(transactions, null)
 
         assertEquals(TransactionType.EXPENSE, capturedEntities.captured[0].type)
         assertEquals(TransactionType.INCOME, capturedEntities.captured[1].type)
@@ -166,7 +162,7 @@ class TransactionLocalRepositoryTest {
             createTransactionDTO(id = 1L, categoryId = 5L, categoryName = "Food")
         )
 
-        repository.addAll(transactions, null, null)
+        repository.addAll(transactions, null)
 
         assertEquals(5L, capturedEntities.captured[0].categoryId)
         assertEquals("Food", capturedEntities.captured[0].categoryName)
@@ -195,7 +191,7 @@ class TransactionLocalRepositoryTest {
             paidByUserName = null
         )
 
-        repository.addAll(listOf(dto), null, null)
+        repository.addAll(listOf(dto), null)
 
         assertEquals(10L, capturedEntities.captured[0].fromAccountId)
         assertEquals(20L, capturedEntities.captured[0].toAccountId)

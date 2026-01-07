@@ -6,7 +6,6 @@ import com.itsjeel01.finsiblefrontend.common.logging.Logger
 import com.itsjeel01.finsiblefrontend.data.local.entity.AccountEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.AccountEntity_
 import com.itsjeel01.finsiblefrontend.data.local.entity.PendingOperationEntity
-import com.itsjeel01.finsiblefrontend.data.local.entity.SyncMetadataEntity
 import com.itsjeel01.finsiblefrontend.data.model.Account
 import com.itsjeel01.finsiblefrontend.data.model.toEntity
 import com.itsjeel01.finsiblefrontend.data.remote.model.AccountCreateRequest
@@ -18,12 +17,10 @@ import javax.inject.Inject
 
 class AccountLocalRepository @Inject constructor(
     override val box: Box<AccountEntity>,
-    syncMetadataBox: Box<SyncMetadataEntity>,
     pendingOperationBox: Box<PendingOperationEntity>,
     localIdGenerator: LocalIdGenerator
 ) : SyncableLocalRepository<Account, AccountEntity>(
     box,
-    syncMetadataBox,
     pendingOperationBox,
     localIdGenerator
 ) {
@@ -34,14 +31,12 @@ class AccountLocalRepository @Inject constructor(
 
     override fun addAll(
         data: List<Account>,
-        additionalInfo: Any?,
-        ttlMinutes: Long?
+        additionalInfo: Any?
     ) {
-        super.addAll(data, additionalInfo, ttlMinutes)
+        super.addAll(data, additionalInfo)
 
         val entities = data.map { account ->
             account.toEntity().apply {
-                updateCacheTime(ttlMinutes)
                 syncStatus = Status.COMPLETED
                 account.accountGroupId?.let { groupId ->
                     accountGroup.targetId = groupId
@@ -51,10 +46,6 @@ class AccountLocalRepository @Inject constructor(
 
         box.put(entities)
         Logger.Database.d("Added ${entities.size} accounts to local DB")
-    }
-
-    override fun syncToServer(entity: AccountEntity) {
-        Logger.Database.w("syncToServer called directly - use SyncManager instead")
     }
 
     /** Get accounts for a specific account group. */

@@ -8,7 +8,6 @@ import com.itsjeel01.finsiblefrontend.data.local.TransactionTypeConverter
 import com.itsjeel01.finsiblefrontend.data.local.entity.CategoryEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.CategoryEntity_
 import com.itsjeel01.finsiblefrontend.data.local.entity.PendingOperationEntity
-import com.itsjeel01.finsiblefrontend.data.local.entity.SyncMetadataEntity
 import com.itsjeel01.finsiblefrontend.data.model.Category
 import com.itsjeel01.finsiblefrontend.data.model.toEntity
 import com.itsjeel01.finsiblefrontend.data.remote.model.CategoryCreateRequest
@@ -21,12 +20,10 @@ import javax.inject.Inject
 
 class CategoryLocalRepository @Inject constructor(
     override val box: Box<CategoryEntity>,
-    syncMetadataBox: Box<SyncMetadataEntity>,
     pendingOperationBox: Box<PendingOperationEntity>,
     localIdGenerator: LocalIdGenerator
 ) : SyncableLocalRepository<Category, CategoryEntity>(
     box,
-    syncMetadataBox,
     pendingOperationBox,
     localIdGenerator
 ) {
@@ -35,8 +32,8 @@ class CategoryLocalRepository @Inject constructor(
     override fun idProperty(): Property<CategoryEntity> = CategoryEntity_.id
     override fun syncStatusProperty(): Property<CategoryEntity> = CategoryEntity_.syncStatus
 
-    override fun addAll(data: List<Category>, additionalInfo: Any?, ttlMinutes: Long?) {
-        super.addAll(data, additionalInfo, ttlMinutes)
+    override fun addAll(data: List<Category>, additionalInfo: Any?) {
+        super.addAll(data, additionalInfo)
 
         val type = additionalInfo as TransactionType
 
@@ -45,7 +42,6 @@ class CategoryLocalRepository @Inject constructor(
 
         parentCategories.forEach { parentCategory ->
             val parentEntity = parentCategory.toEntity(type).apply {
-                updateCacheTime(ttlMinutes)
                 syncStatus = Status.COMPLETED
             }
             this.add(parentEntity)
@@ -57,7 +53,6 @@ class CategoryLocalRepository @Inject constructor(
             childCategories.forEach { childCat ->
                 val childEntity = childCat.toEntity(type).apply {
                     parentCategoryId = parentCategory.id
-                    updateCacheTime(ttlMinutes)
                     syncStatus = Status.COMPLETED
                 }
                 this.add(childEntity)
@@ -66,10 +61,6 @@ class CategoryLocalRepository @Inject constructor(
                 box.put(childEntity)
             }
         }
-    }
-
-    override fun syncToServer(entity: CategoryEntity) {
-        Logger.Database.w("syncToServer called directly - use SyncManager instead")
     }
 
     fun getCategories(type: TransactionType): HashMap<CategoryEntity, List<CategoryEntity>> {

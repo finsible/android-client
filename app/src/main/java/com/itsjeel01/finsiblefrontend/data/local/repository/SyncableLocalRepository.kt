@@ -4,12 +4,9 @@ import com.itsjeel01.finsiblefrontend.common.EntityType
 import com.itsjeel01.finsiblefrontend.common.OperationType
 import com.itsjeel01.finsiblefrontend.common.Status
 import com.itsjeel01.finsiblefrontend.common.logging.Logger
-import com.itsjeel01.finsiblefrontend.data.local.EntityTypeConverter
 import com.itsjeel01.finsiblefrontend.data.local.StatusConverter
 import com.itsjeel01.finsiblefrontend.data.local.entity.BaseEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.PendingOperationEntity
-import com.itsjeel01.finsiblefrontend.data.local.entity.SyncMetadataEntity
-import com.itsjeel01.finsiblefrontend.data.local.entity.SyncMetadataEntity_
 import com.itsjeel01.finsiblefrontend.data.local.entity.SyncableEntity
 import com.itsjeel01.finsiblefrontend.data.sync.LocalIdGenerator
 import io.objectbox.Box
@@ -17,13 +14,8 @@ import io.objectbox.kotlin.equal
 import io.objectbox.query.QueryBuilder
 import kotlinx.serialization.json.Json
 
-/**
- * Base repository for entities that support offline-first sync with pending operations.
- * Centralizes common sync patterns: CRUD queueing, ID remapping, sync status tracking, and metadata management.
- */
 abstract class SyncableLocalRepository<DTO, Entity>(
     override val box: Box<Entity>,
-    protected val syncMetadataBox: Box<SyncMetadataEntity>,
     protected val pendingOperationBox: Box<PendingOperationEntity>,
     protected val localIdGenerator: LocalIdGenerator
 ) : BaseLocalRepository<DTO, Entity>
@@ -130,32 +122,6 @@ abstract class SyncableLocalRepository<DTO, Entity>(
         Logger.Database.d("Queued $operationType for ${entityType.name}")
     }
 
-    fun getLastSyncTime(scopeKey: String? = null): Long? {
-        val syncKey = SyncMetadataEntity.buildSyncKey(entityType, scopeKey)
-        return syncMetadataBox.query(SyncMetadataEntity_.syncKey equal syncKey)
-            .build()
-            .findFirst()
-            ?.lastSyncTime
-    }
-
-    fun updateLastSyncTime(scopeKey: String?, serverTime: Long) {
-        val syncKey = SyncMetadataEntity.buildSyncKey(entityType, scopeKey)
-
-        val existing = syncMetadataBox.query(SyncMetadataEntity_.syncKey equal syncKey)
-            .build()
-            .findFirst()
-
-        val metadata = existing ?: SyncMetadataEntity.forScope(entityType, scopeKey)
-        metadata.lastSyncTime = serverTime
-        syncMetadataBox.put(metadata)
-
-        Logger.Database.d("Updated sync time for $syncKey: $serverTime")
-    }
-
-    /** Check if scope data exists (using syncKey). Returns true if data has been synced. */
-    fun hasDataForScope(scopeKey: String? = null): Boolean {
-        return getLastSyncTime(scopeKey) != null
-    }
 
     fun upsert(entity: Entity) {
         box.put(entity)
@@ -169,13 +135,6 @@ abstract class SyncableLocalRepository<DTO, Entity>(
 
     fun clearAll() {
         box.removeAll()
-        syncMetadataBox.query()
-            .equal(
-                SyncMetadataEntity_.entityType,
-                EntityTypeConverter().convertToDatabaseValue(entityType)!!
-            )
-            .build()
-            .remove()
         Logger.Database.i("Cleared all ${entityType.name} data")
     }
 

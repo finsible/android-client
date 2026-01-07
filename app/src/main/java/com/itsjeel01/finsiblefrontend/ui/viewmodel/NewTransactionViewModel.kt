@@ -14,6 +14,7 @@ import com.itsjeel01.finsiblefrontend.data.local.repository.TransactionLocalRepo
 import com.itsjeel01.finsiblefrontend.data.repository.AccountRepository
 import com.itsjeel01.finsiblefrontend.data.repository.CategoryRepository
 import com.itsjeel01.finsiblefrontend.data.sync.DataFetcher
+import com.itsjeel01.finsiblefrontend.data.sync.IntegrityChecker
 import com.itsjeel01.finsiblefrontend.ui.navigation.Route
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -34,7 +35,8 @@ class NewTransactionViewModel @Inject constructor(
     private val transactionLocalRepository: TransactionLocalRepository,
     private val categoryRepository: CategoryRepository,
     private val accountRepository: AccountRepository,
-    private val dataFetcher: DataFetcher
+    private val dataFetcher: DataFetcher,
+    private val integrityChecker: IntegrityChecker,
 ) : ViewModel() {
 
     companion object {
@@ -99,27 +101,21 @@ class NewTransactionViewModel @Inject constructor(
     /** Auto-fetch categories and accounts if never synced. */
     private fun ensureDataFetched() {
         viewModelScope.launch {
-            // Fetch categories for all transaction types
             dataFetcher.ensureDataFetched(
-                localRepo = categoryLocalRepository,
-                scopeKey = TransactionType.EXPENSE.name,
-                fetcher = { categoryRepository.getCategories(TransactionType.EXPENSE.name) }
+                fetcher = { categoryRepository.getCategories(TransactionType.EXPENSE.name) },
+                verifyIntegrity = { integrityChecker.verifyCategoriesIntegrity() }
             )
             dataFetcher.ensureDataFetched(
-                localRepo = categoryLocalRepository,
-                scopeKey = TransactionType.INCOME.name,
-                fetcher = { categoryRepository.getCategories(TransactionType.INCOME.name) }
+                fetcher = { categoryRepository.getCategories(TransactionType.INCOME.name) },
+                verifyIntegrity = { integrityChecker.verifyCategoriesIntegrity() }
             )
             dataFetcher.ensureDataFetched(
-                localRepo = categoryLocalRepository,
-                scopeKey = TransactionType.TRANSFER.name,
-                fetcher = { categoryRepository.getCategories(TransactionType.TRANSFER.name) }
+                fetcher = { categoryRepository.getCategories(TransactionType.TRANSFER.name) },
+                verifyIntegrity = { integrityChecker.verifyCategoriesIntegrity() }
             )
-            // Fetch accounts
             dataFetcher.ensureDataFetched(
-                localRepo = accountLocalRepository,
-                scopeKey = null,
-                fetcher = { accountRepository.getAccounts() }
+                fetcher = { accountRepository.getAccounts() },
+                verifyIntegrity = { integrityChecker.verifyAccountsIntegrity() }
             )
         }
     }
@@ -259,7 +255,6 @@ class NewTransactionViewModel @Inject constructor(
             }
         }
     }
-
 
     private fun getCategory(id: Long?): CategoryEntity? = id?.let { categoryLocalRepository.get(it) }
 

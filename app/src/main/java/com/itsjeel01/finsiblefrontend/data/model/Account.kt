@@ -1,6 +1,7 @@
 package com.itsjeel01.finsiblefrontend.data.model
 
 import android.icu.math.BigDecimal
+import com.itsjeel01.finsiblefrontend.common.Status
 import com.itsjeel01.finsiblefrontend.common.logging.Logger
 import com.itsjeel01.finsiblefrontend.data.local.entity.AccountEntity
 import kotlinx.serialization.Serializable
@@ -18,7 +19,9 @@ data class Account(
     val isSystemDefault: Boolean
 )
 
-fun Account.toEntity(): AccountEntity {
+fun Account.toEntity(
+    syncStatus: Status = Status.COMPLETED
+): AccountEntity {
     return AccountEntity(
         id = id,
         name = name,
@@ -32,6 +35,7 @@ fun Account.toEntity(): AccountEntity {
         currencyCode = currencyCode,
         icon = icon,
         isActive = isActive,
-        isSystemDefault = isSystemDefault
+        isSystemDefault = isSystemDefault,
+        syncStatus = syncStatus
     )
 }

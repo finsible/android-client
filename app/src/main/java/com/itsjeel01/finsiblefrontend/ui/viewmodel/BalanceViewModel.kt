@@ -12,6 +12,7 @@ import com.itsjeel01.finsiblefrontend.data.local.repository.AccountLocalReposito
 import com.itsjeel01.finsiblefrontend.data.repository.AccountGroupRepository
 import com.itsjeel01.finsiblefrontend.data.repository.AccountRepository
 import com.itsjeel01.finsiblefrontend.data.sync.DataFetcher
+import com.itsjeel01.finsiblefrontend.data.sync.IntegrityChecker
 import com.itsjeel01.finsiblefrontend.ui.model.FlippableCardData
 import com.itsjeel01.finsiblefrontend.ui.model.StatisticsModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,7 +28,8 @@ class BalanceViewModel @Inject constructor(
     private val accountGroupLocalRepository: AccountGroupLocalRepository,
     private val accountRepository: AccountRepository,
     private val accountGroupRepository: AccountGroupRepository,
-    private val dataFetcher: DataFetcher
+    private val dataFetcher: DataFetcher,
+    private val integrityChecker: IntegrityChecker
 ) : ViewModel() {
 
     private var accounts: List<AccountEntity> = emptyList()
@@ -68,13 +70,11 @@ class BalanceViewModel @Inject constructor(
     private fun ensureDataFetched() {
         viewModelScope.launch {
             dataFetcher.ensureDataFetched(
-                localRepo = accountLocalRepository,
-                scopeKey = null,
+                verifyIntegrity = { integrityChecker.verifyAccountsIntegrity() },
                 fetcher = { accountRepository.getAccounts() }
             )
             dataFetcher.ensureDataFetched(
-                localRepo = accountGroupLocalRepository,
-                scopeKey = null,
+                verifyIntegrity = { integrityChecker.verifyAccountGroupsIntegrity() },
                 fetcher = { accountGroupRepository.getAccountGroups() }
             )
         }
@@ -88,13 +88,9 @@ class BalanceViewModel @Inject constructor(
             _isRefreshing.value = true
             try {
                 dataFetcher.refreshData(
-                    localRepo = accountLocalRepository,
-                    scopeKey = null,
                     fetcher = { accountRepository.getAccounts() }
                 )
                 dataFetcher.refreshData(
-                    localRepo = accountGroupLocalRepository,
-                    scopeKey = null,
                     fetcher = { accountGroupRepository.getAccountGroups() }
                 )
                 // Reload from local after refresh

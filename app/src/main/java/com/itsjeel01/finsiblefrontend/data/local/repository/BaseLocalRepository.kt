@@ -22,7 +22,7 @@ interface BaseLocalRepository<DTO, Entity : BaseEntity> {
         box.remove(entity.id)
     }
 
-    fun addAll(data: List<DTO>, additionalInfo: Any? = null, ttlMinutes: Long? = null) {
+    fun addAll(data: List<DTO>, additionalInfo: Any? = null) {
         Logger.Database.d("Adding ${data.size} ${entityName()} entities")
     }
 
@@ -32,16 +32,6 @@ interface BaseLocalRepository<DTO, Entity : BaseEntity> {
         return entities
     }
 
-    fun isStale(): Boolean {
-        val entities = box.all
-        val empty = entities.isEmpty()
-        val hasStale = entities.any { it.isStale() }
-
-        Logger.Database.d("Staleness check for ${entityName()} entity: empty=$empty, hasStale=$hasStale")
-        return empty || hasStale
-    }
-
-    fun syncToServer(entity: Entity)
-
     fun entityName(): String = box.entityInfo.entityName
 }
+

@@ -6,7 +6,6 @@ import com.itsjeel01.finsiblefrontend.common.Status
 import com.itsjeel01.finsiblefrontend.common.TransactionType
 import com.itsjeel01.finsiblefrontend.common.logging.Logger
 import com.itsjeel01.finsiblefrontend.data.local.entity.PendingOperationEntity
-import com.itsjeel01.finsiblefrontend.data.local.entity.SyncMetadataEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.TransactionEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.TransactionEntity_
 import com.itsjeel01.finsiblefrontend.data.model.Transaction
@@ -21,12 +20,10 @@ import javax.inject.Inject
 
 class TransactionLocalRepository @Inject constructor(
     override val box: Box<TransactionEntity>,
-    syncMetadataBox: Box<SyncMetadataEntity>,
     pendingOperationBox: Box<PendingOperationEntity>,
     localIdGenerator: LocalIdGenerator
 ) : SyncableLocalRepository<Transaction, TransactionEntity>(
     box,
-    syncMetadataBox,
     pendingOperationBox,
     localIdGenerator
 ) {
@@ -35,21 +32,12 @@ class TransactionLocalRepository @Inject constructor(
     override fun idProperty(): Property<TransactionEntity> = TransactionEntity_.id
     override fun syncStatusProperty(): Property<TransactionEntity> = TransactionEntity_.syncStatus
 
-    override fun addAll(data: List<Transaction>, additionalInfo: Any?, ttlMinutes: Long?) {
-        super.addAll(data, additionalInfo, ttlMinutes)
+    override fun addAll(data: List<Transaction>, additionalInfo: Any?) {
+        super.addAll(data, additionalInfo)
 
-        val entities = data.map { transaction ->
-            transaction.toEntity().apply {
-                updateCacheTime(ttlMinutes)
-            }
-        }
-
+        val entities = data.map { it.toEntity() }
         box.put(entities)
         Logger.Database.d("Added ${entities.size} transactions to local DB")
-    }
-
-    override fun syncToServer(entity: TransactionEntity) {
-        Logger.Database.w("syncToServer called directly - use SyncManager instead")
     }
 
     /** Get recent transactions with pagination support (for infinite scroll). */
@@ -83,17 +71,6 @@ class TransactionLocalRepository @Inject constructor(
             (now.get(Calendar.MONTH) + 1).toString().padStart(2, '0')
         }"
         return getTransactionsForPeriod(periodKey)
-    }
-
-    fun isPeriodStale(periodKey: String): Boolean {
-        val (startMs, endMs) = periodKey.toPeriodBounds()
-
-        val sample = box.query()
-            .between(TransactionEntity_.transactionDate, startMs, endMs)
-            .build()
-            .findFirst()
-
-        return sample?.isStale() ?: true
     }
 
     fun getTransactionsForAccount(accountId: Long): List<TransactionEntity> {

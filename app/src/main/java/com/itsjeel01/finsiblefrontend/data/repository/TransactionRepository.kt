@@ -6,7 +6,6 @@ import com.itsjeel01.finsiblefrontend.data.remote.model.BaseResponse
 import com.itsjeel01.finsiblefrontend.data.remote.model.TransactionCreateRequest
 import com.itsjeel01.finsiblefrontend.data.remote.model.TransactionUpdateRequest
 import com.itsjeel01.finsiblefrontend.data.remote.model.TransactionsData
-import com.itsjeel01.finsiblefrontend.data.remote.model.TransactionsDeltaData
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -30,12 +29,6 @@ class TransactionRepository @Inject constructor(
         return apiService.getTransaction(id)
     }
 
-    suspend fun getTransactionsModifiedSince(
-        since: Long,
-        includeDeleted: Boolean = true
-    ): BaseResponse<TransactionsDeltaData> {
-        return apiService.getTransactionsModifiedSince(since, includeDeleted)
-    }
 
     suspend fun createTransaction(request: TransactionCreateRequest): BaseResponse<Transaction> {
         return apiService.createTransaction(request)

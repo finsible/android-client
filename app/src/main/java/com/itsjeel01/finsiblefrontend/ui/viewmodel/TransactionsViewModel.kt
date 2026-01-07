@@ -7,6 +7,7 @@ import com.itsjeel01.finsiblefrontend.data.local.entity.TransactionEntity
 import com.itsjeel01.finsiblefrontend.data.local.repository.TransactionLocalRepository
 import com.itsjeel01.finsiblefrontend.data.repository.TransactionRepository
 import com.itsjeel01.finsiblefrontend.data.sync.DataFetcher
+import com.itsjeel01.finsiblefrontend.data.sync.IntegrityChecker
 import com.itsjeel01.finsiblefrontend.data.sync.SyncManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +22,8 @@ class TransactionListViewModel @Inject constructor(
     private val transactionLocalRepo: TransactionLocalRepository,
     private val transactionRepository: TransactionRepository,
     private val syncManager: SyncManager,
-    private val dataFetcher: DataFetcher
+    private val dataFetcher: DataFetcher,
+    private val integrityChecker: IntegrityChecker
 ) : ViewModel() {
 
     companion object {
@@ -52,9 +54,8 @@ class TransactionListViewModel @Inject constructor(
         // Auto-fetch if never synced (centralized logic)
         viewModelScope.launch {
             dataFetcher.ensureDataFetched(
-                localRepo = transactionLocalRepo,
-                scopeKey = null,
-                fetcher = { transactionRepository.getTransactions(page = 0, size = REFRESH_PAGE_SIZE) }
+                fetcher = { transactionRepository.getTransactions(page = 0, size = REFRESH_PAGE_SIZE) },
+                verifyIntegrity = { integrityChecker.verifyTransactionsIntegrity() }
             )
         }
     }
@@ -124,8 +125,6 @@ class TransactionListViewModel @Inject constructor(
             _isRefreshing.value = true
             try {
                 val success = dataFetcher.refreshData(
-                    localRepo = transactionLocalRepo,
-                    scopeKey = null,
                     fetcher = { transactionRepository.getTransactions(page = 0, size = REFRESH_PAGE_SIZE) }
                 )
 

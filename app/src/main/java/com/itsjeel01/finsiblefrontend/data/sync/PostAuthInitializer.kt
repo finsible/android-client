@@ -6,9 +6,6 @@ import com.itsjeel01.finsiblefrontend.data.di.ObjectBoxModule
 import com.itsjeel01.finsiblefrontend.data.local.entity.AccountEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.AccountGroupEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.CategoryEntity
-import com.itsjeel01.finsiblefrontend.data.local.repository.AccountGroupLocalRepository
-import com.itsjeel01.finsiblefrontend.data.local.repository.AccountLocalRepository
-import com.itsjeel01.finsiblefrontend.data.local.repository.CategoryLocalRepository
 import com.itsjeel01.finsiblefrontend.data.repository.AccountGroupRepository
 import com.itsjeel01.finsiblefrontend.data.repository.AccountRepository
 import com.itsjeel01.finsiblefrontend.data.repository.CategoryRepository
@@ -25,11 +22,9 @@ class PostAuthInitializer @Inject constructor(
     private val categoryRepository: CategoryRepository,
     private val accountGroupRepository: AccountGroupRepository,
     private val accountRepository: AccountRepository,
-    private val categoryLocalRepository: CategoryLocalRepository,
-    private val accountGroupLocalRepository: AccountGroupLocalRepository,
-    private val accountLocalRepository: AccountLocalRepository,
     private val dataFetcher: DataFetcher,
-    private val boxStore: BoxStore
+    private val boxStore: BoxStore,
+    private val integrityChecker: IntegrityChecker
 ) {
     private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
@@ -92,15 +87,12 @@ class PostAuthInitializer @Inject constructor(
 
             val success = if (forceRefresh) {
                 dataFetcher.refreshData(
-                    localRepo = categoryLocalRepository,
-                    scopeKey = type.name,
                     fetcher = { categoryRepository.getCategories(type.name) }
                 )
             } else {
                 dataFetcher.ensureDataFetched(
-                    localRepo = categoryLocalRepository,
-                    scopeKey = type.name,
-                    fetcher = { categoryRepository.getCategories(type.name) }
+                    fetcher = { categoryRepository.getCategories(type.name) },
+                    verifyIntegrity = { integrityChecker.verifyCategoriesIntegrity() }
                 )
             }
 
@@ -119,15 +111,12 @@ class PostAuthInitializer @Inject constructor(
 
             val success = if (forceRefresh) {
                 dataFetcher.refreshData(
-                    localRepo = accountGroupLocalRepository,
-                    scopeKey = null,
                     fetcher = { accountGroupRepository.getAccountGroups() }
                 )
             } else {
                 dataFetcher.ensureDataFetched(
-                    localRepo = accountGroupLocalRepository,
-                    scopeKey = null,
-                    fetcher = { accountGroupRepository.getAccountGroups() }
+                    fetcher = { accountGroupRepository.getAccountGroups() },
+                    verifyIntegrity = { integrityChecker.verifyAccountGroupsIntegrity() }
                 )
             }
 
@@ -146,15 +135,12 @@ class PostAuthInitializer @Inject constructor(
 
             val success = if (forceRefresh) {
                 dataFetcher.refreshData(
-                    localRepo = accountLocalRepository,
-                    scopeKey = null,
                     fetcher = { accountRepository.getAccounts() }
                 )
             } else {
                 dataFetcher.ensureDataFetched(
-                    localRepo = accountLocalRepository,
-                    scopeKey = null,
-                    fetcher = { accountRepository.getAccounts() }
+                    fetcher = { accountRepository.getAccounts() },
+                    verifyIntegrity = { integrityChecker.verifyAccountsIntegrity() }
                 )
             }
 

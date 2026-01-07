@@ -8,11 +8,9 @@ import com.itsjeel01.finsiblefrontend.data.local.repository.CategoryLocalReposit
 import com.itsjeel01.finsiblefrontend.data.local.repository.TransactionLocalRepository
 import com.itsjeel01.finsiblefrontend.data.model.Account
 import com.itsjeel01.finsiblefrontend.data.model.AccountGroup
-import com.itsjeel01.finsiblefrontend.data.model.toEntity
 import com.itsjeel01.finsiblefrontend.data.remote.model.BaseResponse
 import com.itsjeel01.finsiblefrontend.data.remote.model.CategoriesData
 import com.itsjeel01.finsiblefrontend.data.remote.model.TransactionsData
-import com.itsjeel01.finsiblefrontend.data.remote.model.TransactionsDeltaData
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -34,8 +32,7 @@ class CacheManager @Inject constructor(
                 Logger.Cache.i("Caching ${data.categories.size} categories of type ${data.type}")
                 categoryLocalRepo.addAll(
                     data.categories,
-                    additionalInfo = TransactionType.valueOf(data.type),
-                    ttlMinutes = response.cacheTtlMinutes
+                    additionalInfo = TransactionType.valueOf(data.type)
                 )
             }
 
@@ -43,14 +40,8 @@ class CacheManager @Inject constructor(
                 Logger.Cache.i("Caching ${data.transactions.size} transactions")
                 transactionLocalRepo.addAll(
                     data.transactions,
-                    additionalInfo = null,
-                    ttlMinutes = response.cacheTtlMinutes
+                    additionalInfo = null
                 )
-            }
-
-            is TransactionsDeltaData -> {
-                Logger.Cache.i("Applying ${data.changes.size} transaction delta changes")
-                applyTransactionDelta(data)
             }
 
             is List<*> -> {
@@ -67,8 +58,7 @@ class CacheManager @Inject constructor(
                             Logger.Cache.i("Caching ${groups.size} account groups")
                             accountGroupLocalRepo.addAll(
                                 groups,
-                                additionalInfo = null,
-                                ttlMinutes = response.cacheTtlMinutes
+                                additionalInfo = null
                             )
                         }
                     }
@@ -80,8 +70,7 @@ class CacheManager @Inject constructor(
                             Logger.Cache.i("Caching ${accounts.size} accounts")
                             accountLocalRepo.addAll(
                                 accounts,
-                                additionalInfo = null,
-                                ttlMinutes = response.cacheTtlMinutes
+                                additionalInfo = null
                             )
                         }
                     }
@@ -94,20 +83,6 @@ class CacheManager @Inject constructor(
 
             else -> {
                 Logger.Cache.w("Unsupported data type for caching: ${data.javaClass.simpleName}")
-            }
-        }
-    }
-
-    private fun applyTransactionDelta(deltaData: TransactionsDeltaData) {
-        for (change in deltaData.changes) {
-            if (change.deleted) {
-                transactionLocalRepo.removeById(change.id)
-                Logger.Cache.d("Delta: removed transaction ${change.id}")
-            } else {
-                change.transaction?.let { tx ->
-                    transactionLocalRepo.upsert(tx.toEntity())
-                    Logger.Cache.d("Delta: upserted transaction ${change.id}")
-                }
             }
         }
     }

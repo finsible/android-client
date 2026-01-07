@@ -70,7 +70,7 @@ class BalanceViewModel @Inject constructor(
     private fun ensureDataFetched() {
         viewModelScope.launch {
             dataFetcher.ensureDataFetched(
-                verifyIntegrity = { integrityChecker.verifyAccountsIntegrity() },  // 👈 CHANGE THIS
+                verifyIntegrity = { integrityChecker.verifyAccountsIntegrity() },
                 fetcher = { accountRepository.getAccounts() }
             )
             dataFetcher.ensureDataFetched(

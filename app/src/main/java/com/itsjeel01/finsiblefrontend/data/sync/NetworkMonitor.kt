@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/** Monitors network connectivity in real-time */
+/** Monitors network connectivity in real-time. */
 @Singleton
 class NetworkMonitor @Inject constructor(
     @param:ApplicationContext private val context: Context,

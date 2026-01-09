@@ -59,6 +59,12 @@ class TestViewModel @Inject constructor(
     private val _mockAccountsFresh = MutableStateFlow(testPrefs.isMockAccountsFreshEnabled())
     val mockAccountsFresh: StateFlow<Boolean> = _mockAccountsFresh
 
+    private val _mockSnapshot = MutableStateFlow(testPrefs.isMockSnapshotEnabled())
+    val mockSnapshot: StateFlow<Boolean> = _mockSnapshot
+
+    private val _mockTransactions = MutableStateFlow(testPrefs.isMockTransactionsEnabled())
+    val mockTransactions: StateFlow<Boolean> = _mockTransactions
+
     /** Clears all app data including preferences and ObjectBox database. */
     fun clearAllAppData() {
         viewModelScope.launch {
@@ -176,6 +182,16 @@ class TestViewModel @Inject constructor(
         _mockAccountsFresh.value = enabled
     }
 
+    fun toggleMockSnapshot(enabled: Boolean) {
+        testPrefs.setMockSnapshotEnabled(enabled)
+        _mockSnapshot.value = enabled
+    }
+
+    fun toggleMockTransactions(enabled: Boolean) {
+        testPrefs.setMockTransactionsEnabled(enabled)
+        _mockTransactions.value = enabled
+    }
+
     /** Resets all debug settings to defaults. */
     fun resetToDefaults() {
         viewModelScope.launch {
@@ -193,6 +209,8 @@ class TestViewModel @Inject constructor(
                 _mockAccountGroups.value = testPrefs.isMockAccountGroupsEnabled()
                 _mockAccounts.value = testPrefs.isMockAccountsEnabled()
                 _mockAccountsFresh.value = testPrefs.isMockAccountsFreshEnabled()
+                _mockSnapshot.value = testPrefs.isMockSnapshotEnabled()
+                _mockTransactions.value = testPrefs.isMockTransactionsEnabled()
 
                 _operationStatus.value = OperationStatus.Success("Settings reset to defaults")
             } catch (e: Exception) {

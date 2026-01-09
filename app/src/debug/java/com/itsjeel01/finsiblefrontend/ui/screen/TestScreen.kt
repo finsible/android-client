@@ -70,6 +70,8 @@ fun TestScreen(
     val mockAccountGroups by viewModel.mockAccountGroups.collectAsStateWithLifecycle()
     val mockAccounts by viewModel.mockAccounts.collectAsStateWithLifecycle()
     val mockAccountsFresh by viewModel.mockAccountsFresh.collectAsStateWithLifecycle()
+    val mockSnapshot by viewModel.mockSnapshot.collectAsStateWithLifecycle()
+    val mockTransactions by viewModel.mockTransactions.collectAsStateWithLifecycle()
 
     // Track which actions are selected
     var selectedActions by remember { mutableStateOf(setOf<String>()) }
@@ -103,7 +105,10 @@ fun TestScreen(
         mockTransferCategories,
         mockAccountGroups,
         mockAccounts,
-        mockAccountsFresh
+        mockAccountsFresh,
+        mockSnapshot,
+        mockAccountsFresh,
+        mockTransactions
     ) {
         if (mockApiEnabled) listOf(
             CheckboxToggle("Authentication", mockAuth) { viewModel.toggleMockAuth(it) },
@@ -112,7 +117,9 @@ fun TestScreen(
             CheckboxToggle("Transfer categories", mockTransferCategories) { viewModel.toggleMockTransferCategories(it) },
             CheckboxToggle("Account groups", mockAccountGroups) { viewModel.toggleMockAccountGroups(it) },
             CheckboxToggle("Accounts", mockAccounts) { viewModel.toggleMockAccounts(it) },
-            CheckboxToggle("Accounts (fresh)", mockAccountsFresh) { viewModel.toggleMockAccountsFresh(it) }
+            CheckboxToggle("Accounts (fresh)", mockAccountsFresh) { viewModel.toggleMockAccountsFresh(it) },
+            CheckboxToggle("Snapshot", mockSnapshot) { viewModel.toggleMockSnapshot(it) },
+            CheckboxToggle("Transactions", mockTransactions) { viewModel.toggleMockTransactions(it) }
         ) else emptyList()
     }
 

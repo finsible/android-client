@@ -176,10 +176,17 @@ class IntegrityResolverService @Inject constructor(
         Logger.Sync.i("Resolving transaction discrepancies")
         try {
             val success = dataFetcher.refreshData {
-                transactionRepository.getTransactions(
-                    page = 0,
-                    size = 100
-                )
+                val pageSize = 100
+                var page = 0
+                var fetchedCount: Int
+                do {
+                    val transactions = transactionRepository.getTransactions(
+                        page = page,
+                        size = pageSize
+                    )
+                    fetchedCount = transactions.size
+                    page++
+                } while (fetchedCount == pageSize)
             }
             if (success) {
                 Logger.Sync.i("Transaction discrepancies resolved")

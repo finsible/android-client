@@ -107,7 +107,6 @@ fun TestScreen(
         mockAccounts,
         mockAccountsFresh,
         mockSnapshot,
-        mockAccountsFresh,
         mockTransactions
     ) {
         if (mockApiEnabled) listOf(

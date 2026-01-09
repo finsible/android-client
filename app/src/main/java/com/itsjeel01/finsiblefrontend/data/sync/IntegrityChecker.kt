@@ -129,7 +129,7 @@ class IntegrityChecker @Inject constructor(
                 networkAvailable = true
             )
         } catch (e: Exception) {
-            Logger.Sync.w("Network unavailable for integrity check: ${e.message}")
+            Logger.Sync.i("Network unavailable for integrity check (operating in offline mode): ${e.message}")
             // Return report indicating network unavailable - not a validation error
             IntegrityReport(
                 categoriesMatch = true,

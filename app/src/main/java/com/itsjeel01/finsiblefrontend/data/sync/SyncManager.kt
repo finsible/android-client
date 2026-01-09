@@ -7,7 +7,6 @@ import com.itsjeel01.finsiblefrontend.common.SyncState
 import com.itsjeel01.finsiblefrontend.common.logging.Logger
 import com.itsjeel01.finsiblefrontend.data.local.entity.PendingOperationEntity
 import com.itsjeel01.finsiblefrontend.data.local.repository.PendingOperationRepository
-import io.objectbox.Box
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +18,6 @@ import javax.inject.Singleton
 /** Manages background synchronization of local changes to server. */
 @Singleton
 class SyncManager @Inject constructor(
-    private val pendingOperationBox: Box<PendingOperationEntity>,
     private val pendingOperationRepository: PendingOperationRepository,
     private val networkMonitor: NetworkMonitor,
     private val coroutineScope: CoroutineScope,
@@ -34,6 +32,7 @@ class SyncManager @Inject constructor(
     private var isSyncing = false
 
     init {
+        networkMonitor.initialize()
         observeNetworkAndSync()
         updatePendingCount()
 

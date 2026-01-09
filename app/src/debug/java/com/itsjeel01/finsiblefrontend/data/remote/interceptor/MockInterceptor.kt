@@ -62,6 +62,16 @@ class MockInterceptor @Inject constructor(
                 matches = { it.contains("/accounts/all") },
                 isEnabled = { testPrefs.isMockAccountsEnabled() && !testPrefs.isMockAccountsFreshEnabled() },
                 resId = R.raw.mock_accounts
+            ),
+            MockRule(
+                matches = { it.contains("/sync/snapshot") },
+                isEnabled = { testPrefs.isMockSnapshotEnabled() },
+                resId = R.raw.mock_snapshot
+            ),
+            MockRule(
+                matches = { it.contains("/transaction/all") },
+                isEnabled = { testPrefs.isMockTransactionsEnabled() },
+                resId = R.raw.mock_all_transactions
             )
         )
     }

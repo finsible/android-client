@@ -7,6 +7,7 @@ import com.itsjeel01.finsiblefrontend.data.local.entity.MyObjectBox
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.objectbox.BoxStore
 import io.objectbox.android.Admin
@@ -17,23 +18,23 @@ import java.io.File
 @Module
 @InstallIn(SingletonComponent::class)
 object ObjectBoxModule {
-    private lateinit var store: BoxStore
+    @Volatile
+    private var store: BoxStore? = null
 
     @Volatile
     private var databaseWasCleared = false
 
     @Synchronized
-    fun init(context: Context) {
-        if (::store.isInitialized) {
-            Logger.Database.w("ObjectBox already initialized, skipping")
-            return
+    private fun getOrCreateStore(context: Context): BoxStore {
+        if (store != null) {
+            return store!!
         }
 
         Logger.Database.i("Initializing ObjectBox database (schema version: ${BuildConfig.DATABASE_SCHEMA_VERSION})")
 
         try {
             store = MyObjectBox.builder()
-                .androidContext(context)
+                .androidContext(context.applicationContext)
                 .build()
 
             Logger.Database.i("ObjectBox database initialized successfully")
@@ -46,6 +47,8 @@ object ObjectBoxModule {
         }
 
         if (BuildConfig.DEBUG) startAdmin(context)
+
+        return store!!
     }
 
     /** Attempts to recover the database by clearing files and rebuilding. */
@@ -55,7 +58,7 @@ object ObjectBoxModule {
 
             // Retry initialization after clearing
             store = MyObjectBox.builder()
-                .androidContext(context)
+                .androidContext(context.applicationContext)
                 .build()
 
             databaseWasCleared = true
@@ -71,7 +74,7 @@ object ObjectBoxModule {
         Logger.Database.d("Clearing ObjectBox database files")
 
         try {
-            val objectBoxDir = File(context.filesDir, "objectbox")
+            val objectBoxDir = File(context.applicationContext.filesDir, "objectbox")
             if (objectBoxDir.exists()) {
                 val deleted = objectBoxDir.deleteRecursively()
                 Logger.Database.d("ObjectBox directory deletion result: $deleted")
@@ -82,24 +85,25 @@ object ObjectBoxModule {
         }
     }
 
-    /** Returns true if the database was cleared during initialization due to schema conflicts. */
     @Synchronized
     fun wasDatabaseCleared(): Boolean = databaseWasCleared
 
-    /** Resets the cleared flag (useful for testing or after successful re-sync). */
     @Synchronized
     fun resetClearedFlag() {
         databaseWasCleared = false
         Logger.Database.d("Database cleared flag reset")
     }
 
-    fun startAdmin(context: Context) {
-        val started = Admin(store).start(context)
-        Logger.Database.d("ObjectBox Admin started: $started")
+    private fun startAdmin(context: Context) {
+        store?.let {
+            val started = Admin(it).start(context)
+            Logger.Database.d("ObjectBox Admin started: $started")
+        }
     }
 
     @Provides
-    fun boxStore(): BoxStore {
-        return store
+    @javax.inject.Singleton
+    fun boxStore(@ApplicationContext context: Context): BoxStore {
+        return getOrCreateStore(context)
     }
 }

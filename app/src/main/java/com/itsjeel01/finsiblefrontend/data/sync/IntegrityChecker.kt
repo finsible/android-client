@@ -125,11 +125,20 @@ class IntegrityChecker @Inject constructor(
                 accountGroupsMatch = accountGroupsMatch,
                 accountsMatch = accountsMatch,
                 transactionsMatch = transactionsMatch,
-                serverSnapshot = snapshot
+                serverSnapshot = snapshot,
+                networkAvailable = true
             )
         } catch (e: Exception) {
-            Logger.Sync.e("Failed to verify integrity: ${e.message}")
-            IntegrityReport(allValid = true)
+            Logger.Sync.i("Network unavailable for integrity check (operating in offline mode): ${e.message}")
+            // Return report indicating network unavailable - not a validation error
+            IntegrityReport(
+                categoriesMatch = true,
+                accountGroupsMatch = true,
+                accountsMatch = true,
+                transactionsMatch = true,
+                serverSnapshot = null,
+                networkAvailable = false
+            )
         }
     }
 }
@@ -141,8 +150,11 @@ data class IntegrityReport(
     val accountsMatch: Boolean = true,
     val transactionsMatch: Boolean = true,
     val serverSnapshot: EntitySnapshot? = null,
-    val allValid: Boolean = false
+    val networkAvailable: Boolean = true
 ) {
     val hasDiscrepancy: Boolean
-        get() = !allValid && (!categoriesMatch || !accountGroupsMatch || !accountsMatch || !transactionsMatch)
+        get() = networkAvailable && (!categoriesMatch || !accountGroupsMatch || !accountsMatch || !transactionsMatch)
+
+    val canResolve: Boolean
+        get() = networkAvailable && hasDiscrepancy
 }

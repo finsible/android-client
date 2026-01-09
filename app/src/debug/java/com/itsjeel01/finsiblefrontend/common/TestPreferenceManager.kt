@@ -21,6 +21,8 @@ class TestPreferenceManager @Inject constructor(@ApplicationContext context: Con
         private const val MOCK_ACCOUNT_GROUPS = "mock_account_groups"
         private const val MOCK_ACCOUNTS = "mock_accounts"
         private const val MOCK_ACCOUNTS_FRESH = "mock_accounts_fresh"
+        private const val MOCK_SNAPSHOT = "mock_snapshot"
+        private const val MOCK_TRANSACTIONS = "mock_transactions"
     }
 
     private val sharedPreferences: SharedPreferences =
@@ -85,6 +87,19 @@ class TestPreferenceManager @Inject constructor(@ApplicationContext context: Con
         sharedPreferences.edit { putBoolean(MOCK_ACCOUNTS_FRESH, enabled) }
     }
 
+    fun isMockSnapshotEnabled(): Boolean = sharedPreferences.getBoolean(MOCK_SNAPSHOT, true)
+
+    fun setMockSnapshotEnabled(enabled: Boolean) {
+        sharedPreferences.edit { putBoolean(MOCK_SNAPSHOT, enabled) }
+    }
+
+    fun isMockTransactionsEnabled(): Boolean =
+        sharedPreferences.getBoolean(MOCK_TRANSACTIONS, true)
+
+    fun setMockTransactionsEnabled(enabled: Boolean) {
+        sharedPreferences.edit { putBoolean(MOCK_TRANSACTIONS, enabled) }
+    }
+
     /** Resets all debug preferences to defaults in a single atomic transaction. */
     fun resetToDefaults() {
         sharedPreferences.edit {
@@ -97,6 +112,8 @@ class TestPreferenceManager @Inject constructor(@ApplicationContext context: Con
             putBoolean(MOCK_ACCOUNT_GROUPS, true)
             putBoolean(MOCK_ACCOUNTS, true)
             putBoolean(MOCK_ACCOUNTS_FRESH, false)
+            putBoolean(MOCK_SNAPSHOT, true)
+            putBoolean(MOCK_TRANSACTIONS, true)
         }
     }
 }

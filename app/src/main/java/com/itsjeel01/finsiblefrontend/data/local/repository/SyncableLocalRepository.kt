@@ -177,7 +177,6 @@ abstract class SyncableLocalRepository<DTO, Entity>(
         Logger.Database.i("Cleared all ${entityType.name} data")
     }
 
-
     /** Property ID for the entity's ID field (for ObjectBox queries). */
     protected abstract fun idProperty(): io.objectbox.Property<Entity>
 

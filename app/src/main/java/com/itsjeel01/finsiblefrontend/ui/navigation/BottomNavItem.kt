@@ -22,10 +22,10 @@ object BottomNavItems {
             activeIcon = R.drawable.ic_home_filled
         ),
         BottomNavItem(
-            label = "Analytics",
-            route = Route.Home.Analytics,
-            inactiveIcon = R.drawable.ic_analytics_outlined,
-            activeIcon = R.drawable.ic_analytics_filled
+            label = "Accounts",
+            route = Route.Home.Accounts,
+            inactiveIcon = R.drawable.ic_piggybank_outlined,
+            activeIcon = R.drawable.ic_piggybank_filled
         ),
         BottomNavItem(
             label = "New Transaction",
@@ -35,10 +35,10 @@ object BottomNavItems {
             activeIcon = R.drawable.ic_plus
         ),
         BottomNavItem(
-            label = "Accounts",
-            route = Route.Home.Balance,
-            inactiveIcon = R.drawable.ic_piggybank_outlined,
-            activeIcon = R.drawable.ic_piggybank_filled
+            label = "Transactions",
+            route = Route.Home.Transactions,
+            inactiveIcon = R.drawable.ic_history_outlined,
+            activeIcon = R.drawable.ic_history_outlined
         ),
         BottomNavItem(
             label = "Settings",

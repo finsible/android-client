@@ -23,12 +23,13 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.itsjeel01.finsiblefrontend.ui.component.BottomNavigationBar
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
-import com.itsjeel01.finsiblefrontend.ui.screen.AnalyticsTab
-import com.itsjeel01.finsiblefrontend.ui.screen.BalanceTab
+import com.itsjeel01.finsiblefrontend.ui.screen.AccountsScreen
 import com.itsjeel01.finsiblefrontend.ui.screen.DashboardTab
 import com.itsjeel01.finsiblefrontend.ui.screen.SettingsTab
+import com.itsjeel01.finsiblefrontend.ui.screen.TransactionsScreen
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
-import com.itsjeel01.finsiblefrontend.ui.viewmodel.BalanceViewModel
+import com.itsjeel01.finsiblefrontend.ui.viewmodel.AccountsViewModel
+import com.itsjeel01.finsiblefrontend.ui.viewmodel.TransactionsViewModel
 
 @Composable
 fun NavigationHome() {
@@ -67,17 +68,18 @@ fun NavigationHome() {
                     entry<Route.Home.Dashboard> {
                         DashboardTab()
                     }
-                    entry<Route.Home.Analytics> {
-                        AnalyticsTab()
+                    entry<Route.Home.Accounts> {
+                        val viewModel: AccountsViewModel = hiltViewModel()
+                        AccountsScreen(viewModel = viewModel)
                     }
                     entry<Route.Home.NewTransaction> {
                         NavigationNewTransaction(
                             onNavigateBack = { navigator.goBack() }
                         )
                     }
-                    entry<Route.Home.Balance> {
-                        val viewModel: BalanceViewModel = hiltViewModel()
-                        BalanceTab(viewModel = viewModel)
+                    entry<Route.Home.Transactions> {
+                        val viewModel: TransactionsViewModel = hiltViewModel()
+                        TransactionsScreen(viewModel = viewModel)
                     }
                     entry<Route.Home.Settings> {
                         SettingsTab()

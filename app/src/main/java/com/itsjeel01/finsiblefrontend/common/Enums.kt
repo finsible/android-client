@@ -64,3 +64,13 @@ enum class Status {
     FAILED,
     COMPLETED
 }
+
+enum class Currency {
+    INR;
+
+    fun getSymbol(): String {
+        return when (this) {
+            INR -> "₹"
+        }
+    }
+}

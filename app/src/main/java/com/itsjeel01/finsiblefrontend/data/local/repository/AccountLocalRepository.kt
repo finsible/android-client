@@ -13,6 +13,9 @@ import com.itsjeel01.finsiblefrontend.data.remote.model.AccountUpdateRequest
 import com.itsjeel01.finsiblefrontend.data.sync.LocalIdGenerator
 import io.objectbox.Box
 import io.objectbox.Property
+import io.objectbox.kotlin.flow
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class AccountLocalRepository @Inject constructor(
@@ -28,6 +31,11 @@ class AccountLocalRepository @Inject constructor(
     override val entityType: EntityType = EntityType.ACCOUNT
     override fun idProperty(): Property<AccountEntity> = AccountEntity_.id
     override fun syncStatusProperty(): Property<AccountEntity> = AccountEntity_.syncStatus
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun getAccountsFlow(): Flow<List<AccountEntity>> {
+        return box.query().build().flow()
+    }
 
     override fun toCreateRequest(entity: AccountEntity) = AccountCreateRequest(
         name = entity.name,
@@ -120,7 +128,6 @@ class AccountLocalRepository @Inject constructor(
     ): AccountEntity? {
         val entity = box.get(id) ?: return null
 
-        // Apply updates
         name?.let { entity.name = it }
         description?.let { entity.description = it }
         balance?.let { entity.balance = android.icu.math.BigDecimal(it) }

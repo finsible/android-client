@@ -13,6 +13,9 @@ import com.itsjeel01.finsiblefrontend.data.remote.model.AccountGroupUpdateReques
 import com.itsjeel01.finsiblefrontend.data.sync.LocalIdGenerator
 import io.objectbox.Box
 import io.objectbox.Property
+import io.objectbox.kotlin.flow
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class AccountGroupLocalRepository @Inject constructor(
@@ -28,6 +31,11 @@ class AccountGroupLocalRepository @Inject constructor(
     override val entityType: EntityType = EntityType.ACCOUNT_GROUP
     override fun idProperty(): Property<AccountGroupEntity> = AccountGroupEntity_.id
     override fun syncStatusProperty(): Property<AccountGroupEntity> = AccountGroupEntity_.syncStatus
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun getAccountGroupsFlow(): Flow<List<AccountGroupEntity>> {
+        return box.query().build().flow()
+    }
 
     override fun toCreateRequest(entity: AccountGroupEntity) = AccountGroupCreateRequest(
         name = entity.name,

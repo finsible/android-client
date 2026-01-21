@@ -1,6 +1,7 @@
 package com.itsjeel01.finsiblefrontend.ui.viewmodel
 
 import android.icu.math.BigDecimal
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.itsjeel01.finsiblefrontend.common.CurrencyFormatter
@@ -204,6 +205,7 @@ class AccountsViewModel @Inject constructor(
 }
 
 /** Stable UI Model for optimal composition */
+@Immutable
 data class AccountUiModel(
     val id: Long,
     val name: String,

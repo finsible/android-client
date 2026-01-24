@@ -34,6 +34,8 @@ material3AdaptiveNav3 = "1.3.0-alpha05"
 composeBom = "2025.12.01"
 composeUi = "1.10.0"
 coreTesting = "2.2.0"
+composeIcons = "2.2.1"
+kotlinxCollectionsImmutable = "0.3.7"
 
 [libraries]
 androidx-activity = { module = "androidx.activity:activity", version.ref = "activityCompose" }
@@ -63,6 +65,7 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "composeUi" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activityKtx" }
@@ -80,6 +83,19 @@ androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", vers
 androidx-lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "lifecycleViewmodelNav3" }
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinxSerializationCore" }
 androidx-material3-adaptive-navigation3 = { group = "androidx.compose.material3.adaptive", name = "adaptive-navigation3", version.ref = "material3AdaptiveNav3" }
+composables-icons-material-icons-filled = { group = "com.composables", name = "icons-material-icons-filled-android", version.ref = "composeIcons" }
+composables-icons-material-icons-outlined = { group = "com.composables", name = "icons-material-icons-outlined-android", version.ref = "composeIcons" }
+composables-icons-material-icons-rounded = { group = "com.composables", name = "icons-material-icons-rounded-android", version.ref = "composeIcons" }
+composables-icons-material-icons-sharp = { group = "com.composables", name = "icons-material-icons-sharp-android", version.ref = "composeIcons" }
+composables-icons-lucide = { group = "com.composables", name = "icons-lucide-android", version.ref = "composeIcons" }
+composables-icons-material-symbols-outlined = { group = "com.composables", name = "icons-material-symbols-outlined-android", version.ref = "composeIcons" }
+composables-icons-material-symbols-rounded = { group = "com.composables", name = "icons-material-symbols-rounded-android", version.ref = "composeIcons" }
+composables-icons-material-symbols-sharp = { group = "com.composables", name = "icons-material-symbols-sharp-android", version.ref = "composeIcons" }
+composables-icons-material-symbols-outlined-filled = { group = "com.composables", name = "icons-material-symbols-outlined-filled-android", version.ref = "composeIcons" }
+composables-icons-material-symbols-rounded-filled = { group = "com.composables", name = "icons-material-symbols-rounded-filled-android", version.ref = "composeIcons" }
+composables-icons-material-symbols-sharp-filled = { group = "com.composables", name = "icons-material-symbols-sharp-filled-android", version.ref = "composeIcons" }
+composables-icons-tabler-outline = { group = "com.composables", name = "icons-tabler-outline-android", version.ref = "composeIcons" }
+composables-icons-tabler-filled = { group = "com.composables", name = "icons-tabler-filled-android", version.ref = "composeIcons" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -1,7 +1,9 @@
 package com.itsjeel01.finsiblefrontend.data.local.entity
 
+import com.itsjeel01.finsiblefrontend.common.Currency
 import com.itsjeel01.finsiblefrontend.common.Status
 import com.itsjeel01.finsiblefrontend.common.TransactionType
+import com.itsjeel01.finsiblefrontend.data.local.CurrencyConverter
 import com.itsjeel01.finsiblefrontend.data.local.StatusConverter
 import com.itsjeel01.finsiblefrontend.data.local.TransactionTypeConverter
 import com.itsjeel01.finsiblefrontend.data.model.Transaction
@@ -9,7 +11,6 @@ import io.objectbox.annotation.Convert
 import io.objectbox.annotation.Entity
 import io.objectbox.annotation.Id
 import io.objectbox.annotation.Index
-import java.util.Calendar
 
 @Entity
 data class TransactionEntity(
@@ -25,11 +26,16 @@ data class TransactionEntity(
 
     var categoryId: Long = 0,
     var categoryName: String = "",
+    var categoryIcon: String = "",
     var description: String? = null,
-    var currency: String = "INR",
+
+    @Convert(converter = CurrencyConverter::class, dbType = String::class)
+    var currency: Currency = Currency.INR,
 
     @Index var fromAccountId: Long? = null,
+    var fromAccountName: String? = null,
     @Index var toAccountId: Long? = null,
+    var toAccountName: String? = null,
 
     @Convert(converter = StatusConverter::class, dbType = Int::class)
     override var syncStatus: Status = Status.COMPLETED,
@@ -42,19 +48,7 @@ data class TransactionEntity(
     var isSplit: Boolean = false,
     var paidByUserId: Long? = null,
     var paidByUserName: String? = null,
-) : BaseEntity(), SyncableEntity {
-
-    val periodKey: String
-        get() {
-            val cal = Calendar.getInstance().apply { timeInMillis = transactionDate }
-            return "${cal.get(Calendar.YEAR)}-${
-                (cal.get(Calendar.MONTH) + 1).toString().padStart(2, '0')
-            }"
-        }
-
-    val isLocalOnly: Boolean
-        get() = id < 0
-}
+) : BaseEntity(), SyncableEntity
 
 fun TransactionEntity.toDTO(): Transaction = Transaction(
     id = id,
@@ -66,7 +60,9 @@ fun TransactionEntity.toDTO(): Transaction = Transaction(
     description = description,
     currency = currency,
     fromAccountId = fromAccountId,
+    fromAccountName = fromAccountName,
     toAccountId = toAccountId,
+    toAccountName = toAccountName,
     spaceId = spaceId,
     userShare = userShare,
     isSplit = isSplit,

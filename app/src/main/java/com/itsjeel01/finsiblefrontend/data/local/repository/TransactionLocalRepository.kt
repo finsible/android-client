@@ -5,6 +5,7 @@ import com.itsjeel01.finsiblefrontend.common.EntityType
 import com.itsjeel01.finsiblefrontend.common.Status
 import com.itsjeel01.finsiblefrontend.common.TransactionType
 import com.itsjeel01.finsiblefrontend.common.logging.Logger
+import com.itsjeel01.finsiblefrontend.data.local.TransactionTypeConverter
 import com.itsjeel01.finsiblefrontend.data.local.entity.PendingOperationEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.TransactionEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.TransactionEntity_
@@ -13,8 +14,10 @@ import com.itsjeel01.finsiblefrontend.data.model.toEntity
 import com.itsjeel01.finsiblefrontend.data.remote.model.TransactionCreateRequest
 import com.itsjeel01.finsiblefrontend.data.remote.model.TransactionUpdateRequest
 import com.itsjeel01.finsiblefrontend.data.sync.LocalIdGenerator
+import com.itsjeel01.finsiblefrontend.ui.model.TransactionDailySummary
 import io.objectbox.Box
 import io.objectbox.Property
+import java.math.BigDecimal
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -60,13 +63,11 @@ class TransactionLocalRepository @Inject constructor(
 
         val entities = data.map { it.toEntity() }
 
-        // Populate categoryIcon for each entity by looking up from CategoryLocalRepository
+        val categoryIds = entities.map { it.categoryId }.distinct()
+        val categoryMap = categoryLocalRepository.getCategories(categoryIds)
+
         entities.forEach { entity ->
-            try {
-                entity.categoryIcon = categoryLocalRepository.get(entity.categoryId).icon
-            } catch (_: Exception) {
-                entity.categoryIcon = ""
-            }
+            entity.categoryIcon = categoryMap[entity.categoryId]?.icon ?: ""
         }
 
         box.put(entities)
@@ -77,33 +78,25 @@ class TransactionLocalRepository @Inject constructor(
         return box.count()
     }
 
-    fun getTransactionsForDate(startOfDayMs: Long, endOfDayMs: Long): List<TransactionEntity> {
-        return box.query()
-            .between(TransactionEntity_.transactionDate, startOfDayMs, endOfDayMs)
-            .orderDesc(TransactionEntity_.transactionDate)
-            .build()
-            .find()
-            .also { Logger.Database.d("Fetched ${it.size} transactions for date range $startOfDayMs-$endOfDayMs") }
-    }
-
     fun getAllUniqueDates(): List<Long> {
-        return box.query()
+        val timestamps = box.query()
             .orderDesc(TransactionEntity_.transactionDate)
             .build()
-            .find()
-            .map { transaction ->
-                // Normalize to start of day
-                val cal = Calendar.getInstance().apply {
-                    timeInMillis = transaction.transactionDate
-                    set(Calendar.HOUR_OF_DAY, 0)
-                    set(Calendar.MINUTE, 0)
-                    set(Calendar.SECOND, 0)
-                    set(Calendar.MILLISECOND, 0)
-                }
-                cal.timeInMillis
+            .property(TransactionEntity_.transactionDate)
+            .findLongs()
+
+        return timestamps.map { timestamp ->
+            // Normalize to start of day
+            val cal = Calendar.getInstance().apply {
+                timeInMillis = timestamp
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
             }
-            .distinct()
-            .also { Logger.Database.d("Found ${it.size} unique dates in database") }
+            cal.timeInMillis
+        }.distinct()
+            .also { Logger.Database.d("Found ${it.size} unique dates from ${timestamps.size} records") }
     }
 
     fun getTransactionsForDates(dateTimestamps: List<Long>): List<TransactionEntity> {
@@ -138,42 +131,67 @@ class TransactionLocalRepository @Inject constructor(
             .also { Logger.Database.d("Fetched ${it.size} transactions for ${dateTimestamps.size} dates") }
     }
 
-    fun getAllDateAggregates(): Map<Long, Triple<String, String, Long>> {
-        val allTransactions = box.query()
-            .orderDesc(TransactionEntity_.transactionDate)
-            .build()
-            .find()
+    fun getAllDateAggregates(): Map<Long, TransactionDailySummary> {
+        val converter = TransactionTypeConverter()
+        val incomeTypeInt = converter.convertToDatabaseValue(TransactionType.INCOME) ?: -1
+        val expenseTypeInt = converter.convertToDatabaseValue(TransactionType.EXPENSE) ?: -1
 
-        return allTransactions
-            .groupBy {
-                // Normalize to start of day
-                val cal = Calendar.getInstance().apply {
-                    timeInMillis = it.transactionDate
-                    set(Calendar.HOUR_OF_DAY, 0)
-                    set(Calendar.MINUTE, 0)
-                    set(Calendar.SECOND, 0)
-                    set(Calendar.MILLISECOND, 0)
+        return box.store.callInReadTx {
+            val query = box.query()
+                .orderDesc(TransactionEntity_.transactionDate)
+                .build()
+
+            val dates = query.property(TransactionEntity_.transactionDate).findLongs()
+            val amounts = query.property(TransactionEntity_.totalAmount).findStrings()
+            val types = query.property(TransactionEntity_.type).findInts()
+
+            query.close()
+
+            val resultMap = HashMap<Long, TransactionDailySummary>()
+            val cal = Calendar.getInstance()
+
+            for (i in dates.indices) {
+                cal.timeInMillis = dates[i]
+                cal.set(Calendar.HOUR_OF_DAY, 0)
+                cal.set(Calendar.MINUTE, 0)
+                cal.set(Calendar.SECOND, 0)
+                cal.set(Calendar.MILLISECOND, 0)
+                val dayStart = cal.timeInMillis
+
+                val amountStr = amounts[i]
+                val amount = if (!amountStr.isNullOrEmpty()) {
+                    try {
+                        BigDecimal(amountStr)
+                    } catch (e: Exception) {
+                        BigDecimal.ZERO
+                    }
+                } else {
+                    BigDecimal.ZERO
                 }
-                cal.timeInMillis
+
+                val typeInt = types[i]
+
+                val current = resultMap[dayStart] ?: TransactionDailySummary()
+
+                val updated = when (typeInt) {
+                    incomeTypeInt -> current.copy(
+                        income = current.income.add(amount),
+                        count = current.count + 1
+                    )
+
+                    expenseTypeInt -> current.copy(
+                        expense = current.expense.add(amount),
+                        count = current.count + 1
+                    )
+
+                    else -> current.copy(count = current.count + 1)
+                }
+
+                resultMap[dayStart] = updated
             }
-            .mapValues { (_, transactions) ->
-                val incomeSum = transactions
-                    .filter { it.type == TransactionType.INCOME }
-                    .fold(java.math.BigDecimal.ZERO) { acc, t ->
-                        acc + (t.totalAmount.toBigDecimalOrNull() ?: java.math.BigDecimal.ZERO)
-                    }
 
-                val expenseSum = transactions
-                    .filter { it.type == TransactionType.EXPENSE }
-                    .fold(java.math.BigDecimal.ZERO) { acc, t ->
-                        acc + (t.totalAmount.toBigDecimalOrNull() ?: java.math.BigDecimal.ZERO)
-                    }
-
-                val count = transactions.size.toLong()
-
-                Triple(incomeSum.toString(), expenseSum.toString(), count)
-            }
-            .also { Logger.Database.d("Computed aggregates for ${it.size} unique dates") }
+            resultMap
+        }
     }
 
     fun createTransaction(

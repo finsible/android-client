@@ -1,5 +1,6 @@
 package com.itsjeel01.finsiblefrontend.data.remote.model
 
+import com.itsjeel01.finsiblefrontend.common.Currency
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -9,7 +10,7 @@ data class TransactionCreateRequest(
     val transactionDate: Long,
     val categoryId: Long,
     val description: String? = null,
-    val currency: String = "INR",
+    val currency: Currency = Currency.INR,
     val fromAccountId: Long? = null,
     val toAccountId: Long? = null,
     val spaceId: Long? = null,

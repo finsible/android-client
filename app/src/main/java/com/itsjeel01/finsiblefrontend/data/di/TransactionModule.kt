@@ -2,6 +2,7 @@ package com.itsjeel01.finsiblefrontend.data.di
 
 import com.itsjeel01.finsiblefrontend.data.local.entity.PendingOperationEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.TransactionEntity
+import com.itsjeel01.finsiblefrontend.data.local.repository.CategoryLocalRepository
 import com.itsjeel01.finsiblefrontend.data.local.repository.TransactionLocalRepository
 import com.itsjeel01.finsiblefrontend.data.sync.LocalIdGenerator
 import dagger.Module
@@ -26,12 +27,14 @@ class TransactionModule {
     fun provideTransactionLocalRepository(
         transactionBox: Box<TransactionEntity>,
         pendingOperationBox: Box<PendingOperationEntity>,
-        localIdGenerator: LocalIdGenerator
+        localIdGenerator: LocalIdGenerator,
+        categoryLocalRepository: CategoryLocalRepository
     ): TransactionLocalRepository {
         return TransactionLocalRepository(
             transactionBox,
             pendingOperationBox,
-            localIdGenerator
+            localIdGenerator,
+            categoryLocalRepository
         )
     }
 }

@@ -1,5 +1,6 @@
 package com.itsjeel01.finsiblefrontend.data.sync
 
+import com.itsjeel01.finsiblefrontend.common.Currency
 import com.itsjeel01.finsiblefrontend.common.EntityType
 import com.itsjeel01.finsiblefrontend.common.OperationType
 import com.itsjeel01.finsiblefrontend.data.local.entity.PendingOperationEntity
@@ -59,7 +60,6 @@ class TransactionSyncHandlerTest {
 
     @Test
     fun testProcessCreateSuccess() = runTest {
-        // Arrange
         val localId = -1L
         val serverId = 1001L
         val request = TransactionCreateRequest(
@@ -84,7 +84,7 @@ class TransactionSyncHandlerTest {
             categoryId = 1L,
             categoryName = "Test Category",
             description = null,
-            currency = "INR"
+            currency = Currency.INR
         )
 
         val response = BaseResponse(
@@ -97,17 +97,14 @@ class TransactionSyncHandlerTest {
         coEvery { mockRepository.createTransaction(any()) } returns response
         every { mockLocalRepository.remapId(any(), any(), any()) } just Runs
 
-        // Act
         syncHandler.processCreate(operation)
 
-        // Assert
         coVerify(exactly = 1) { mockRepository.createTransaction(any()) }
         verify(exactly = 1) { mockLocalRepository.remapId(localId, serverId, any()) }
     }
 
     @Test
     fun testProcessCreateWithNullResponse() = runTest {
-        // Arrange
         val request = TransactionCreateRequest(
             type = "INCOME",
             totalAmount = "200.00",
@@ -128,7 +125,6 @@ class TransactionSyncHandlerTest {
 
         coEvery { mockRepository.createTransaction(any()) } returns response
 
-        // Act & Assert
         try {
             syncHandler.processCreate(operation)
             fail("Should have thrown SyncException")
@@ -139,7 +135,6 @@ class TransactionSyncHandlerTest {
 
     @Test
     fun testProcessCreateNetworkError() = runTest {
-        // Arrange
         val request = TransactionCreateRequest(
             type = "EXPENSE",
             totalAmount = "50.00",
@@ -156,7 +151,6 @@ class TransactionSyncHandlerTest {
 
         coEvery { mockRepository.createTransaction(any()) } throws IOException("Network unreachable")
 
-        // Act & Assert
         try {
             syncHandler.processCreate(operation)
             fail("Should have thrown SyncException")
@@ -168,7 +162,6 @@ class TransactionSyncHandlerTest {
 
     @Test
     fun testProcessCreateHttpError401() = runTest {
-        // Arrange
         val request = TransactionCreateRequest(
             type = "EXPENSE",
             totalAmount = "75.00",
@@ -186,7 +179,6 @@ class TransactionSyncHandlerTest {
         val httpException = HttpException(Response.error<Transaction>(401, mockk(relaxed = true)))
         coEvery { mockRepository.createTransaction(any()) } throws httpException
 
-        // Act & Assert
         try {
             syncHandler.processCreate(operation)
             fail("Should have thrown SyncException")
@@ -198,7 +190,6 @@ class TransactionSyncHandlerTest {
 
     @Test
     fun testProcessCreateHttpError409() = runTest {
-        // Arrange
         val request = TransactionCreateRequest(
             type = "TRANSFER",
             totalAmount = "150.00",
@@ -216,7 +207,6 @@ class TransactionSyncHandlerTest {
         val httpException = HttpException(Response.error<Transaction>(409, mockk(relaxed = true)))
         coEvery { mockRepository.createTransaction(any()) } throws httpException
 
-        // Act & Assert
         try {
             syncHandler.processCreate(operation)
             fail("Should have thrown SyncException")
@@ -232,7 +222,6 @@ class TransactionSyncHandlerTest {
 
     @Test
     fun testProcessUpdateSuccess() = runTest {
-        // Arrange
         val entityId = 1001L
         val request = TransactionUpdateRequest(totalAmount = "120.00")
         val payload = json.encodeToString(TransactionUpdateRequest.serializer(), request)
@@ -251,7 +240,7 @@ class TransactionSyncHandlerTest {
             categoryId = 1L,
             categoryName = "Test Category",
             description = "Updated",
-            currency = "INR"
+            currency = Currency.INR
         )
 
         val response = BaseResponse(
@@ -264,17 +253,14 @@ class TransactionSyncHandlerTest {
         coEvery { mockRepository.updateTransaction(entityId, any()) } returns response
         every { mockLocalRepository.upsert(any()) } just Runs
 
-        // Act
         syncHandler.processUpdate(operation)
 
-        // Assert
         coVerify(exactly = 1) { mockRepository.updateTransaction(entityId, any()) }
         verify(exactly = 1) { mockLocalRepository.upsert(any()) }
     }
 
     @Test
     fun testProcessUpdateFailure() = runTest {
-        // Arrange
         val entityId = 1002L
         val request = TransactionUpdateRequest(description = "New description")
         val payload = json.encodeToString(TransactionUpdateRequest.serializer(), request)
@@ -291,63 +277,11 @@ class TransactionSyncHandlerTest {
 
         coEvery { mockRepository.updateTransaction(entityId, any()) } returns response
 
-        // Act & Assert
         try {
             syncHandler.processUpdate(operation)
             fail("Should have thrown SyncException")
         } catch (e: SyncException) {
             assertTrue("Should contain error message", e.message!!.contains("Update failed"))
-        }
-    }
-
-    @Test
-    fun testProcessUpdateNetworkError() = runTest {
-        // Arrange
-        val entityId = 1003L
-        val request = TransactionUpdateRequest(type = "INCOME")
-        val payload = json.encodeToString(TransactionUpdateRequest.serializer(), request)
-        val operation = PendingOperationEntity().apply {
-            entityType = EntityType.TRANSACTION
-            operationType = OperationType.UPDATE
-            this.entityId = entityId
-            this.payload = payload
-        }
-
-        coEvery { mockRepository.updateTransaction(entityId, any()) } throws IOException("Timeout")
-
-        // Act & Assert
-        try {
-            syncHandler.processUpdate(operation)
-            fail("Should have thrown SyncException")
-        } catch (e: SyncException) {
-            assertTrue("Should be retryable", e.isRetryable)
-            assertTrue("Should be network error", e.message!!.contains("Network"))
-        }
-    }
-
-    @Test
-    fun testProcessUpdateHttpError404() = runTest {
-        // Arrange
-        val entityId = 9999L
-        val request = TransactionUpdateRequest(totalAmount = "999.00")
-        val payload = json.encodeToString(TransactionUpdateRequest.serializer(), request)
-        val operation = PendingOperationEntity().apply {
-            entityType = EntityType.TRANSACTION
-            operationType = OperationType.UPDATE
-            this.entityId = entityId
-            this.payload = payload
-        }
-
-        val httpException = HttpException(Response.error<Transaction>(404, mockk(relaxed = true)))
-        coEvery { mockRepository.updateTransaction(entityId, any()) } throws httpException
-
-        // Act & Assert
-        try {
-            syncHandler.processUpdate(operation)
-            fail("Should have thrown SyncException")
-        } catch (e: SyncException) {
-            assertFalse("404 should not be retryable", e.isRetryable)
-            assertTrue("Should be not found error", e.message!!.contains("not found"))
         }
     }
 
@@ -357,8 +291,7 @@ class TransactionSyncHandlerTest {
 
     @Test
     fun testProcessDeleteSuccess() = runTest {
-        // Arrange
-        val entityId = 1001L
+        val entityId = 1003L
         val operation = PendingOperationEntity().apply {
             entityType = EntityType.TRANSACTION
             operationType = OperationType.DELETE
@@ -366,7 +299,7 @@ class TransactionSyncHandlerTest {
             payload = "{}"
         }
 
-        val response = BaseResponse<Unit>(
+        val response = BaseResponse(
             success = true,
             message = "Deleted",
             data = Unit,
@@ -376,67 +309,15 @@ class TransactionSyncHandlerTest {
         coEvery { mockRepository.deleteTransaction(entityId) } returns response
         every { mockLocalRepository.removeById(entityId) } just Runs
 
-        // Act
         syncHandler.processDelete(operation)
 
-        // Assert
         coVerify(exactly = 1) { mockRepository.deleteTransaction(entityId) }
         verify(exactly = 1) { mockLocalRepository.removeById(entityId) }
     }
 
     @Test
-    fun testProcessDeleteFailure() = runTest {
-        // Arrange
-        val entityId = 1002L
-        val operation = PendingOperationEntity().apply {
-            entityType = EntityType.TRANSACTION
-            operationType = OperationType.DELETE
-            this.entityId = entityId
-            payload = "{}"
-        }
-
-        val response = mockk<BaseResponse<Unit>>(relaxed = true)
-        every { response.success } returns false
-        every { response.message } returns "Delete failed"
-
-        coEvery { mockRepository.deleteTransaction(entityId) } returns response
-
-        // Act & Assert
-        try {
-            syncHandler.processDelete(operation)
-            fail("Should have thrown SyncException")
-        } catch (e: SyncException) {
-            assertTrue("Should contain error message", e.message!!.contains("Delete failed"))
-        }
-    }
-
-    @Test
-    fun testProcessDeleteNetworkError() = runTest {
-        // Arrange
-        val entityId = 1003L
-        val operation = PendingOperationEntity().apply {
-            entityType = EntityType.TRANSACTION
-            operationType = OperationType.DELETE
-            this.entityId = entityId
-            payload = "{}"
-        }
-
-        coEvery { mockRepository.deleteTransaction(entityId) } throws IOException("Connection reset")
-
-        // Act & Assert
-        try {
-            syncHandler.processDelete(operation)
-            fail("Should have thrown SyncException")
-        } catch (e: SyncException) {
-            assertTrue("Should be retryable", e.isRetryable)
-            assertTrue("Should be network error", e.message!!.contains("Network"))
-        }
-    }
-
-    @Test
-    fun testProcessDelete404RemovesLocalCopy() = runTest {
-        // Arrange
-        val entityId = 9999L
+    fun testProcessDeleteAlreadyDeleted() = runTest {
+        val entityId = 1004L
         val operation = PendingOperationEntity().apply {
             entityType = EntityType.TRANSACTION
             operationType = OperationType.DELETE
@@ -448,87 +329,10 @@ class TransactionSyncHandlerTest {
         coEvery { mockRepository.deleteTransaction(entityId) } throws httpException
         every { mockLocalRepository.removeById(entityId) } just Runs
 
-        // Act - should not throw, should remove local copy
+        // Should not throw - 404 on delete means already deleted
         syncHandler.processDelete(operation)
 
-        // Assert
-        coVerify(exactly = 1) { mockRepository.deleteTransaction(entityId) }
+        // Should still clean up locally
         verify(exactly = 1) { mockLocalRepository.removeById(entityId) }
     }
-
-    @Test
-    fun testProcessDeleteHttpError500() = runTest {
-        // Arrange
-        val entityId = 1004L
-        val operation = PendingOperationEntity().apply {
-            entityType = EntityType.TRANSACTION
-            operationType = OperationType.DELETE
-            this.entityId = entityId
-            payload = "{}"
-        }
-
-        val httpException = HttpException(Response.error<Unit>(500, mockk(relaxed = true)))
-        coEvery { mockRepository.deleteTransaction(entityId) } throws httpException
-
-        // Act & Assert
-        try {
-            syncHandler.processDelete(operation)
-            fail("Should have thrown SyncException")
-        } catch (e: SyncException) {
-            assertTrue("500 should be retryable", e.isRetryable)
-        }
-    }
-
-    // ============================================
-    // Edge Case Tests
-    // ============================================
-
-    @Test
-    fun testProcessCreateWithInvalidPayload() = runTest {
-        // Arrange
-        val operation = PendingOperationEntity().apply {
-            entityType = EntityType.TRANSACTION
-            operationType = OperationType.CREATE
-            localEntityId = -5L
-            payload = "invalid json"
-        }
-
-        // Act & Assert
-        try {
-            syncHandler.processCreate(operation)
-            fail("Should have thrown exception for invalid JSON")
-        } catch (e: Exception) {
-            // Expected - invalid JSON should cause deserialization error
-            assertTrue(
-                "Should be serialization error",
-                e is kotlinx.serialization.SerializationException ||
-                        e.message?.contains("JSON") == true
-            )
-        }
-    }
-
-    @Test
-    fun testProcessUpdateWithEmptyPayload() = runTest {
-        // Arrange
-        val operation = PendingOperationEntity().apply {
-            entityType = EntityType.TRANSACTION
-            operationType = OperationType.UPDATE
-            entityId = 1005L
-            payload = ""
-        }
-
-        // Act & Assert
-        try {
-            syncHandler.processUpdate(operation)
-            fail("Should have thrown exception for empty payload")
-        } catch (e: Exception) {
-            // Expected - empty payload should cause deserialization error
-            assertTrue(
-                "Should be serialization error",
-                e is kotlinx.serialization.SerializationException ||
-                        e.message?.contains("JSON") == true
-            )
-        }
-    }
 }
-

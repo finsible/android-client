@@ -173,6 +173,7 @@ fun TextStyle.loose() = this.copy(lineHeight = this.fontSize * 1.8)
 
 /** Letter spacing modifiers */
 fun TextStyle.condensed() = this.copy(letterSpacing = (-0.02).em)
+fun TextStyle.relaxed() = this.copy(letterSpacing = (0.025).em)
 fun TextStyle.expanded() = this.copy(letterSpacing = 0.1.em)
 
 fun TextStyle.displayFont() = this.copy(fontFamily = FinsibleFontFamily.displayFont)

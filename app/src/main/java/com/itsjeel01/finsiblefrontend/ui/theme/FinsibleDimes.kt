@@ -52,6 +52,9 @@ data class FinsibleDimes(
     val d260: Dp,
     val d280: Dp,
     val d300: Dp,
+    val d360: Dp,
+    val d400: Dp,
+    val d480: Dp,
     val d800: Dp,
 ) {
     companion object {
@@ -104,6 +107,9 @@ data class FinsibleDimes(
             d260 = 260.dp,
             d280 = 280.dp,
             d300 = 300.dp,
+            d360 = 360.dp,
+            d400 = 400.dp,
+            d480 = 480.dp,
             d800 = 800.dp,
         )
 

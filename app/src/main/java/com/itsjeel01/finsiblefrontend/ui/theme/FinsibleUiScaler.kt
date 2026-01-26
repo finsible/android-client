@@ -70,6 +70,9 @@ class FinsibleUiScaler(private val deviceInfo: DeviceInfo) {
             d280 = scaleDime(dimes.d280),
             d300 = scaleDime(dimes.d300),
             d800 = scaleDime(dimes.d800),
+            d360 = scaleDime(dimes.d360),
+            d400 = scaleDime(dimes.d400),
+            d480 = scaleDime(dimes.d480)
         )
     }
 

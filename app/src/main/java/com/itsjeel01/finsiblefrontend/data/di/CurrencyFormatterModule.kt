@@ -13,9 +13,10 @@ import dagger.hilt.components.SingletonComponent
 @Composable
 fun hiltCurrencyFormatter(): CurrencyFormatter {
     val context = LocalContext.current
-    return remember {
+    val appContext = context.applicationContext
+    return remember(appContext) {
         EntryPointAccessors.fromApplication(
-            context.applicationContext,
+            appContext,
             CurrencyFormatterEntryPoint::class.java
         ).currencyFormatter()
     }

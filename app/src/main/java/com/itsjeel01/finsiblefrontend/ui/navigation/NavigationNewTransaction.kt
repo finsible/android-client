@@ -1,5 +1,12 @@
 package com.itsjeel01.finsiblefrontend.ui.navigation
 
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntOffset
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entryProvider
@@ -25,6 +33,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentType
 import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleIconButton
 import com.itsjeel01.finsiblefrontend.ui.component.fin.IconButtonConfig
 import com.itsjeel01.finsiblefrontend.ui.component.fin.IconButtonShape
+import com.itsjeel01.finsiblefrontend.ui.constants.Duration
 import com.itsjeel01.finsiblefrontend.ui.screen.newtransaction.Step1Amount
 import com.itsjeel01.finsiblefrontend.ui.screen.newtransaction.Step2Date
 import com.itsjeel01.finsiblefrontend.ui.screen.newtransaction.Step3Category
@@ -49,6 +58,11 @@ fun NavigationNewTransaction(
         )
     }
     val stepIndex = navState.currentStepIndex
+
+    val animDuration = Duration.MS_400.toInt()
+    val emphasizedEasing = CubicBezierEasing(0.2f, 0.0f, 0f, 1.0f)
+    val slideSpec = tween<IntOffset>(durationMillis = animDuration, easing = emphasizedEasing)
+    val fadeSpec = tween<Float>(durationMillis = animDuration, easing = emphasizedEasing)
 
     Box(
         modifier = Modifier
@@ -81,6 +95,14 @@ fun NavigationNewTransaction(
                 NavDisplay(
                     modifier = Modifier.weight(1f),
                     onBack = { navigator.back(onNavigateBack) },
+                    transitionSpec = {
+                        (slideInHorizontally(slideSpec) { w -> w } + fadeIn(fadeSpec))
+                            .togetherWith(slideOutHorizontally(slideSpec) { w -> -w } + fadeOut(fadeSpec))
+                    },
+                    popTransitionSpec = {
+                        (slideInHorizontally(slideSpec) { w -> -w } + fadeIn(fadeSpec))
+                            .togetherWith(slideOutHorizontally(slideSpec) { w -> w } + fadeOut(fadeSpec))
+                    },
                     entries = navState.toEntries(
                         entryProvider {
                             entry<Route.Home.NewTransaction.Amount> {

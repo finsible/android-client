@@ -1,7 +1,7 @@
 package com.itsjeel01.finsiblefrontend.ui.navigation
 
 import androidx.compose.animation.ContentTransform
-import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -55,13 +55,10 @@ fun NavigationHome() {
             modifier = Modifier.padding(paddingValues),
             onBack = navigator::goBack,
             transitionSpec = {
-                calculateTransition(initialState.key, targetState.key)
+                calculateTransition(initialState.key, targetState.key, isPop = false)
             },
             popTransitionSpec = {
-                calculateTransition(initialState.key, targetState.key)
-            },
-            predictivePopTransitionSpec = {
-                calculateTransition(initialState.key, targetState.key)
+                calculateTransition(initialState.key, targetState.key, isPop = true)
             },
             entries = navigationState.toEntries(
                 entryProvider {
@@ -96,8 +93,10 @@ private val StringToRoute = TabRoutes.associateBy { it.toString() }
 
 private fun calculateTransition(
     initialKey: Any?,
-    targetKey: Any?
+    targetKey: Any?,
+    isPop: Boolean
 ): ContentTransform {
+
     fun resolve(key: Any?): Route? {
         if (key is Route) return key
         return StringToRoute[key.toString()]
@@ -106,22 +105,36 @@ private fun calculateTransition(
     val initialRoute = resolve(initialKey)
     val targetRoute = resolve(targetKey)
 
-    val initialIndex = initialRoute?.let { RouteToIndex[it] } ?: -1
-    val targetIndex = targetRoute?.let { RouteToIndex[it] } ?: -1
+    val initialIndex = initialRoute?.let { RouteToIndex[it] } ?: 0
+    val targetIndex = targetRoute?.let { RouteToIndex[it] } ?: 0
 
-    val slideSpec = tween<IntOffset>(durationMillis = Duration.MS_300.toInt(), easing = FastOutSlowInEasing)
-    val fadeSpec = tween<Float>(durationMillis = Duration.MS_300.toInt(), easing = FastOutSlowInEasing)
+    val emphasizedEasing = CubicBezierEasing(0.2f, 0.0f, 0f, 1.0f)
+    val slideSpec = tween<IntOffset>(durationMillis = Duration.MS_400.toInt(), easing = emphasizedEasing)
+    val fadeSpec = tween<Float>(durationMillis = Duration.MS_400.toInt(), easing = emphasizedEasing)
 
-    return if (targetRoute == Route.Home.NewTransaction) {
-        slideInVertically(slideSpec) { height -> height } togetherWith fadeOut(fadeSpec)
+    // Handle Vertical Slide for NewTransaction
+    if (targetRoute == Route.Home.NewTransaction) {
+        return (slideInVertically(slideSpec) { h -> h } + fadeIn(fadeSpec))
+            .togetherWith(fadeOut(fadeSpec))
     } else if (initialRoute == Route.Home.NewTransaction) {
-        fadeIn(fadeSpec) togetherWith slideOutVertically(slideSpec) { height -> height }
+        return fadeIn(fadeSpec)
+            .togetherWith(slideOutVertically(slideSpec) { h -> h } + fadeOut(fadeSpec))
+    }
+
+    // Handle Horizontal Slides for Tabs
+    return if (isPop) {
+        (slideInHorizontally(slideSpec) { w -> -w } + fadeIn(fadeSpec))
+            .togetherWith(slideOutHorizontally(slideSpec) { w -> w } + fadeOut(fadeSpec))
     } else {
+        // Push/Switch Logic: Determine direction based on tab index
         if (targetIndex > initialIndex) {
-            slideInHorizontally(slideSpec) { width -> width } togetherWith slideOutHorizontally(slideSpec) { width -> -width }
+            // Moving Right -> Slide Content Left
+            (slideInHorizontally(slideSpec) { w -> w } + fadeIn(fadeSpec))
+                .togetherWith(slideOutHorizontally(slideSpec) { w -> -w } + fadeOut(fadeSpec))
         } else {
-            slideInHorizontally(slideSpec) { width -> -width } togetherWith slideOutHorizontally(slideSpec) { width -> width }
+            // Moving Left -> Slide Content Right
+            (slideInHorizontally(slideSpec) { w -> -w } + fadeIn(fadeSpec))
+                .togetherWith(slideOutHorizontally(slideSpec) { w -> w } + fadeOut(fadeSpec))
         }
     }
 }
-

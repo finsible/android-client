@@ -1,6 +1,5 @@
 package com.itsjeel01.finsiblefrontend.ui.screen.newtransaction
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -25,20 +24,14 @@ import androidx.compose.ui.draw.clip
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.extraBold
 
+private val STEP_TITLES = listOf(
+    "Enter Amount", "Date & Schedule", "Select Category",
+    "Select Accounts", "Add Description (Optional)"
+)
+
 @Composable
 fun StepTitle(currentStep: Int, totalSteps: Int) {
-    val stepTitles = listOf(
-        "Enter Amount",
-        "Date & Schedule",
-        "Select Category",
-        "Select Accounts",
-        "Add Description (Optional)"
-    )
-    val title = if (currentStep in stepTitles.indices) {
-        stepTitles[currentStep]
-    } else {
-        stepTitles.first()
-    }
+    val title = STEP_TITLES.getOrElse(currentStep) { STEP_TITLES.first() }
 
     Spacer(Modifier.height(FinsibleTheme.dimes.d16))
     Column(Modifier.padding(vertical = FinsibleTheme.dimes.d16)) {
@@ -79,7 +72,6 @@ fun StepTitle(currentStep: Int, totalSteps: Int) {
                         .fillMaxWidth(progress)
                         .clip(RoundedCornerShape(FinsibleTheme.dimes.d2))
                         .background(FinsibleTheme.colors.brandAccent)
-                        .animateContentSize()
                 )
             }
         }

@@ -31,7 +31,8 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.itsjeel01.finsiblefrontend.common.toReadableCurrency
+import com.itsjeel01.finsiblefrontend.common.toCompactCurrency
+import com.itsjeel01.finsiblefrontend.data.di.hiltCurrencyFormatter
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.bold
 import com.itsjeel01.finsiblefrontend.ui.theme.displayFont
@@ -45,6 +46,7 @@ fun Step1Amount(
     focusRequester: FocusRequester,
     modifier: Modifier = Modifier,
 ) {
+    val currencyFormatter = hiltCurrencyFormatter()
     LaunchedEffect(focusRequester) { focusRequester.requestFocus() }
 
     // Count only digits for sizing decisions.
@@ -69,8 +71,8 @@ fun Step1Amount(
         label = "topPadding"
     )
 
-    val formattedAmount by remember(amount) {
-        derivedStateOf { amount.toReadableCurrency() }
+    val formattedAmount by remember(amount, currencyFormatter) {
+        derivedStateOf { amount.toCompactCurrency(currencyFormatter) }
     }
 
     Column(

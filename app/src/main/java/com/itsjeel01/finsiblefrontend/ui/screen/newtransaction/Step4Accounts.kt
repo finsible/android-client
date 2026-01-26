@@ -1,8 +1,7 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.itsjeel01.finsiblefrontend.ui.screen.newtransaction
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,7 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,11 +36,33 @@ import com.itsjeel01.finsiblefrontend.ui.theme.medium
 import com.itsjeel01.finsiblefrontend.ui.util.resolveIcon
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.NewTransactionViewModel
 
+/** ViewModel wrapper preserving original signature. */
+@Composable
+fun Step4Accounts(viewModel: NewTransactionViewModel) {
+    val transactionType by viewModel.transactionType.collectAsStateWithLifecycle()
+    val fromAccountId by viewModel.transactionFromAccountId.collectAsStateWithLifecycle()
+    val toAccountId by viewModel.transactionToAccountId.collectAsStateWithLifecycle()
+
+    val allAccounts by viewModel.accounts.collectAsStateWithLifecycle()
+    val availableAccounts by viewModel.availableToAccounts.collectAsStateWithLifecycle()
+
+    AccountSelector(
+        transactionType = transactionType,
+        fromAccountsOptions = allAccounts,
+        toAccountsOptions = availableAccounts,
+        fromAccountId = fromAccountId,
+        toAccountId = toAccountId,
+        onFromAccountSelected = { viewModel.setTransactionFromAccountId(it) },
+        onToAccountSelected = { viewModel.setTransactionToAccountId(it) }
+    )
+}
+
 /** Stateless account selection step with hoisted state. */
 @Composable
-fun Step4Accounts(
+fun AccountSelector(
     transactionType: TransactionType,
-    accounts: List<AccountEntity>,
+    fromAccountsOptions: List<AccountEntity>,
+    toAccountsOptions: List<AccountEntity>,
     fromAccountId: Long?,
     toAccountId: Long?,
     onFromAccountSelected: (Long) -> Unit,
@@ -50,6 +70,7 @@ fun Step4Accounts(
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
+
     Column(
         modifier = modifier
             .verticalScroll(scrollState)
@@ -62,9 +83,8 @@ fun Step4Accounts(
                 description = when (transactionType) {
                     TransactionType.EXPENSE -> "Select where the money will be spent from"
                     TransactionType.TRANSFER -> "Select the source account"
-                    else -> ""
                 },
-                accounts = accounts,
+                accounts = fromAccountsOptions,
                 selectedAccountId = fromAccountId,
                 accentColor = transactionType.getColor(),
                 onAccountSelected = onFromAccountSelected
@@ -76,32 +96,14 @@ fun Step4Accounts(
                 description = when (transactionType) {
                     TransactionType.INCOME -> "Select where the money will be received"
                     TransactionType.TRANSFER -> "Select the destination account"
-                    else -> ""
                 },
-                accounts = accounts.filter { transactionType != TransactionType.TRANSFER || it.id != fromAccountId },
+                accounts = toAccountsOptions.filter { transactionType != TransactionType.TRANSFER || it.id != fromAccountId },
                 selectedAccountId = toAccountId,
                 accentColor = transactionType.getColor(),
                 onAccountSelected = onToAccountSelected
             )
         }
     }
-}
-
-/** ViewModel wrapper preserving original signature. */
-@Composable
-fun Step4Accounts(viewModel: NewTransactionViewModel) {
-    val transactionType = viewModel.transactionType.collectAsStateWithLifecycle().value
-    val fromAccountId = viewModel.transactionFromAccountId.collectAsStateWithLifecycle().value
-    val toAccountId = viewModel.transactionToAccountId.collectAsStateWithLifecycle().value
-    val accounts = viewModel.accounts.collectAsStateWithLifecycle().value
-    Step4Accounts(
-        transactionType = transactionType,
-        accounts = accounts,
-        fromAccountId = fromAccountId,
-        toAccountId = toAccountId,
-        onFromAccountSelected = { viewModel.setTransactionFromAccountId(it) },
-        onToAccountSelected = { viewModel.setTransactionToAccountId(it) }
-    )
 }
 
 /** Account selector section with title, description, and account chips. */
@@ -119,7 +121,8 @@ private fun AccountSelector(
         modifier = modifier
             .fillMaxWidth()
             .background(FinsibleTheme.colors.surface, RoundedCornerShape(FinsibleTheme.dimes.d12))
-            .padding(FinsibleTheme.dimes.d16),
+            .padding(FinsibleTheme.dimes.d16)
+            .animateContentSize(),
         verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d12)
     ) {
         // Section header

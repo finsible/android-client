@@ -195,7 +195,7 @@ private fun AccountChip(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d6)
         ) {
-            val iconDrawable = resolveIcon(account.icon, fallbackIcon = R.drawable.ic_piggy_bank)
+            val iconDrawable = resolveIcon(account.icon, fallbackIcon = R.drawable.ic_piggybank_outlined)
             Icon(
                 modifier = Modifier.size(FinsibleTheme.dimes.d20),
                 painter = painterResource(id = iconDrawable),

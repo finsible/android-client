@@ -20,10 +20,46 @@ abstract class SyncableLocalRepository<DTO, Entity>(
 
     protected abstract val entityType: EntityType
 
-    /** Convert entity to CREATE request for serialization. */
+    /**
+     * Convert entity to CREATE request for serialization.
+     *
+     * **IMPORTANT**: Implementation MUST return a `@Serializable` data class.
+     * The return type is `Any` for flexibility, but kotlinx.serialization requires
+     * the actual runtime type to be annotated with `@Serializable` for
+     * `Json.encodeToString()` to work correctly.
+     *
+     * Example:
+     * ```
+     * @Serializable
+     * data class EntityCreateRequest(val name: String, ...)
+     *
+     * override fun toCreateRequest(entity: Entity) = EntityCreateRequest(
+     *     name = entity.name,
+     *     ...
+     * )
+     * ```
+     */
     protected abstract fun toCreateRequest(entity: Entity): Any
 
-    /** Convert entity to UPDATE request for serialization. */
+    /**
+     * Convert entity to UPDATE request for serialization.
+     *
+     * **IMPORTANT**: Implementation MUST return a `@Serializable` data class.
+     * The return type is `Any` for flexibility, but kotlinx.serialization requires
+     * the actual runtime type to be annotated with `@Serializable` for
+     * `Json.encodeToString()` to work correctly.
+     *
+     * Example:
+     * ```
+     * @Serializable
+     * data class EntityUpdateRequest(val name: String?, ...)
+     *
+     * override fun toUpdateRequest(entity: Entity) = EntityUpdateRequest(
+     *     name = entity.name,
+     *     ...
+     * )
+     * ```
+     */
     protected abstract fun toUpdateRequest(entity: Entity): Any
 
     /**
@@ -40,6 +76,7 @@ abstract class SyncableLocalRepository<DTO, Entity>(
 
         box.put(entity)
 
+        // toCreateRequest() must return @Serializable object for Json.encodeToString() serialization
         val request = toCreateRequest(entity)
         queueOperation(
             operationType = OperationType.CREATE,
@@ -69,6 +106,7 @@ abstract class SyncableLocalRepository<DTO, Entity>(
         entity.syncStatus = Status.PENDING
         box.put(entity)
 
+        // toUpdateRequest() must return @Serializable object for Json.encodeToString() serialization
         val request = toUpdateRequest(entity)
         queueOperation(
             operationType = OperationType.UPDATE,

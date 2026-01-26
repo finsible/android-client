@@ -76,7 +76,7 @@ abstract class SyncableLocalRepository<DTO, Entity>(
 
         box.put(entity)
 
-        // toCreateRequest() returns @Serializable object; Json.encodeToString() uses runtime type
+        // toCreateRequest() must return @Serializable object for Json.encodeToString() serialization
         val request = toCreateRequest(entity)
         queueOperation(
             operationType = OperationType.CREATE,
@@ -106,7 +106,7 @@ abstract class SyncableLocalRepository<DTO, Entity>(
         entity.syncStatus = Status.PENDING
         box.put(entity)
 
-        // toUpdateRequest() returns @Serializable object; Json.encodeToString() uses runtime type
+        // toUpdateRequest() must return @Serializable object for Json.encodeToString() serialization
         val request = toUpdateRequest(entity)
         queueOperation(
             operationType = OperationType.UPDATE,

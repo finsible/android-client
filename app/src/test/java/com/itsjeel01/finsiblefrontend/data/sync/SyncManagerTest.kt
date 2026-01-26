@@ -13,7 +13,6 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
-import io.objectbox.Box
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,7 +29,6 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class SyncManagerTest {
 
-    private lateinit var mockPendingOperationBox: Box<PendingOperationEntity>
     private lateinit var mockPendingOperationRepository: PendingOperationRepository
     private lateinit var mockNetworkMonitor: NetworkMonitor
     private lateinit var testScope: CoroutineScope
@@ -41,7 +39,6 @@ class SyncManagerTest {
 
     @Before
     fun setUp() {
-        mockPendingOperationBox = mockk(relaxed = true)
         mockPendingOperationRepository = mockk(relaxed = true)
         mockNetworkMonitor = mockk(relaxed = true)
         mockSyncHandler = mockk(relaxed = true)
@@ -59,7 +56,6 @@ class SyncManagerTest {
         every { mockPendingOperationRepository.getFailed() } returns emptyList()
 
         syncManager = SyncManager(
-            mockPendingOperationBox,
             mockPendingOperationRepository,
             mockNetworkMonitor,
             testScope,
@@ -137,8 +133,6 @@ class SyncManagerTest {
     @Test
     fun testProcessQueueWithSingleCreateOperation() = runTest {
         networkStateFlow.value = true  // Set network online for this test
-        // Arrange
-        networkStateFlow.value = true  // Set network online for this test
 
         val operation = PendingOperationEntity().apply {
             localId = 1L
@@ -166,7 +160,7 @@ class SyncManagerTest {
     @Test
     fun testProcessQueueWithSingleUpdateOperation() = runTest {
         networkStateFlow.value = true  // Set network online for this test
-        // Arrange
+
         val operation = PendingOperationEntity().apply {
             localId = 2L
             entityType = EntityType.TRANSACTION
@@ -192,7 +186,7 @@ class SyncManagerTest {
     @Test
     fun testProcessQueueWithSingleDeleteOperation() = runTest {
         networkStateFlow.value = true  // Set network online for this test
-        // Arrange
+
         val operation = PendingOperationEntity().apply {
             localId = 3L
             entityType = EntityType.TRANSACTION
@@ -218,7 +212,7 @@ class SyncManagerTest {
     @Test
     fun testProcessQueueWithMultipleOperations() = runTest {
         networkStateFlow.value = true  // Set network online for this test
-        // Arrange
+
         val op1 = PendingOperationEntity().apply {
             localId = 1L
             entityType = EntityType.TRANSACTION
@@ -269,7 +263,7 @@ class SyncManagerTest {
     @Test
     fun testProcessQueueWithRetryableError() = runTest {
         networkStateFlow.value = true  // Set network online for this test
-        // Arrange
+
         val operation = PendingOperationEntity().apply {
             localId = 4L
             entityType = EntityType.TRANSACTION
@@ -297,7 +291,7 @@ class SyncManagerTest {
     @Test
     fun testProcessQueueWithNonRetryableError() = runTest {
         networkStateFlow.value = true  // Set network online for this test
-        // Arrange
+
         val operation = PendingOperationEntity().apply {
             localId = 5L
             entityType = EntityType.TRANSACTION
@@ -327,7 +321,7 @@ class SyncManagerTest {
     @Test
     fun testProcessQueueWithMaxRetriesExceeded() = runTest {
         networkStateFlow.value = true  // Set network online for this test
-        // Arrange
+
         val operation = PendingOperationEntity().apply {
             localId = 6L
             entityType = EntityType.TRANSACTION
@@ -356,7 +350,7 @@ class SyncManagerTest {
     @Test
     fun testProcessQueueWithUnexpectedException() = runTest {
         networkStateFlow.value = true  // Set network online for this test
-        // Arrange
+
         val operation = PendingOperationEntity().apply {
             localId = 7L
             entityType = EntityType.TRANSACTION
@@ -382,7 +376,7 @@ class SyncManagerTest {
     @Test
     fun testProcessQueueWithMissingHandler() = runTest {
         networkStateFlow.value = true  // Set network online for this test
-        // Arrange
+
         val operation = PendingOperationEntity().apply {
             localId = 8L
             entityType = EntityType.ACCOUNT  // No handler registered
@@ -405,7 +399,7 @@ class SyncManagerTest {
     @Test
     fun testProcessQueueWithNullOperationType() = runTest {
         networkStateFlow.value = true  // Set network online for this test
-        // Arrange
+
         val operation = PendingOperationEntity().apply {
             localId = 9L
             entityType = EntityType.TRANSACTION
@@ -434,7 +428,6 @@ class SyncManagerTest {
     fun testProcessQueuePausesWhenNetworkLost() = runTest {
         networkStateFlow.value = true  // Set network online initially
 
-        // Arrange
         val op1 = PendingOperationEntity().apply {
             localId = 10L
             entityType = EntityType.TRANSACTION
@@ -474,7 +467,6 @@ class SyncManagerTest {
 
     @Test
     fun testRetryFailedResetsPendingOperations() = runTest {
-        // Arrange
         val failedOp1 = PendingOperationEntity().apply {
             localId = 12L
             entityType = EntityType.TRANSACTION
@@ -522,7 +514,6 @@ class SyncManagerTest {
     fun testProcessQueueDoesNotRunConcurrently() = runTest {
         networkStateFlow.value = true  // Set network online for this test
 
-        // Arrange - first call will be "in progress"
         val operation = PendingOperationEntity().apply {
             localId = 14L
             entityType = EntityType.TRANSACTION
@@ -551,5 +542,3 @@ class SyncManagerTest {
         assertEquals("Handler should only be called once", 1, processCount)
     }
 }
-
-

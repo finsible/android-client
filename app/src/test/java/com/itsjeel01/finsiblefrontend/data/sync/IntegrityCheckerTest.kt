@@ -333,5 +333,95 @@ class IntegrityCheckerTest {
         assertTrue(report.transactionsMatch)
         assertFalse(report.hasDiscrepancy)
     }
+
+    // ============================================
+    // IntegrityReport Unit Tests
+    // ============================================
+
+    @Test
+    fun `IntegrityReport hasDiscrepancy returns false when all match`() {
+        val report = IntegrityReport(
+            categoriesMatch = true,
+            accountGroupsMatch = true,
+            accountsMatch = true,
+            transactionsMatch = true,
+            networkAvailable = true
+        )
+
+        assertFalse(report.hasDiscrepancy)
+    }
+
+    @Test
+    fun `IntegrityReport hasDiscrepancy returns true when any mismatch`() {
+        val reportWithCategoryMismatch = IntegrityReport(
+            categoriesMatch = false,
+            accountGroupsMatch = true,
+            accountsMatch = true,
+            transactionsMatch = true,
+            networkAvailable = true
+        )
+        assertTrue(reportWithCategoryMismatch.hasDiscrepancy)
+
+        val reportWithTransactionMismatch = IntegrityReport(
+            categoriesMatch = true,
+            accountGroupsMatch = true,
+            accountsMatch = true,
+            transactionsMatch = false,
+            networkAvailable = true
+        )
+        assertTrue(reportWithTransactionMismatch.hasDiscrepancy)
+    }
+
+    @Test
+    fun `IntegrityReport hasDiscrepancy returns false when network unavailable`() {
+        val report = IntegrityReport(
+            categoriesMatch = false,
+            accountGroupsMatch = false,
+            accountsMatch = false,
+            transactionsMatch = false,
+            networkAvailable = false
+        )
+
+        assertFalse("Should not report discrepancy when offline", report.hasDiscrepancy)
+    }
+
+    @Test
+    fun `IntegrityReport canResolve returns true when has discrepancy and network available`() {
+        val report = IntegrityReport(
+            categoriesMatch = false,
+            accountGroupsMatch = true,
+            accountsMatch = true,
+            transactionsMatch = true,
+            networkAvailable = true
+        )
+
+        assertTrue(report.canResolve)
+    }
+
+    @Test
+    fun `IntegrityReport canResolve returns false when network unavailable`() {
+        val report = IntegrityReport(
+            categoriesMatch = false,
+            accountGroupsMatch = true,
+            accountsMatch = true,
+            transactionsMatch = true,
+            networkAvailable = false
+        )
+
+        assertFalse(report.canResolve)
+    }
+
+    @Test
+    fun `IntegrityReport canResolve returns false when no discrepancy`() {
+        val report = IntegrityReport(
+            categoriesMatch = true,
+            accountGroupsMatch = true,
+            accountsMatch = true,
+            transactionsMatch = true,
+            networkAvailable = true
+        )
+
+        assertFalse(report.canResolve)
+    }
 }
 

@@ -93,6 +93,14 @@ class CategoryLocalRepository @Inject constructor(
         return categories
     }
 
+    fun getCategories(ids: List<Long>): Map<Long, CategoryEntity> {
+        return box.query()
+            .`in`(CategoryEntity_.id, ids.toLongArray())
+            .build()
+            .find()
+            .associateBy { it.id }
+    }
+
     fun createCategory(
         type: TransactionType,
         name: String,

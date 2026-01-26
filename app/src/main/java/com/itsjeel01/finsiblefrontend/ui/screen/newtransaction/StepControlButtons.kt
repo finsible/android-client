@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import com.itsjeel01.finsiblefrontend.ui.component.fin.ButtonConfig
 import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentSize
 import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentType
@@ -27,6 +29,9 @@ fun StepControlButtons(
 
     val isLastStep = stepIndex == NewTransactionSteps.lastIndex
     val continueButtonText = if (isLastStep) "Confirm" else "Next"
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
 
     Row(
         horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d16),
@@ -50,7 +55,11 @@ fun StepControlButtons(
 
         FinsibleButton(
             text = continueButtonText,
-            onClick = onNext,
+            onClick = {
+                keyboardController?.hide()
+                focusManager.clearFocus(true)
+                onNext()
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),

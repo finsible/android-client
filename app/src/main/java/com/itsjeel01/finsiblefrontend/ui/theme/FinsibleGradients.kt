@@ -5,10 +5,11 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
 /** Predefined gradient types for financial cards. */
-enum class CardGradientType {
+enum class GradientType {
     NET_WORTH,
     ASSETS,
     LIABILITIES,
+    CARDS,
     BRAND
 }
 
@@ -17,31 +18,32 @@ object FinsibleGradients {
 
     /** Get gradient color pair for a specific card type (darker shade first for left-to-right gradients). */
     @Composable
-    fun getGradientColors(type: CardGradientType): List<Color> {
+    fun getGradientColors(type: GradientType): List<Color> {
         val colors = FinsibleTheme.colors
         return when (type) {
-            CardGradientType.NET_WORTH -> listOf(colors.netWorthGradientStart, colors.netWorthGradientEnd)
-            CardGradientType.ASSETS -> listOf(colors.assetsGradientStart, colors.assetsGradientEnd)
-            CardGradientType.LIABILITIES -> listOf(colors.liabilitiesGradientStart, colors.liabilitiesGradientEnd)
-            CardGradientType.BRAND -> listOf(colors.brandAccent, colors.brandAccent50)
+            GradientType.NET_WORTH -> listOf(colors.netWorthGradientStart, colors.netWorthGradientEnd)
+            GradientType.ASSETS -> listOf(colors.assetsGradientStart, colors.assetsGradientEnd)
+            GradientType.LIABILITIES -> listOf(colors.liabilitiesGradientStart, colors.liabilitiesGradientEnd)
+            GradientType.CARDS -> listOf(colors.primaryBackground, colors.secondaryBackground.copy(alpha = 0.9F))
+            GradientType.BRAND -> listOf(colors.brandAccent, colors.brandAccent50)
         }
     }
 
     /** Get linear gradient brush for a specific card type (left-to-right, darker on left). */
     @Composable
-    fun getLinearGradient(type: CardGradientType): Brush {
+    fun getLinearGradient(type: GradientType): Brush {
         return Brush.horizontalGradient(colors = getGradientColors(type))
     }
 
     /** Get vertical gradient brush for a specific card type. */
     @Composable
-    fun getVerticalGradient(type: CardGradientType): Brush {
+    fun getVerticalGradient(type: GradientType): Brush {
         return Brush.verticalGradient(colors = getGradientColors(type))
     }
 
     /** Get horizontal gradient brush for a specific card type. */
     @Composable
-    fun getHorizontalGradient(type: CardGradientType): Brush {
+    fun getHorizontalGradient(type: GradientType): Brush {
         return Brush.horizontalGradient(colors = getGradientColors(type))
     }
 }

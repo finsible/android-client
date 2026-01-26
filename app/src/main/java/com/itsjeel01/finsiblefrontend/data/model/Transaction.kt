@@ -1,5 +1,6 @@
 package com.itsjeel01.finsiblefrontend.data.model
 
+import com.itsjeel01.finsiblefrontend.common.Currency
 import com.itsjeel01.finsiblefrontend.common.Status
 import com.itsjeel01.finsiblefrontend.common.TransactionType
 import com.itsjeel01.finsiblefrontend.data.local.entity.TransactionEntity
@@ -14,9 +15,11 @@ data class Transaction(
     val categoryId: Long,
     val categoryName: String,
     val description: String? = null,
-    val currency: String,
+    val currency: Currency,
     val fromAccountId: Long? = null,
+    val fromAccountName: String? = null,
     val toAccountId: Long? = null,
+    val toAccountName: String? = null,
     val spaceId: Long? = null,
     val userShare: String? = null,
     val isSplit: Boolean = false,
@@ -33,10 +36,13 @@ fun Transaction.toEntity(
     transactionDate = transactionDate.toLongOrNull() ?: 0L,
     categoryId = categoryId,
     categoryName = categoryName,
+    categoryIcon = "", // Will be populated by repository
     description = description,
     currency = currency,
     fromAccountId = fromAccountId,
+    fromAccountName = fromAccountName,
     toAccountId = toAccountId,
+    toAccountName = toAccountName,
     spaceId = spaceId,
     userShare = userShare,
     isSplit = isSplit,

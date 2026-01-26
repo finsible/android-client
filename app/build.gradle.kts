@@ -74,6 +74,7 @@ secrets {
 
 dependencies {
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.collections.immutable)
     implementation(libs.hilt.android)
     implementation(libs.androidx.activity)
     implementation(libs.activity.ktx)
@@ -86,16 +87,11 @@ dependencies {
     implementation(libs.androidx.security.crypto)
     implementation(libs.androidx.compose.material3)
     implementation(libs.timber)
-    debugImplementation(libs.okhttp.logging.interceptor)
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.lifecycle.viewmodel.navigation3)
     implementation(libs.androidx.material3.adaptive.navigation3)
     implementation(libs.kotlinx.serialization.core)
-
-    ksp(libs.hilt.compiler)
-    ksp(libs.kotlin.metadata.jvm)
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -105,18 +101,39 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.ui.text.google.fonts)
+    implementation(libs.composables.icons.material.icons.filled)
+    implementation(libs.composables.icons.material.icons.outlined)
+    implementation(libs.composables.icons.material.icons.rounded)
+    implementation(libs.composables.icons.material.icons.sharp)
+    implementation(libs.composables.icons.lucide)
+    implementation(libs.composables.icons.material.symbols.outlined)
+    implementation(libs.composables.icons.material.symbols.rounded)
+    implementation(libs.composables.icons.material.symbols.sharp)
+    implementation(libs.composables.icons.material.symbols.outlined.filled)
+    implementation(libs.composables.icons.material.symbols.rounded.filled)
+    implementation(libs.composables.icons.material.symbols.sharp.filled)
+    implementation(libs.composables.icons.tabler.outline)
+    implementation(libs.composables.icons.tabler.filled)
+
+    ksp(libs.hilt.compiler)
+    ksp(libs.kotlin.metadata.jvm)
+
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.androidx.core.testing)
+
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.mockk.android)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+
+    debugImplementation(libs.okhttp.logging.interceptor)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     debugImplementation(libs.objectbox.android.objectbrowser)
+
     releaseImplementation(libs.objectbox.android)
 }
 

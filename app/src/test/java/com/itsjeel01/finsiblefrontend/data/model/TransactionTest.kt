@@ -1,5 +1,6 @@
 package com.itsjeel01.finsiblefrontend.data.model
 
+import com.itsjeel01.finsiblefrontend.common.Currency
 import com.itsjeel01.finsiblefrontend.common.Status
 import com.itsjeel01.finsiblefrontend.common.TransactionType
 import com.itsjeel01.finsiblefrontend.data.local.entity.toDTO
@@ -20,7 +21,7 @@ class TransactionTest {
             categoryId = 5L,
             categoryName = "Food",
             description = "Dinner",
-            currency = "INR",
+            currency = Currency.INR,
             fromAccountId = 10L,
             toAccountId = null,
             spaceId = null,
@@ -39,7 +40,7 @@ class TransactionTest {
         assertEquals(5L, entity.categoryId)
         assertEquals("Food", entity.categoryName)
         assertEquals("Dinner", entity.description)
-        assertEquals("INR", entity.currency)
+        assertEquals(Currency.INR, entity.currency)
         assertEquals(10L, entity.fromAccountId)
         assertNull(entity.toAccountId)
         assertEquals(Status.COMPLETED, entity.syncStatus)
@@ -115,7 +116,7 @@ class TransactionTest {
             categoryId = 1L,
             categoryName = "Test",
             description = null,
-            currency = "INR",
+            currency = Currency.INR,
             fromAccountId = 1L,
             toAccountId = null,
             spaceId = 100L,
@@ -144,7 +145,7 @@ class TransactionTest {
             categoryId = 1L,
             categoryName = "Test",
             description = null,
-            currency = "USD",
+            currency = Currency.INR,
             fromAccountId = null,
             toAccountId = null,
             spaceId = null,
@@ -175,7 +176,7 @@ class TransactionTest {
             categoryId = 10L,
             categoryName = "Shopping",
             description = "Groceries",
-            currency = "INR",
+            currency = Currency.INR,
             fromAccountId = 5L,
             toAccountId = null,
             spaceId = null,
@@ -202,14 +203,9 @@ class TransactionTest {
     }
 
     @Test
-    fun `test different currency values`() {
-        val dtoUsd = createTransaction(currency = "USD")
-        val dtoEur = createTransaction(currency = "EUR")
-        val dtoGbp = createTransaction(currency = "GBP")
-
-        assertEquals("USD", dtoUsd.toEntity().currency)
-        assertEquals("EUR", dtoEur.toEntity().currency)
-        assertEquals("GBP", dtoGbp.toEntity().currency)
+    fun `test currency value INR is preserved`() {
+        val dto = createTransaction(currency = Currency.INR)
+        assertEquals(Currency.INR, dto.toEntity().currency)
     }
 
     private fun createTransaction(
@@ -220,7 +216,7 @@ class TransactionTest {
         categoryId: Long = 1L,
         categoryName: String = "Test",
         description: String? = null,
-        currency: String = "INR",
+        currency: Currency = Currency.INR,
         fromAccountId: Long? = 1L,
         toAccountId: Long? = null,
         spaceId: Long? = null,
@@ -246,5 +242,3 @@ class TransactionTest {
         paidByUserName = paidByUserName
     )
 }
-
-

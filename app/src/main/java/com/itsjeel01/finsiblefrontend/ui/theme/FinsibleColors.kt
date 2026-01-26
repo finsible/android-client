@@ -183,7 +183,7 @@ data class FinsibleColors(
             same = Color(0xFF000000),
 
             // Backgrounds & Surfaces
-            primaryBackground = Color(0xFF1B1B1B),
+            primaryBackground = Color(0xFF161616),
             secondaryBackground = Color(0xFF242424),
             surface = Color(0xFF2A2A2A),
             surfaceContainer = Color(0xFF242424),
@@ -194,7 +194,7 @@ data class FinsibleColors(
             input = Color(0xFF1F1F1F),
 
             // Content / Text
-            primaryContent = Color(0xFFF7F7F7),
+            primaryContent = Color(0xFFE6E6E6),
             secondaryContent = Color(0xFFB8B8B8),
             tertiaryContent = Color(0xFF8E8E8E),
             onSurfaceVariant = Color(0xFF9E9E9E),
@@ -247,9 +247,9 @@ data class FinsibleColors(
             brandAccent10 = Color(0xFF091F11),
 
             // Transaction types
-            income = Color(0xFF7BC86F),
-            expense = Color(0xFFFF6E54),
-            transfer = Color(0xFF61A4B5),
+            income = Color(0xFF72B372),
+            expense = Color(0xFFD9614C),
+            transfer = Color(0xFF6F9BA6),
 
             // Financial card gradients - richer saturation for dark mode
             netWorthGradientStart = Color(0xFF1A7532),

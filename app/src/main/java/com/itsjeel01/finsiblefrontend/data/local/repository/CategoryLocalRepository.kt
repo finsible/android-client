@@ -32,6 +32,18 @@ class CategoryLocalRepository @Inject constructor(
     override fun idProperty(): Property<CategoryEntity> = CategoryEntity_.id
     override fun syncStatusProperty(): Property<CategoryEntity> = CategoryEntity_.syncStatus
 
+    override fun toCreateRequest(entity: CategoryEntity) = CategoryCreateRequest(
+        type = entity.type.name,
+        name = entity.name,
+        icon = entity.icon,
+        parentCategoryId = if (entity.parentCategoryId > 0) entity.parentCategoryId else null
+    )
+
+    override fun toUpdateRequest(entity: CategoryEntity) = CategoryUpdateRequest(
+        name = entity.name,
+        icon = entity.icon
+    )
+
     override fun addAll(data: List<Category>, additionalInfo: Any?) {
         super.addAll(data, additionalInfo)
 
@@ -44,7 +56,7 @@ class CategoryLocalRepository @Inject constructor(
             val parentEntity = parentCategory.toEntity(type).apply {
                 syncStatus = Status.COMPLETED
             }
-            this.add(parentEntity)
+            box.put(parentEntity)
         }
 
         parentCategories.forEach { parentCategory ->
@@ -55,7 +67,7 @@ class CategoryLocalRepository @Inject constructor(
                     parentCategoryId = parentCategory.id
                     syncStatus = Status.COMPLETED
                 }
-                this.add(childEntity)
+                box.put(childEntity)
 
                 childEntity.parentCategory.target = box.get(parentCategory.id)
                 box.put(childEntity)
@@ -81,67 +93,35 @@ class CategoryLocalRepository @Inject constructor(
         return categories
     }
 
-    fun getParentCategories(type: TransactionType): List<CategoryEntity> {
-        val parents = box.query()
-            .equal(CategoryEntity_.type, TransactionTypeConverter().convertToDatabaseValue(type)!!)
-            .equal(CategoryEntity_.parentCategoryId, 0L)
+    fun getCategories(ids: List<Long>): Map<Long, CategoryEntity> {
+        return box.query()
+            .`in`(CategoryEntity_.id, ids.toLongArray())
             .build()
             .find()
-
-        Logger.Database.d("Fetched ${parents.size} parent categories of type $type")
-        return parents
+            .associateBy { it.id }
     }
 
-    fun getSubCategories(parentId: Long): List<CategoryEntity> {
-        val subs = box.query()
-            .equal(CategoryEntity_.parentCategoryId, parentId)
-            .build()
-            .find()
-
-        Logger.Database.d("Fetched ${subs.size} subcategories for parent id=$parentId")
-        return subs
-    }
-
-    /** Create category locally and queue for sync. Returns immediately with local entity. */
     fun createCategory(
         type: TransactionType,
         name: String,
         icon: String,
         parentCategoryId: Long? = null
     ): CategoryEntity {
-        val localId = localIdGenerator.nextLocalId()
-
-        val entity = CategoryEntity(
-            id = localId,
-            type = type,
-            name = name,
-            icon = icon,
-            readOnly = false,
-            parentCategoryId = parentCategoryId ?: 0L,
-            syncStatus = Status.PENDING
-        )
-
-        parentCategoryId?.let {
-            entity.parentCategory.targetId = it
-        }
-
-        box.put(entity)
-
-        queueCreate(
-            localEntityId = localId,
-            request = CategoryCreateRequest(
-                type = type.name,
+        return queueCreateEntity { localId ->
+            CategoryEntity(
+                id = localId,
+                type = type,
                 name = name,
                 icon = icon,
-                parentCategoryId = parentCategoryId
-            )
-        )
-
-        Logger.Database.i("Created local category: id=$localId, name=$name, type=$type")
-        return entity
+                readOnly = false,
+                parentCategoryId = parentCategoryId ?: 0L,
+                syncStatus = Status.PENDING
+            ).apply {
+                parentCategoryId?.let { this.parentCategory.targetId = it }
+            }
+        }
     }
 
-    /** Update category locally and queue for sync (only for server-synced entities). */
     fun updateCategory(
         id: Long,
         name: String? = null,
@@ -159,25 +139,9 @@ class CategoryLocalRepository @Inject constructor(
         name?.let { entity.name = it }
         icon?.let { entity.icon = it }
 
-        entity.syncStatus = Status.PENDING
-        box.put(entity)
-
-        // Only queue if server-synced (positive ID)
-        if (id > 0) {
-            queueUpdate(
-                entityId = id,
-                request = CategoryUpdateRequest(
-                    name = name,
-                    icon = icon
-                )
-            )
-        }
-
-        Logger.Database.i("Updated category: id=$id")
-        return entity
+        return queueUpdateEntity(entity)
     }
 
-    /** Delete category locally and queue for sync (server-synced) or remove immediately (local-only). */
     fun deleteCategory(id: Long): Boolean {
         val entity = box.get(id) ?: return false
 
@@ -187,6 +151,6 @@ class CategoryLocalRepository @Inject constructor(
             return false
         }
 
-        return deleteSyncAware(id)
+        return queueDeleteEntity(id)
     }
 }

@@ -1,6 +1,7 @@
 package com.itsjeel01.finsiblefrontend.ui.screen.newtransaction
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -9,13 +10,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -23,9 +25,12 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.itsjeel01.finsiblefrontend.R
@@ -48,14 +53,15 @@ fun Step3Category(
     onCategorySelected: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val options = TransactionType.toOrderedList()
-    val scrollState = rememberScrollState()
+    val options = remember { TransactionType.toOrderedList() }
+
+    val categoryList = remember(categories) { categories.toList() }
 
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d12)
     ) {
-        // Transaction type selector.
+        // Transaction type selector
         SingleChoiceSegmentedButtonRow(
             modifier = Modifier.fillMaxWidth(),
             space = FinsibleTheme.dimes.d8.inverted()
@@ -87,14 +93,15 @@ fun Step3Category(
             }
         }
 
-        // Category groups.
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .verticalScroll(scrollState),
-            verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d16)
+        LazyColumn(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d16),
+            contentPadding = PaddingValues(bottom = FinsibleTheme.dimes.d16)
         ) {
-            categories.forEach { (parentCat, subCats) ->
+            items(
+                items = categoryList,
+                key = { (parent, _) -> parent.id } // Optimization: Stable ID for smart updates
+            ) { (parentCat, subCats) ->
                 CategoryGroup(
                     parentCategory = parentCat,
                     subCategories = subCats,
@@ -110,9 +117,10 @@ fun Step3Category(
 /** ViewModel wrapper maintaining previous signature. */
 @Composable
 fun Step3Category(modifier: Modifier = Modifier, viewModel: NewTransactionViewModel) {
-    val transactionType = viewModel.transactionType.collectAsStateWithLifecycle().value
-    val categories = viewModel.categories.collectAsStateWithLifecycle().value
-    val transactionCategory = viewModel.transactionCategoryId.collectAsStateWithLifecycle().value
+    val transactionType by viewModel.transactionType.collectAsStateWithLifecycle()
+    val categories by viewModel.categories.collectAsStateWithLifecycle()
+    val transactionCategory by viewModel.transactionCategoryId.collectAsStateWithLifecycle()
+
     Step3Category(
         transactionType = transactionType,
         categories = categories,
@@ -136,7 +144,8 @@ private fun CategoryGroup(
         modifier = Modifier
             .fillMaxWidth()
             .background(FinsibleTheme.colors.surface, RoundedCornerShape(FinsibleTheme.dimes.d12))
-            .padding(FinsibleTheme.dimes.d16),
+            .padding(FinsibleTheme.dimes.d16)
+            .animateContentSize(),
         verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d12)
     ) {
         Text(
@@ -150,12 +159,14 @@ private fun CategoryGroup(
             verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d8)
         ) {
             subCategories.forEach { category ->
-                CategoryChip(
-                    category = category,
-                    isSelected = category.id == selectedCategoryId,
-                    accentColor = transactionType.getColor(),
-                    onSelected = { onCategorySelected(category.id) }
-                )
+                key(category.id) {
+                    CategoryChip(
+                        category = category,
+                        isSelected = category.id == selectedCategoryId,
+                        accentColor = transactionType.getColor(),
+                        onSelected = { onCategorySelected(category.id) }
+                    )
+                }
             }
         }
     }
@@ -166,7 +177,7 @@ private fun CategoryGroup(
 private fun CategoryChip(
     category: CategoryEntity,
     isSelected: Boolean,
-    accentColor: androidx.compose.ui.graphics.Color,
+    accentColor: Color,
     onSelected: () -> Unit
 ) {
     val borderColor by animateColorAsState(
@@ -211,6 +222,5 @@ private fun CategoryChip(
                 color = if (isSelected) FinsibleTheme.colors.primaryContent else FinsibleTheme.colors.primaryContent80
             )
         }
-
     }
 }

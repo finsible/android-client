@@ -13,6 +13,9 @@ import com.itsjeel01.finsiblefrontend.data.remote.model.AccountUpdateRequest
 import com.itsjeel01.finsiblefrontend.data.sync.LocalIdGenerator
 import io.objectbox.Box
 import io.objectbox.Property
+import io.objectbox.kotlin.flow
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class AccountLocalRepository @Inject constructor(
@@ -28,6 +31,31 @@ class AccountLocalRepository @Inject constructor(
     override val entityType: EntityType = EntityType.ACCOUNT
     override fun idProperty(): Property<AccountEntity> = AccountEntity_.id
     override fun syncStatusProperty(): Property<AccountEntity> = AccountEntity_.syncStatus
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun getAccountsFlow(): Flow<List<AccountEntity>> {
+        return box.query().build().flow()
+    }
+
+    override fun toCreateRequest(entity: AccountEntity) = AccountCreateRequest(
+        name = entity.name,
+        description = entity.description,
+        balance = entity.balance.toString(),
+        currencyCode = entity.currencyCode,
+        icon = entity.icon,
+        accountGroupId = entity.accountGroup.targetId,
+        isActive = entity.isActive
+    )
+
+    override fun toUpdateRequest(entity: AccountEntity) = AccountUpdateRequest(
+        name = entity.name,
+        description = entity.description,
+        balance = entity.balance.toString(),
+        currencyCode = entity.currencyCode,
+        icon = entity.icon,
+        accountGroupId = entity.accountGroup.targetId,
+        isActive = entity.isActive
+    )
 
     override fun addAll(
         data: List<Account>,
@@ -48,14 +76,12 @@ class AccountLocalRepository @Inject constructor(
         Logger.Database.d("Added ${entities.size} accounts to local DB")
     }
 
-    /** Get accounts for a specific account group. */
     fun getAccountsForGroup(groupId: Long): List<AccountEntity> {
         return box.all
             .filter { it.accountGroup.target?.id == groupId }
             .also { Logger.Database.d("Fetched ${it.size} accounts for group $groupId") }
     }
 
-    /** Get all active accounts. */
     fun getActiveAccounts(): List<AccountEntity> {
         return box.query()
             .equal(AccountEntity_.isActive, true)
@@ -64,7 +90,6 @@ class AccountLocalRepository @Inject constructor(
             .also { Logger.Database.d("Fetched ${it.size} active accounts") }
     }
 
-    /** Create account locally and queue for sync. Returns immediately with local entity. */
     fun createAccount(
         name: String,
         description: String,
@@ -74,44 +99,23 @@ class AccountLocalRepository @Inject constructor(
         accountGroupId: Long?,
         isActive: Boolean = true
     ): AccountEntity {
-        val localId = localIdGenerator.nextLocalId()
-
-        val entity = AccountEntity(
-            id = localId,
-            name = name,
-            description = description,
-            balance = android.icu.math.BigDecimal(balance),
-            currencyCode = currencyCode,
-            icon = icon,
-            isActive = isActive,
-            isSystemDefault = false,
-            syncStatus = Status.PENDING
-        )
-
-        accountGroupId?.let {
-            entity.accountGroup.targetId = it
-        }
-
-        box.put(entity)
-
-        queueCreate(
-            localEntityId = localId,
-            request = AccountCreateRequest(
+        return queueCreateEntity { localId ->
+            AccountEntity(
+                id = localId,
                 name = name,
                 description = description,
-                balance = balance,
+                balance = android.icu.math.BigDecimal(balance),
                 currencyCode = currencyCode,
                 icon = icon,
-                accountGroupId = accountGroupId,
-                isActive = isActive
-            )
-        )
-
-        Logger.Database.i("Created local account: id=$localId, name=$name")
-        return entity
+                isActive = isActive,
+                isSystemDefault = false,
+                syncStatus = Status.PENDING
+            ).apply {
+                accountGroupId?.let { accountGroup.targetId = it }
+            }
+        }
     }
 
-    /** Update account locally and queue for sync (only for server-synced entities). */
     fun updateAccount(
         id: Long,
         name: String? = null,
@@ -124,7 +128,6 @@ class AccountLocalRepository @Inject constructor(
     ): AccountEntity? {
         val entity = box.get(id) ?: return null
 
-        // Apply updates
         name?.let { entity.name = it }
         description?.let { entity.description = it }
         balance?.let { entity.balance = android.icu.math.BigDecimal(it) }
@@ -133,29 +136,8 @@ class AccountLocalRepository @Inject constructor(
         accountGroupId?.let { entity.accountGroup.targetId = it }
         isActive?.let { entity.isActive = it }
 
-        entity.syncStatus = Status.PENDING
-        box.put(entity)
-
-        // Only queue if server-synced (positive ID)
-        if (id > 0) {
-            queueUpdate(
-                entityId = id,
-                request = AccountUpdateRequest(
-                    name = name,
-                    description = description,
-                    balance = balance,
-                    currencyCode = currencyCode,
-                    icon = icon,
-                    accountGroupId = accountGroupId,
-                    isActive = isActive
-                )
-            )
-        }
-
-        Logger.Database.i("Updated account: id=$id")
-        return entity
+        return queueUpdateEntity(entity)
     }
 
-    /** Delete account locally and queue for sync (server-synced) or remove immediately (local-only). */
-    fun deleteAccount(id: Long): Boolean = deleteSyncAware(id)
+    fun deleteAccount(id: Long): Boolean = queueDeleteEntity(id)
 }

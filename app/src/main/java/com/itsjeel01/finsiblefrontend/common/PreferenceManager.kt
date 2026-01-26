@@ -19,6 +19,7 @@ class PreferenceManager @Inject constructor(context: Context) {
         private const val KEY_SYNC_ENABLED = "sync_enabled"
         private const val KEY_BACKUP_ENABLED = "backup_enabled"
         private const val KEY_WIFI_ONLY_SYNC = "wifi_only_sync"
+        private const val KEY_CURRENCY = "currency"
         private const val PREFS_FILE_NAME = "secret_shared_prefs"
     }
 
@@ -92,4 +93,17 @@ class PreferenceManager @Inject constructor(context: Context) {
     fun getUserId(): String? = sharedPreferences.getString(KEY_USER_ID, null)
     fun getEmail(): String? = sharedPreferences.getString(KEY_USER_EMAIL, null)
     fun getName(): String? = sharedPreferences.getString(KEY_USER_NAME, null)
+
+    fun getCurrency(): Currency {
+        val currencyName = sharedPreferences.getString(KEY_CURRENCY, Currency.INR.name)
+        return try {
+            Currency.valueOf(currencyName ?: Currency.INR.name)
+        } catch (_: IllegalArgumentException) {
+            Currency.INR
+        }
+    }
+
+    fun setCurrency(currency: Currency) {
+        sharedPreferences.edit { putString(KEY_CURRENCY, currency.name) }
+    }
 }

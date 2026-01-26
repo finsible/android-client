@@ -253,7 +253,7 @@
     },
     {
       "id": "6:6297331166862476803",
-      "lastPropertyId": "18:4042880049046244444",
+      "lastPropertyId": "21:3722423812120378061",
       "name": "TransactionEntity",
       "properties": [
         {
@@ -351,6 +351,21 @@
         {
           "id": "18:4042880049046244444",
           "name": "paidByUserName",
+          "type": 9
+        },
+        {
+          "id": "19:5632570290119854791",
+          "name": "fromAccountName",
+          "type": 9
+        },
+        {
+          "id": "20:4973124976255063115",
+          "name": "toAccountName",
+          "type": 9
+        },
+        {
+          "id": "21:3722423812120378061",
+          "name": "categoryIcon",
           "type": 9
         }
       ],

@@ -20,7 +20,7 @@ sealed interface Route : NavKey {
         data object Dashboard : Route
 
         @Serializable
-        data object Analytics : Route
+        data object Accounts : Route
 
         @Serializable
         data object NewTransaction : Route {
@@ -41,13 +41,7 @@ sealed interface Route : NavKey {
         }
 
         @Serializable
-        data object Balance : Route {
-            @Serializable
-            data object Accounts : Route
-
-            @Serializable
-            data object Transactions : Route
-        }
+        data object Transactions : Route
 
         @Serializable
         data object Settings : Route

@@ -13,6 +13,9 @@ import com.itsjeel01.finsiblefrontend.data.remote.model.AccountGroupUpdateReques
 import com.itsjeel01.finsiblefrontend.data.sync.LocalIdGenerator
 import io.objectbox.Box
 import io.objectbox.Property
+import io.objectbox.kotlin.flow
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class AccountGroupLocalRepository @Inject constructor(
@@ -28,6 +31,25 @@ class AccountGroupLocalRepository @Inject constructor(
     override val entityType: EntityType = EntityType.ACCOUNT_GROUP
     override fun idProperty(): Property<AccountGroupEntity> = AccountGroupEntity_.id
     override fun syncStatusProperty(): Property<AccountGroupEntity> = AccountGroupEntity_.syncStatus
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun getAccountGroupsFlow(): Flow<List<AccountGroupEntity>> {
+        return box.query().build().flow()
+    }
+
+    override fun toCreateRequest(entity: AccountGroupEntity) = AccountGroupCreateRequest(
+        name = entity.name,
+        description = entity.description,
+        icon = entity.icon,
+        color = entity.color
+    )
+
+    override fun toUpdateRequest(entity: AccountGroupEntity) = AccountGroupUpdateRequest(
+        name = entity.name,
+        description = entity.description,
+        icon = entity.icon,
+        color = entity.color
+    )
 
     override fun addAll(
         data: List<AccountGroup>,
@@ -45,42 +67,25 @@ class AccountGroupLocalRepository @Inject constructor(
         Logger.Database.d("Added ${entities.size} account groups to local DB")
     }
 
-    /** Create account group locally and queue for sync. Returns immediately with local entity. */
     fun createAccountGroup(
         name: String,
         description: String,
         icon: String,
         color: String
     ): AccountGroupEntity {
-        val localId = localIdGenerator.nextLocalId()
-
-        val entity = AccountGroupEntity(
-            id = localId,
-            name = name,
-            description = description,
-            icon = icon,
-            color = color,
-            isSystemDefault = false,
-            syncStatus = Status.PENDING
-        )
-
-        box.put(entity)
-
-        queueCreate(
-            localEntityId = localId,
-            request = AccountGroupCreateRequest(
+        return queueCreateEntity { localId ->
+            AccountGroupEntity(
+                id = localId,
                 name = name,
                 description = description,
                 icon = icon,
-                color = color
+                color = color,
+                isSystemDefault = false,
+                syncStatus = Status.PENDING
             )
-        )
-
-        Logger.Database.i("Created local account group: id=$localId, name=$name")
-        return entity
+        }
     }
 
-    /** Update account group locally and queue for sync (only for server-synced entities). */
     fun updateAccountGroup(
         id: Long,
         name: String? = null,
@@ -96,26 +101,8 @@ class AccountGroupLocalRepository @Inject constructor(
         icon?.let { entity.icon = it }
         color?.let { entity.color = it }
 
-        entity.syncStatus = Status.PENDING
-        box.put(entity)
-
-        // Only queue if server-synced (positive ID)
-        if (id > 0) {
-            queueUpdate(
-                entityId = id,
-                request = AccountGroupUpdateRequest(
-                    name = name,
-                    description = description,
-                    icon = icon,
-                    color = color
-                )
-            )
-        }
-
-        Logger.Database.i("Updated account group: id=$id")
-        return entity
+        return queueUpdateEntity(entity)
     }
 
-    /** Delete account group locally and queue for sync (server-synced) or remove immediately (local-only). */
-    fun deleteAccountGroup(id: Long): Boolean = deleteSyncAware(id)
+    fun deleteAccountGroup(id: Long): Boolean = queueDeleteEntity(id)
 }

@@ -1,7 +1,9 @@
 package com.itsjeel01.finsiblefrontend.data.local.repository
 
+import com.itsjeel01.finsiblefrontend.common.Currency
 import com.itsjeel01.finsiblefrontend.common.Status
 import com.itsjeel01.finsiblefrontend.common.TransactionType
+import com.itsjeel01.finsiblefrontend.data.local.entity.CategoryEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.PendingOperationEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.TransactionEntity
 import com.itsjeel01.finsiblefrontend.data.model.Transaction
@@ -22,6 +24,7 @@ class TransactionLocalRepositoryTest {
     private lateinit var mockTransactionBox: Box<TransactionEntity>
     private lateinit var mockPendingOperationBox: Box<PendingOperationEntity>
     private lateinit var mockLocalIdGenerator: LocalIdGenerator
+    private lateinit var mockCategoryLocalRepository: CategoryLocalRepository
     private lateinit var repository: TransactionLocalRepository
 
     @Before
@@ -29,10 +32,15 @@ class TransactionLocalRepositoryTest {
         mockTransactionBox = mockk(relaxed = true)
         mockPendingOperationBox = mockk(relaxed = true)
         mockLocalIdGenerator = mockk(relaxed = true)
+        mockCategoryLocalRepository = mockk(relaxed = true)
+
+        every { mockCategoryLocalRepository.getCategories(any<List<Long>>()) } returns emptyMap<Long, CategoryEntity>()
+
         repository = TransactionLocalRepository(
             mockTransactionBox,
             mockPendingOperationBox,
-            mockLocalIdGenerator
+            mockLocalIdGenerator,
+            mockCategoryLocalRepository
         )
     }
 
@@ -180,7 +188,7 @@ class TransactionLocalRepositoryTest {
             transactionDate = "1735689600000",
             categoryId = 1L,
             categoryName = "Transfer",
-            currency = "INR",
+            currency = Currency.INR,
             fromAccountId = 10L,
             toAccountId = 20L,
             description = null,
@@ -204,7 +212,7 @@ class TransactionLocalRepositoryTest {
         transactionDate: String = "1735689600000",
         categoryId: Long = 1L,
         categoryName: String = "Test",
-        currency: String = "INR"
+        currency: Currency = Currency.INR
     ) = Transaction(
         id = id,
         type = type,
@@ -230,7 +238,7 @@ class TransactionLocalRepositoryTest {
         transactionDate: Long = System.currentTimeMillis(),
         categoryId: Long = 1L,
         categoryName: String = "Test",
-        currency: String = "INR",
+        currency: Currency = Currency.INR,
         fromAccountId: Long? = null,
         toAccountId: Long? = null,
         syncStatus: Status = Status.COMPLETED

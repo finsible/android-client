@@ -107,7 +107,7 @@ fun FinsibleIconButton(
                 modifier = Modifier
                     .size(config.size.iconSize + 2 * config.size.iconButtonPadding)
                     .padding(config.size.iconButtonPadding),
-                tint = if (config.tintIcon) config.contentColor() else Color.Unspecified
+                tint = config.customTint ?: if (config.tintIcon) config.contentColor() else Color.Unspecified
             )
         }
     }
@@ -120,6 +120,7 @@ data class IconButtonConfig(
     val enabled: Boolean = true,
     val loading: Boolean = false,
     val tintIcon: Boolean = true,
+    val customTint: Color? = null,
     val customShape: Shape? = null
 ) {
     @Composable

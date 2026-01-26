@@ -4,14 +4,11 @@ import com.itsjeel01.finsiblefrontend.common.EntityType
 import com.itsjeel01.finsiblefrontend.common.OperationType
 import com.itsjeel01.finsiblefrontend.common.Status
 import com.itsjeel01.finsiblefrontend.common.logging.Logger
-import com.itsjeel01.finsiblefrontend.data.local.StatusConverter
 import com.itsjeel01.finsiblefrontend.data.local.entity.BaseEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.PendingOperationEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.SyncableEntity
 import com.itsjeel01.finsiblefrontend.data.sync.LocalIdGenerator
 import io.objectbox.Box
-import io.objectbox.kotlin.equal
-import io.objectbox.query.QueryBuilder
 import kotlinx.serialization.json.Json
 
 abstract class SyncableLocalRepository<DTO, Entity>(
@@ -23,25 +20,99 @@ abstract class SyncableLocalRepository<DTO, Entity>(
 
     protected abstract val entityType: EntityType
 
-    fun getPendingEntities(): List<Entity> {
-        return box.query()
-            .equal(syncStatusProperty(), StatusConverter().convertToDatabaseValue(Status.PENDING)!!)
-            .build()
-            .find()
+    /** Convert entity to CREATE request for serialization. */
+    protected abstract fun toCreateRequest(entity: Entity): Any
+
+    /** Convert entity to UPDATE request for serialization. */
+    protected abstract fun toUpdateRequest(entity: Entity): Any
+
+    /**
+     * Create entity locally and queue for sync. Returns entity with assigned local ID.
+     *
+     * @param entityFactory Function that creates entity with provided local ID
+     * @return Created entity with local ID and Status.PENDING
+     */
+    fun queueCreateEntity(entityFactory: (localId: Long) -> Entity): Entity {
+        val localId = localIdGenerator.nextLocalId()
+        val entity = entityFactory(localId).apply {
+            syncStatus = Status.PENDING
+        }
+
+        box.put(entity)
+
+        val request = toCreateRequest(entity)
+        queueOperation(
+            operationType = OperationType.CREATE,
+            localEntityId = localId,
+            payload = Json.encodeToString(request)
+        )
+
+        Logger.Database.i("Created local ${entityType.name}: id=$localId")
+        return entity
     }
 
-    fun getFailedEntities(): List<Entity> {
-        return box.query()
-            .equal(syncStatusProperty(), StatusConverter().convertToDatabaseValue(Status.FAILED)!!)
-            .build()
-            .find()
+    /**
+     * Update entity locally and queue for sync (only for server-synced entities with positive ID).
+     *
+     * @param entity Entity to update (must have positive ID for sync queueing)
+     * @return Updated entity or null if not found
+     */
+    fun queueUpdateEntity(entity: Entity): Entity {
+        if (entity.id <= 0) {
+            // Local-only: just update, don't queue
+            box.put(entity.apply { syncStatus = Status.PENDING })
+            Logger.Database.i("Updated local-only ${entityType.name}: id=${entity.id}")
+            return entity
+        }
+
+        // Server-synced: queue update
+        entity.syncStatus = Status.PENDING
+        box.put(entity)
+
+        val request = toUpdateRequest(entity)
+        queueOperation(
+            operationType = OperationType.UPDATE,
+            entityId = entity.id,
+            payload = Json.encodeToString(request)
+        )
+
+        Logger.Database.i("Updated ${entityType.name}: id=${entity.id}")
+        return entity
     }
 
-    fun getLocalOnlyEntities(): List<Entity> {
-        return box.query()
-            .less(idProperty(), 0)
-            .build()
-            .find()
+    /**
+     * Delete entity with sync-aware logic.
+     * - Local-only (negative ID): remove immediately + clear pending CREATE ops
+     * - Server-synced (positive ID): queue DELETE operation
+     *
+     * @param id Entity ID to delete
+     * @return true if deleted/queued, false if not found
+     */
+    fun queueDeleteEntity(id: Long): Boolean {
+        val entity = box.get(id) ?: return false
+
+        // Local-only: remove immediately
+        if (id < 0) {
+            box.remove(id)
+            // Clear any pending CREATE operation for this local ID
+            val pendingOps = pendingOperationBox.all.filter { it.localEntityId == id }
+            pendingOps.forEach { pendingOperationBox.remove(it) }
+            Logger.Database.i("Deleted local-only ${entityType.name}: id=$id")
+            return true
+        }
+
+        // Server-synced: queue delete operation
+        queueOperation(
+            operationType = OperationType.DELETE,
+            entityId = id
+        )
+
+        // Optionally mark as pending-delete
+        entity.syncStatus = Status.PENDING
+        box.put(entity)
+
+        Logger.Database.i("Queued ${entityType.name} deletion: id=$id")
+        return true
     }
 
     fun updateSyncStatus(id: Long, status: Status, error: String? = null) {
@@ -70,38 +141,6 @@ abstract class SyncableLocalRepository<DTO, Entity>(
         Logger.Database.i("Remapped ${entityType.name} ID: $oldId → $newId")
     }
 
-    protected fun queueCreateOperation(localEntityId: Long, payload: String) {
-        queueOperation(
-            operationType = OperationType.CREATE,
-            localEntityId = localEntityId,
-            payload = payload
-        )
-    }
-
-    /** Queue CREATE operation with automatic JSON serialization. */
-    protected inline fun <reified T> queueCreate(localEntityId: Long, request: T) {
-        queueCreateOperation(localEntityId, Json.encodeToString(request))
-    }
-
-    protected fun queueUpdateOperation(entityId: Long, payload: String) {
-        queueOperation(
-            operationType = OperationType.UPDATE,
-            entityId = entityId,
-            payload = payload
-        )
-    }
-
-    /** Queue UPDATE operation with automatic JSON serialization. */
-    protected inline fun <reified T> queueUpdate(entityId: Long, request: T) {
-        queueUpdateOperation(entityId, Json.encodeToString(request))
-    }
-
-    protected fun queueDeleteOperation(entityId: Long) {
-        queueOperation(
-            operationType = OperationType.DELETE,
-            entityId = entityId
-        )
-    }
 
     private fun queueOperation(
         operationType: OperationType,
@@ -136,54 +175,6 @@ abstract class SyncableLocalRepository<DTO, Entity>(
     fun clearAll() {
         box.removeAll()
         Logger.Database.i("Cleared all ${entityType.name} data")
-    }
-
-    protected fun replaceMatching(
-        queryBuilder: QueryBuilder<Entity>,
-        newEntities: List<Entity>
-    ) {
-        // Get all matching entities
-        val matchingEntities = queryBuilder.build().find()
-
-        // Remove only non-pending entities
-        matchingEntities.forEach { entity ->
-            if (entity.syncStatus != Status.PENDING) {
-                box.remove(entity.id)
-            }
-        }
-
-        box.put(newEntities)
-
-        Logger.Database.i("Replaced ${newEntities.size} ${entityType.name} entities")
-    }
-
-    /**
-     * Delete an entity with sync-aware logic:
-     * - Local-only (negative ID): remove immediately + clear pending CREATE ops
-     * - Server-synced (positive ID): queue DELETE operation
-     */
-    protected fun deleteSyncAware(id: Long): Boolean {
-        val entity = box.get(id) ?: return false
-
-        // Local-only: remove immediately
-        if (id < 0) {
-            box.remove(id)
-            // Clear any pending CREATE operation for this local ID
-            val pendingOps = pendingOperationBox.all.filter { it.localEntityId == id }
-            pendingOps.forEach { pendingOperationBox.remove(it) }
-            Logger.Database.i("Deleted local-only ${entityType.name}: id=$id")
-            return true
-        }
-
-        // Server-synced: queue delete operation
-        queueDeleteOperation(id)
-
-        // Optionally mark as pending-delete
-        entity.syncStatus = Status.PENDING
-        box.put(entity)
-
-        Logger.Database.i("Queued ${entityType.name} deletion: id=$id")
-        return true
     }
 
     /** Property ID for the entity's ID field (for ObjectBox queries). */

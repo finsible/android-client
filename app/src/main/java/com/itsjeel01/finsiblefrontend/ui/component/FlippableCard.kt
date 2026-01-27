@@ -43,11 +43,12 @@ import com.itsjeel01.finsiblefrontend.ui.theme.bold
 import com.itsjeel01.finsiblefrontend.ui.theme.extraBold
 import com.itsjeel01.finsiblefrontend.ui.theme.medium
 import com.itsjeel01.finsiblefrontend.ui.theme.semiBold
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 
 @Composable
 fun FlippableCard(
-    items: List<FlippableCardData>,
+    items: ImmutableList<FlippableCardData>,
     gradients: List<Brush>,
     modifier: Modifier = Modifier
 ) {
@@ -149,7 +150,7 @@ fun FlippableCard(
 private fun CardFace(
     title: String,
     largeText: String,
-    statistics: List<StatisticsModel>,
+    statistics: ImmutableList<StatisticsModel>,
     gradientBrush: Brush,
     onRotateClick: () -> Unit
 ) {

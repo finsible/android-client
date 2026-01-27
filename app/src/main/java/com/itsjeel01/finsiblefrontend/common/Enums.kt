@@ -1,6 +1,7 @@
 package com.itsjeel01.finsiblefrontend.common
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
@@ -39,9 +40,15 @@ enum class TransactionRecurringFrequency(val displayText: String) {
     }
 }
 
+@Immutable
 sealed class SyncState {
+    @Immutable
     data object Idle : SyncState()
+
+    @Immutable
     data class Syncing(val remaining: Int) : SyncState()
+
+    @Immutable
     data class Error(val message: String) : SyncState()
 }
 

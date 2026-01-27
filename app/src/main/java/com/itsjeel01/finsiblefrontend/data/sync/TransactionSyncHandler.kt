@@ -103,13 +103,4 @@ class TransactionSyncHandler @Inject constructor(
             }
         }
     }
-
-    private fun handleHttpException(e: HttpException): SyncException {
-        return when (e.code()) {
-            401 -> SyncException.unauthorized()
-            404 -> SyncException.notFound()
-            409 -> SyncException.conflict("Server has conflicting changes")
-            else -> SyncException.serverError(e.code(), e.message())
-        }
-    }
 }

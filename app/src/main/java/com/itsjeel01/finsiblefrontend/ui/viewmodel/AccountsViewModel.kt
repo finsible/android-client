@@ -1,7 +1,6 @@
 package com.itsjeel01.finsiblefrontend.ui.viewmodel
 
 import android.icu.math.BigDecimal
-import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.itsjeel01.finsiblefrontend.common.CurrencyFormatter
@@ -11,9 +10,13 @@ import com.itsjeel01.finsiblefrontend.data.local.entity.AccountEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.AccountGroupEntity
 import com.itsjeel01.finsiblefrontend.data.local.repository.AccountGroupLocalRepository
 import com.itsjeel01.finsiblefrontend.data.local.repository.AccountLocalRepository
+import com.itsjeel01.finsiblefrontend.ui.model.AccountListItem
+import com.itsjeel01.finsiblefrontend.ui.model.AccountUiModel
+import com.itsjeel01.finsiblefrontend.ui.model.AccountsUiState
 import com.itsjeel01.finsiblefrontend.ui.model.FlippableCardData
 import com.itsjeel01.finsiblefrontend.ui.model.StatisticsModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -120,9 +123,9 @@ class AccountsViewModel @Inject constructor(
             }
 
         return AccountsUiState(
-            accountCards = cards,
-            listItems = listItems,
-            accountGroups = groups,
+            accountCards = cards.toPersistentList(),
+            listItems = listItems.toPersistentList(),
+            accountGroups = groups.toPersistentList(),
             selectedGroupId = selectedGroupId,
             isLoading = false
         )
@@ -148,19 +151,19 @@ class AccountsViewModel @Inject constructor(
         statistics = listOf(
             StatisticsModel("Assets", assets.toCompactCurrency(currencyFormatter)),
             StatisticsModel("Liabilities", liabilities.toCompactCurrency(currencyFormatter))
-        )
+        ).toPersistentList()
     )
 
     private fun createAssetsCard(totalAssets: BigDecimal, statistics: List<StatisticsModel>) = FlippableCardData(
         title = "Total Assets",
         largeText = totalAssets.toFormattedCurrency(currencyFormatter),
-        statistics = statistics
+        statistics = statistics.toPersistentList()
     )
 
     private fun createLiabilitiesCard(totalLiabilities: BigDecimal, statistics: List<StatisticsModel>) = FlippableCardData(
         title = "Total Liabilities",
         largeText = totalLiabilities.toFormattedCurrency(currencyFormatter),
-        statistics = statistics
+        statistics = statistics.toPersistentList()
     )
 
     private fun buildGroupedStatistics(
@@ -204,28 +207,3 @@ class AccountsViewModel @Inject constructor(
         fold(BigDecimal.ZERO) { acc, account -> acc.add(selector(account)) }
 }
 
-/** Stable UI Model for optimal composition */
-@Immutable
-data class AccountUiModel(
-    val id: Long,
-    val name: String,
-    val description: String,
-    val icon: String,
-    val formattedBalance: String,
-    val groupColor: String?,
-    val isPositiveBalance: Boolean
-)
-
-/** UI State for accounts tab */
-data class AccountsUiState(
-    val accountCards: List<FlippableCardData> = emptyList(),
-    val listItems: List<AccountListItem> = emptyList(),
-    val accountGroups: List<AccountGroupEntity> = emptyList(),
-    val selectedGroupId: Long? = null,
-    val isLoading: Boolean = false
-)
-
-sealed interface AccountListItem {
-    data class Header(val groupName: String) : AccountListItem
-    data class Account(val uiModel: AccountUiModel) : AccountListItem
-}

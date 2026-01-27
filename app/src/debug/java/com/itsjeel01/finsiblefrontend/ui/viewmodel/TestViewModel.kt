@@ -1,5 +1,6 @@
 package com.itsjeel01.finsiblefrontend.ui.viewmodel
 
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.itsjeel01.finsiblefrontend.common.PreferenceManager
@@ -225,10 +226,18 @@ class TestViewModel @Inject constructor(
     }
 }
 
+@Immutable
 sealed class OperationStatus {
+    @Immutable
     data object Idle : OperationStatus()
+
+    @Immutable
     data class Loading(val message: String) : OperationStatus()
+
+    @Immutable
     data class Success(val message: String) : OperationStatus()
+
+    @Immutable
     data class Error(val message: String) : OperationStatus()
 }
 

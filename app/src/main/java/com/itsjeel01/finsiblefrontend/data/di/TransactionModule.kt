@@ -15,23 +15,23 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class TransactionModule {
+object TransactionModule {
     @Provides
     @Singleton
-    fun provideTransactionBox(store: BoxStore): Box<TransactionEntity> {
+    fun transactionEntityBox(store: BoxStore): Box<TransactionEntity> {
         return store.boxFor(TransactionEntity::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideTransactionLocalRepository(
-        transactionBox: Box<TransactionEntity>,
+    fun transactionLocalRepository(
+        transactionEntityBox: Box<TransactionEntity>,
         pendingOperationBox: Box<PendingOperationEntity>,
         localIdGenerator: LocalIdGenerator,
         categoryLocalRepository: CategoryLocalRepository
     ): TransactionLocalRepository {
         return TransactionLocalRepository(
-            transactionBox,
+            transactionEntityBox,
             pendingOperationBox,
             localIdGenerator,
             categoryLocalRepository

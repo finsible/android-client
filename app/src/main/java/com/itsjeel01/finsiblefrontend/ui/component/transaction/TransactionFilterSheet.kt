@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.ui.component
+package com.itsjeel01.finsiblefrontend.ui.component.transaction
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -80,6 +80,7 @@ import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.bold
 import com.itsjeel01.finsiblefrontend.ui.theme.medium
 import com.itsjeel01.finsiblefrontend.ui.theme.semiBold
+import java.text.DecimalFormatSymbols
 import java.util.Calendar
 
 private const val ALL_MONTHS = -1
@@ -758,7 +759,7 @@ private fun AmountSection(
 
 /** Strip non-decimal characters and prevent multiple decimal points. Supports locale-aware decimal separators. */
 private fun sanitizeDecimalInput(input: String): String {
-    val decimalSeparator = java.text.DecimalFormatSymbols.getInstance().decimalSeparator
+    val decimalSeparator = DecimalFormatSymbols.getInstance().decimalSeparator
     var hasDecimal = false
     return input.filter { c ->
         when {

@@ -1,5 +1,6 @@
 package com.itsjeel01.finsiblefrontend.ui.viewmodel
 
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.itsjeel01.finsiblefrontend.common.CurrencyFormatter
@@ -7,14 +8,13 @@ import com.itsjeel01.finsiblefrontend.common.logging.Logger
 import com.itsjeel01.finsiblefrontend.data.local.entity.TransactionEntity
 import com.itsjeel01.finsiblefrontend.data.local.repository.TransactionLocalRepository
 import com.itsjeel01.finsiblefrontend.ui.mapper.toUiModel
-import com.itsjeel01.finsiblefrontend.ui.model.DateAggregates
-import com.itsjeel01.finsiblefrontend.ui.model.DateFilterMode
-import com.itsjeel01.finsiblefrontend.ui.model.TransactionListState
 import com.itsjeel01.finsiblefrontend.ui.model.TransactionUiModel
 import com.itsjeel01.finsiblefrontend.ui.util.DateUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.collections.immutable.toPersistentMap
 import kotlinx.coroutines.Dispatchers
@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.math.BigDecimal
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -185,3 +186,51 @@ class TransactionsViewModel @Inject constructor(
         return DateUtils.formatDateHeader(timestamp)
     }
 }
+
+/** Filter mode for transaction date groups. */
+enum class DateFilterMode {
+    NET,
+    INCOME,
+    EXPENSE
+}
+
+/** Aggregate financial data for a specific date. */
+@Immutable
+data class DateAggregates(
+    val dateHeader: String,
+    val startOfDayMs: Long,
+    val endOfDayMs: Long,
+    val incomeSum: BigDecimal,
+    val expenseSum: BigDecimal,
+    val netSum: BigDecimal,
+    val transactionCount: Long
+) {
+    companion object {
+        /** Create DateAggregates with zero values. */
+        fun zero(dateHeader: String, startOfDayMs: Long, endOfDayMs: Long): DateAggregates {
+            return DateAggregates(
+                dateHeader = dateHeader,
+                startOfDayMs = startOfDayMs,
+                endOfDayMs = endOfDayMs,
+                incomeSum = BigDecimal.ZERO,
+                expenseSum = BigDecimal.ZERO,
+                netSum = BigDecimal.ZERO,
+                transactionCount = 0
+            )
+        }
+    }
+}
+
+/** UI state for lazy-loaded transaction list with day-based pagination. Immutable for Compose optimization. */
+@Immutable
+data class TransactionListState(
+    val transactions: ImmutableList<TransactionUiModel> = persistentListOf(),
+    val isLoading: Boolean = false,
+    val isLoadingMore: Boolean = false,
+    val hasMoreData: Boolean = true,
+    val error: String? = null,
+    val dateFilterModes: ImmutableMap<String, DateFilterMode> = persistentMapOf(),
+    val dateAggregates: ImmutableMap<String, DateAggregates> = persistentMapOf(),
+    val groupedTransactions: ImmutableMap<String, ImmutableList<TransactionUiModel>> = persistentMapOf(),
+    val loadedDatesCount: Int = 0
+)

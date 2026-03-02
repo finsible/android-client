@@ -42,7 +42,7 @@ import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.data.local.entity.AccountGroupEntity
 import com.itsjeel01.finsiblefrontend.ui.component.FlippableCard
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
-import com.itsjeel01.finsiblefrontend.ui.model.AccountListItem
+import com.itsjeel01.finsiblefrontend.ui.viewmodel.AccountListItem
 import com.itsjeel01.finsiblefrontend.ui.model.AccountUiModel
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleGradients
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme

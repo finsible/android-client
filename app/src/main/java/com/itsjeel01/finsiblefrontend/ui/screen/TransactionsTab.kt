@@ -43,8 +43,8 @@ import com.itsjeel01.finsiblefrontend.common.TransactionType
 import com.itsjeel01.finsiblefrontend.common.toAmountOnly
 import com.itsjeel01.finsiblefrontend.data.di.hiltCurrencyFormatter
 import com.itsjeel01.finsiblefrontend.ui.component.TransactionListItem
-import com.itsjeel01.finsiblefrontend.ui.model.DateAggregates
-import com.itsjeel01.finsiblefrontend.ui.model.DateFilterMode
+import com.itsjeel01.finsiblefrontend.ui.viewmodel.DateAggregates
+import com.itsjeel01.finsiblefrontend.ui.viewmodel.DateFilterMode
 import com.itsjeel01.finsiblefrontend.ui.model.TransactionUiModel
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.expanded

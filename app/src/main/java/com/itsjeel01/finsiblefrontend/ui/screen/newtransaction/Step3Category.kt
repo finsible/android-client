@@ -32,7 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.TransactionType
 import com.itsjeel01.finsiblefrontend.data.local.entity.CategoryEntity
@@ -41,7 +40,6 @@ import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.extraBold
 import com.itsjeel01.finsiblefrontend.ui.theme.medium
 import com.itsjeel01.finsiblefrontend.ui.util.resolveIcon
-import com.itsjeel01.finsiblefrontend.ui.viewmodel.NewTransactionViewModel
 
 /** Stateless category selection step with hoisted state. */
 @Composable
@@ -112,23 +110,6 @@ fun Step3Category(
             }
         }
     }
-}
-
-/** ViewModel wrapper maintaining previous signature. */
-@Composable
-fun Step3Category(modifier: Modifier = Modifier, viewModel: NewTransactionViewModel) {
-    val transactionType by viewModel.transactionType.collectAsStateWithLifecycle()
-    val categories by viewModel.categories.collectAsStateWithLifecycle()
-    val transactionCategory by viewModel.transactionCategoryId.collectAsStateWithLifecycle()
-
-    Step3Category(
-        transactionType = transactionType,
-        categories = categories,
-        selectedCategoryId = transactionCategory,
-        onTransactionTypeChange = { viewModel.setTransactionType(it) },
-        onCategorySelected = { viewModel.setTransactionCategoryId(it) },
-        modifier = modifier
-    )
 }
 
 /** Category group with parent title and subcategory chips. */

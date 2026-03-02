@@ -34,10 +34,10 @@ import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleIconButton
 import com.itsjeel01.finsiblefrontend.ui.component.fin.IconButtonConfig
 import com.itsjeel01.finsiblefrontend.ui.component.fin.IconButtonShape
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
+import com.itsjeel01.finsiblefrontend.ui.screen.newtransaction.AccountSelector
 import com.itsjeel01.finsiblefrontend.ui.screen.newtransaction.Step1Amount
 import com.itsjeel01.finsiblefrontend.ui.screen.newtransaction.Step2Date
 import com.itsjeel01.finsiblefrontend.ui.screen.newtransaction.Step3Category
-import com.itsjeel01.finsiblefrontend.ui.screen.newtransaction.Step4Accounts
 import com.itsjeel01.finsiblefrontend.ui.screen.newtransaction.Step5Description
 import com.itsjeel01.finsiblefrontend.ui.screen.newtransaction.StepControlButtons
 import com.itsjeel01.finsiblefrontend.ui.screen.newtransaction.StepTitle
@@ -58,6 +58,10 @@ fun NavigationNewTransaction(
         )
     }
     val stepIndex = navState.currentStepIndex
+
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val categories by viewModel.categories.collectAsStateWithLifecycle()
+    val availableToAccounts by viewModel.availableToAccounts.collectAsStateWithLifecycle()
 
     val animDuration = Duration.MS_400.toInt()
     val emphasizedEasing = CubicBezierEasing(0.2f, 0.0f, 0f, 1.0f)
@@ -107,32 +111,51 @@ fun NavigationNewTransaction(
                         entryProvider {
                             entry<Route.Home.NewTransaction.Amount> {
                                 Step1Amount(
-                                    modifier = Modifier.fillMaxSize(),
+                                    amount = uiState.amountString,
+                                    onAmountChange = { input ->
+                                        viewModel.setTransactionAmountString(viewModel.validateAmount(input))
+                                    },
                                     focusRequester = focusRequester,
-                                    viewModel = viewModel
+                                    modifier = Modifier.fillMaxSize(),
                                 )
                             }
                             entry<Route.Home.NewTransaction.Date> {
                                 Step2Date(
+                                    dateMillis = uiState.date,
+                                    isRecurring = uiState.isRecurring,
+                                    recurringFrequency = uiState.recurringFrequency,
+                                    onDateChange = { viewModel.setTransactionDate(it) },
+                                    onIsRecurringChange = { viewModel.setIsRecurring(it) },
+                                    onRecurringFrequencyChange = { viewModel.setRecurringFrequency(it) },
                                     modifier = Modifier.fillMaxSize(),
-                                    viewModel = viewModel
                                 )
                             }
                             entry<Route.Home.NewTransaction.Category> {
                                 Step3Category(
+                                    transactionType = uiState.type,
+                                    categories = categories,
+                                    selectedCategoryId = uiState.categoryId,
+                                    onTransactionTypeChange = { viewModel.setTransactionType(it) },
+                                    onCategorySelected = { viewModel.setTransactionCategoryId(it) },
                                     modifier = Modifier.fillMaxSize(),
-                                    viewModel = viewModel
                                 )
                             }
                             entry<Route.Home.NewTransaction.TransactionAccounts> {
-                                Step4Accounts(
-                                    viewModel = viewModel
+                                AccountSelector(
+                                    transactionType = uiState.type,
+                                    fromAccountsOptions = uiState.accounts,
+                                    toAccountsOptions = availableToAccounts,
+                                    fromAccountId = uiState.fromAccountId,
+                                    toAccountId = uiState.toAccountId,
+                                    onFromAccountSelected = { viewModel.setTransactionFromAccountId(it) },
+                                    onToAccountSelected = { viewModel.setTransactionToAccountId(it) },
                                 )
                             }
                             entry<Route.Home.NewTransaction.Description> {
                                 Step5Description(
-                                    viewModel = viewModel,
-                                    focusRequester = focusRequester
+                                    description = uiState.description,
+                                    onDescriptionChange = { viewModel.setTransactionDescription(it) },
+                                    focusRequester = focusRequester,
                                 )
                             }
                         }

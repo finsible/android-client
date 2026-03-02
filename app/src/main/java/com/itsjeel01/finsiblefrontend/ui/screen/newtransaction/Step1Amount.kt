@@ -30,14 +30,12 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.itsjeel01.finsiblefrontend.common.toCompactCurrency
 import com.itsjeel01.finsiblefrontend.data.di.hiltCurrencyFormatter
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.bold
 import com.itsjeel01.finsiblefrontend.ui.theme.displayFont
 import com.itsjeel01.finsiblefrontend.ui.theme.medium
-import com.itsjeel01.finsiblefrontend.ui.viewmodel.NewTransactionViewModel
 
 @Composable
 fun Step1Amount(
@@ -162,22 +160,4 @@ fun Step1Amount(
             )
         }
     }
-}
-
-@Composable
-fun Step1Amount(
-    modifier: Modifier = Modifier,
-    focusRequester: FocusRequester,
-    viewModel: NewTransactionViewModel,
-) {
-    val amount by viewModel.transactionAmountString.collectAsStateWithLifecycle()
-    Step1Amount(
-        amount = amount,
-        onAmountChange = { input ->
-            val validated = viewModel.validateAmount(input)
-            viewModel.setTransactionAmountString(validated)
-        },
-        focusRequester = focusRequester,
-        modifier = modifier,
-    )
 }

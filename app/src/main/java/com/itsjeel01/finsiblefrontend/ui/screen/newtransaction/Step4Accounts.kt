@@ -26,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.TransactionType
 import com.itsjeel01.finsiblefrontend.data.local.entity.AccountEntity
@@ -34,28 +33,6 @@ import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.extraBold
 import com.itsjeel01.finsiblefrontend.ui.theme.medium
 import com.itsjeel01.finsiblefrontend.ui.util.resolveIcon
-import com.itsjeel01.finsiblefrontend.ui.viewmodel.NewTransactionViewModel
-
-/** ViewModel wrapper preserving original signature. */
-@Composable
-fun Step4Accounts(viewModel: NewTransactionViewModel) {
-    val transactionType by viewModel.transactionType.collectAsStateWithLifecycle()
-    val fromAccountId by viewModel.transactionFromAccountId.collectAsStateWithLifecycle()
-    val toAccountId by viewModel.transactionToAccountId.collectAsStateWithLifecycle()
-
-    val allAccounts by viewModel.accounts.collectAsStateWithLifecycle()
-    val availableAccounts by viewModel.availableToAccounts.collectAsStateWithLifecycle()
-
-    AccountSelector(
-        transactionType = transactionType,
-        fromAccountsOptions = allAccounts,
-        toAccountsOptions = availableAccounts,
-        fromAccountId = fromAccountId,
-        toAccountId = toAccountId,
-        onFromAccountSelected = { viewModel.setTransactionFromAccountId(it) },
-        onToAccountSelected = { viewModel.setTransactionToAccountId(it) }
-    )
-}
 
 /** Stateless account selection step with hoisted state. */
 @Composable

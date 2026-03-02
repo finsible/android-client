@@ -1,13 +1,13 @@
 package com.itsjeel01.finsiblefrontend.ui.viewmodel
 
 import android.content.Context
+import androidx.compose.runtime.Immutable
 import androidx.credentials.exceptions.GetCredentialCancellationException
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.itsjeel01.finsiblefrontend.BuildConfig
 import com.itsjeel01.finsiblefrontend.data.repository.AuthRepository
 import com.itsjeel01.finsiblefrontend.data.sync.PostAuthInitializer
-import com.itsjeel01.finsiblefrontend.ui.model.AuthState
 import com.itsjeel01.finsiblefrontend.ui.util.GoogleAuthManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -81,4 +81,20 @@ class AuthViewModel @Inject constructor(
     companion object {
         private const val TAG = "AuthViewModel"
     }
+}
+
+/** Authentication state. */
+@Immutable
+sealed class AuthState {
+    @Immutable
+    data object Loading : AuthState()
+
+    @Immutable
+    data class Negative(
+        val message: String = "You are not logged in.",
+        val isFailed: Boolean = false
+    ) : AuthState()
+
+    @Immutable
+    data object Positive : AuthState()
 }

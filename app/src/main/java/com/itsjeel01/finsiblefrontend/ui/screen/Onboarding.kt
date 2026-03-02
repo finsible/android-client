@@ -56,9 +56,9 @@ import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleButton
 import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsiblePageIndicators
 import com.itsjeel01.finsiblefrontend.ui.component.fin.IconPosition
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
-import com.itsjeel01.finsiblefrontend.ui.model.AuthState
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.bold
+import com.itsjeel01.finsiblefrontend.ui.viewmodel.AuthState
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.AuthViewModel
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.OnboardingViewModel
 
@@ -73,7 +73,7 @@ fun Onboarding(
     val context = LocalContext.current
 
     val carouselItems = remember { OnboardingViewModel.CarouselItems().get() }
-    val currentItem by onboardingViewModel.currentCarouselItem.collectAsStateWithLifecycle()
+    val onboardingUiState by onboardingViewModel.uiState.collectAsStateWithLifecycle()
     val authState by authViewModel.authState.collectAsStateWithLifecycle()
 
     LaunchedEffect(authState) {
@@ -111,9 +111,9 @@ fun Onboarding(
         OnboardingBackground()
 
         OnboardingContent(
-            currentItem = currentItem,
+            currentItem = onboardingUiState.currentItem,
             carouselItems = carouselItems,
-            isLastItem = onboardingViewModel::isLastCarouselItem,
+            isLastItem = { onboardingUiState.isLastItem },
             onNextItem = onboardingViewModel::nextCarouselItem,
             onPreviousItem = onboardingViewModel::previousCarouselItem,
             onSkip = onboardingViewModel::skipToLastCarouselItem,

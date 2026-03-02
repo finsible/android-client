@@ -1,6 +1,7 @@
 package com.itsjeel01.finsiblefrontend.ui.viewmodel
 
 import android.icu.math.BigDecimal
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.itsjeel01.finsiblefrontend.common.CurrencyFormatter
@@ -10,12 +11,12 @@ import com.itsjeel01.finsiblefrontend.data.local.entity.AccountEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.AccountGroupEntity
 import com.itsjeel01.finsiblefrontend.data.local.repository.AccountGroupLocalRepository
 import com.itsjeel01.finsiblefrontend.data.local.repository.AccountLocalRepository
-import com.itsjeel01.finsiblefrontend.ui.model.AccountListItem
 import com.itsjeel01.finsiblefrontend.ui.model.AccountUiModel
-import com.itsjeel01.finsiblefrontend.ui.model.AccountsUiState
 import com.itsjeel01.finsiblefrontend.ui.model.FlippableCardData
 import com.itsjeel01.finsiblefrontend.ui.model.StatisticsModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -205,5 +206,24 @@ class AccountsViewModel @Inject constructor(
 
     private fun List<AccountEntity>.sumOfBigDecimal(selector: (AccountEntity) -> BigDecimal): BigDecimal =
         fold(BigDecimal.ZERO) { acc, account -> acc.add(selector(account)) }
+}
+
+/** UI state for accounts tab. Immutable for Compose optimization. */
+@Immutable
+data class AccountsUiState(
+    val accountCards: ImmutableList<FlippableCardData> = persistentListOf(),
+    val listItems: ImmutableList<AccountListItem> = persistentListOf(),
+    val accountGroups: ImmutableList<AccountGroupEntity> = persistentListOf(),
+    val selectedGroupId: Long? = null,
+    val isLoading: Boolean = false
+)
+
+/** Sealed interface for account list items (headers and accounts). */
+sealed interface AccountListItem {
+    @Immutable
+    data class Header(val groupName: String) : AccountListItem
+
+    @Immutable
+    data class Account(val uiModel: AccountUiModel) : AccountListItem
 }
 

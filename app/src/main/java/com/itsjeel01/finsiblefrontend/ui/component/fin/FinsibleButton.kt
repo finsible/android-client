@@ -74,7 +74,7 @@ fun FinsibleButton(
                 enabled = isEnabled,
                 shape = RoundedCornerShape(config.effectiveCornerRadius),
                 colors = ButtonDefaults.textButtonColors(
-                    contentColor = config.type.contentColor()
+                    contentColor = if (isEnabled) config.type.contentColor() else FinsibleTheme.colors.disabledContent
                 ),
                 interactionSource = interactionSource,
                 contentPadding = PaddingValues(horizontal = config.size.horizontalPadding),

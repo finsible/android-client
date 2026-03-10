@@ -5,6 +5,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -53,6 +54,7 @@ fun FinsibleTextField(
     errorText: String? = null,
     leadingIcon: Int? = null,
     trailingIcon: Int? = null,
+    onTrailingIconClick: (() -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     visualTransformation: VisualTransformation = VisualTransformation.None,
@@ -63,7 +65,7 @@ fun FinsibleTextField(
 
     val borderColor = when {
         effectiveError -> FinsibleTheme.colors.error
-        isFocused -> FinsibleTheme.colors.brandAccent
+        isFocused -> FinsibleTheme.colors.primaryContent
         !config.enabled -> FinsibleTheme.colors.disabled
         else -> FinsibleTheme.colors.border
     }
@@ -107,7 +109,7 @@ fun FinsibleTextField(
             minLines = config.minLines,
             visualTransformation = visualTransformation,
             interactionSource = interactionSource,
-            cursorBrush = SolidColor(FinsibleTheme.colors.brandAccent),
+            cursorBrush = SolidColor(FinsibleTheme.colors.primaryContent80),
             decorationBox = { innerTextField ->
                 Box(
                     modifier = Modifier
@@ -157,7 +159,12 @@ fun FinsibleTextField(
                                 painter = painterResource(id = it),
                                 contentDescription = null,
                                 tint = if (effectiveError) FinsibleTheme.colors.error else FinsibleTheme.colors.onSurfaceVariant,
-                                modifier = Modifier.padding(start = FinsibleTheme.dimes.d4)
+                                modifier = Modifier
+                                    .padding(start = FinsibleTheme.dimes.d4)
+                                    .then(
+                                        if (onTrailingIconClick != null) Modifier.clickable(onClick = onTrailingIconClick)
+                                        else Modifier
+                                    )
                             )
                         }
                     }

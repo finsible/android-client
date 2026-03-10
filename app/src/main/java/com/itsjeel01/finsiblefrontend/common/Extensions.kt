@@ -41,7 +41,7 @@ fun String.toCompactCurrency(formatter: CurrencyFormatter): String {
 }
 
 /** Parse a user-typed decimal String to centis, returning 0 on invalid input. */
-private fun String.toAmountCentisOrZero(): Long {
+fun String.toAmountCentisOrZero(): Long {
     if (isBlank()) return 0L
     val parts = trim().split(".")
     val whole = parts[0].toLongOrNull() ?: return 0L

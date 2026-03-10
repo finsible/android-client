@@ -5,20 +5,24 @@ import com.itsjeel01.finsiblefrontend.common.EntityType
 import com.itsjeel01.finsiblefrontend.common.Status
 import com.itsjeel01.finsiblefrontend.common.TransactionType
 import com.itsjeel01.finsiblefrontend.common.logging.Logger
+import com.itsjeel01.finsiblefrontend.common.toAmountCentisOrZero
 import com.itsjeel01.finsiblefrontend.data.local.TransactionTypeConverter
 import com.itsjeel01.finsiblefrontend.data.local.entity.PendingOperationEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.TransactionEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.TransactionEntity_
+import com.itsjeel01.finsiblefrontend.data.local.entity.toAmountString
 import com.itsjeel01.finsiblefrontend.data.model.Transaction
 import com.itsjeel01.finsiblefrontend.data.model.toEntity
 import com.itsjeel01.finsiblefrontend.data.remote.model.TransactionCreateRequest
 import com.itsjeel01.finsiblefrontend.data.remote.model.TransactionUpdateRequest
 import com.itsjeel01.finsiblefrontend.data.sync.LocalIdGenerator
+import com.itsjeel01.finsiblefrontend.ui.model.SortOption
 import com.itsjeel01.finsiblefrontend.ui.model.TransactionDailySummary
 import io.objectbox.Box
 import io.objectbox.Property
-import java.math.BigDecimal
+import io.objectbox.query.QueryBuilder
 import java.util.Calendar
+import java.util.Locale
 import javax.inject.Inject
 
 class TransactionLocalRepository @Inject constructor(
@@ -31,14 +35,13 @@ class TransactionLocalRepository @Inject constructor(
     pendingOperationBox,
     localIdGenerator
 ) {
-
     override val entityType: EntityType = EntityType.TRANSACTION
     override fun idProperty(): Property<TransactionEntity> = TransactionEntity_.id
     override fun syncStatusProperty(): Property<TransactionEntity> = TransactionEntity_.syncStatus
 
     override fun toCreateRequest(entity: TransactionEntity) = TransactionCreateRequest(
         type = entity.type.name,
-        totalAmount = entity.totalAmount,
+        totalAmount = entity.totalAmount.toAmountString(),
         transactionDate = entity.transactionDate,
         categoryId = entity.categoryId,
         description = entity.description,
@@ -49,7 +52,7 @@ class TransactionLocalRepository @Inject constructor(
 
     override fun toUpdateRequest(entity: TransactionEntity) = TransactionUpdateRequest(
         type = entity.type.name,
-        totalAmount = entity.totalAmount,
+        totalAmount = entity.totalAmount.toAmountString(),
         transactionDate = entity.transactionDate,
         categoryId = entity.categoryId,
         description = entity.description,
@@ -74,129 +77,59 @@ class TransactionLocalRepository @Inject constructor(
         Logger.Database.d("Added ${entities.size} transactions to local DB")
     }
 
+    /** Returns total number of transactions. */
     fun getTotalTransactionCount(): Long {
         return box.count()
     }
 
-    fun getAllUniqueDates(): List<Long> {
-        val timestamps = box.query()
-            .orderDesc(TransactionEntity_.transactionDate)
-            .build()
-            .property(TransactionEntity_.transactionDate)
-            .findLongs()
-
-        return timestamps.map { timestamp ->
-            // Normalize to start of day
-            val cal = Calendar.getInstance().apply {
-                timeInMillis = timestamp
-                set(Calendar.HOUR_OF_DAY, 0)
-                set(Calendar.MINUTE, 0)
-                set(Calendar.SECOND, 0)
-                set(Calendar.MILLISECOND, 0)
-            }
-            cal.timeInMillis
-        }.distinct()
-            .also { Logger.Database.d("Found ${it.size} unique dates from ${timestamps.size} records") }
-    }
-
-    fun getTransactionsForDates(dateTimestamps: List<Long>): List<TransactionEntity> {
-        if (dateTimestamps.isEmpty()) return emptyList()
-
-        val allTransactions = mutableListOf<TransactionEntity>()
-
-        dateTimestamps.forEach { dateTimestamp ->
-            val cal = Calendar.getInstance().apply {
-                timeInMillis = dateTimestamp
-                set(Calendar.HOUR_OF_DAY, 0)
-                set(Calendar.MINUTE, 0)
-                set(Calendar.SECOND, 0)
-                set(Calendar.MILLISECOND, 0)
-            }
-            val startOfDay = cal.timeInMillis
-            cal.add(Calendar.DAY_OF_MONTH, 1)
-            val endOfDay = cal.timeInMillis - 1
-
-            val transactions = box.query()
-                .between(TransactionEntity_.transactionDate, startOfDay, endOfDay)
-                .orderDesc(TransactionEntity_.transactionDate)
-                .build()
-                .find()
-
-            allTransactions.addAll(transactions)
-        }
-
-        return allTransactions
-            .distinctBy { it.id }
-            .sortedByDescending { it.transactionDate }
-            .also { Logger.Database.d("Fetched ${it.size} transactions for ${dateTimestamps.size} dates") }
-    }
-
+    /** Computes daily aggregates for all transactions. */
     fun getAllDateAggregates(): Map<Long, TransactionDailySummary> {
         val converter = TransactionTypeConverter()
         val incomeTypeInt = converter.convertToDatabaseValue(TransactionType.INCOME) ?: -1
         val expenseTypeInt = converter.convertToDatabaseValue(TransactionType.EXPENSE) ?: -1
 
         return box.store.callInReadTx {
-            val query = box.query()
+            val transactions = box.query()
                 .orderDesc(TransactionEntity_.transactionDate)
                 .build()
-
-            val dates = query.property(TransactionEntity_.transactionDate).findLongs()
-            val amounts = query.property(TransactionEntity_.totalAmount).findStrings()
-            val types = query.property(TransactionEntity_.type).findInts()
-
-            query.close()
+                .use { it.find() }
 
             val resultMap = HashMap<Long, TransactionDailySummary>()
             val cal = Calendar.getInstance()
 
-            for (i in dates.indices) {
-                cal.timeInMillis = dates[i]
+            for (txn in transactions) {
+                cal.timeInMillis = txn.transactionDate
                 cal.set(Calendar.HOUR_OF_DAY, 0)
                 cal.set(Calendar.MINUTE, 0)
                 cal.set(Calendar.SECOND, 0)
                 cal.set(Calendar.MILLISECOND, 0)
                 val dayStart = cal.timeInMillis
 
-                val amountStr = amounts[i]
-                val amount = if (!amountStr.isNullOrEmpty()) {
-                    try {
-                        BigDecimal(amountStr)
-                    } catch (e: Exception) {
-                        BigDecimal.ZERO
-                    }
-                } else {
-                    BigDecimal.ZERO
-                }
-
-                val typeInt = types[i]
-
                 val current = resultMap[dayStart] ?: TransactionDailySummary()
+                val typeInt = converter.convertToDatabaseValue(txn.type)
 
                 val updated = when (typeInt) {
                     incomeTypeInt -> current.copy(
-                        income = current.income.add(amount),
+                        incomeCentis = current.incomeCentis + txn.totalAmount,
                         count = current.count + 1
                     )
 
                     expenseTypeInt -> current.copy(
-                        expense = current.expense.add(amount),
+                        expenseCentis = current.expenseCentis + txn.totalAmount,
                         count = current.count + 1
                     )
 
                     else -> current.copy(count = current.count + 1)
                 }
-
                 resultMap[dayStart] = updated
             }
-
             resultMap
         }
     }
 
     fun createTransaction(
         type: TransactionType,
-        totalAmount: String,
+        totalAmount: Long,
         transactionDate: Long,
         categoryId: Long,
         categoryName: String,
@@ -210,6 +143,7 @@ class TransactionLocalRepository @Inject constructor(
                 id = localId,
                 type = type,
                 totalAmount = totalAmount,
+                searchableText = buildSearchableText(description, categoryName),
                 transactionDate = transactionDate,
                 categoryId = categoryId,
                 categoryName = categoryName,
@@ -230,7 +164,7 @@ class TransactionLocalRepository @Inject constructor(
     fun updateTransaction(
         id: Long,
         type: TransactionType? = null,
-        totalAmount: String? = null,
+        totalAmount: Long? = null,
         transactionDate: Long? = null,
         categoryId: Long? = null,
         categoryName: String? = null,
@@ -258,8 +192,264 @@ class TransactionLocalRepository @Inject constructor(
         description?.let { entity.description = it }
         currency?.let { entity.currency = it }
 
+        // Update searchableText if description or categoryName changed
+        if (description != null || categoryName != null) {
+            entity.searchableText = buildSearchableText(entity.description, entity.categoryName)
+        }
+
         return queueUpdateEntity(entity)
     }
 
     fun deleteTransaction(id: Long): Boolean = queueDeleteEntity(id)
+
+    /**
+     * Unified query method for all search/filter/sort operations with true DB-level pagination.
+     * Aggregates are computed via separate optimized query to avoid loading all results.
+     */
+    fun queryTransactions(
+        searchQuery: String = "",
+        sortOption: SortOption = SortOption.NEWEST_FIRST,
+        accountIds: Set<Long> = emptySet(),
+        dateRangeStart: Long? = null,
+        dateRangeEnd: Long? = null,
+        amountMin: Long? = null,
+        amountMax: Long? = null,
+        transactionTypes: Set<TransactionType> = emptySet(),
+        offset: Int = 0,
+        limit: Int = 50
+    ): PaginatedResult {
+        Logger.Database.d("queryTransactions: query='$searchQuery', sort=$sortOption, accounts=${accountIds.size}, offset=$offset, limit=$limit")
+
+        val transactions = queryPaginated(
+            searchQuery = searchQuery,
+            sortOption = sortOption,
+            accountIds = accountIds,
+            dateRangeStart = dateRangeStart,
+            dateRangeEnd = dateRangeEnd,
+            amountMin = amountMin,
+            amountMax = amountMax,
+            transactionTypes = transactionTypes,
+            offset = offset,
+            limit = limit
+        )
+
+        /** Compute total count and aggregates only on first page (offset == 0)
+         * For subsequent pages, return placeholder (caller should cache first page aggregates) */
+        val (totalCount, summary) = if (offset == 0) {
+            computeAggregates(
+                searchQuery = searchQuery,
+                accountIds = accountIds,
+                dateRangeStart = dateRangeStart,
+                dateRangeEnd = dateRangeEnd,
+                amountMin = amountMin,
+                amountMax = amountMax,
+                transactionTypes = transactionTypes
+            )
+        } else {
+            0 to FilteredSummary(0, 0L, 0L)
+        }
+
+        Logger.Database.d("queryTransactions: total=$totalCount, returned=${transactions.size}")
+
+        return PaginatedResult(
+            transactions = transactions,
+            totalCount = totalCount,
+            summary = summary,
+            hasMore = transactions.size == limit
+        )
+    }
+
+    /**
+     * Query with true DB-level pagination using offset/limit.
+     * All filters are applied at the DB level — no in-memory post-filtering.
+     */
+    private fun queryPaginated(
+        searchQuery: String,
+        sortOption: SortOption,
+        accountIds: Set<Long>,
+        dateRangeStart: Long?,
+        dateRangeEnd: Long?,
+        amountMin: Long?,
+        amountMax: Long?,
+        transactionTypes: Set<TransactionType>,
+        offset: Int,
+        limit: Int
+    ): List<TransactionEntity> {
+        val queryBuilder = box.query()
+
+        applyDateFilter(queryBuilder, dateRangeStart, dateRangeEnd)
+        applyTypeFilter(queryBuilder, transactionTypes)
+        applyAmountFilter(queryBuilder, amountMin, amountMax)
+        applySearchFilter(queryBuilder, searchQuery)
+        applyAccountFilter(queryBuilder, accountIds)
+        applySorting(queryBuilder, sortOption)
+
+        return queryBuilder.build().use { query ->
+            query.find(offset.toLong(), limit.toLong())
+        }
+    }
+
+    /** Compute aggregates fully at DB level for all filter combinations. */
+    private fun computeAggregates(
+        searchQuery: String,
+        accountIds: Set<Long>,
+        dateRangeStart: Long?,
+        dateRangeEnd: Long?,
+        amountMin: Long?,
+        amountMax: Long?,
+        transactionTypes: Set<TransactionType>
+    ): Pair<Int, FilteredSummary> {
+        val converter = TransactionTypeConverter()
+        val incomeTypeInt = converter.convertToDatabaseValue(TransactionType.INCOME) ?: -1
+        val expenseTypeInt = converter.convertToDatabaseValue(TransactionType.EXPENSE) ?: -1
+
+        fun baseBuilder(): QueryBuilder<TransactionEntity> {
+            val qb = box.query()
+            applyDateFilter(qb, dateRangeStart, dateRangeEnd)
+            applyAmountFilter(qb, amountMin, amountMax)
+            applyTypeFilter(qb, transactionTypes)
+            applySearchFilter(qb, searchQuery)
+            applyAccountFilter(qb, accountIds)
+            return qb
+        }
+
+        val count = baseBuilder().build().use { it.count().toInt() }
+
+        val includeIncome = transactionTypes.isEmpty() || TransactionType.INCOME in transactionTypes
+        val totalIncomeCentis = if (includeIncome) {
+            baseBuilder()
+                .apply(TransactionEntity_.type.equal(incomeTypeInt)) // Fluent and array-free
+                .build()
+                .use { q -> q.property(TransactionEntity_.totalAmount).sum() }
+        } else 0L
+
+        val includeExpense = transactionTypes.isEmpty() || TransactionType.EXPENSE in transactionTypes
+        val totalExpenseCentis = if (includeExpense) {
+            baseBuilder()
+                .apply(TransactionEntity_.type.equal(expenseTypeInt)) // Fluent and array-free
+                .build()
+                .use { q -> q.property(TransactionEntity_.totalAmount).sum() }
+        } else 0L
+
+        return count to FilteredSummary(count, totalIncomeCentis, totalExpenseCentis)
+    }
+
+    /** Apply DB-level text search on pre-computed searchableText field. */
+    private fun applySearchFilter(
+        queryBuilder: QueryBuilder<TransactionEntity>,
+        searchQuery: String
+    ) {
+        val trimmed = searchQuery.trim().lowercase(Locale.getDefault())
+        if (trimmed.isBlank()) return
+
+        val amountCentis = trimmed.toAmountCentisOrZero().takeIf { it > 0L }
+
+        val searchCondition = if (amountCentis != null)
+            TransactionEntity_.searchableText.contains(trimmed)
+                .or(TransactionEntity_.totalAmount.equal(amountCentis))
+        else
+            TransactionEntity_.searchableText.contains(trimmed)
+
+        queryBuilder.apply(searchCondition)
+    }
+
+    /** Apply DB-level account filter as OR across fromAccountId and toAccountId. */
+    private fun applyAccountFilter(
+        queryBuilder: QueryBuilder<TransactionEntity>,
+        accountIds: Set<Long>
+    ) {
+        if (accountIds.isEmpty()) return
+
+        val ids = accountIds.toLongArray()
+        val accountCondition = TransactionEntity_.fromAccountId.oneOf(ids).or(TransactionEntity_.toAccountId.oneOf(ids))
+        queryBuilder.apply(accountCondition)
+    }
+
+    /** Apply DB-level date range filter. */
+    private fun applyDateFilter(
+        queryBuilder: QueryBuilder<TransactionEntity>,
+        dateRangeStart: Long?,
+        dateRangeEnd: Long?
+    ) {
+        when {
+            dateRangeStart != null && dateRangeEnd != null ->
+                queryBuilder.between(TransactionEntity_.transactionDate, dateRangeStart, dateRangeEnd)
+
+            dateRangeStart != null ->
+                queryBuilder.greater(TransactionEntity_.transactionDate, dateRangeStart)
+
+            dateRangeEnd != null ->
+                queryBuilder.less(TransactionEntity_.transactionDate, dateRangeEnd)
+        }
+    }
+
+    /** Apply DB-level transaction type filter. */
+    private fun applyTypeFilter(
+        queryBuilder: QueryBuilder<TransactionEntity>,
+        transactionTypes: Set<TransactionType>
+    ) {
+        if (transactionTypes.isNotEmpty()) {
+            val converter = TransactionTypeConverter()
+            val typeInts = transactionTypes.mapNotNull { converter.convertToDatabaseValue(it) }.toIntArray()
+            if (typeInts.isNotEmpty()) {
+                queryBuilder.apply(TransactionEntity_.type.oneOf(typeInts))
+            }
+        }
+    }
+
+    /** Apply DB-level amount range filter. */
+    private fun applyAmountFilter(
+        queryBuilder: QueryBuilder<TransactionEntity>,
+        amountMin: Long?,
+        amountMax: Long?
+    ) {
+        when {
+            amountMin != null && amountMax != null ->
+                queryBuilder.between(TransactionEntity_.totalAmount, amountMin, amountMax)
+
+            amountMin != null ->
+                queryBuilder.greaterOrEqual(TransactionEntity_.totalAmount, amountMin)
+
+            amountMax != null ->
+                queryBuilder.lessOrEqual(TransactionEntity_.totalAmount, amountMax)
+        }
+    }
+
+    /** Apply DB-level on-demand sorting */
+    private fun applySorting(
+        queryBuilder: QueryBuilder<TransactionEntity>,
+        sortOption: SortOption
+    ) {
+        when (sortOption) {
+            SortOption.NEWEST_FIRST -> queryBuilder.orderDesc(TransactionEntity_.transactionDate)
+            SortOption.OLDEST_FIRST -> queryBuilder.order(TransactionEntity_.transactionDate)
+            SortOption.AMOUNT_HIGH_TO_LOW -> queryBuilder.orderDesc(TransactionEntity_.totalAmount)
+            SortOption.AMOUNT_LOW_TO_HIGH -> queryBuilder.order(TransactionEntity_.totalAmount)
+        }
+    }
+
+    /** Builds pre-computed lowercase searchable text for efficient text search. */
+    private fun buildSearchableText(description: String?, categoryName: String): String {
+        return buildString {
+            description?.lowercase()?.let { append(it).append(" ") }
+            append(categoryName.lowercase())
+        }.trim()
+    }
+}
+
+/** Result container for paginated query. */
+data class PaginatedResult(
+    val transactions: List<TransactionEntity>,
+    val totalCount: Int,
+    val summary: FilteredSummary,
+    val hasMore: Boolean
+)
+
+/** Summary for filtered transactions, amounts in centis (×100). */
+data class FilteredSummary(
+    val totalCount: Int,
+    val totalIncomeCentis: Long,
+    val totalExpenseCentis: Long
+) {
+    val netCentis: Long get() = totalIncomeCentis - totalExpenseCentis
 }

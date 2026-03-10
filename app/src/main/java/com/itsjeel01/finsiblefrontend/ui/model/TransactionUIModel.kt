@@ -5,7 +5,7 @@ import com.itsjeel01.finsiblefrontend.common.Currency
 import com.itsjeel01.finsiblefrontend.common.TransactionType
 
 @Immutable
-data class TransactionUiModel(
+data class TransactionUIModel(
     val id: Long,
     val type: TransactionType,
     val title: String,
@@ -13,5 +13,8 @@ data class TransactionUiModel(
     val formattedAmount: String,
     val categoryIcon: String,
     val currency: Currency,
-    val transactionDate: Long
+    val transactionDate: Long,
+    /** Raw amount in centis (×100) for aggregation. E.g., 15050L = 150.50. */
+    val rawAmountCentis: Long = 0L,
+    val formattedDate: String = ""
 )

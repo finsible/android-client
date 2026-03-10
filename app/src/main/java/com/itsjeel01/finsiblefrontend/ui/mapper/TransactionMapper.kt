@@ -2,12 +2,13 @@ package com.itsjeel01.finsiblefrontend.ui.mapper
 
 import com.itsjeel01.finsiblefrontend.common.CurrencyFormatter
 import com.itsjeel01.finsiblefrontend.common.TransactionType
-import com.itsjeel01.finsiblefrontend.common.toAmountOnly
+import com.itsjeel01.finsiblefrontend.common.centisToFormattedAmount
 import com.itsjeel01.finsiblefrontend.data.local.entity.TransactionEntity
-import com.itsjeel01.finsiblefrontend.ui.model.TransactionUiModel
+import com.itsjeel01.finsiblefrontend.ui.model.TransactionUIModel
+import com.itsjeel01.finsiblefrontend.ui.util.DateUtils
 
-fun TransactionEntity.toUiModel(currencyFormatter: CurrencyFormatter): TransactionUiModel {
-    return TransactionUiModel(
+fun TransactionEntity.toUiModel(currencyFormatter: CurrencyFormatter): TransactionUIModel {
+    return TransactionUIModel(
         id = this.id,
         type = this.type,
         title = this.description.takeUnless { it.isNullOrBlank() } ?: this.categoryName,
@@ -15,7 +16,9 @@ fun TransactionEntity.toUiModel(currencyFormatter: CurrencyFormatter): Transacti
         formattedAmount = formatAmount(this, currencyFormatter),
         categoryIcon = this.categoryIcon,
         currency = this.currency,
-        transactionDate = this.transactionDate
+        transactionDate = this.transactionDate,
+        rawAmountCentis = this.totalAmount,
+        formattedDate = DateUtils.readableDate(this.transactionDate)
     )
 }
 
@@ -35,6 +38,6 @@ private fun formatAmount(transaction: TransactionEntity, currencyFormatter: Curr
         TransactionType.EXPENSE -> "-"
         TransactionType.TRANSFER -> ""
     }
-    val amountStr = transaction.totalAmount.toAmountOnly(currencyFormatter)
+    val amountStr = transaction.totalAmount.centisToFormattedAmount(currencyFormatter)
     return "$sign ${transaction.currency.getSymbol()}$amountStr"
 }

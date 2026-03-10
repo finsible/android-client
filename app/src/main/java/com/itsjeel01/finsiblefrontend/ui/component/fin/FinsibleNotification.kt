@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.ui.component.fin.NotificationType.Companion.getColor
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
@@ -212,7 +213,7 @@ fun FinsibleNotification(
                         FinsibleIconButton(
                             modifier = Modifier.align(Alignment.CenterVertically),
                             icon = R.drawable.ic_close,
-                            contentDescription = "Dismiss notification",
+                            contentDescription = stringResource(R.string.cd_dismiss_notification),
                             onClick = onDismiss,
                             config = IconButtonConfig(
                                 type = ComponentType.Tertiary,

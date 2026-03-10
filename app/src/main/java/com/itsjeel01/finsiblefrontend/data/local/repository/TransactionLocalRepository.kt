@@ -12,6 +12,7 @@ import com.itsjeel01.finsiblefrontend.data.local.entity.TransactionEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.TransactionEntity_
 import com.itsjeel01.finsiblefrontend.data.local.entity.toAmountString
 import com.itsjeel01.finsiblefrontend.data.model.Transaction
+import com.itsjeel01.finsiblefrontend.data.model.buildSearchableText
 import com.itsjeel01.finsiblefrontend.data.model.toEntity
 import com.itsjeel01.finsiblefrontend.data.remote.model.TransactionCreateRequest
 import com.itsjeel01.finsiblefrontend.data.remote.model.TransactionUpdateRequest
@@ -426,14 +427,6 @@ class TransactionLocalRepository @Inject constructor(
             SortOption.AMOUNT_HIGH_TO_LOW -> queryBuilder.orderDesc(TransactionEntity_.totalAmount)
             SortOption.AMOUNT_LOW_TO_HIGH -> queryBuilder.order(TransactionEntity_.totalAmount)
         }
-    }
-
-    /** Builds pre-computed lowercase searchable text for efficient text search. */
-    private fun buildSearchableText(description: String?, categoryName: String): String {
-        return buildString {
-            description?.lowercase()?.let { append(it).append(" ") }
-            append(categoryName.lowercase())
-        }.trim()
     }
 }
 

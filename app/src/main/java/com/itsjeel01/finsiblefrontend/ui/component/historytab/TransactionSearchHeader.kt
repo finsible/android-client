@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.ui.component.transaction
+package com.itsjeel01.finsiblefrontend.ui.component.historytab
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.slideInVertically
@@ -25,7 +25,6 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -42,6 +41,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import com.itsjeel01.finsiblefrontend.R
+import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentSize
+import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentType
+import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleIconButton
+import com.itsjeel01.finsiblefrontend.ui.component.fin.IconButtonConfig
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.extraBold
 import com.itsjeel01.finsiblefrontend.ui.theme.semiBold
@@ -186,17 +189,17 @@ private fun SearchTextField(
                     innerTextField()
                 }
 
-                IconButton(
+                FinsibleIconButton(
                     onClick = dismissAction,
-                    modifier = Modifier.size(FinsibleTheme.dimes.d40)
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_close),
-                        contentDescription = stringResource(R.string.cd_close_search),
-                        tint = FinsibleTheme.colors.onSurfaceVariant,
-                        modifier = Modifier.size(FinsibleTheme.dimes.d18)
+                    icon = com.composables.icons.materialicons.outlined.R.drawable.materialicons_ic_close_outlined,
+                    contentDescription = stringResource(R.string.cd_close_search),
+                    config = IconButtonConfig(
+                        size = ComponentSize.Small,
+                        tintIcon = true,
+                        customTint = FinsibleTheme.colors.onSurfaceVariant,
+                        type = ComponentType.Tertiary
                     )
-                }
+                )
             }
         }
     )

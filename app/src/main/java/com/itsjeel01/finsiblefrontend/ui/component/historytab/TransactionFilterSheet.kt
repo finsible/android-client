@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.ui.component.transaction
+package com.itsjeel01.finsiblefrontend.ui.component.historytab
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -46,9 +46,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -58,10 +57,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.FinsibleConstants
 import com.itsjeel01.finsiblefrontend.common.TransactionType
@@ -73,106 +75,55 @@ import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleButton
 import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleTextField
 import com.itsjeel01.finsiblefrontend.ui.component.fin.TextFieldConfig
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
+import com.itsjeel01.finsiblefrontend.ui.model.SortOption
 import com.itsjeel01.finsiblefrontend.ui.model.TimeFilterMode
-import com.itsjeel01.finsiblefrontend.ui.model.TransactionSortOption
-import com.itsjeel01.finsiblefrontend.ui.model.TransactionViewOptions
+import com.itsjeel01.finsiblefrontend.ui.model.TransactionsFilterState
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.bold
 import com.itsjeel01.finsiblefrontend.ui.theme.medium
 import com.itsjeel01.finsiblefrontend.ui.theme.semiBold
+import com.itsjeel01.finsiblefrontend.ui.viewmodel.ALL_MONTHS
+import com.itsjeel01.finsiblefrontend.ui.viewmodel.TransactionsFilterViewModel
 import java.text.DecimalFormatSymbols
 import java.util.Calendar
-
-private const val ALL_MONTHS = -1
 
 /** Bottom sheet for transaction filters and sort options. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionFilterSheet(
     isVisible: Boolean,
-    viewOptions: TransactionViewOptions,
+    appliedFilters: TransactionsFilterState,
     onDismiss: () -> Unit,
-    onApplyFilters: (TransactionViewOptions) -> Unit,
+    onApply: (TransactionsFilterState) -> Unit,
     modifier: Modifier = Modifier,
-    sheetState: SheetState = rememberModalBottomSheetState(),
+    bottomSheetState: SheetState = rememberModalBottomSheetState(),
+    viewModel: TransactionsFilterViewModel = hiltViewModel(),
 ) {
     if (!isVisible) return
+
+    val sheetState by viewModel.filterState.collectAsStateWithLifecycle()
 
     val calendar = remember { Calendar.getInstance() }
     val currentMonth = calendar.get(Calendar.MONTH)
     val currentYear = calendar.get(Calendar.YEAR)
 
-    var sortOption by remember(viewOptions) { mutableStateOf(viewOptions.sortOption) }
-    var selectedTypes by remember(viewOptions) { mutableStateOf(viewOptions.transactionTypes) }
-    var timeMode by remember(viewOptions) { mutableStateOf(viewOptions.timeFilterMode) }
-    var selectedMonth by remember(viewOptions) {
-        mutableIntStateOf(if (viewOptions.selectedMonth == -1) currentMonth else viewOptions.selectedMonth)
-    }
-    var selectedYear by remember(viewOptions) {
-        mutableIntStateOf(if (viewOptions.selectedYear == -1) currentYear else viewOptions.selectedYear)
-    }
-    var amountMinText by remember(viewOptions) {
-        mutableStateOf(viewOptions.amountMin?.toPlainString() ?: "")
-    }
-    var amountMaxText by remember(viewOptions) {
-        mutableStateOf(viewOptions.amountMax?.toPlainString() ?: "")
-    }
-    var amountRangeError by remember { mutableStateOf(false) }
-    var showDateRangePicker by remember { mutableStateOf(false) }
-    var customRangeStart by remember(viewOptions) { mutableStateOf(viewOptions.dateRangeStart) }
-    var customRangeEnd by remember(viewOptions) { mutableStateOf(viewOptions.dateRangeEnd) }
-
-    val updatedRange by remember {
-        derivedStateOf {
-            resolveRange(timeMode, selectedMonth, selectedYear, customRangeStart, customRangeEnd)
-        }
+    // Seed ViewModel from the currently applied filters whenever the sheet becomes visible.
+    LaunchedEffect(isVisible) {
+        viewModel.initFromFilterState(appliedFilters, calendar)
     }
 
-    val amountMin = amountMinText.toBigDecimalOrNull()
-    val amountMax = amountMaxText.toBigDecimalOrNull()
-
-    val hasAnyActive by remember {
-        derivedStateOf {
-            sortOption != TransactionSortOption.NEWEST_FIRST ||
-                    selectedTypes.isNotEmpty() ||
-                    updatedRange.first != null ||
-                    updatedRange.second != null ||
-                    amountMin != null ||
-                    amountMax != null
-        }
-    }
-
-    fun clearAllFilters() {
-        sortOption = TransactionSortOption.NEWEST_FIRST
-        selectedTypes = emptySet()
-        amountMinText = ""
-        amountMaxText = ""
-        timeMode = TimeFilterMode.ALL
-        selectedMonth = currentMonth
-        selectedYear = currentYear
-        customRangeStart = null
-        customRangeEnd = null
-        onApplyFilters(TransactionViewOptions.DEFAULT)
-        onDismiss()
-    }
-
-    // ── Date range picker dialog ──
-    if (showDateRangePicker) {
+    if (sheetState.showDateRangePicker) {
         DateRangePickerDialog(
-            initialStartMs = customRangeStart,
-            initialEndMs = customRangeEnd,
-            onConfirm = { start, end ->
-                customRangeStart = start
-                customRangeEnd = end
-                showDateRangePicker = false
-            },
-            onDismiss = { showDateRangePicker = false }
+            initialStartMs = sheetState.dateRangeStart,
+            initialEndMs = sheetState.dateRangeEnd,
+            onConfirm = { start, end -> viewModel.confirmCustomDateRange(start, end) },
+            onDismiss = { viewModel.setShowDateRangePicker(false) }
         )
     }
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
-        sheetState = sheetState,
+        sheetState = bottomSheetState,
         containerColor = FinsibleTheme.colors.primaryBackground,
         contentColor = FinsibleTheme.colors.primaryContent,
         dragHandle = { SheetDragHandle() },
@@ -187,65 +138,54 @@ fun TransactionFilterSheet(
                 .padding(bottom = FinsibleTheme.dimes.d32)
         ) {
             SheetHeader(
-                hasAnyActive = hasAnyActive,
-                onClearAll = { clearAllFilters() }
+                hasAnyActive = sheetState.hasAnySheetActive,
+                onClearAll = {
+                    viewModel.reset(calendar)
+                    onApply(TransactionsFilterState.DEFAULT)
+                }
             )
             Spacer(Modifier.height(FinsibleTheme.dimes.d20))
             TypeSection(
-                selectedTypes = selectedTypes,
-                onTypeToggle = { type ->
-                    selectedTypes = if (type in selectedTypes) selectedTypes - type
-                    else selectedTypes + type
-                }
+                selectedTypes = sheetState.transactionTypes,
+                onTypeToggle = { viewModel.toggleType(it) }
             )
             SheetDivider()
-            SortSection(selectedOption = sortOption, onOptionSelected = { sortOption = it })
+            SortSection(
+                selectedOption = sheetState.sortOption,
+                onOptionSelected = { viewModel.updateSortOption(it) }
+            )
             SheetDivider()
             TimeSection(
-                timeMode = timeMode,
-                onTimeModeChange = { timeMode = it },
-                selectedMonth = selectedMonth,
-                selectedYear = selectedYear,
+                timeMode = sheetState.timeFilterMode,
+                onTimeModeChange = { viewModel.updateTimeMode(it) },
+                selectedMonth = sheetState.selectedMonth,
+                selectedYear = sheetState.selectedYear,
                 currentMonth = currentMonth,
                 currentYear = currentYear,
-                onMonthChange = { selectedMonth = it },
-                onYearChange = { selectedYear = it },
-                customRangeStart = customRangeStart,
-                customRangeEnd = customRangeEnd,
-                onCustomRangeClick = { showDateRangePicker = true }
+                onMonthChange = { viewModel.updateSelectedMonth(it) },
+                onYearChange = { viewModel.updateSelectedYear(it) },
+                customRangeStart = sheetState.dateRangeStart,
+                customRangeEnd = sheetState.dateRangeEnd,
+                onCustomRangeClick = { viewModel.setShowDateRangePicker(true) }
             )
             SheetDivider()
             AmountSection(
-                minAmount = amountMinText,
-                maxAmount = amountMaxText,
-                onMinChange = { amountMinText = it; amountRangeError = false },
-                onMaxChange = { amountMaxText = it; amountRangeError = false },
-                isError = amountRangeError
+                minAmount = sheetState.amountMinText,
+                maxAmount = sheetState.amountMaxText,
+                onMinChange = { viewModel.updateAmountMin(sanitizeDecimalInput(it)) },
+                onMaxChange = { viewModel.updateAmountMax(sanitizeDecimalInput(it)) },
+                isError = sheetState.amountRangeError
             )
             Spacer(Modifier.height(FinsibleTheme.dimes.d20))
             FinsibleButton(
-                text = "Apply Filters",
+                text = stringResource(R.string.apply_filters),
                 onClick = {
-                    val minVal = amountMinText.toBigDecimalOrNull()
-                    val maxVal = amountMaxText.toBigDecimalOrNull()
-                    if (minVal != null && maxVal != null && minVal > maxVal) {
-                        amountRangeError = true
+                    val applied = viewModel.buildAppliedState(appliedFilters.searchQuery)
+                    if (applied.amountMin != null && applied.amountMax != null && applied.amountMin > applied.amountMax) {
+                        viewModel.markAmountRangeError()
                         return@FinsibleButton
                     }
-
-                    onApplyFilters(
-                        viewOptions.copy(
-                            sortOption = sortOption,
-                            transactionTypes = selectedTypes,
-                            timeFilterMode = timeMode,
-                            selectedMonth = selectedMonth,
-                            selectedYear = selectedYear,
-                            dateRangeStart = updatedRange.first,
-                            dateRangeEnd = updatedRange.second,
-                            amountMin = minVal,
-                            amountMax = maxVal
-                        )
-                    )
+                    onApply(applied)
                     onDismiss()
                 },
                 config = ButtonConfig(type = ComponentType.Primary, size = ComponentSize.Medium, fullWidth = true)
@@ -279,10 +219,10 @@ private fun SheetHeader(hasAnyActive: Boolean, onClearAll: () -> Unit) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text("Filters & Sort", style = FinsibleTheme.typography.t18.bold())
+        Text(stringResource(R.string.filters_and_sort), style = FinsibleTheme.typography.t18.bold())
 
         FinsibleButton(
-            text = "Clear All",
+            text = stringResource(R.string.clear_all),
             onClick = onClearAll,
             config = ButtonConfig(
                 type = ComponentType.Tertiary,
@@ -326,14 +266,14 @@ private fun SelectionDot(visible: Boolean) {
 /** Sorting section of the filter sheet. */
 @Composable
 private fun SortSection(
-    selectedOption: TransactionSortOption,
-    onOptionSelected: (TransactionSortOption) -> Unit
+    selectedOption: SortOption,
+    onOptionSelected: (SortOption) -> Unit
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d8)) {
-        SectionLabel("SORT BY")
+        SectionLabel(stringResource(R.string.sort_by))
 
         Column(verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d4)) {
-            TransactionSortOption.entries.chunked(2).forEach { row ->
+            SortOption.entries.chunked(2).forEach { row ->
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d8),
                     modifier = Modifier.fillMaxWidth()
@@ -360,7 +300,7 @@ private fun TypeSection(
     onTypeToggle: (TransactionType) -> Unit
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d10)) {
-        SectionLabel("TRANSACTION TYPE")
+        SectionLabel(stringResource(R.string.transaction_type))
         Row(
             horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d8),
         ) {
@@ -393,7 +333,7 @@ private fun TimeSection(
     onCustomRangeClick: () -> Unit
 ) {
     Column {
-        SectionLabel("TIME PERIOD")
+        SectionLabel(stringResource(R.string.time_period))
 
         Spacer(Modifier.height(FinsibleTheme.dimes.d8))
 
@@ -507,14 +447,15 @@ private fun MonthYearRow(
             .fillMaxWidth()
     ) {
         // Month dropdown
-        val monthLabel = if (selectedMonth == ALL_MONTHS) "All months" else FinsibleConstants.MONTHS[selectedMonth]
+        val allMonthsLabel = stringResource(R.string.all_months)
+        val monthLabel = if (selectedMonth == ALL_MONTHS) allMonthsLabel else FinsibleConstants.MONTHS[selectedMonth]
         InlineDropdown(value = monthLabel, modifier = Modifier.weight(1.6f)) { closeMenu ->
             // "All months" entry — year-only filtering
             DropdownMenuItem(
                 text = {
                     Row {
                         Text(
-                            text = "All months",
+                            text = allMonthsLabel,
                             style = FinsibleTheme.typography.t14.medium(),
                             color = if (selectedMonth == ALL_MONTHS) FinsibleTheme.colors.link
                             else FinsibleTheme.colors.secondaryContent
@@ -592,10 +533,10 @@ private fun CustomRangeField(
 ) {
     val label = when {
         rangeStart != null && rangeEnd != null ->
-            "${rangeStart.toReadableDate()} – ${rangeEnd.toReadableDate()}"
+            stringResource(R.string.date_range_full, rangeStart.toReadableDate(), rangeEnd.toReadableDate())
 
-        rangeStart != null -> "From ${rangeStart.toReadableDate()}"
-        else -> "Select date range"
+        rangeStart != null -> stringResource(R.string.date_range_from, rangeStart.toReadableDate())
+        else -> stringResource(R.string.select_date_range)
     }
     val hasValue = rangeStart != null || rangeEnd != null
 
@@ -712,7 +653,7 @@ private fun AmountSection(
     val keyboardController = LocalSoftwareKeyboardController.current
 
     Column {
-        SectionLabel("AMOUNT RANGE")
+        SectionLabel(stringResource(R.string.amount_range))
         Row(
             horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d10),
             verticalAlignment = Alignment.CenterVertically
@@ -721,7 +662,7 @@ private fun AmountSection(
                 value = minAmount,
                 onValueChange = { onMinChange(sanitizeDecimalInput(it)) },
                 modifier = Modifier.weight(1f),
-                placeholder = "Min",
+                placeholder = stringResource(R.string.amount_min_placeholder),
                 config = TextFieldConfig(size = ComponentSize.Small),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Decimal,
@@ -734,7 +675,7 @@ private fun AmountSection(
                 value = maxAmount,
                 onValueChange = { onMaxChange(sanitizeDecimalInput(it)) },
                 modifier = Modifier.weight(1f),
-                placeholder = "Max",
+                placeholder = stringResource(R.string.amount_max_placeholder),
                 config = TextFieldConfig(size = ComponentSize.Small),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Decimal,
@@ -749,7 +690,7 @@ private fun AmountSection(
             exit = fadeOut(tween(Duration.MS_100.toInt()))
         ) {
             Text(
-                text = "Min amount cannot exceed max amount",
+                text = stringResource(R.string.min_exceeds_max_error),
                 style = FinsibleTheme.typography.t12.medium(),
                 color = FinsibleTheme.colors.error
             )
@@ -757,11 +698,11 @@ private fun AmountSection(
     }
 }
 
-/** Strip non-decimal characters and prevent multiple decimal points. Supports locale-aware decimal separators. */
+/** Strip non-decimal characters, prevent multiple decimal points, and enforce 14.2 digit limits. */
 private fun sanitizeDecimalInput(input: String): String {
     val decimalSeparator = DecimalFormatSymbols.getInstance().decimalSeparator
     var hasDecimal = false
-    return input.filter { c ->
+    val filtered = input.filter { c ->
         when {
             c.isDigit() -> true
             (c == '.' || c == decimalSeparator) && !hasDecimal -> {
@@ -771,7 +712,14 @@ private fun sanitizeDecimalInput(input: String): String {
             else -> false
         }
     }.replace(decimalSeparator, '.')
+
+    val parts = filtered.split('.')
+    val integerPart = parts[0].take(14)
+    val decimalPart = parts.getOrNull(1)?.take(2) ?: ""
+    return if (decimalPart.isEmpty() && !filtered.contains('.')) integerPart
+    else "$integerPart.$decimalPart"
 }
+
 
 /** Filter chips used for transaction types filters in the filter sheet. */
 @Composable
@@ -874,45 +822,3 @@ private fun DateRangePickerDialog(
         )
     }
 }
-
-/** Resolve the final [dateRangeStart, dateRangeEnd] pair from the active [TimeFilterMode]. */
-internal fun resolveRange(
-    mode: TimeFilterMode,
-    month: Int,
-    year: Int,
-    customStart: Long?,
-    customEnd: Long?
-): Pair<Long?, Long?> = when (mode) {
-    TimeFilterMode.ALL -> null to null
-
-    TimeFilterMode.MONTH_YEAR -> {
-        if (month == ALL_MONTHS) {
-            val start = Calendar.getInstance().apply {
-                set(year, Calendar.JANUARY, 1, 0, 0, 0)
-                set(Calendar.MILLISECOND, 0)
-            }.timeInMillis
-            val end = Calendar.getInstance().apply {
-                set(year, Calendar.DECEMBER, 31, 23, 59, 59)
-                set(Calendar.MILLISECOND, 999)
-            }.timeInMillis
-
-            start to end
-        } else {
-            val start = Calendar.getInstance().apply {
-                set(year, month, 1, 0, 0, 0)
-                set(Calendar.MILLISECOND, 0)
-            }.timeInMillis
-            val end = Calendar.getInstance().apply {
-                set(year, month, 1, 0, 0, 0)
-                set(Calendar.MILLISECOND, 0)
-                add(Calendar.MONTH, 1)
-                add(Calendar.MILLISECOND, -1)
-            }.timeInMillis
-
-            start to end
-        }
-    }
-
-    TimeFilterMode.CUSTOM -> customStart to customEnd
-}
-

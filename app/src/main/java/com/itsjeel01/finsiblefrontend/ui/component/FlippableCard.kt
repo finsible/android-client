@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.ui.model.FlippableCardData
 import com.itsjeel01.finsiblefrontend.ui.model.StatisticsModel
@@ -181,7 +182,7 @@ private fun CardFace(
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_rotate),
-                        contentDescription = "Rotate card",
+                        contentDescription = stringResource(R.string.cd_rotate_card),
                         tint = FinsibleTheme.colors.white.copy(alpha = 0.95f),
                         modifier = Modifier.size(FinsibleTheme.dimes.d20)
                     )

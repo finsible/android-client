@@ -25,11 +25,11 @@ import com.itsjeel01.finsiblefrontend.ui.component.BottomNavigationBar
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
 import com.itsjeel01.finsiblefrontend.ui.screen.AccountsScreen
 import com.itsjeel01.finsiblefrontend.ui.screen.DashboardTab
+import com.itsjeel01.finsiblefrontend.ui.screen.HistoryTab
 import com.itsjeel01.finsiblefrontend.ui.screen.SettingsTab
-import com.itsjeel01.finsiblefrontend.ui.screen.TransactionsScreen
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.AccountsViewModel
-import com.itsjeel01.finsiblefrontend.ui.viewmodel.TransactionsViewModel
+import com.itsjeel01.finsiblefrontend.ui.viewmodel.HistoryViewModel
 
 @Composable
 fun NavigationHome() {
@@ -75,8 +75,8 @@ fun NavigationHome() {
                         )
                     }
                     entry<Route.Home.Transactions> {
-                        val viewModel: TransactionsViewModel = hiltViewModel()
-                        TransactionsScreen(viewModel = viewModel)
+                        val viewModel: HistoryViewModel = hiltViewModel()
+                        HistoryTab(viewModel = viewModel)
                     }
                     entry<Route.Home.Settings> {
                         SettingsTab()

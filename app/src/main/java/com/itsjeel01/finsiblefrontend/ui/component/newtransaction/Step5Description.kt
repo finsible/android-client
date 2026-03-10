@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.ui.screen.newtransaction
+package com.itsjeel01.finsiblefrontend.ui.component.newtransaction
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column

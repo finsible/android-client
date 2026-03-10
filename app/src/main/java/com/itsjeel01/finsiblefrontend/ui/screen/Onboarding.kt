@@ -41,6 +41,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -264,7 +265,7 @@ private fun OnboardingHeader(onSkip: () -> Unit = {}, isLastItem: Boolean) {
 
         Image(
             painter = painterResource(id = R.drawable.ic_logo),
-            contentDescription = "Finsible Logo",
+            contentDescription = stringResource(R.string.cd_finsible_logo),
             modifier = Modifier.height(FinsibleTheme.dimes.d64),
             contentScale = ContentScale.Fit
         )
@@ -273,7 +274,7 @@ private fun OnboardingHeader(onSkip: () -> Unit = {}, isLastItem: Boolean) {
 
         if (!isLastItem) {
             FinsibleButton(
-                "Skip",
+                stringResource(R.string.skip),
                 onClick = onSkip,
                 config = ButtonConfig(
                     size = ComponentSize.Small,
@@ -304,7 +305,7 @@ private fun OnboardingIllustration(
         ) { index ->
             Image(
                 painter = painterResource(id = carouselItems[index].illustration),
-                contentDescription = "${index}th Onboarding Illustration",
+                contentDescription = stringResource(R.string.cd_onboarding_illustration, index),
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Fit
             )
@@ -415,7 +416,7 @@ private fun OnboardingNavigationButtons(
     ) {
         if (currentItem > 0 && !isLastItem()) {
             FinsibleButton(
-                text = "Back",
+                text = stringResource(R.string.back),
                 onClick = onSecondaryButtonClick,
                 modifier = Modifier.weight(1f),
                 config = ButtonConfig(
@@ -426,9 +427,9 @@ private fun OnboardingNavigationButtons(
             )
         }
 
-        val label = if (currentItem == 0) "Get started"
-        else if (isLastItem()) "Continue with Google"
-        else "Next"
+        val label = if (currentItem == 0) stringResource(R.string.get_started)
+        else if (isLastItem()) stringResource(R.string.continue_with_google)
+        else stringResource(R.string.next)
 
         val icon = if (isLastItem()) R.drawable.ic_google
         else if (currentItem == 0) R.drawable.ic_right_arrow_dotted
@@ -461,7 +462,7 @@ private fun OnboardingNavigationButtons(
             if (isLastItem()) {
                 FinsibleButton(
                     modifier = Modifier.padding(vertical = FinsibleTheme.dimes.d8),
-                    text = "Go back",
+                    text = stringResource(R.string.go_back),
                     onClick = onSecondaryButtonClick,
                     config = ButtonConfig(
                         size = ComponentSize.Small,

@@ -1,11 +1,10 @@
 package com.itsjeel01.finsiblefrontend.ui.viewmodel
 
-import android.icu.math.BigDecimal
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.itsjeel01.finsiblefrontend.common.CurrencyFormatter
-import com.itsjeel01.finsiblefrontend.common.toCompactCurrency
-import com.itsjeel01.finsiblefrontend.common.toFormattedCurrency
+import com.itsjeel01.finsiblefrontend.common.centisToCompactCurrency
+import com.itsjeel01.finsiblefrontend.common.centisToFormattedCurrency
 import com.itsjeel01.finsiblefrontend.data.local.entity.AccountEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.AccountGroupEntity
 import com.itsjeel01.finsiblefrontend.data.local.repository.AccountGroupLocalRepository
@@ -68,28 +67,28 @@ class AccountsViewModel @Inject constructor(
         selectedGroupId: Long?
     ): AccountsUiState {
 
-        val (totalAssets, totalLiabilities) = calculateTotals(accounts)
-        val netWorth = totalAssets.subtract(totalLiabilities)
+        val (totalAssetCentis, totalLiabilityCentis) = calculateTotals(accounts)
+        val netWorthCentis = totalAssetCentis - totalLiabilityCentis
 
         val cards = if (accounts.isEmpty()) {
             emptyList()
         } else {
             buildList {
-                add(createNetWorthCard(netWorth, totalAssets, totalLiabilities))
+                add(createNetWorthCard(netWorthCentis, totalAssetCentis, totalLiabilityCentis))
 
                 val assetStats = buildGroupedStatistics(
                     accounts,
-                    includePredicate = { it.signum() >= 0 },
-                    valueSelector = { it.balance }
+                    includePredicate = { it >= 0L },
+                    valueSelector = { it.balanceCentis }
                 )
-                if (assetStats.isNotEmpty()) add(createAssetsCard(totalAssets, assetStats))
+                if (assetStats.isNotEmpty()) add(createAssetsCard(totalAssetCentis, assetStats))
 
                 val liabilityStats = buildGroupedStatistics(
                     accounts,
-                    includePredicate = { it.signum() < 0 },
-                    valueSelector = { it.balance.abs() }
+                    includePredicate = { it < 0L },
+                    valueSelector = { -it.balanceCentis }
                 )
-                if (liabilityStats.isNotEmpty()) add(createLiabilitiesCard(totalLiabilities, liabilityStats))
+                if (liabilityStats.isNotEmpty()) add(createLiabilitiesCard(totalLiabilityCentis, liabilityStats))
             }
         }
 
@@ -113,9 +112,9 @@ class AccountsViewModel @Inject constructor(
                                 name = entity.name,
                                 description = entity.description,
                                 icon = entity.icon,
-                                formattedBalance = entity.balance.toFormattedCurrency(currencyFormatter),
+                                formattedBalance = entity.balanceCentis.centisToFormattedCurrency(currencyFormatter),
                                 groupColor = entity.accountGroup.target?.color,
-                                isPositiveBalance = entity.balance.signum() >= 0
+                                isPositiveBalance = entity.balanceCentis >= 0L
                             )
                         )
                     })
@@ -131,79 +130,75 @@ class AccountsViewModel @Inject constructor(
         )
     }
 
-    private fun calculateTotals(accounts: List<AccountEntity>): Pair<BigDecimal, BigDecimal> {
-        var assets = BigDecimal.ZERO
-        var liabilities = BigDecimal.ZERO
+    /** Returns (totalAssetCentis, totalLiabilityCentis) — liabilities are positive (magnitude). */
+    private fun calculateTotals(accounts: List<AccountEntity>): Pair<Long, Long> {
+        var assets = 0L
+        var liabilities = 0L
         for (account in accounts) {
-            val balance = account.balance
-            if (balance.signum() >= 0) {
-                assets = assets.add(balance)
-            } else {
-                liabilities = liabilities.add(balance.abs())
-            }
+            if (account.balanceCentis >= 0L) assets += account.balanceCentis
+            else liabilities += -account.balanceCentis
         }
         return assets to liabilities
     }
 
-    private fun createNetWorthCard(netWorth: BigDecimal, assets: BigDecimal, liabilities: BigDecimal) = FlippableCardData(
+    private fun createNetWorthCard(netWorthCentis: Long, assetCentis: Long, liabilityCentis: Long) = FlippableCardData(
         title = "Net Worth",
-        largeText = netWorth.toFormattedCurrency(currencyFormatter),
+        largeText = netWorthCentis.centisToFormattedCurrency(currencyFormatter),
         statistics = listOf(
-            StatisticsModel("Assets", assets.toCompactCurrency(currencyFormatter)),
-            StatisticsModel("Liabilities", liabilities.toCompactCurrency(currencyFormatter))
+            StatisticsModel("Assets", assetCentis.centisToCompactCurrency(currencyFormatter)),
+            StatisticsModel("Liabilities", liabilityCentis.centisToCompactCurrency(currencyFormatter))
         ).toPersistentList()
     )
 
-    private fun createAssetsCard(totalAssets: BigDecimal, statistics: List<StatisticsModel>) = FlippableCardData(
+    private fun createAssetsCard(totalAssetCentis: Long, statistics: List<StatisticsModel>) = FlippableCardData(
         title = "Total Assets",
-        largeText = totalAssets.toFormattedCurrency(currencyFormatter),
+        largeText = totalAssetCentis.centisToFormattedCurrency(currencyFormatter),
         statistics = statistics.toPersistentList()
     )
 
-    private fun createLiabilitiesCard(totalLiabilities: BigDecimal, statistics: List<StatisticsModel>) = FlippableCardData(
+    private fun createLiabilitiesCard(totalLiabilityCentis: Long, statistics: List<StatisticsModel>) = FlippableCardData(
         title = "Total Liabilities",
-        largeText = totalLiabilities.toFormattedCurrency(currencyFormatter),
+        largeText = totalLiabilityCentis.centisToFormattedCurrency(currencyFormatter),
         statistics = statistics.toPersistentList()
     )
 
     private fun buildGroupedStatistics(
         accounts: List<AccountEntity>,
-        includePredicate: (BigDecimal) -> Boolean,
-        valueSelector: (AccountEntity) -> BigDecimal
+        includePredicate: (Long) -> Boolean,
+        valueSelector: (AccountEntity) -> Long
     ): List<StatisticsModel> {
-        val matchingAccounts = accounts.filter { includePredicate(it.balance) }
+        val matchingAccounts = accounts.filter { includePredicate(it.balanceCentis) }
         if (matchingAccounts.isEmpty()) return emptyList()
 
         val (orphanAccounts, groupedAccounts) = matchingAccounts.partition {
             it.accountGroup.target == null
         }
 
-        val orphanTotal = orphanAccounts.sumOfBigDecimal(valueSelector)
+        val orphanTotal = orphanAccounts.sumOfCentis(valueSelector)
 
         val namedGroups = groupedAccounts
             .groupBy { it.accountGroup.target!!.name }
-            .map { (name, groupAccounts) -> name to groupAccounts.sumOfBigDecimal(valueSelector) }
+            .map { (name, groupAccounts) -> name to groupAccounts.sumOfCentis(valueSelector) }
             .sortedByDescending { it.second }
 
         return buildList {
-            namedGroups.take(2).forEach { (name, total) ->
-                add(StatisticsModel(name, total.toCompactCurrency(currencyFormatter)))
+            namedGroups.take(2).forEach { (name, totalCentis) ->
+                add(StatisticsModel(name, totalCentis.centisToCompactCurrency(currencyFormatter)))
             }
 
-            var othersTotal = orphanTotal
+            var othersTotalCentis = orphanTotal
             if (namedGroups.size > 2) {
-                othersTotal = othersTotal.add(
-                    namedGroups.drop(2).fold(BigDecimal.ZERO) { acc, (_, total) -> acc.add(total) }
-                )
+                othersTotalCentis += namedGroups.drop(2).sumOf { it.second }
             }
 
-            if (othersTotal > BigDecimal.ZERO) {
-                add(StatisticsModel("Others", othersTotal.toCompactCurrency(currencyFormatter)))
+            if (othersTotalCentis > 0L) {
+                add(StatisticsModel("Others", othersTotalCentis.centisToCompactCurrency(currencyFormatter)))
             }
         }
     }
 
-    private fun List<AccountEntity>.sumOfBigDecimal(selector: (AccountEntity) -> BigDecimal): BigDecimal =
-        fold(BigDecimal.ZERO) { acc, account -> acc.add(selector(account)) }
+    private fun List<AccountEntity>.sumOfCentis(selector: (AccountEntity) -> Long): Long =
+        fold(0L) { acc, account -> acc + selector(account) }
 }
+
 

@@ -34,6 +34,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
 import com.itsjeel01.finsiblefrontend.ui.navigation.BottomNavItem
@@ -182,7 +183,7 @@ private fun StandardNavigationTab(
         ) {
             Icon(
                 painter = painterResource(id = if (isSelected) tab.activeIcon else tab.inactiveIcon),
-                contentDescription = tab.label,
+                contentDescription = stringResource(tab.labelRes),
                 tint = if (isSelected) FinsibleTheme.colors.primaryContent else FinsibleTheme.colors.primaryContent80,
                 modifier = Modifier.size(FinsibleTheme.dimes.d24)
             )
@@ -274,7 +275,7 @@ private fun CentralFABTab(
     ) {
         Icon(
             painter = painterResource(id = tab.activeIcon),
-            contentDescription = tab.label,
+            contentDescription = stringResource(tab.labelRes),
             tint = FinsibleTheme.colors.primaryBackground,
             modifier = Modifier.size(FinsibleTheme.dimes.d24)
         )

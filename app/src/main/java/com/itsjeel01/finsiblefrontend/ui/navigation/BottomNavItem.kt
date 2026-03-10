@@ -1,10 +1,11 @@
 package com.itsjeel01.finsiblefrontend.ui.navigation
 
+import androidx.annotation.StringRes
 import com.itsjeel01.finsiblefrontend.R
 
 /** Navigation tab configuration data class */
 data class BottomNavItem(
-    val label: String,
+    @StringRes val labelRes: Int,
     val route: Route,
     val isFAB: Boolean = false,
     val inactiveIcon: Int = 0,
@@ -16,32 +17,32 @@ data class BottomNavItem(
 object BottomNavItems {
     private val navigationTabs = listOf(
         BottomNavItem(
-            label = "Dashboard",
+            labelRes = R.string.nav_dashboard,
             route = Route.Home.Dashboard,
             inactiveIcon = R.drawable.ic_home_outlined,
             activeIcon = R.drawable.ic_home_filled
         ),
         BottomNavItem(
-            label = "Accounts",
+            labelRes = R.string.nav_accounts,
             route = Route.Home.Accounts,
             inactiveIcon = R.drawable.ic_piggybank_outlined,
             activeIcon = R.drawable.ic_piggybank_filled
         ),
         BottomNavItem(
-            label = "New Transaction",
+            labelRes = R.string.nav_new_transaction,
             route = Route.Home.NewTransaction,
             isFAB = true,
             inactiveIcon = 0,
             activeIcon = R.drawable.ic_plus
         ),
         BottomNavItem(
-            label = "Transactions",
+            labelRes = R.string.nav_transactions,
             route = Route.Home.Transactions,
             inactiveIcon = R.drawable.ic_history_outlined,
             activeIcon = R.drawable.ic_history_outlined
         ),
         BottomNavItem(
-            label = "Settings",
+            labelRes = R.string.nav_settings,
             route = Route.Home.Settings,
             inactiveIcon = R.drawable.ic_settings_outlined,
             activeIcon = R.drawable.ic_settings_filled

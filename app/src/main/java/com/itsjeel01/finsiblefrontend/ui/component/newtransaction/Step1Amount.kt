@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.ui.screen.newtransaction
+package com.itsjeel01.finsiblefrontend.ui.component.newtransaction
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
@@ -28,9 +28,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.toCompactCurrency
 import com.itsjeel01.finsiblefrontend.data.di.hiltCurrencyFormatter
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
@@ -116,7 +118,7 @@ fun Step1Amount(
                         // Placeholder when empty.
                         if (amount.isEmpty()) {
                             Text(
-                                text = "0",
+                                text = stringResource(R.string.amount_placeholder),
                                 style = textStyle.copy(color = FinsibleTheme.colors.primaryContent40)
                             )
                         }
@@ -154,7 +156,7 @@ fun Step1Amount(
             exit = fadeOut()
         ) {
             Text(
-                text = "Enter transaction amount",
+                text = stringResource(R.string.enter_transaction_amount),
                 style = FinsibleTheme.typography.t16,
                 color = FinsibleTheme.colors.secondaryContent,
                 textAlign = TextAlign.Center,

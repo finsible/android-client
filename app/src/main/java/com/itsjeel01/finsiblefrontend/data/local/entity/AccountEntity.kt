@@ -1,13 +1,12 @@
 package com.itsjeel01.finsiblefrontend.data.local.entity
 
-import android.icu.math.BigDecimal
 import com.itsjeel01.finsiblefrontend.common.Status
-import com.itsjeel01.finsiblefrontend.data.local.BigDecimalConverter
 import com.itsjeel01.finsiblefrontend.data.local.StatusConverter
 import com.itsjeel01.finsiblefrontend.data.model.Account
 import io.objectbox.annotation.Convert
 import io.objectbox.annotation.Entity
 import io.objectbox.annotation.Id
+import io.objectbox.annotation.Index
 import io.objectbox.relation.ToOne
 
 @Entity
@@ -17,8 +16,8 @@ data class AccountEntity(
 
     var description: String = "",
 
-    @Convert(converter = BigDecimalConverter::class, dbType = String::class)
-    var balance: BigDecimal = BigDecimal.ZERO,
+    /** Account balance in centis (×100). E.g., 123456L = 1234.56. */
+    @Index var balanceCentis: Long = 0,
 
     var currencyCode: String = "",
 
@@ -44,7 +43,7 @@ fun AccountEntity.toDTO(): Account {
         name = name,
         description = description,
         accountGroupId = accountGroup.target?.id,
-        balance = balance.toString(),
+        balance = balanceCentis.toAmountString(),
         currencyCode = currencyCode,
         icon = icon,
         isActive = isActive,

@@ -6,6 +6,8 @@ import com.itsjeel01.finsiblefrontend.common.logging.Logger
 import com.itsjeel01.finsiblefrontend.data.local.entity.AccountEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.AccountEntity_
 import com.itsjeel01.finsiblefrontend.data.local.entity.PendingOperationEntity
+import com.itsjeel01.finsiblefrontend.data.local.entity.toAmountCentis
+import com.itsjeel01.finsiblefrontend.data.local.entity.toAmountString
 import com.itsjeel01.finsiblefrontend.data.model.Account
 import com.itsjeel01.finsiblefrontend.data.model.toEntity
 import com.itsjeel01.finsiblefrontend.data.remote.model.AccountCreateRequest
@@ -40,7 +42,7 @@ class AccountLocalRepository @Inject constructor(
     override fun toCreateRequest(entity: AccountEntity) = AccountCreateRequest(
         name = entity.name,
         description = entity.description,
-        balance = entity.balance.toString(),
+        balance = entity.balanceCentis.toAmountString(),
         currencyCode = entity.currencyCode,
         icon = entity.icon,
         accountGroupId = entity.accountGroup.targetId,
@@ -50,7 +52,7 @@ class AccountLocalRepository @Inject constructor(
     override fun toUpdateRequest(entity: AccountEntity) = AccountUpdateRequest(
         name = entity.name,
         description = entity.description,
-        balance = entity.balance.toString(),
+        balance = entity.balanceCentis.toAmountString(),
         currencyCode = entity.currencyCode,
         icon = entity.icon,
         accountGroupId = entity.accountGroup.targetId,
@@ -104,7 +106,7 @@ class AccountLocalRepository @Inject constructor(
                 id = localId,
                 name = name,
                 description = description,
-                balance = android.icu.math.BigDecimal(balance),
+                balanceCentis = balance.toAmountCentis(),
                 currencyCode = currencyCode,
                 icon = icon,
                 isActive = isActive,
@@ -130,7 +132,7 @@ class AccountLocalRepository @Inject constructor(
 
         name?.let { entity.name = it }
         description?.let { entity.description = it }
-        balance?.let { entity.balance = android.icu.math.BigDecimal(it) }
+        balance?.let { entity.balanceCentis = it.toAmountCentis() }
         currencyCode?.let { entity.currencyCode = it }
         icon?.let { entity.icon = it }
         accountGroupId?.let { entity.accountGroup.targetId = it }

@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:36553080464490998",
-      "lastPropertyId": "12:8267619782700735346",
+      "lastPropertyId": "13:5817362973252964116",
       "name": "AccountEntity",
       "properties": [
         {
@@ -22,11 +22,6 @@
         {
           "id": "3:4401009694744929550",
           "name": "description",
-          "type": 9
-        },
-        {
-          "id": "4:4480711609445654992",
-          "name": "balance",
           "type": 9
         },
         {
@@ -71,6 +66,13 @@
           "id": "12:8267619782700735346",
           "name": "syncError",
           "type": 9
+        },
+        {
+          "id": "13:5817362973252964116",
+          "name": "balanceCentis",
+          "indexId": "12:6868491128436372398",
+          "type": 6,
+          "flags": 8
         }
       ],
       "relations": []
@@ -253,7 +255,7 @@
     },
     {
       "id": "6:6297331166862476803",
-      "lastPropertyId": "21:3722423812120378061",
+      "lastPropertyId": "22:3622881014852802664",
       "name": "TransactionEntity",
       "properties": [
         {
@@ -270,7 +272,9 @@
         {
           "id": "3:2521166742728888635",
           "name": "totalAmount",
-          "type": 9
+          "indexId": "11:6119797495717609941",
+          "type": 6,
+          "flags": 8
         },
         {
           "id": "4:2662661078709497583",
@@ -367,13 +371,18 @@
           "id": "21:3722423812120378061",
           "name": "categoryIcon",
           "type": 9
+        },
+        {
+          "id": "22:3622881014852802664",
+          "name": "searchableText",
+          "type": 9
         }
       ],
       "relations": []
     }
   ],
   "lastEntityId": "6:6297331166862476803",
-  "lastIndexId": "10:8469686178105220491",
+  "lastIndexId": "12:6868491128436372398",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 5,
@@ -392,7 +401,8 @@
     4648368035987455136,
     4522232263756840346,
     1259847168904331729,
-    9196209529055799685
+    9196209529055799685,
+    4480711609445654992
   ],
   "retiredRelationUids": [],
   "version": 1

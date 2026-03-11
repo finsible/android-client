@@ -74,6 +74,27 @@ class CurrencyFormatter @Inject constructor(
         return "$sign${currency.getSymbol()}$formattedValue"
     }
 
+    /** ThreadLocal cache for compact DecimalFormat instances (separate from regular formatters to avoid rounding-mode mutation). */
+    private val threadLocalCompactFormatters = object : ThreadLocal<MutableMap<Currency, DecimalFormat>>() {
+        override fun initialValue(): MutableMap<Currency, DecimalFormat> = mutableMapOf()
+    }
+
+    private fun getCompactFormatter(currency: Currency): DecimalFormat {
+        val cache = threadLocalCompactFormatters.get()!!
+
+        return cache.getOrPut(currency) {
+            val locale = CURRENCY_LOCALES[currency] ?: Locale.getDefault()
+            val pattern = CURRENCY_PATTERNS[currency] ?: "###,###,##0.##"
+
+            DecimalFormat(pattern, DecimalFormatSymbols(locale)).apply {
+                maximumFractionDigits = 2
+                minimumFractionDigits = 0
+                isGroupingUsed = true
+                roundingMode = MathContext.ROUND_HALF_EVEN
+            }
+        }
+    }
+
     /** Format centis with abbreviated suffixes (K, L, Cr, etc.) for compact display. */
     fun formatCompact(centis: Long, currency: Currency = userCurrency): String {
         val absCentis = if (centis < 0L) -centis else centis
@@ -86,10 +107,9 @@ class CurrencyFormatter @Inject constructor(
             }
             ?: (centisToDecimal(absCentis) to "")
 
-        val formatter = getFormatter(currency).apply { roundingMode = MathContext.ROUND_HALF_EVEN }
         val sign = if (centis < 0L) "- " else ""
 
-        return "$sign${currency.getSymbol()}${formatter.format(scaledDecimal)}$suffix"
+        return "$sign${currency.getSymbol()}${getCompactFormatter(currency).format(scaledDecimal)}$suffix"
     }
 
     /** Format centis without sign: `1,234`. Use when caller needs to add custom signs/symbols. */

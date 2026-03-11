@@ -201,4 +201,3 @@ class AccountsViewModel @Inject constructor(
         fold(0L) { acc, account -> acc + selector(account) }
 }
 
-

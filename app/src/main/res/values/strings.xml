@@ -32,6 +32,8 @@
     <string name="date_range_full">%1$s – %2$s</string>
     <string name="date_range_from">From %s</string>
     <string name="select_date_range">Select date range</string>
+    <string name="date_range_dialog_ok">OK</string>
+    <string name="date_range_dialog_cancel">Cancel</string>
     <string name="min_exceeds_max_error">Min amount cannot exceed max amount</string>
 
     <!-- FlippableCard -->

@@ -794,12 +794,12 @@ private fun DateRangePickerDialog(
                 },
                 colors = ButtonDefaults.textButtonColors().copy(containerColor = FinsibleTheme.colors.surfaceBright)
             ) {
-                Text("OK", color = FinsibleTheme.colors.primaryContent)
+                Text(stringResource(R.string.date_range_dialog_ok), color = FinsibleTheme.colors.primaryContent)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel", color = FinsibleTheme.colors.tertiaryContent)
+                Text(stringResource(R.string.date_range_dialog_cancel), color = FinsibleTheme.colors.tertiaryContent)
             }
         }
     ) {

@@ -193,8 +193,9 @@ private fun RecurringFrequencyDropdown(
 
     var expanded by remember { mutableStateOf(false) }
 
+    val frequencyText = stringResource(currentFrequency.displayText)
     val textFieldState = remember(currentFrequency) {
-        TextFieldState(currentFrequency.displayText)
+        TextFieldState(frequencyText)
     }
 
     ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
@@ -227,7 +228,7 @@ private fun RecurringFrequencyDropdown(
                 DropdownMenuItem(
                     text = {
                         Text(
-                            option.displayText,
+                            stringResource(option.displayText),
                             style = FinsibleTheme.typography.t18,
                             color = FinsibleTheme.colors.primaryContent
                         )

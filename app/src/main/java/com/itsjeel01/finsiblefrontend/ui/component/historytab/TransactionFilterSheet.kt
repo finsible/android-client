@@ -280,7 +280,7 @@ private fun SortSection(
                 ) {
                     row.forEach { option ->
                         RadioOption(
-                            label = option.displayText,
+                            label = stringResource(option.displayText),
                             selected = option == selectedOption,
                             onClick = { onOptionSelected(option) },
                             modifier = Modifier.weight(1f)
@@ -344,7 +344,7 @@ private fun TimeSection(
         ) {
             TimeFilterMode.entries.forEach { mode ->
                 RadioOption(
-                    label = mode.displayText,
+                    label = stringResource(mode.displayText),
                     selected = mode == timeMode,
                     onClick = { onTimeModeChange(mode) }
                 )
@@ -670,7 +670,7 @@ private fun AmountSection(
                 ),
                 keyboardActions = KeyboardActions(onDone = { keyboardController?.hide() })
             )
-            Text("–", style = FinsibleTheme.typography.t16.medium(), color = FinsibleTheme.colors.tertiaryContent)
+            Text(stringResource(R.string.amount_range_dash), style = FinsibleTheme.typography.t16.medium(), color = FinsibleTheme.colors.tertiaryContent)
             FinsibleTextField(
                 value = maxAmount,
                 onValueChange = { onMaxChange(sanitizeDecimalInput(it)) },
@@ -760,7 +760,7 @@ private fun FilterChip(
             Spacer(Modifier.width(FinsibleTheme.dimes.d6))
         }
         Text(
-            text = type.displayText,
+            text = stringResource(type.displayText),
             style = FinsibleTheme.typography.t14.medium(),
             color = contentColor,
             textAlign = if (leadingIcon == null) TextAlign.Center else TextAlign.Start

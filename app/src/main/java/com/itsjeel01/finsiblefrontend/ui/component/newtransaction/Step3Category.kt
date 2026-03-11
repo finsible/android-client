@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.TransactionType
@@ -80,12 +81,12 @@ fun Step3Category(
                     ),
                     selected = isSelected,
                     label = {
-                        Text(type.displayText, style = FinsibleTheme.typography.t16.medium())
+                        Text(stringResource(type.displayText), style = FinsibleTheme.typography.t16.medium())
                     },
                     icon = {
                         if (isSelected) Icon(
                             painter = painterResource(id = type.icon),
-                            contentDescription = type.displayText + " icon",
+                            contentDescription = stringResource(R.string.cd_type_icon, stringResource(type.displayText)),
                             tint = type.getColor()
                         )
                     }

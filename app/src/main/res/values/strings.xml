@@ -118,6 +118,32 @@
     <!-- Notification -->
     <string name="cd_dismiss_notification">Dismiss notification</string>
 
+    <!-- Transaction Types -->
+    <string name="type_income">Income</string>
+    <string name="type_expense">Expense</string>
+    <string name="type_transfer">Transfer</string>
+
+    <!-- Recurring Frequency -->
+    <string name="frequency_daily">Daily</string>
+    <string name="frequency_weekly">Weekly</string>
+    <string name="frequency_monthly">Monthly</string>
+    <string name="frequency_yearly">Yearly</string>
+
+    <!-- Time Filter Modes -->
+    <string name="filter_all_time">All Time</string>
+    <string name="filter_month_year">Month / Year</string>
+    <string name="filter_custom_range">Custom Range</string>
+
+    <!-- Sort Options -->
+    <string name="sort_newest_first">Newest First</string>
+    <string name="sort_oldest_first">Oldest First</string>
+    <string name="sort_amount_high_to_low">Amount: High to Low</string>
+    <string name="sort_amount_low_to_high">Amount: Low to High</string>
+
+    <!-- Misc -->
+    <string name="cd_type_icon">%s icon</string>
+    <string name="amount_range_dash">–</string>
+
     <!-- Bottom Navigation -->
     <string name="nav_dashboard">Dashboard</string>
     <string name="nav_accounts">Accounts</string>

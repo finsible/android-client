@@ -1,15 +1,16 @@
 package com.itsjeel01.finsiblefrontend.common
 
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
-enum class TransactionType(val displayText: String, val icon: Int) {
-    INCOME("Income", R.drawable.ic_arrow_down),
-    EXPENSE("Expense", R.drawable.ic_arrow_up),
-    TRANSFER("Transfer", R.drawable.ic_transfer);
+enum class TransactionType(@StringRes val displayText: Int, val icon: Int) {
+    INCOME(R.string.type_income, R.drawable.ic_arrow_down),
+    EXPENSE(R.string.type_expense, R.drawable.ic_arrow_up),
+    TRANSFER(R.string.type_transfer, R.drawable.ic_transfer);
 
     @Composable
     fun getColor(): Color {
@@ -27,11 +28,11 @@ enum class TransactionType(val displayText: String, val icon: Int) {
     }
 }
 
-enum class TransactionRecurringFrequency(val displayText: String) {
-    DAILY("Daily"),
-    WEEKLY("Weekly"),
-    MONTHLY("Monthly"),
-    YEARLY("Yearly");
+enum class TransactionRecurringFrequency(@StringRes val displayText: Int) {
+    DAILY(R.string.frequency_daily),
+    WEEKLY(R.string.frequency_weekly),
+    MONTHLY(R.string.frequency_monthly),
+    YEARLY(R.string.frequency_yearly);
 
     companion object {
         fun toOrderedList(): List<TransactionRecurringFrequency> {

@@ -11,7 +11,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentSize
 import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleTextFieldWithCounter
 import com.itsjeel01.finsiblefrontend.ui.component.fin.TextFieldConfig
@@ -41,8 +43,8 @@ fun Step5Description(viewModel: NewTransactionViewModel, focusRequester: FocusRe
                 minLines = 4,
                 maxLines = 8
             ),
-            label = "Description",
-            placeholder = "Add notes about this transaction...",
+            label = stringResource(R.string.description_label),
+            placeholder = stringResource(R.string.description_placeholder),
             showCounter = true,
             interactionSource = interactionSource
         )

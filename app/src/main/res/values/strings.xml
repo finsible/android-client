@@ -48,6 +48,16 @@
     <string name="continue_with_google">Continue with Google</string>
     <string name="next">Next</string>
     <string name="go_back">Go back</string>
+    <string name="onboarding_headline_welcome">Welcome to Finsible</string>
+    <string name="onboarding_description_welcome">We make finance sensible and stress-free. Start your journey to financial clarity and transform how you manage money.</string>
+    <string name="onboarding_headline_track">Never Lose Track Again</string>
+    <string name="onboarding_description_track">Capture transactions in seconds and see your spending clearly. Understand your money habits without the headache.</string>
+    <string name="onboarding_headline_audit">Your money, decoded!</string>
+    <string name="onboarding_description_audit">Turn financial data into insights. Set goals, get personalized tips, and reach them faster with advice in your pocket.</string>
+    <string name="onboarding_headline_auth">Let\'s Get You Set Up</string>
+    <string name="onboarding_description_auth">Never lose your data, access from anywhere. Sign in with Google and start making your finances more sensible.</string>
+    <string name="please_wait">Please wait…</string>
+    <string name="authentication_failed">Authentication failed</string>
 
     <!-- New Transaction -->
     <string name="new_transaction">New Transaction</string>
@@ -55,10 +65,19 @@
     <string name="enter_transaction_amount">Enter transaction amount</string>
     <string name="confirm">Confirm</string>
     <string name="cd_close">Close</string>
+    <string name="description_label">Description</string>
+    <string name="description_placeholder">Add notes about this transaction…</string>
 
     <!-- Accounts -->
     <string name="all">All</string>
     <string name="cd_account_icon">Account icon for %s</string>
+    <string name="my_accounts">My Accounts</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_screen">Dashboard Screen</string>
+
+    <!-- Settings -->
+    <string name="settings_screen">Settings Screen</string>
 
     <!-- Notification -->
     <string name="cd_dismiss_notification">Dismiss notification</string>

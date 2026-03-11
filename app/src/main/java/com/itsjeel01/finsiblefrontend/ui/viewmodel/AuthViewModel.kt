@@ -12,6 +12,7 @@ import com.itsjeel01.finsiblefrontend.ui.util.GoogleAuthManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import javax.inject.Inject
@@ -24,7 +25,7 @@ class AuthViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _authState = MutableStateFlow<AuthState>(AuthState.Negative())
-    val authState: StateFlow<AuthState> = _authState
+    val authState: StateFlow<AuthState> = _authState.asStateFlow()
 
     init {
         if (authRepo.isAuthenticated()) {
@@ -76,9 +77,5 @@ class AuthViewModel @Inject constructor(
             authRepo.logout()
             _authState.value = AuthState.Negative()
         }
-    }
-
-    companion object {
-        private const val TAG = "AuthViewModel"
     }
 }

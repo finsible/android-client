@@ -82,7 +82,8 @@ import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.bold
 import com.itsjeel01.finsiblefrontend.ui.theme.medium
 import com.itsjeel01.finsiblefrontend.ui.theme.semiBold
-import com.itsjeel01.finsiblefrontend.ui.viewmodel.ALL_MONTHS
+import com.itsjeel01.finsiblefrontend.common.FinsibleConstants
+import com.itsjeel01.finsiblefrontend.common.FinsibleConstants.ALL_MONTHS
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.TransactionsFilterViewModel
 import java.text.DecimalFormatSymbols
 import java.util.Calendar

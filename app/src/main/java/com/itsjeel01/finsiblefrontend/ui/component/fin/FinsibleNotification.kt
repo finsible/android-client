@@ -69,7 +69,7 @@ fun FinsibleNotification(
     var isAutoDismissing by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
-    // --- Auto Dismiss Logic with optimized updates ---
+    // Auto dismiss logic with optimized updates
 
     var timeLeft by remember(config) { mutableFloatStateOf(COMPLETE_FRACTION) }
 
@@ -94,7 +94,7 @@ fun FinsibleNotification(
         }
     }
 
-    // --- Swipe Up to Dismiss Logic ---
+    // Swipe up to dismiss
 
     val verticalDismissThreshold = screenHeight * VERTICAL_THRESHOLD_FACTOR
 
@@ -119,8 +119,6 @@ fun FinsibleNotification(
         ),
         label = "notification_alpha"
     )
-
-    // --- Notification Card UI ---
 
     AnimatedVisibility(
         visible = isVisible,

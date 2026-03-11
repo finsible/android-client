@@ -101,7 +101,7 @@ fun AccountsScreen(
                     .fillMaxSize()
                     .padding(horizontal = FinsibleTheme.dimes.d16, vertical = FinsibleTheme.dimes.d12)
             ) {
-                Text("My Accounts", style = FinsibleTheme.typography.t24.extraBold())
+                Text(stringResource(R.string.my_accounts), style = FinsibleTheme.typography.t24.extraBold())
 
                 Spacer(Modifier.height(FinsibleTheme.dimes.d16))
 

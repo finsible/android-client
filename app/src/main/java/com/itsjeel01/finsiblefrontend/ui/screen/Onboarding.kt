@@ -73,9 +73,11 @@ fun Onboarding(
     val loadingManager = hiltLoadingManager()
     val context = LocalContext.current
 
-    val carouselItems = remember { OnboardingViewModel.CarouselItems().get() }
+    val carouselItems = remember { OnboardingViewModel.CarouselItem.entries }
     val currentItem by onboardingViewModel.currentCarouselItem.collectAsStateWithLifecycle()
     val authState by authViewModel.authState.collectAsStateWithLifecycle()
+    val pleaseWait = stringResource(R.string.please_wait)
+    val authFailed = stringResource(R.string.authentication_failed)
 
     LaunchedEffect(authState) {
         loadingManager.hide()
@@ -88,7 +90,7 @@ fun Onboarding(
 
             is AuthState.Loading -> {
                 Logger.UI.d("AuthState = Loading")
-                loadingManager.show("Please wait...")
+                loadingManager.show(pleaseWait)
             }
 
             is AuthState.Negative -> {
@@ -98,7 +100,7 @@ fun Onboarding(
                     Logger.UI.d("Auth status: ${authState.message}")
 
                     inAppNotificationManager.showError(
-                        title = "Authentication failed",
+                        title = authFailed,
                         subtitle = authState.message,
                         autoDismiss = true,
                         autoDismissDelay = Duration.MS_3000,
@@ -194,7 +196,7 @@ private fun OnboardingBackground() {
 @Composable
 private fun OnboardingContent(
     currentItem: Int,
-    carouselItems: List<OnboardingViewModel.CarouselItems>,
+    carouselItems: List<OnboardingViewModel.CarouselItem>,
     isLastItem: () -> Boolean,
     onNextItem: () -> Unit,
     onPreviousItem: () -> Unit,
@@ -261,16 +263,12 @@ private fun OnboardingHeader(onSkip: () -> Unit = {}, isLastItem: Boolean) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // --- Finsible Logo ---
-
         Image(
             painter = painterResource(id = R.drawable.ic_logo),
             contentDescription = stringResource(R.string.cd_finsible_logo),
             modifier = Modifier.height(FinsibleTheme.dimes.d64),
             contentScale = ContentScale.Fit
         )
-
-        // --- Skip Button ---
 
         if (!isLastItem) {
             FinsibleButton(
@@ -290,7 +288,7 @@ private fun OnboardingHeader(onSkip: () -> Unit = {}, isLastItem: Boolean) {
 private fun OnboardingIllustration(
     modifier: Modifier = Modifier,
     currentItem: Int,
-    carouselItems: List<OnboardingViewModel.CarouselItems>
+    carouselItems: List<OnboardingViewModel.CarouselItem>
 ) {
     Box(
         modifier = modifier.fillMaxSize(),
@@ -317,7 +315,7 @@ private fun OnboardingIllustration(
 private fun OnboardingTextContent(
     modifier: Modifier = Modifier,
     currentItem: Int,
-    carouselItems: List<OnboardingViewModel.CarouselItems>
+    carouselItems: List<OnboardingViewModel.CarouselItem>
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -355,7 +353,7 @@ private fun OnboardingTextContent(
             }
         ) { index ->
             Text(
-                carouselItems[index].headline,
+                stringResource(carouselItems[index].headline),
                 style = FinsibleTheme.typography.t56.bold(),
                 textAlign = TextAlign.Start,
             )
@@ -390,7 +388,7 @@ private fun OnboardingTextContent(
             val textStyle = FinsibleTheme.typography.t16
 
             Text(
-                carouselItems[index].description,
+                stringResource(carouselItems[index].description),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = FinsibleTheme.dimes.d2)

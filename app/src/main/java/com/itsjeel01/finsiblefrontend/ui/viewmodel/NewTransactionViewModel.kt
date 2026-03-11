@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -232,9 +233,7 @@ class NewTransactionViewModel @Inject constructor(
         _transactionDescription.value = description
     }
 
-    /**
-     * OPTIMIZATION: Uses cached data in memory instead of blocking DB calls.
-     */
+    /** Uses cached data in memory instead of blocking DB calls. */
     fun toTxString(): String = buildString {
         appendLine("Transaction Details:")
         appendLine("Type: ${transactionType.value}")
@@ -300,5 +299,5 @@ class NewTransactionViewModel @Inject constructor(
         return _accounts.value.find { it.id == id }
     }
 
-    private fun <T> MutableStateFlow<T>.stateFlow(): StateFlow<T> = this
+    private fun <T> MutableStateFlow<T>.stateFlow(): StateFlow<T> = this.asStateFlow()
 }

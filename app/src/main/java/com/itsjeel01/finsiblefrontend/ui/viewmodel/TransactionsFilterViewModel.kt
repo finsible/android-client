@@ -2,6 +2,7 @@ package com.itsjeel01.finsiblefrontend.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.itsjeel01.finsiblefrontend.common.CurrencyFormatter
+import com.itsjeel01.finsiblefrontend.common.FinsibleConstants
 import com.itsjeel01.finsiblefrontend.common.TransactionType
 import com.itsjeel01.finsiblefrontend.data.local.entity.toAmountCentis
 import com.itsjeel01.finsiblefrontend.ui.model.SortOption
@@ -14,8 +15,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.util.Calendar
 import javax.inject.Inject
-
-const val ALL_MONTHS = -1
 
 /** ViewModel that owns the transient editing state of the transaction filter bottom sheet. Uses [TransactionsFilterState] internally. */
 @HiltViewModel
@@ -134,7 +133,7 @@ private fun resolveRange(
     TimeFilterMode.ALL -> null to null
 
     TimeFilterMode.MONTH_YEAR -> {
-        if (month == ALL_MONTHS) {
+        if (month == FinsibleConstants.ALL_MONTHS) {
             val start = Calendar.getInstance().apply {
                 set(year, Calendar.JANUARY, 1, 0, 0, 0)
                 set(Calendar.MILLISECOND, 0)

@@ -58,6 +58,7 @@ data class DateAggregates(
 }
 
 /** Lightweight aggregate holder for computed group summaries, amounts in centis (×100). */
+@Immutable
 data class GroupAggregates(
     val incomeSumCentis: Long,
     val expenseSumCentis: Long,

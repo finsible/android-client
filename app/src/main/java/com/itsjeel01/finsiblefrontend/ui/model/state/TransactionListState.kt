@@ -1,6 +1,9 @@
-package com.itsjeel01.finsiblefrontend.ui.model
+package com.itsjeel01.finsiblefrontend.ui.model.state
 
 import androidx.compose.runtime.Immutable
+import com.itsjeel01.finsiblefrontend.ui.model.DateAggregates
+import com.itsjeel01.finsiblefrontend.ui.model.FilteredTransactionSummary
+import com.itsjeel01.finsiblefrontend.ui.model.item.TransactionUIModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.persistentListOf

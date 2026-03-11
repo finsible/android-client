@@ -42,11 +42,11 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.res.stringResource
+import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.TransactionRecurringFrequency
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.medium
-import com.itsjeel01.finsiblefrontend.ui.viewmodel.NewTransactionViewModel
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 
@@ -120,7 +120,7 @@ fun Step2Date(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                "Make recurring",
+                stringResource(R.string.make_recurring),
                 style = FinsibleTheme.typography.t18.medium(),
                 color = FinsibleTheme.colors.primaryContent
             )
@@ -137,7 +137,6 @@ fun Step2Date(
             )
         }
 
-        // Recurring frequency dropdown
         AnimatedVisibility(
             visible = isRecurring,
             enter = expandVertically() + fadeIn(),
@@ -145,7 +144,7 @@ fun Step2Date(
         ) {
             Column(Modifier.padding(top = FinsibleTheme.dimes.d12)) {
                 Text(
-                    "Frequency",
+                    stringResource(R.string.frequency),
                     style = FinsibleTheme.typography.t16.medium(),
                     color = FinsibleTheme.colors.secondaryContent,
                     modifier = Modifier.padding(bottom = FinsibleTheme.dimes.d8)
@@ -160,26 +159,6 @@ fun Step2Date(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun Step2Date(
-    modifier: Modifier = Modifier,
-    viewModel: NewTransactionViewModel
-) {
-    val dateMillis by viewModel.transactionDate.collectAsStateWithLifecycle()
-    val isRecurring by viewModel.isRecurring.collectAsStateWithLifecycle()
-    val frequency by viewModel.recurringFrequency.collectAsStateWithLifecycle()
-
-    Step2Date(
-        dateMillis = dateMillis,
-        isRecurring = isRecurring,
-        recurringFrequency = frequency,
-        onDateChange = { viewModel.setTransactionDate(it) },
-        onIsRecurringChange = { viewModel.setIsRecurring(it) },
-        onRecurringFrequencyChange = { viewModel.setRecurringFrequency(it) },
-        modifier = modifier
-    )
-}
 
 /** Dropdown for recurring frequency with hoisted selection. */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -192,8 +171,9 @@ private fun RecurringFrequencyDropdown(
 
     var expanded by remember { mutableStateOf(false) }
 
+    val frequencyText = stringResource(currentFrequency.displayText)
     val textFieldState = remember(currentFrequency) {
-        TextFieldState(currentFrequency.displayText)
+        TextFieldState(frequencyText)
     }
 
     ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
@@ -226,7 +206,7 @@ private fun RecurringFrequencyDropdown(
                 DropdownMenuItem(
                     text = {
                         Text(
-                            option.displayText,
+                            stringResource(option.displayText),
                             style = FinsibleTheme.typography.t18,
                             color = FinsibleTheme.colors.primaryContent
                         )

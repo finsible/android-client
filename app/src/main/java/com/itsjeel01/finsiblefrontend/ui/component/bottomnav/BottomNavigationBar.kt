@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.ui.component
+package com.itsjeel01.finsiblefrontend.ui.component.bottomnav
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.EaseInOut

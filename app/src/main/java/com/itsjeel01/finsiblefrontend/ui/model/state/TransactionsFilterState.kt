@@ -1,7 +1,9 @@
-package com.itsjeel01.finsiblefrontend.ui.model
+package com.itsjeel01.finsiblefrontend.ui.model.state
 
 import androidx.compose.runtime.Immutable
 import com.itsjeel01.finsiblefrontend.common.TransactionType
+import com.itsjeel01.finsiblefrontend.ui.model.SortOption
+import com.itsjeel01.finsiblefrontend.ui.model.TimeFilterMode
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.TransactionsFilterViewModel
 
 /** Data class representing transaction view options (search, filter, sort). Sheet-exclusive fields are orphan state used only by [TransactionsFilterViewModel]. */

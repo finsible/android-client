@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
-import com.itsjeel01.finsiblefrontend.ui.component.BottomNavigationBar
+import com.itsjeel01.finsiblefrontend.ui.component.bottomnav.BottomNavigationBar
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
 import com.itsjeel01.finsiblefrontend.ui.screen.AccountsScreen
 import com.itsjeel01.finsiblefrontend.ui.screen.DashboardTab

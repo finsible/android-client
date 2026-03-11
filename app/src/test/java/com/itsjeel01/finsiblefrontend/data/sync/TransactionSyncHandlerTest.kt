@@ -45,18 +45,14 @@ class TransactionSyncHandlerTest {
         syncHandler = TransactionSyncHandler(mockRepository, mockLocalRepository, json)
     }
 
-    // ============================================
     // Entity Type Tests
-    // ============================================
 
     @Test
     fun testEntityTypeIsTransaction() {
         assertEquals("Handler should be for TRANSACTION", EntityType.TRANSACTION, syncHandler.entityType)
     }
 
-    // ============================================
     // CREATE Operation Tests
-    // ============================================
 
     @Test
     fun testProcessCreateSuccess() = runTest {
@@ -216,9 +212,7 @@ class TransactionSyncHandlerTest {
         }
     }
 
-    // ============================================
     // UPDATE Operation Tests
-    // ============================================
 
     @Test
     fun testProcessUpdateSuccess() = runTest {
@@ -285,9 +279,7 @@ class TransactionSyncHandlerTest {
         }
     }
 
-    // ============================================
     // DELETE Operation Tests
-    // ============================================
 
     @Test
     fun testProcessDeleteSuccess() = runTest {

@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.ui.model
+package com.itsjeel01.finsiblefrontend.ui.model.item
 
 import androidx.compose.runtime.Immutable
 import com.itsjeel01.finsiblefrontend.common.Currency

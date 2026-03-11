@@ -1,10 +1,10 @@
-package com.itsjeel01.finsiblefrontend.ui.model
+package com.itsjeel01.finsiblefrontend.ui.model.item
 
 import androidx.compose.runtime.Immutable
 
 /** Stable UI Model for account display, optimized for Compose. */
 @Immutable
-data class AccountUiModel(
+data class AccountUIModel(
     val id: Long,
     val name: String,
     val description: String,

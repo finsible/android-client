@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.ui.component
+package com.itsjeel01.finsiblefrontend.ui.component.accountstab
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.CubicBezierEasing
@@ -37,8 +37,8 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.itsjeel01.finsiblefrontend.R
-import com.itsjeel01.finsiblefrontend.ui.model.FlippableCardData
-import com.itsjeel01.finsiblefrontend.ui.model.StatisticsModel
+import com.itsjeel01.finsiblefrontend.ui.model.item.FlippableCardUIModel
+import com.itsjeel01.finsiblefrontend.ui.model.item.StatEntry
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.bold
 import com.itsjeel01.finsiblefrontend.ui.theme.extraBold
@@ -49,7 +49,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun FlippableCard(
-    items: ImmutableList<FlippableCardData>,
+    items: ImmutableList<FlippableCardUIModel>,
     gradients: List<Brush>,
     modifier: Modifier = Modifier
 ) {
@@ -151,7 +151,7 @@ fun FlippableCard(
 private fun CardFace(
     title: String,
     largeText: String,
-    statistics: ImmutableList<StatisticsModel>,
+    statistics: ImmutableList<StatEntry>,
     gradientBrush: Brush,
     onRotateClick: () -> Unit
 ) {

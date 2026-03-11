@@ -32,22 +32,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.res.stringResource
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.TransactionType
-import com.itsjeel01.finsiblefrontend.data.local.entity.CategoryEntity
+import com.itsjeel01.finsiblefrontend.ui.model.item.CategoryUIModel
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleDimes.Companion.inverted
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.extraBold
 import com.itsjeel01.finsiblefrontend.ui.theme.medium
 import com.itsjeel01.finsiblefrontend.ui.util.resolveIcon
-import com.itsjeel01.finsiblefrontend.ui.viewmodel.NewTransactionViewModel
 
 /** Stateless category selection step with hoisted state. */
 @Composable
 fun Step3Category(
     transactionType: TransactionType,
-    categories: Map<CategoryEntity, List<CategoryEntity>>,
+    categories: Map<CategoryUIModel, List<CategoryUIModel>>,
     selectedCategoryId: Long?,
     onTransactionTypeChange: (TransactionType) -> Unit,
     onCategorySelected: (Long) -> Unit,
@@ -80,12 +79,12 @@ fun Step3Category(
                     ),
                     selected = isSelected,
                     label = {
-                        Text(type.displayText, style = FinsibleTheme.typography.t16.medium())
+                        Text(stringResource(type.displayText), style = FinsibleTheme.typography.t16.medium())
                     },
                     icon = {
                         if (isSelected) Icon(
                             painter = painterResource(id = type.icon),
-                            contentDescription = type.displayText + " icon",
+                            contentDescription = stringResource(R.string.cd_type_icon, stringResource(type.displayText)),
                             tint = type.getColor()
                         )
                     }
@@ -114,28 +113,12 @@ fun Step3Category(
     }
 }
 
-/** ViewModel wrapper maintaining previous signature. */
-@Composable
-fun Step3Category(modifier: Modifier = Modifier, viewModel: NewTransactionViewModel) {
-    val transactionType by viewModel.transactionType.collectAsStateWithLifecycle()
-    val categories by viewModel.categories.collectAsStateWithLifecycle()
-    val transactionCategory by viewModel.transactionCategoryId.collectAsStateWithLifecycle()
-
-    Step3Category(
-        transactionType = transactionType,
-        categories = categories,
-        selectedCategoryId = transactionCategory,
-        onTransactionTypeChange = { viewModel.setTransactionType(it) },
-        onCategorySelected = { viewModel.setTransactionCategoryId(it) },
-        modifier = modifier
-    )
-}
 
 /** Category group with parent title and subcategory chips. */
 @Composable
 private fun CategoryGroup(
-    parentCategory: CategoryEntity,
-    subCategories: List<CategoryEntity>,
+    parentCategory: CategoryUIModel,
+    subCategories: List<CategoryUIModel>,
     selectedCategoryId: Long?,
     transactionType: TransactionType,
     onCategorySelected: (Long) -> Unit
@@ -175,7 +158,7 @@ private fun CategoryGroup(
 /** Individual category chip with animated selection state. */
 @Composable
 private fun CategoryChip(
-    category: CategoryEntity,
+    category: CategoryUIModel,
     isSelected: Boolean,
     accentColor: Color,
     onSelected: () -> Unit

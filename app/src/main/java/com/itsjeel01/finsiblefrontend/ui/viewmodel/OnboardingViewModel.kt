@@ -1,20 +1,23 @@
 package com.itsjeel01.finsiblefrontend.ui.viewmodel
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.logging.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor() : ViewModel() {
 
     private val _currentCarouselItem = MutableStateFlow(0)
-    val currentCarouselItem: StateFlow<Int> = _currentCarouselItem
+    val currentCarouselItem: StateFlow<Int> = _currentCarouselItem.asStateFlow()
 
-    private val carouselItems = CarouselItems().get()
+    private val carouselItems = CarouselItem.entries
 
     fun nextCarouselItem() {
         if (_currentCarouselItem.value < carouselItems.size - 1) _currentCarouselItem.value++
@@ -35,38 +38,15 @@ class OnboardingViewModel @Inject constructor() : ViewModel() {
         return _currentCarouselItem.value == carouselItems.size - 1
     }
 
-    data class CarouselItems(
-        val illustration: Int = 0,
-        val headline: String = "",
-        val description: String = "",
+    /** Onboarding carousel items backed by string resources for localization. */
+    enum class CarouselItem(
+        @DrawableRes val illustration: Int,
+        @StringRes val headline: Int,
+        @StringRes val description: Int,
     ) {
-        fun get(): List<CarouselItems> {
-            return listOf(
-                CarouselItems(
-                    illustration = R.drawable.ill_welcome,
-                    headline = "Welcome to Finsible",
-                    description = "We make finance sensible and stress-free. Start your journey to financial clarity and transform how you manage money."
-                ),
-                CarouselItems(
-                    illustration = R.drawable.ill_track,
-                    headline = "Never Lose Track Again",
-                    description = "Capture transactions in seconds and see your spending clearly. Understand your money habits without the headache."
-                ),
-                CarouselItems(
-                    illustration = R.drawable.ill_audit,
-                    headline = "Your money, decoded!",
-                    description = "Turn financial data into insights. Set goals, get personalized tips, and reach them faster with advice in your pocket."
-                ),
-                CarouselItems(
-                    illustration = R.drawable.ill_auth,
-                    headline = "Let's Get You Set Up",
-                    description = "Never lose your data, access from anywhere. Sign in with Google and start making your finances more sensible."
-                )
-            )
-        }
-    }
-
-    companion object {
-        const val TAG = "OnboardingViewModel"
+        WELCOME(R.drawable.ill_welcome, R.string.onboarding_headline_welcome, R.string.onboarding_description_welcome),
+        TRACK(R.drawable.ill_track, R.string.onboarding_headline_track, R.string.onboarding_description_track),
+        AUDIT(R.drawable.ill_audit, R.string.onboarding_headline_audit, R.string.onboarding_description_audit),
+        AUTH(R.drawable.ill_auth, R.string.onboarding_headline_auth, R.string.onboarding_description_auth);
     }
 }

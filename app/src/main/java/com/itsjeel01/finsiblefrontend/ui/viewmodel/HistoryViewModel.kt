@@ -1,7 +1,9 @@
 package com.itsjeel01.finsiblefrontend.ui.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.CurrencyFormatter
 import com.itsjeel01.finsiblefrontend.common.TransactionType
 import com.itsjeel01.finsiblefrontend.common.logging.Logger
@@ -12,11 +14,12 @@ import com.itsjeel01.finsiblefrontend.ui.model.DateAggregates
 import com.itsjeel01.finsiblefrontend.ui.model.DateFilterMode
 import com.itsjeel01.finsiblefrontend.ui.model.FilteredTransactionSummary
 import com.itsjeel01.finsiblefrontend.ui.model.SortOption
-import com.itsjeel01.finsiblefrontend.ui.model.TransactionListState
-import com.itsjeel01.finsiblefrontend.ui.model.TransactionUIModel
-import com.itsjeel01.finsiblefrontend.ui.model.TransactionsFilterState
+import com.itsjeel01.finsiblefrontend.ui.model.item.TransactionUIModel
+import com.itsjeel01.finsiblefrontend.ui.model.state.TransactionListState
+import com.itsjeel01.finsiblefrontend.ui.model.state.TransactionsFilterState
 import com.itsjeel01.finsiblefrontend.ui.util.DateUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.persistentMapOf
@@ -36,6 +39,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HistoryViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val transactionLocalRepository: TransactionLocalRepository,
     private val currencyFormatter: CurrencyFormatter
 ) : ViewModel() {
@@ -95,13 +99,13 @@ class HistoryViewModel @Inject constructor(
                     val loadedTransactionsGrouped = _uiState.value.groupedTransactions
 
                     val incomingTransactions = if (!shouldGroup) {
-                        result.transactions.map { it.toUiModel(currencyFormatter) }.toPersistentList()
+                        result.transactions.map { it.toUiModel(currencyFormatter, context) }.toPersistentList()
                     } else {
                         loadedTransactions
                     }
 
                     val incomingTransactionsGrouped = if (shouldGroup) {
-                        val mapped = result.transactions.map { it.toUiModel(currencyFormatter) }
+                        val mapped = result.transactions.map { it.toUiModel(currencyFormatter, context) }
                         val groupedPage = mapped.groupBy { formatDateHeader(it.transactionDate) }
                             .mapValues { (_, list) -> list.toPersistentList() }
                         mergeGroupedTransactions(loadedTransactionsGrouped, groupedPage.toPersistentMap())
@@ -126,7 +130,7 @@ class HistoryViewModel @Inject constructor(
             } catch (e: Exception) {
                 Logger.UI.e("Failed to load more: ${e.message}", e)
                 withContext(Dispatchers.Main) {
-                    _uiState.update { it.copy(isLoading = false, error = "Failed to load more") }
+                    _uiState.update { it.copy(isLoading = false, error = context.getString(R.string.error_failed_to_load_more)) }
                 }
             }
         }
@@ -266,7 +270,7 @@ class HistoryViewModel @Inject constructor(
             } catch (e: Exception) {
                 Logger.UI.e("Failed to execute query: ${e.message}", e)
                 withContext(Dispatchers.Main) {
-                    _uiState.update { it.copy(isLoading = false, error = "Failed to load transactions") }
+                    _uiState.update { it.copy(isLoading = false, error = context.getString(R.string.error_failed_to_load_transactions)) }
                 }
             }
         }
@@ -277,7 +281,7 @@ class HistoryViewModel @Inject constructor(
         entities: List<TransactionEntity>,
         shouldGroup: Boolean = true
     ): Pair<ImmutableList<TransactionUIModel>, ImmutableMap<String, ImmutableList<TransactionUIModel>>> {
-        val uiModels = entities.map { it.toUiModel(currencyFormatter) }
+        val uiModels = entities.map { it.toUiModel(currencyFormatter, context) }
 
         val grouped = if (shouldGroup) {
             uiModels.groupBy { formatDateHeader(it.transactionDate) }

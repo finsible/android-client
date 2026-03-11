@@ -26,43 +26,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.res.stringResource
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.TransactionType
-import com.itsjeel01.finsiblefrontend.data.local.entity.AccountEntity
+import com.itsjeel01.finsiblefrontend.ui.model.item.AccountUIModel
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.extraBold
 import com.itsjeel01.finsiblefrontend.ui.theme.medium
 import com.itsjeel01.finsiblefrontend.ui.util.resolveIcon
-import com.itsjeel01.finsiblefrontend.ui.viewmodel.NewTransactionViewModel
-
-/** ViewModel wrapper preserving original signature. */
-@Composable
-fun Step4Accounts(viewModel: NewTransactionViewModel) {
-    val transactionType by viewModel.transactionType.collectAsStateWithLifecycle()
-    val fromAccountId by viewModel.transactionFromAccountId.collectAsStateWithLifecycle()
-    val toAccountId by viewModel.transactionToAccountId.collectAsStateWithLifecycle()
-
-    val allAccounts by viewModel.accounts.collectAsStateWithLifecycle()
-    val availableAccounts by viewModel.availableToAccounts.collectAsStateWithLifecycle()
-
-    AccountSelector(
-        transactionType = transactionType,
-        fromAccountsOptions = allAccounts,
-        toAccountsOptions = availableAccounts,
-        fromAccountId = fromAccountId,
-        toAccountId = toAccountId,
-        onFromAccountSelected = { viewModel.setTransactionFromAccountId(it) },
-        onToAccountSelected = { viewModel.setTransactionToAccountId(it) }
-    )
-}
 
 /** Stateless account selection step with hoisted state. */
 @Composable
-fun AccountSelector(
+fun Step4Accounts(
     transactionType: TransactionType,
-    fromAccountsOptions: List<AccountEntity>,
-    toAccountsOptions: List<AccountEntity>,
+    fromAccountsOptions: List<AccountUIModel>,
+    toAccountsOptions: List<AccountUIModel>,
     fromAccountId: Long?,
     toAccountId: Long?,
     onFromAccountSelected: (Long) -> Unit,
@@ -79,10 +57,10 @@ fun AccountSelector(
     ) {
         if (transactionType != TransactionType.INCOME) {
             AccountSelector(
-                title = "From Account",
+                title = stringResource(R.string.from_account),
                 description = when (transactionType) {
-                    TransactionType.EXPENSE -> "Select where the money will be spent from"
-                    TransactionType.TRANSFER -> "Select the source account"
+                    TransactionType.EXPENSE -> stringResource(R.string.select_expense_source)
+                    TransactionType.TRANSFER -> stringResource(R.string.select_transfer_source)
                 },
                 accounts = fromAccountsOptions,
                 selectedAccountId = fromAccountId,
@@ -92,10 +70,10 @@ fun AccountSelector(
         }
         if (transactionType != TransactionType.EXPENSE) {
             AccountSelector(
-                title = "To Account",
+                title = stringResource(R.string.to_account),
                 description = when (transactionType) {
-                    TransactionType.INCOME -> "Select where the money will be received"
-                    TransactionType.TRANSFER -> "Select the destination account"
+                    TransactionType.INCOME -> stringResource(R.string.select_income_destination)
+                    TransactionType.TRANSFER -> stringResource(R.string.select_transfer_destination)
                 },
                 accounts = toAccountsOptions.filter { transactionType != TransactionType.TRANSFER || it.id != fromAccountId },
                 selectedAccountId = toAccountId,
@@ -111,7 +89,7 @@ fun AccountSelector(
 private fun AccountSelector(
     title: String,
     description: String,
-    accounts: List<AccountEntity>,
+    accounts: List<AccountUIModel>,
     selectedAccountId: Long?,
     accentColor: Color,
     onAccountSelected: (Long) -> Unit,
@@ -125,7 +103,6 @@ private fun AccountSelector(
             .animateContentSize(),
         verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d12)
     ) {
-        // Section header
         Column(verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d4)) {
             Text(
                 text = title,
@@ -141,7 +118,6 @@ private fun AccountSelector(
             }
         }
 
-        // Account chips
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d8),
@@ -162,7 +138,7 @@ private fun AccountSelector(
 /** Individual account chip with animated selection state. */
 @Composable
 private fun AccountChip(
-    account: AccountEntity,
+    account: AccountUIModel,
     isSelected: Boolean,
     accentColor: Color,
     onSelected: () -> Unit

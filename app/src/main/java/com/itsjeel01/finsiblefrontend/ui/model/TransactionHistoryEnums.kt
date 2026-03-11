@@ -1,18 +1,21 @@
 package com.itsjeel01.finsiblefrontend.ui.model
 
+import androidx.annotation.StringRes
+import com.itsjeel01.finsiblefrontend.R
+
 /** Enum representing the different time based filtering modes. */
-enum class TimeFilterMode(val displayText: String) {
-    ALL("All Time"),
-    MONTH_YEAR("Month / Year"),
-    CUSTOM("Custom Range");
+enum class TimeFilterMode(@StringRes val displayText: Int) {
+    ALL(R.string.filter_all_time),
+    MONTH_YEAR(R.string.filter_month_year),
+    CUSTOM(R.string.filter_custom_range);
 }
 
 /** Enum representing the different transaction sort options. */
-enum class SortOption(val displayText: String) {
-    NEWEST_FIRST("Newest First"),
-    OLDEST_FIRST("Oldest First"),
-    AMOUNT_HIGH_TO_LOW("Amount: High to Low"),
-    AMOUNT_LOW_TO_HIGH("Amount: Low to High");
+enum class SortOption(@StringRes val displayText: Int) {
+    NEWEST_FIRST(R.string.sort_newest_first),
+    OLDEST_FIRST(R.string.sort_oldest_first),
+    AMOUNT_HIGH_TO_LOW(R.string.sort_amount_high_to_low),
+    AMOUNT_LOW_TO_HIGH(R.string.sort_amount_low_to_high);
 
     val isDateBased: Boolean get() = this == NEWEST_FIRST || this == OLDEST_FIRST
 }

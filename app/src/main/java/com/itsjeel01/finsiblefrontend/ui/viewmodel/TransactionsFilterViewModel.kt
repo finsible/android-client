@@ -7,7 +7,7 @@ import com.itsjeel01.finsiblefrontend.common.TransactionType
 import com.itsjeel01.finsiblefrontend.data.local.entity.toAmountCentis
 import com.itsjeel01.finsiblefrontend.ui.model.SortOption
 import com.itsjeel01.finsiblefrontend.ui.model.TimeFilterMode
-import com.itsjeel01.finsiblefrontend.ui.model.TransactionsFilterState
+import com.itsjeel01.finsiblefrontend.ui.model.state.TransactionsFilterState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

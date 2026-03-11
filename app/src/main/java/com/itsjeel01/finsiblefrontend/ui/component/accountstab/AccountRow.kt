@@ -21,15 +21,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.itsjeel01.finsiblefrontend.R
-import com.itsjeel01.finsiblefrontend.ui.model.AccountUiModel
+import com.itsjeel01.finsiblefrontend.ui.model.item.AccountUIModel
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.bold
 import com.itsjeel01.finsiblefrontend.ui.theme.semiBold
 import com.itsjeel01.finsiblefrontend.ui.util.resolveIcon
 
 @Composable
-fun AccountItem(
-    model: AccountUiModel,
+fun AccountRow(
+    model: AccountUIModel,
     modifier: Modifier = Modifier
 ) {
     val cornerRadius = FinsibleTheme.dimes.d12

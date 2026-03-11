@@ -14,9 +14,9 @@ import com.itsjeel01.finsiblefrontend.ui.model.DateAggregates
 import com.itsjeel01.finsiblefrontend.ui.model.DateFilterMode
 import com.itsjeel01.finsiblefrontend.ui.model.FilteredTransactionSummary
 import com.itsjeel01.finsiblefrontend.ui.model.SortOption
-import com.itsjeel01.finsiblefrontend.ui.model.TransactionListState
-import com.itsjeel01.finsiblefrontend.ui.model.TransactionUIModel
-import com.itsjeel01.finsiblefrontend.ui.model.TransactionsFilterState
+import com.itsjeel01.finsiblefrontend.ui.model.item.TransactionUIModel
+import com.itsjeel01.finsiblefrontend.ui.model.state.TransactionListState
+import com.itsjeel01.finsiblefrontend.ui.model.state.TransactionsFilterState
 import com.itsjeel01.finsiblefrontend.ui.util.DateUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext

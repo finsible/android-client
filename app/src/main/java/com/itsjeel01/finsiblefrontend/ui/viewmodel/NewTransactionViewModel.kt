@@ -4,11 +4,9 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.itsjeel01.finsiblefrontend.R
+import com.itsjeel01.finsiblefrontend.common.CurrencyFormatter
 import com.itsjeel01.finsiblefrontend.common.TransactionRecurringFrequency
 import com.itsjeel01.finsiblefrontend.common.TransactionType
-import com.itsjeel01.finsiblefrontend.common.convertUTCToLocal
-import com.itsjeel01.finsiblefrontend.data.local.entity.AccountEntity
-import com.itsjeel01.finsiblefrontend.data.local.entity.CategoryEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.toAmountCentis
 import com.itsjeel01.finsiblefrontend.data.local.repository.AccountLocalRepository
 import com.itsjeel01.finsiblefrontend.data.local.repository.CategoryLocalRepository
@@ -17,8 +15,11 @@ import com.itsjeel01.finsiblefrontend.data.repository.AccountRepository
 import com.itsjeel01.finsiblefrontend.data.repository.CategoryRepository
 import com.itsjeel01.finsiblefrontend.data.sync.DataFetcher
 import com.itsjeel01.finsiblefrontend.data.sync.IntegrityChecker
+import com.itsjeel01.finsiblefrontend.ui.mapper.toUiModel
+import com.itsjeel01.finsiblefrontend.ui.model.item.AccountUIModel
+import com.itsjeel01.finsiblefrontend.ui.model.item.CategoryUIModel
+import com.itsjeel01.finsiblefrontend.ui.model.state.NewTransactionFormState
 import com.itsjeel01.finsiblefrontend.ui.navigation.Route
-import com.itsjeel01.finsiblefrontend.ui.util.DateUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -27,9 +28,11 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -43,6 +46,7 @@ class NewTransactionViewModel @Inject constructor(
     private val accountRepository: AccountRepository,
     private val dataFetcher: DataFetcher,
     private val integrityChecker: IntegrityChecker,
+    private val currencyFormatter: CurrencyFormatter,
 ) : ViewModel() {
 
     companion object {
@@ -51,56 +55,36 @@ class NewTransactionViewModel @Inject constructor(
         private const val SUBSCRIPTION_TIMEOUT = 5000L
     }
 
-    /** Transaction form state. */
-    private val _transactionAmountString = MutableStateFlow("")
-    val transactionAmountString: StateFlow<String> = _transactionAmountString.asStateFlow()
+    /** Consolidated form state for the new transaction flow. */
+    private val _state = MutableStateFlow(NewTransactionFormState.DEFAULT)
+    val state: StateFlow<NewTransactionFormState> = _state.asStateFlow()
 
-    private val _transactionDate = MutableStateFlow<Long?>(System.currentTimeMillis().convertUTCToLocal())
-    val transactionDate: StateFlow<Long?> = _transactionDate.asStateFlow()
+    /** Mapped category UI models grouped by parent, re-queried only when transaction type changes. */
+    val categories: StateFlow<Map<CategoryUIModel, List<CategoryUIModel>>> =
+        state.map { it.transactionType }
+            .distinctUntilChanged()
+            .map { type ->
+                categoryLocalRepository.getCategories(type)
+                    .mapKeys { (k, _) -> k.toUiModel() }
+                    .mapValues { (_, v) -> v.map { it.toUiModel() } }
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(SUBSCRIPTION_TIMEOUT),
+                initialValue = emptyMap()
+            )
 
-    private val _isRecurring = MutableStateFlow(false)
-    val isRecurring: StateFlow<Boolean> = _isRecurring.asStateFlow()
+    /** Mapped account UI models for all available accounts. */
+    private val _accounts = MutableStateFlow<List<AccountUIModel>>(emptyList())
+    val accounts: StateFlow<List<AccountUIModel>> = _accounts.asStateFlow()
 
-    private val _recurringFrequency = MutableStateFlow(TransactionRecurringFrequency.DAILY)
-    val recurringFrequency: StateFlow<TransactionRecurringFrequency> = _recurringFrequency.asStateFlow()
-
-    private val _transactionType = MutableStateFlow(TransactionType.EXPENSE)
-    val transactionType: StateFlow<TransactionType> = _transactionType.asStateFlow()
-
-    private val _transactionCategoryId = MutableStateFlow<Long?>(null)
-    val transactionCategoryId: StateFlow<Long?> = _transactionCategoryId.asStateFlow()
-
-    private val _transactionFromAccountId = MutableStateFlow<Long?>(null)
-    val transactionFromAccountId: StateFlow<Long?> = _transactionFromAccountId.asStateFlow()
-
-    private val _transactionToAccountId = MutableStateFlow<Long?>(null)
-    val transactionToAccountId: StateFlow<Long?> = _transactionToAccountId.asStateFlow()
-
-    private val _transactionDescription = MutableStateFlow("")
-    val transactionDescription: StateFlow<String> = _transactionDescription.asStateFlow()
-
-    /** Data for categories based on transaction type. */
-    val categories: StateFlow<Map<CategoryEntity, List<CategoryEntity>>> =
-        transactionType.map { type ->
-            categoryLocalRepository.getCategories(type)
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(SUBSCRIPTION_TIMEOUT),
-            initialValue = hashMapOf()
-        )
-
-    /** Available accounts for transaction. */
-    private val _accounts = MutableStateFlow<List<AccountEntity>>(emptyList())
-    val accounts: StateFlow<List<AccountEntity>> = _accounts.asStateFlow()
-
-    /** Pre-calculates the valid "To" accounts to prevent main-thread filtering. */
-    val availableToAccounts: StateFlow<List<AccountEntity>> = combine(
+    /** Pre-filters "To" accounts to prevent TRANSFER self-selection. */
+    val availableToAccounts: StateFlow<List<AccountUIModel>> = combine(
         _accounts,
-        transactionType,
-        transactionFromAccountId
-    ) { allAccounts, type, fromId ->
-        if (type == TransactionType.TRANSFER && fromId != null) {
-            allAccounts.filter { it.id != fromId }
+        state
+    ) { allAccounts, s ->
+        if (s.transactionType == TransactionType.TRANSFER && s.fromAccountId != null) {
+            allAccounts.filter { it.id != s.fromAccountId }
         } else {
             allAccounts
         }
@@ -117,7 +101,7 @@ class NewTransactionViewModel @Inject constructor(
 
     private fun loadAccounts() {
         viewModelScope.launch {
-            _accounts.value = accountLocalRepository.getAll()
+            _accounts.value = accountLocalRepository.getAll().map { it.toUiModel(currencyFormatter) }
         }
     }
 
@@ -148,10 +132,10 @@ class NewTransactionViewModel @Inject constructor(
         if (input.isEmpty()) return ""
 
         if (input.length > MAX_INTEGER_DIGITS + MAX_DECIMAL_DIGITS + 2)
-            return _transactionAmountString.value
+            return _state.value.amountString
 
         if (input.count { it == '.' } > 1)
-            return _transactionAmountString.value
+            return _state.value.amountString
 
         val filtered = input.filter { it.isDigit() || it == '.' }
 
@@ -160,14 +144,13 @@ class NewTransactionViewModel @Inject constructor(
         val decimalPart = parts.getOrNull(1) ?: ""
 
         return when {
-            integerPart.length > MAX_INTEGER_DIGITS -> _transactionAmountString.value
-            decimalPart.length > MAX_DECIMAL_DIGITS -> _transactionAmountString.value
-            integerPart.length > 1 && integerPart.startsWith("0") && !filtered.startsWith("0.") -> _transactionAmountString.value
+            integerPart.length > MAX_INTEGER_DIGITS -> _state.value.amountString
+            decimalPart.length > MAX_DECIMAL_DIGITS -> _state.value.amountString
+            integerPart.length > 1 && integerPart.startsWith("0") && !filtered.startsWith("0.") -> _state.value.amountString
             else -> filtered
         }
     }
 
-    /** Step-specific validation methods. */
     private fun validateAmountStep(amountString: String): Boolean =
         validateAmount(amountString).isNotEmpty() && amountString.toDoubleOrNull()?.let { it > 0 } == true
 
@@ -183,100 +166,71 @@ class NewTransactionViewModel @Inject constructor(
         }
 
     fun isStepValid(step: Any): Flow<Boolean> = when (step) {
-        Route.Home.NewTransaction.Amount -> transactionAmountString.map { validateAmountStep(it) }
-        Route.Home.NewTransaction.Date -> transactionDate.map { validateDateStep(it) }
-        Route.Home.NewTransaction.Category -> transactionCategoryId.map { validateCategoryStep(it) }
-        Route.Home.NewTransaction.TransactionAccounts -> combine(
-            transactionType,
-            transactionFromAccountId,
-            transactionToAccountId
-        ) { type, from, to ->
-            validateAccountStep(type, from, to)
+        Route.Home.NewTransaction.Amount -> state.map { validateAmountStep(it.amountString) }
+        Route.Home.NewTransaction.Date -> state.map { validateDateStep(it.dateMillis) }
+        Route.Home.NewTransaction.Category -> state.map { validateCategoryStep(it.categoryId) }
+        Route.Home.NewTransaction.TransactionAccounts -> state.map { s ->
+            validateAccountStep(s.transactionType, s.fromAccountId, s.toAccountId)
         }
 
         Route.Home.NewTransaction.Description -> flowOf(true)
-        else -> throw UnsupportedOperationException("Unrecognized transaction step: $step. Please add handling for this step in isStepValid().")
+        else -> throw UnsupportedOperationException("Unrecognized transaction step: $step.")
     }
 
     fun setTransactionAmountString(amountStr: String) {
-        _transactionAmountString.value = amountStr
+        _state.update { it.copy(amountString = amountStr) }
     }
 
     fun setTransactionDate(date: Long) {
-        _transactionDate.value = date
+        _state.update { it.copy(dateMillis = date) }
     }
 
     fun setIsRecurring(recurring: Boolean) {
-        _isRecurring.value = recurring
+        _state.update { it.copy(isRecurring = recurring) }
     }
 
     fun setRecurringFrequency(frequency: TransactionRecurringFrequency) {
-        _recurringFrequency.value = frequency
+        _state.update { it.copy(recurringFrequency = frequency) }
     }
 
     fun setTransactionType(type: TransactionType) {
-        if (_transactionType.value != type) {
-            _transactionType.value = type
-            _transactionCategoryId.value = null
-        }
+        _state.update { s -> if (s.transactionType != type) s.copy(transactionType = type, categoryId = null) else s }
     }
 
     fun setTransactionCategoryId(id: Long) {
-        _transactionCategoryId.value = id
+        _state.update { it.copy(categoryId = id) }
     }
 
     fun setTransactionFromAccountId(id: Long) {
-        _transactionFromAccountId.value = id
+        _state.update { it.copy(fromAccountId = id) }
     }
 
     fun setTransactionToAccountId(id: Long) {
-        _transactionToAccountId.value = id
+        _state.update { it.copy(toAccountId = id) }
     }
 
     fun setTransactionDescription(description: String) {
-        _transactionDescription.value = description
-    }
-
-    /** Uses cached data in memory instead of blocking DB calls. */
-    fun toTxString(): String = buildString {
-        appendLine("Transaction Details:")
-        appendLine("Type: ${transactionType.value}")
-        appendLine("Amount: ${transactionAmountString.value}")
-        appendLine("Date: ${DateUtils.readableDate(transactionDate.value ?: System.currentTimeMillis())}")
-        appendLine("Is Recurring: ${isRecurring.value}")
-        appendLine("Recurring Frequency: ${recurringFrequency.value}")
-        appendLine("Category: ${getCategoryFromCache(transactionCategoryId.value)?.name}")
-        appendLine("From Account: ${getAccountFromCache(transactionFromAccountId.value)?.name}")
-        appendLine("To Account: ${getAccountFromCache(transactionToAccountId.value)?.name}")
-        append("Description: ${transactionDescription.value}")
+        _state.update { it.copy(description = description) }
     }
 
     fun reset() {
-        _transactionAmountString.value = ""
-        _transactionDate.value = System.currentTimeMillis().convertUTCToLocal()
-        _isRecurring.value = false
-        _recurringFrequency.value = TransactionRecurringFrequency.DAILY
-        _transactionType.value = TransactionType.EXPENSE
-        _transactionCategoryId.value = null
-        _transactionFromAccountId.value = null
-        _transactionToAccountId.value = null
-        _transactionDescription.value = ""
+        _state.value = NewTransactionFormState.DEFAULT
     }
 
     fun submit(onSuccess: () -> Unit, onError: (String) -> Unit) {
         viewModelScope.launch {
             try {
-                val categoryName = getCategoryFromCache(transactionCategoryId.value)?.name ?: ""
-
+                val s = _state.value
+                val categoryName = getCategoryFromCache(s.categoryId)?.name ?: ""
                 transactionLocalRepository.createTransaction(
-                    type = transactionType.value,
-                    totalAmount = transactionAmountString.value.toAmountCentis(),
-                    transactionDate = transactionDate.value ?: System.currentTimeMillis(),
-                    categoryId = transactionCategoryId.value ?: 0L,
+                    type = s.transactionType,
+                    totalAmount = s.amountString.toAmountCentis(),
+                    transactionDate = s.dateMillis ?: System.currentTimeMillis(),
+                    categoryId = s.categoryId ?: 0L,
                     categoryName = categoryName,
-                    fromAccountId = transactionFromAccountId.value ?: 0L,
-                    toAccountId = transactionToAccountId.value,
-                    description = transactionDescription.value.takeIf { it.isNotBlank() }
+                    fromAccountId = s.fromAccountId ?: 0L,
+                    toAccountId = s.toAccountId,
+                    description = s.description.takeIf { it.isNotBlank() }
                 )
                 reset()
                 onSuccess()
@@ -286,19 +240,17 @@ class NewTransactionViewModel @Inject constructor(
         }
     }
 
-    private fun getCategoryFromCache(id: Long?): CategoryEntity? {
+    private fun getCategoryFromCache(id: Long?): CategoryUIModel? {
         if (id == null) return null
         val currentMap = categories.value
-        // Search through the values (lists of subcategories)
         for (subList in currentMap.values) {
             val found = subList.find { it.id == id }
             if (found != null) return found
         }
-        // Also check keys (parent categories) if they can be selected
         return currentMap.keys.find { it.id == id }
     }
 
-    private fun getAccountFromCache(id: Long?): AccountEntity? {
+    private fun getAccountFromCache(id: Long?): AccountUIModel? {
         if (id == null) return null
         return _accounts.value.find { it.id == id }
     }

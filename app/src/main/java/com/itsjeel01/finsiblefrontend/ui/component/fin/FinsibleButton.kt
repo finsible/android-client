@@ -133,6 +133,7 @@ private fun ButtonContent(
         tint = if (config.tintIcon) LocalContentColor.current else Color.Unspecified
     )
 
+    // Loading state
     if (config.loading) {
         CircularProgressIndicator(
             modifier = Modifier.size(config.size.iconSize),
@@ -142,6 +143,7 @@ private fun ButtonContent(
         return
     }
 
+    // Icon attached before/after label
     if (config.iconPosition == IconPosition.BeforeLabel || config.iconPosition == IconPosition.AfterLabel) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -158,6 +160,7 @@ private fun ButtonContent(
         return
     }
 
+    // Icon aligned to start/end of the button
     Box(
         contentAlignment = Alignment.Center,
         modifier = if (config.icon != null) Modifier.fillMaxWidth() else Modifier

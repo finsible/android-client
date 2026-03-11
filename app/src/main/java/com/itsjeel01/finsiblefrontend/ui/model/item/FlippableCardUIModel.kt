@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.ui.model
+package com.itsjeel01.finsiblefrontend.ui.model.item
 
 import androidx.compose.runtime.Immutable
 import kotlinx.collections.immutable.ImmutableList
@@ -6,15 +6,16 @@ import kotlinx.collections.immutable.persistentListOf
 
 /** Represents data for a single FlippableCard display from ViewModel. */
 @Immutable
-data class FlippableCardData(
+data class FlippableCardUIModel(
     val title: String,
     val largeText: String,
-    val statistics: ImmutableList<StatisticsModel> = persistentListOf()
+    val statistics: ImmutableList<StatEntry> = persistentListOf()
 )
 
 /** Represents a single statistic item with title and value. */
 @Immutable
-data class StatisticsModel(
+data class StatEntry(
     val title: String,
     val value: String
 )
+

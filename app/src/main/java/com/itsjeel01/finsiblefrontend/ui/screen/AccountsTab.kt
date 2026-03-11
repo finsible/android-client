@@ -26,17 +26,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.itsjeel01.finsiblefrontend.R
-import com.itsjeel01.finsiblefrontend.ui.component.FlippableCard
 import com.itsjeel01.finsiblefrontend.ui.component.accountstab.AccountGroupFilterRow
 import com.itsjeel01.finsiblefrontend.ui.component.accountstab.AccountGroupHeader
-import com.itsjeel01.finsiblefrontend.ui.component.accountstab.AccountItem
+import com.itsjeel01.finsiblefrontend.ui.component.accountstab.AccountRow
+import com.itsjeel01.finsiblefrontend.ui.component.accountstab.FlippableCard
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
-import com.itsjeel01.finsiblefrontend.ui.model.AccountListItem
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleGradients
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.GradientType
 import com.itsjeel01.finsiblefrontend.ui.theme.extraBold
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.AccountsViewModel
+import com.itsjeel01.finsiblefrontend.ui.model.state.AccountListItem
 
 @Composable
 fun AccountsScreen(
@@ -135,7 +135,7 @@ fun AccountsScreen(
 
                                 is AccountListItem.Account -> {
                                     Column {
-                                        AccountItem(
+                                        AccountRow(
                                             model = item.uiModel,
                                             modifier = Modifier.fillMaxWidth()
                                         )

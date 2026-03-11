@@ -6,7 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.itsjeel01.finsiblefrontend.common.logging.Logger
 import com.itsjeel01.finsiblefrontend.data.di.hiltLoadingManager
-import com.itsjeel01.finsiblefrontend.ui.model.AuthState
+import com.itsjeel01.finsiblefrontend.ui.model.state.AuthState
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.AuthViewModel
 
 @Composable

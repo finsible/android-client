@@ -16,13 +16,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.itsjeel01.finsiblefrontend.R
-import com.itsjeel01.finsiblefrontend.data.local.entity.AccountGroupEntity
+import com.itsjeel01.finsiblefrontend.ui.model.item.AccountGroupUIModel
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun AccountGroupFilterRow(
-    groups: ImmutableList<AccountGroupEntity>,
+    groups: ImmutableList<AccountGroupUIModel>,
     selectedGroupId: Long?,
     onGroupSelected: (Long?) -> Unit,
     modifier: Modifier = Modifier

@@ -8,7 +8,7 @@ import com.itsjeel01.finsiblefrontend.BuildConfig
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.data.repository.AuthRepository
 import com.itsjeel01.finsiblefrontend.data.sync.PostAuthInitializer
-import com.itsjeel01.finsiblefrontend.ui.model.AuthState
+import com.itsjeel01.finsiblefrontend.ui.model.state.AuthState
 import com.itsjeel01.finsiblefrontend.ui.util.GoogleAuthManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext

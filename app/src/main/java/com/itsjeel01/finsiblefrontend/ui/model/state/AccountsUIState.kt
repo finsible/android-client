@@ -1,16 +1,18 @@
-package com.itsjeel01.finsiblefrontend.ui.model
+package com.itsjeel01.finsiblefrontend.ui.model.state
 
 import androidx.compose.runtime.Immutable
-import com.itsjeel01.finsiblefrontend.data.local.entity.AccountGroupEntity
+import com.itsjeel01.finsiblefrontend.ui.model.item.AccountGroupUIModel
+import com.itsjeel01.finsiblefrontend.ui.model.item.AccountUIModel
+import com.itsjeel01.finsiblefrontend.ui.model.item.FlippableCardUIModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 /** UI state for accounts tab. Immutable for Compose optimization. */
 @Immutable
-data class AccountsUiState(
-    val accountCards: ImmutableList<FlippableCardData> = persistentListOf(),
+data class AccountsUIState(
+    val accountCards: ImmutableList<FlippableCardUIModel> = persistentListOf(),
     val listItems: ImmutableList<AccountListItem> = persistentListOf(),
-    val accountGroups: ImmutableList<AccountGroupEntity> = persistentListOf(),
+    val accountGroups: ImmutableList<AccountGroupUIModel> = persistentListOf(),
     val selectedGroupId: Long? = null,
     val isLoading: Boolean = false
 )
@@ -21,5 +23,5 @@ sealed interface AccountListItem {
     data class Header(val groupName: String) : AccountListItem
 
     @Immutable
-    data class Account(val uiModel: AccountUiModel) : AccountListItem
+    data class Account(val uiModel: AccountUIModel) : AccountListItem
 }

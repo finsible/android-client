@@ -43,12 +43,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.TransactionRecurringFrequency
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.medium
-import com.itsjeel01.finsiblefrontend.ui.viewmodel.NewTransactionViewModel
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 
@@ -161,26 +159,6 @@ fun Step2Date(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun Step2Date(
-    modifier: Modifier = Modifier,
-    viewModel: NewTransactionViewModel
-) {
-    val dateMillis by viewModel.transactionDate.collectAsStateWithLifecycle()
-    val isRecurring by viewModel.isRecurring.collectAsStateWithLifecycle()
-    val frequency by viewModel.recurringFrequency.collectAsStateWithLifecycle()
-
-    Step2Date(
-        dateMillis = dateMillis,
-        isRecurring = isRecurring,
-        recurringFrequency = frequency,
-        onDateChange = { viewModel.setTransactionDate(it) },
-        onIsRecurringChange = { viewModel.setIsRecurring(it) },
-        onRecurringFrequencyChange = { viewModel.setRecurringFrequency(it) },
-        modifier = modifier
-    )
-}
 
 /** Dropdown for recurring frequency with hoisted selection. */
 @OptIn(ExperimentalMaterial3Api::class)

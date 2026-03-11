@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import com.itsjeel01.finsiblefrontend.common.TransactionType
-import com.itsjeel01.finsiblefrontend.ui.model.TransactionUIModel
+import com.itsjeel01.finsiblefrontend.ui.model.item.TransactionUIModel
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.bold
 import com.itsjeel01.finsiblefrontend.ui.theme.medium

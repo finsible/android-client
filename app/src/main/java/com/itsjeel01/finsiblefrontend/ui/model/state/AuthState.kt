@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.ui.model
+package com.itsjeel01.finsiblefrontend.ui.model.state
 
 import androidx.compose.runtime.Immutable
 

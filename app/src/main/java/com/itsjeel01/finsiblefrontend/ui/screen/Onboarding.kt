@@ -17,7 +17,7 @@ import com.itsjeel01.finsiblefrontend.data.di.hiltNotificationManager
 import com.itsjeel01.finsiblefrontend.ui.component.onboarding.OnboardingBackground
 import com.itsjeel01.finsiblefrontend.ui.component.onboarding.OnboardingContent
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
-import com.itsjeel01.finsiblefrontend.ui.model.AuthState
+import com.itsjeel01.finsiblefrontend.ui.model.state.AuthState
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.AuthViewModel
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.OnboardingViewModel
 

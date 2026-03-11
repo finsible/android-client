@@ -21,8 +21,8 @@ import com.itsjeel01.finsiblefrontend.common.CurrencyFormatter
 import com.itsjeel01.finsiblefrontend.common.TransactionType
 import com.itsjeel01.finsiblefrontend.ui.model.DateFilterMode
 import com.itsjeel01.finsiblefrontend.ui.model.GroupAggregates
-import com.itsjeel01.finsiblefrontend.ui.model.TransactionListState
-import com.itsjeel01.finsiblefrontend.ui.model.TransactionUIModel
+import com.itsjeel01.finsiblefrontend.ui.model.item.TransactionUIModel
+import com.itsjeel01.finsiblefrontend.ui.model.state.TransactionListState
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
 @Composable

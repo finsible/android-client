@@ -5,7 +5,9 @@ import androidx.compose.ui.unit.dp
 
 data class FinsibleDimes(
     val d0: Dp,
+    val d0dot5: Dp,
     val d1: Dp,
+    val d1dot5: Dp,
     val d2: Dp,
     val d3: Dp,
     val d4: Dp,
@@ -60,7 +62,9 @@ data class FinsibleDimes(
     companion object {
         val values = FinsibleDimes(
             d0 = 0.dp,
+            d0dot5 = 0.5.dp,
             d1 = 1.dp,
+            d1dot5 = 1.5.dp,
             d2 = 2.dp,
             d3 = 3.dp,
             d4 = 4.dp,

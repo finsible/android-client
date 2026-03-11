@@ -1,3 +1,72 @@
 <resources>
     <string name="app_name">FinsibleFrontend</string>
+
+    <!-- TransactionSearchHeader -->
+    <string name="transaction_history_title">History</string>
+    <string name="search_transactions_placeholder">Search transactions…</string>
+    <string name="cd_close_search">Close search</string>
+    <string name="cd_search">Search</string>
+    <string name="cd_filter">Filter</string>
+
+    <!-- TransactionsTab -->
+    <string name="transactions_count">%d transactions</string>
+    <string name="unknown_error">Unknown error</string>
+    <string name="no_matching_transactions">No matching transactions</string>
+    <string name="no_transactions_yet">No transactions yet</string>
+    <string name="try_adjusting_filters">Try adjusting your filters</string>
+    <string name="clear_filters">Clear Filters</string>
+    <string name="cd_change_view">Change view</string>
+    <string name="cd_scroll_to_top">Scroll to top</string>
+
+    <!-- TransactionFilterSheet -->
+    <string name="apply_filters">Apply Filters</string>
+    <string name="filters_and_sort">Filters &amp; Sort</string>
+    <string name="clear_all">Clear All</string>
+    <string name="sort_by">SORT BY</string>
+    <string name="transaction_type">TRANSACTION TYPE</string>
+    <string name="time_period">TIME PERIOD</string>
+    <string name="amount_range">AMOUNT RANGE</string>
+    <string name="amount_min_placeholder">Min</string>
+    <string name="amount_max_placeholder">Max</string>
+    <string name="all_months">All months</string>
+    <string name="date_range_full">%1$s – %2$s</string>
+    <string name="date_range_from">From %s</string>
+    <string name="select_date_range">Select date range</string>
+    <string name="date_range_dialog_ok">OK</string>
+    <string name="date_range_dialog_cancel">Cancel</string>
+    <string name="min_exceeds_max_error">Min amount cannot exceed max amount</string>
+
+    <!-- FlippableCard -->
+    <string name="cd_rotate_card">Rotate card</string>
+
+    <!-- Onboarding -->
+    <string name="cd_finsible_logo">Finsible Logo</string>
+    <string name="cd_onboarding_illustration">Onboarding illustration %d</string>
+    <string name="skip">Skip</string>
+    <string name="back">Back</string>
+    <string name="get_started">Get started</string>
+    <string name="continue_with_google">Continue with Google</string>
+    <string name="next">Next</string>
+    <string name="go_back">Go back</string>
+
+    <!-- New Transaction -->
+    <string name="new_transaction">New Transaction</string>
+    <string name="amount_placeholder">0</string>
+    <string name="enter_transaction_amount">Enter transaction amount</string>
+    <string name="confirm">Confirm</string>
+    <string name="cd_close">Close</string>
+
+    <!-- Accounts -->
+    <string name="all">All</string>
+    <string name="cd_account_icon">Account icon for %s</string>
+
+    <!-- Notification -->
+    <string name="cd_dismiss_notification">Dismiss notification</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_dashboard">Dashboard</string>
+    <string name="nav_accounts">Accounts</string>
+    <string name="nav_new_transaction">New Transaction</string>
+    <string name="nav_transactions">Transactions</string>
+    <string name="nav_settings">Settings</string>
 </resources>

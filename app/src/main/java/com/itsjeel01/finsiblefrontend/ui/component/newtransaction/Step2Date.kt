@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.ui.screen.newtransaction
+package com.itsjeel01.finsiblefrontend.ui.component.newtransaction
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -95,11 +95,11 @@ fun Step2Date(
                 colors = DatePickerDefaults.colors().copy(
                     containerColor = FinsibleTheme.colors.surface,
                     selectedDayContainerColor = FinsibleTheme.colors.brandAccent,
-                    todayContentColor = FinsibleTheme.colors.brandAccent,
+                    todayContentColor = FinsibleTheme.colors.link,
                     todayDateBorderColor = FinsibleTheme.colors.brandAccent,
                     dayContentColor = FinsibleTheme.colors.primaryContent,
                     weekdayContentColor = FinsibleTheme.colors.secondaryContent,
-                    currentYearContentColor = FinsibleTheme.colors.brandAccent,
+                    currentYearContentColor = FinsibleTheme.colors.link,
                     selectedYearContainerColor = FinsibleTheme.colors.brandAccent,
                     yearContentColor = FinsibleTheme.colors.primaryContent
                 )

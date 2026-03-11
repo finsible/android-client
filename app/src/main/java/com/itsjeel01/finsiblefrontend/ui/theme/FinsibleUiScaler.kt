@@ -22,7 +22,9 @@ class FinsibleUiScaler(private val deviceInfo: DeviceInfo) {
     fun scaleDimes(dimes: FinsibleDimes): FinsibleDimes {
         return FinsibleDimes(
             d0 = dimes.d0,
+            d0dot5 = dimes.d0dot5,
             d1 = dimes.d1,
+            d1dot5 = dimes.d1dot5,
             d2 = dimes.d2,
             d3 = dimes.d3,
             d4 = dimes.d4,

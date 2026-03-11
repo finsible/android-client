@@ -20,7 +20,11 @@ data class TransactionEntity(
     @Convert(converter = TransactionTypeConverter::class, dbType = Int::class)
     var type: TransactionType = TransactionType.EXPENSE,
 
-    var totalAmount: String = "0.0",
+    /** Indexed amount in centis (×100) for 2 decimal precision. E.g., 123.45 → 12345. */
+    @Index var totalAmount: Long = 0,
+
+    /** Pre-computed lowercase searchable text (description + categoryName) for efficient text search. */
+    var searchableText: String = "",
 
     @Index var transactionDate: Long = 0,
 
@@ -50,10 +54,36 @@ data class TransactionEntity(
     var paidByUserName: String? = null,
 ) : BaseEntity(), SyncableEntity
 
+/** Multiplier for centis conversion (2 decimal places). E.g., 123.45 → 12345. */
+const val AMOUNT_MULTIPLIER = 100L
+
+/** Convert centis (Long) to decimal String with exactly 2dp. E.g., 12345 → "123.45", -12345 → "-123.45". */
+fun Long.toAmountString(): String {
+    val sign = if (this < 0) "-" else ""
+    val abs = if (this < 0) -this else this
+    val wholePart = abs / AMOUNT_MULTIPLIER
+    val decimalPart = (abs % AMOUNT_MULTIPLIER).toString().padStart(2, '0')
+    return "$sign$wholePart.$decimalPart"
+}
+
+/** Convert decimal String to centis (Long). E.g., "123.45" → 12345, "-123.45" → -12345. */
+fun String.toAmountCentis(): Long {
+    val trimmed = this.trim()
+    val negative = trimmed.startsWith("-")
+    val unsigned = if (negative) trimmed.substring(1) else trimmed
+    val parts = unsigned.split(".")
+    val wholePart = parts[0].toLongOrNull() ?: 0L
+    val decimalPart = if (parts.size > 1) {
+        parts[1].take(2).padEnd(2, '0').toLongOrNull() ?: 0L
+    } else 0L
+    val centis = wholePart * AMOUNT_MULTIPLIER + decimalPart
+    return if (negative) -centis else centis
+}
+
 fun TransactionEntity.toDTO(): Transaction = Transaction(
     id = id,
     type = type.name,
-    totalAmount = totalAmount,
+    totalAmount = totalAmount.toAmountString(),
     transactionDate = transactionDate.toString(),
     categoryId = categoryId,
     categoryName = categoryName,

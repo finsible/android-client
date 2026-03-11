@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.ui.screen.newtransaction
+package com.itsjeel01.finsiblefrontend.ui.component.newtransaction
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize

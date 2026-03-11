@@ -1,6 +1,5 @@
 package com.itsjeel01.finsiblefrontend.data.local
 
-import android.icu.math.BigDecimal
 import com.itsjeel01.finsiblefrontend.common.Currency
 import com.itsjeel01.finsiblefrontend.common.EntityType
 import com.itsjeel01.finsiblefrontend.common.OperationType
@@ -30,10 +29,4 @@ class StatusConverter : EnumPropertyConverter<Status>(Status.entries)
 class CurrencyConverter : PropertyConverter<Currency, String> {
     override fun convertToDatabaseValue(entityProperty: Currency?): String? = entityProperty?.name
     override fun convertToEntityProperty(databaseValue: String?): Currency? = databaseValue?.let { Currency.valueOf(it) }
-}
-
-class BigDecimalConverter : PropertyConverter<BigDecimal, String> {
-    override fun convertToDatabaseValue(entityProperty: BigDecimal?): String? = entityProperty?.toString()
-
-    override fun convertToEntityProperty(databaseValue: String?): BigDecimal? = databaseValue?.let { BigDecimal(it) }
 }

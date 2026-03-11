@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.ui.screen.newtransaction
+package com.itsjeel01.finsiblefrontend.ui.component.newtransaction
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -11,6 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
+import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.ui.component.fin.ButtonConfig
 import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentSize
 import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentType
@@ -28,7 +30,7 @@ fun StepControlButtons(
     val canGoBack = stepIndex > 0
 
     val isLastStep = stepIndex == NewTransactionSteps.lastIndex
-    val continueButtonText = if (isLastStep) "Confirm" else "Next"
+    val continueButtonText = if (isLastStep) stringResource(R.string.confirm) else stringResource(R.string.next)
 
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
@@ -42,7 +44,7 @@ fun StepControlButtons(
     ) {
         if (canGoBack) {
             FinsibleButton(
-                text = "Back",
+                text = stringResource(R.string.back),
                 onClick = onBack,
                 config = ButtonConfig(
                     type = ComponentType.Tertiary,

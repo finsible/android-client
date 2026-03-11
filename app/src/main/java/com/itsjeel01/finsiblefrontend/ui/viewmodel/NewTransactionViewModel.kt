@@ -7,6 +7,7 @@ import com.itsjeel01.finsiblefrontend.common.TransactionType
 import com.itsjeel01.finsiblefrontend.common.convertUTCToLocal
 import com.itsjeel01.finsiblefrontend.data.local.entity.AccountEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.CategoryEntity
+import com.itsjeel01.finsiblefrontend.data.local.entity.toAmountCentis
 import com.itsjeel01.finsiblefrontend.data.local.repository.AccountLocalRepository
 import com.itsjeel01.finsiblefrontend.data.local.repository.CategoryLocalRepository
 import com.itsjeel01.finsiblefrontend.data.local.repository.TransactionLocalRepository
@@ -40,8 +41,8 @@ class NewTransactionViewModel @Inject constructor(
 ) : ViewModel() {
 
     companion object {
-        private const val MAX_INTEGER_DIGITS = 15
-        private const val MAX_DECIMAL_DIGITS = 4
+        private const val MAX_INTEGER_DIGITS = 14
+        private const val MAX_DECIMAL_DIGITS = 2
         private const val SUBSCRIPTION_TIMEOUT = 5000L
     }
 
@@ -266,7 +267,7 @@ class NewTransactionViewModel @Inject constructor(
 
                 transactionLocalRepository.createTransaction(
                     type = transactionType.value,
-                    totalAmount = transactionAmountString.value,
+                    totalAmount = transactionAmountString.value.toAmountCentis(),
                     transactionDate = transactionDate.value ?: System.currentTimeMillis(),
                     categoryId = transactionCategoryId.value ?: 0L,
                     categoryName = categoryName,

@@ -67,7 +67,7 @@ android {
     }
     tasks.withType<KotlinCompile> {
         compilerOptions {
-            freeCompilerArgs = listOf("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
+            freeCompilerArgs.add("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
         }
     }
 }

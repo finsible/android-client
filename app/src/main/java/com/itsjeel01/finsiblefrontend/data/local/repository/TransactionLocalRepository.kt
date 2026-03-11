@@ -340,7 +340,7 @@ class TransactionLocalRepository @Inject constructor(
         queryBuilder: QueryBuilder<TransactionEntity>,
         searchQuery: String
     ) {
-        val trimmed = searchQuery.trim().lowercase(Locale.getDefault())
+        val trimmed = searchQuery.trim().lowercase(Locale.ROOT)
         if (trimmed.isBlank()) return
 
         val amountCentis = trimmed.toAmountCentisOrZero().takeIf { it > 0L }
@@ -366,7 +366,7 @@ class TransactionLocalRepository @Inject constructor(
         queryBuilder.apply(accountCondition)
     }
 
-    /** Apply DB-level date range filter. */
+    /** Apply DB-level date range filter. Both bounds are inclusive. */
     private fun applyDateFilter(
         queryBuilder: QueryBuilder<TransactionEntity>,
         dateRangeStart: Long?,
@@ -377,10 +377,10 @@ class TransactionLocalRepository @Inject constructor(
                 queryBuilder.between(TransactionEntity_.transactionDate, dateRangeStart, dateRangeEnd)
 
             dateRangeStart != null ->
-                queryBuilder.greater(TransactionEntity_.transactionDate, dateRangeStart)
+                queryBuilder.greaterOrEqual(TransactionEntity_.transactionDate, dateRangeStart)
 
             dateRangeEnd != null ->
-                queryBuilder.less(TransactionEntity_.transactionDate, dateRangeEnd)
+                queryBuilder.lessOrEqual(TransactionEntity_.transactionDate, dateRangeEnd)
         }
     }
 

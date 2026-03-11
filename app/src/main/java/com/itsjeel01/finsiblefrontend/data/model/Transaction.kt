@@ -6,6 +6,7 @@ import com.itsjeel01.finsiblefrontend.common.TransactionType
 import com.itsjeel01.finsiblefrontend.data.local.entity.TransactionEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.toAmountCentis
 import kotlinx.serialization.Serializable
+import java.util.Locale
 
 @Serializable
 data class Transaction(
@@ -56,7 +57,7 @@ fun Transaction.toEntity(
 /** Builds pre-computed lowercase searchable text for efficient text search. */
 fun buildSearchableText(description: String?, categoryName: String): String {
     return buildString {
-        description?.lowercase()?.let { append(it).append(" ") }
-        append(categoryName.lowercase())
+        description?.lowercase(Locale.ROOT)?.let { append(it).append(" ") }
+        append(categoryName.lowercase(Locale.ROOT))
     }.trim()
 }

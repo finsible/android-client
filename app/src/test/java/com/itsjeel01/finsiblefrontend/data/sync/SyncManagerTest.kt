@@ -63,9 +63,7 @@ class SyncManagerTest {
         )
     }
 
-    // ============================================
     // Initialization Tests
-    // ============================================
 
     @Test
     fun testInitialSyncStateIsIdle() {
@@ -112,9 +110,7 @@ class SyncManagerTest {
         assertTrue("Should have TRANSACTION handler", syncHandlers.containsKey(EntityType.TRANSACTION))
     }
 
-    // ============================================
     // Queue Processing Tests
-    // ============================================
 
     @Test
     fun testProcessQueueWithEmptyQueue() = runTest {
@@ -256,9 +252,7 @@ class SyncManagerTest {
         verify(exactly = 1) { mockPendingOperationRepository.removeCompleted() }
     }
 
-    // ============================================
     // Error Handling Tests
-    // ============================================
 
     @Test
     fun testProcessQueueWithRetryableError() = runTest {
@@ -420,9 +414,7 @@ class SyncManagerTest {
         assertTrue("Error should indicate null operation type", operation.lastError!!.contains("Operation type is null"))
     }
 
-    // ============================================
     // Network Monitoring Tests
-    // ============================================
 
     @Test
     fun testProcessQueuePausesWhenNetworkLost() = runTest {
@@ -461,9 +453,7 @@ class SyncManagerTest {
         coVerify(exactly = 0) { mockSyncHandler.processUpdate(op2) }  // Should not process second op
     }
 
-    // ============================================
     // Retry Failed Tests
-    // ============================================
 
     @Test
     fun testRetryFailedResetsPendingOperations() = runTest {
@@ -506,9 +496,7 @@ class SyncManagerTest {
         verify(exactly = 2) { mockPendingOperationRepository.update(any()) }
     }
 
-    // ============================================
     // Concurrent Sync Protection Tests
-    // ============================================
 
     @Test
     fun testProcessQueueDoesNotRunConcurrently() = runTest {

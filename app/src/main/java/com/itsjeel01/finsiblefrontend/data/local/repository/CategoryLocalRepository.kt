@@ -94,8 +94,7 @@ class CategoryLocalRepository @Inject constructor(
     }
 
     fun getCategories(ids: List<Long>): Map<Long, CategoryEntity> {
-        return box.query()
-            .`in`(CategoryEntity_.id, ids.toLongArray())
+        return box.query(CategoryEntity_.id.oneOf(ids.toLongArray()))
             .build()
             .find()
             .associateBy { it.id }

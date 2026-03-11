@@ -67,11 +67,47 @@
     <string name="cd_close">Close</string>
     <string name="description_label">Description</string>
     <string name="description_placeholder">Add notes about this transaction…</string>
+    <string name="step_enter_amount">Enter Amount</string>
+    <string name="step_date_schedule">Date &amp; Schedule</string>
+    <string name="step_select_category">Select Category</string>
+    <string name="step_select_accounts">Select Accounts</string>
+    <string name="step_add_description">Add Description (Optional)</string>
+    <string name="step_counter">Step %1$d of %2$d</string>
+    <string name="from_account">From Account</string>
+    <string name="to_account">To Account</string>
+    <string name="select_expense_source">Select where the money will be spent from</string>
+    <string name="select_transfer_source">Select the source account</string>
+    <string name="select_income_destination">Select where the money will be received</string>
+    <string name="select_transfer_destination">Select the destination account</string>
+    <string name="make_recurring">Make recurring</string>
+    <string name="frequency">Frequency</string>
+    <string name="failed_to_create_transaction">Failed to create transaction</string>
 
     <!-- Accounts -->
     <string name="all">All</string>
     <string name="cd_account_icon">Account icon for %s</string>
     <string name="my_accounts">My Accounts</string>
+    <string name="net_worth">Net Worth</string>
+    <string name="total_assets">Total Assets</string>
+    <string name="total_liabilities">Total Liabilities</string>
+    <string name="assets">Assets</string>
+    <string name="liabilities">Liabilities</string>
+    <string name="others">Others</string>
+
+    <!-- Auth -->
+    <string name="auth_error_server">It\'s not you, it\'s us. Please try again later.</string>
+    <string name="auth_error_cancelled">Sign-in cancelled, please log in.</string>
+    <string name="auth_error_no_internet">No internet connection. Please check your network.</string>
+    <string name="auth_error_timeout">The request timed out. Please try again.</string>
+    <string name="auth_error_unexpected">An unexpected error occurred. Please try again.</string>
+
+    <!-- History -->
+    <string name="error_failed_to_load_more">Failed to load more</string>
+    <string name="error_failed_to_load_transactions">Failed to load transactions</string>
+
+    <!-- Transaction Mapper -->
+    <string name="account_unknown">?</string>
+    <string name="transfer_label_format">%1$s → %2$s</string>
 
     <!-- Dashboard -->
     <string name="dashboard_screen">Dashboard Screen</string>

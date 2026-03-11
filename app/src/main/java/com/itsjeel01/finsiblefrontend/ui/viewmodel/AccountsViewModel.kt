@@ -1,7 +1,9 @@
 package com.itsjeel01.finsiblefrontend.ui.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.CurrencyFormatter
 import com.itsjeel01.finsiblefrontend.common.centisToCompactCurrency
 import com.itsjeel01.finsiblefrontend.common.centisToFormattedCurrency
@@ -15,6 +17,7 @@ import com.itsjeel01.finsiblefrontend.ui.model.AccountsUiState
 import com.itsjeel01.finsiblefrontend.ui.model.FlippableCardData
 import com.itsjeel01.finsiblefrontend.ui.model.StatisticsModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,6 +30,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AccountsViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val accountLocalRepository: AccountLocalRepository,
     private val accountGroupLocalRepository: AccountGroupLocalRepository,
     private val currencyFormatter: CurrencyFormatter
@@ -99,7 +103,7 @@ class AccountsViewModel @Inject constructor(
         }
 
         val listItems = filteredAccounts
-            .groupBy { it.accountGroup.target?.name ?: "Others" }
+            .groupBy { it.accountGroup.target?.name ?: context.getString(R.string.others) }
             .flatMap { (groupName, accountsInGroup) ->
                 buildList {
                     if (selectedGroupId == null) {
@@ -142,22 +146,22 @@ class AccountsViewModel @Inject constructor(
     }
 
     private fun createNetWorthCard(netWorthCentis: Long, assetCentis: Long, liabilityCentis: Long) = FlippableCardData(
-        title = "Net Worth",
+        title = context.getString(R.string.net_worth),
         largeText = netWorthCentis.centisToFormattedCurrency(currencyFormatter),
         statistics = listOf(
-            StatisticsModel("Assets", assetCentis.centisToCompactCurrency(currencyFormatter)),
-            StatisticsModel("Liabilities", liabilityCentis.centisToCompactCurrency(currencyFormatter))
+            StatisticsModel(context.getString(R.string.assets), assetCentis.centisToCompactCurrency(currencyFormatter)),
+            StatisticsModel(context.getString(R.string.liabilities), liabilityCentis.centisToCompactCurrency(currencyFormatter))
         ).toPersistentList()
     )
 
     private fun createAssetsCard(totalAssetCentis: Long, statistics: List<StatisticsModel>) = FlippableCardData(
-        title = "Total Assets",
+        title = context.getString(R.string.total_assets),
         largeText = totalAssetCentis.centisToFormattedCurrency(currencyFormatter),
         statistics = statistics.toPersistentList()
     )
 
     private fun createLiabilitiesCard(totalLiabilityCentis: Long, statistics: List<StatisticsModel>) = FlippableCardData(
-        title = "Total Liabilities",
+        title = context.getString(R.string.total_liabilities),
         largeText = totalLiabilityCentis.centisToFormattedCurrency(currencyFormatter),
         statistics = statistics.toPersistentList()
     )
@@ -192,7 +196,7 @@ class AccountsViewModel @Inject constructor(
             }
 
             if (othersTotalCentis > 0L) {
-                add(StatisticsModel("Others", othersTotalCentis.centisToCompactCurrency(currencyFormatter)))
+                add(StatisticsModel(context.getString(R.string.others), othersTotalCentis.centisToCompactCurrency(currencyFormatter)))
             }
         }
     }

@@ -5,11 +5,13 @@ import androidx.credentials.exceptions.GetCredentialCancellationException
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.itsjeel01.finsiblefrontend.BuildConfig
+import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.data.repository.AuthRepository
 import com.itsjeel01.finsiblefrontend.data.sync.PostAuthInitializer
 import com.itsjeel01.finsiblefrontend.ui.model.AuthState
 import com.itsjeel01.finsiblefrontend.ui.util.GoogleAuthManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,6 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val authRepo: AuthRepository,
     private val googleAuthManager: GoogleAuthManager,
     private val postAuthInitializer: PostAuthInitializer,
@@ -62,11 +65,11 @@ class AuthViewModel @Inject constructor(
 
     private fun handleAuthError(exception: Throwable) {
         val message = when (exception) {
-            is HttpException -> "It's not you, it's us. Please try again later."
-            is GetCredentialCancellationException -> "Sign-in cancelled, please log in."
-            is java.net.UnknownHostException -> "No internet connection. Please check your network."
-            is java.net.SocketTimeoutException -> "The request timed out. Please try again."
-            else -> "An unexpected error occurred. Please try again."
+            is HttpException -> context.getString(R.string.auth_error_server)
+            is GetCredentialCancellationException -> context.getString(R.string.auth_error_cancelled)
+            is java.net.UnknownHostException -> context.getString(R.string.auth_error_no_internet)
+            is java.net.SocketTimeoutException -> context.getString(R.string.auth_error_timeout)
+            else -> context.getString(R.string.auth_error_unexpected)
         }
 
         _authState.value = AuthState.Negative(message, isFailed = true)

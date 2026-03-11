@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.TransactionType
@@ -79,10 +80,10 @@ fun AccountSelector(
     ) {
         if (transactionType != TransactionType.INCOME) {
             AccountSelector(
-                title = "From Account",
+                title = stringResource(R.string.from_account),
                 description = when (transactionType) {
-                    TransactionType.EXPENSE -> "Select where the money will be spent from"
-                    TransactionType.TRANSFER -> "Select the source account"
+                    TransactionType.EXPENSE -> stringResource(R.string.select_expense_source)
+                    TransactionType.TRANSFER -> stringResource(R.string.select_transfer_source)
                 },
                 accounts = fromAccountsOptions,
                 selectedAccountId = fromAccountId,
@@ -92,10 +93,10 @@ fun AccountSelector(
         }
         if (transactionType != TransactionType.EXPENSE) {
             AccountSelector(
-                title = "To Account",
+                title = stringResource(R.string.to_account),
                 description = when (transactionType) {
-                    TransactionType.INCOME -> "Select where the money will be received"
-                    TransactionType.TRANSFER -> "Select the destination account"
+                    TransactionType.INCOME -> stringResource(R.string.select_income_destination)
+                    TransactionType.TRANSFER -> stringResource(R.string.select_transfer_destination)
                 },
                 accounts = toAccountsOptions.filter { transactionType != TransactionType.TRANSFER || it.id != fromAccountId },
                 selectedAccountId = toAccountId,
@@ -125,7 +126,6 @@ private fun AccountSelector(
             .animateContentSize(),
         verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d12)
     ) {
-        // Section header
         Column(verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d4)) {
             Text(
                 text = title,
@@ -141,7 +141,6 @@ private fun AccountSelector(
             }
         }
 
-        // Account chips
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d8),

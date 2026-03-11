@@ -17,7 +17,6 @@ import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
 @Composable
 fun OnboardingBackground() {
-    // Vertical gradient
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -37,7 +36,6 @@ fun OnboardingBackground() {
             )
     )
 
-    // TopLeft radial gradient
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -54,7 +52,6 @@ fun OnboardingBackground() {
             )
     )
 
-    // TopRight radial gradient
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -71,7 +68,6 @@ fun OnboardingBackground() {
             )
     )
 
-    // Noise overlay
     val noise = ImageBitmap.imageResource(R.drawable.noise)
     Canvas(modifier = Modifier.fillMaxSize()) {
         drawImage(

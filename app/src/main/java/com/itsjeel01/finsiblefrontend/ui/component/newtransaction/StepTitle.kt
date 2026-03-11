@@ -21,17 +21,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
+import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.extraBold
 
-private val STEP_TITLES = listOf(
-    "Enter Amount", "Date & Schedule", "Select Category",
-    "Select Accounts", "Add Description (Optional)"
-)
-
 @Composable
 fun StepTitle(currentStep: Int, totalSteps: Int) {
-    val title = STEP_TITLES.getOrElse(currentStep) { STEP_TITLES.first() }
+    val stepTitles = listOf(
+        stringResource(R.string.step_enter_amount),
+        stringResource(R.string.step_date_schedule),
+        stringResource(R.string.step_select_category),
+        stringResource(R.string.step_select_accounts),
+        stringResource(R.string.step_add_description)
+    )
+    val title = stepTitles.getOrElse(currentStep) { stepTitles.first() }
 
     Spacer(Modifier.height(FinsibleTheme.dimes.d16))
     Column(Modifier.padding(vertical = FinsibleTheme.dimes.d16)) {
@@ -44,7 +48,7 @@ fun StepTitle(currentStep: Int, totalSteps: Int) {
 
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d8)) {
             Text(
-                "Step ${currentStep + 1} of $totalSteps",
+                stringResource(R.string.step_counter, currentStep + 1, totalSteps),
                 style = FinsibleTheme.typography.t16,
                 color = FinsibleTheme.colors.secondaryContent,
             )
@@ -58,7 +62,6 @@ fun StepTitle(currentStep: Int, totalSteps: Int) {
                 label = "progress"
             )
 
-            // Linear step progress bar with animation
             Box(
                 modifier = Modifier
                     .height(FinsibleTheme.dimes.d3)

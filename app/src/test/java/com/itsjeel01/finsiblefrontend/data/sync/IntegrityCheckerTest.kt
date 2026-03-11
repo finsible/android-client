@@ -334,9 +334,7 @@ class IntegrityCheckerTest {
         assertFalse(report.hasDiscrepancy)
     }
 
-    // ============================================
     // IntegrityReport Unit Tests
-    // ============================================
 
     @Test
     fun `IntegrityReport hasDiscrepancy returns false when all match`() {

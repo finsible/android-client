@@ -1,7 +1,9 @@
 package com.itsjeel01.finsiblefrontend.ui.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.TransactionRecurringFrequency
 import com.itsjeel01.finsiblefrontend.common.TransactionType
 import com.itsjeel01.finsiblefrontend.common.convertUTCToLocal
@@ -18,6 +20,7 @@ import com.itsjeel01.finsiblefrontend.data.sync.IntegrityChecker
 import com.itsjeel01.finsiblefrontend.ui.navigation.Route
 import com.itsjeel01.finsiblefrontend.ui.util.DateUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -32,6 +35,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NewTransactionViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val categoryLocalRepository: CategoryLocalRepository,
     private val accountLocalRepository: AccountLocalRepository,
     private val transactionLocalRepository: TransactionLocalRepository,
@@ -49,31 +53,31 @@ class NewTransactionViewModel @Inject constructor(
 
     /** Transaction form state. */
     private val _transactionAmountString = MutableStateFlow("")
-    val transactionAmountString: StateFlow<String> = _transactionAmountString.stateFlow()
+    val transactionAmountString: StateFlow<String> = _transactionAmountString.asStateFlow()
 
     private val _transactionDate = MutableStateFlow<Long?>(System.currentTimeMillis().convertUTCToLocal())
-    val transactionDate: StateFlow<Long?> = _transactionDate.stateFlow()
+    val transactionDate: StateFlow<Long?> = _transactionDate.asStateFlow()
 
     private val _isRecurring = MutableStateFlow(false)
-    val isRecurring: StateFlow<Boolean> = _isRecurring.stateFlow()
+    val isRecurring: StateFlow<Boolean> = _isRecurring.asStateFlow()
 
     private val _recurringFrequency = MutableStateFlow(TransactionRecurringFrequency.DAILY)
-    val recurringFrequency: StateFlow<TransactionRecurringFrequency> = _recurringFrequency.stateFlow()
+    val recurringFrequency: StateFlow<TransactionRecurringFrequency> = _recurringFrequency.asStateFlow()
 
     private val _transactionType = MutableStateFlow(TransactionType.EXPENSE)
-    val transactionType: StateFlow<TransactionType> = _transactionType.stateFlow()
+    val transactionType: StateFlow<TransactionType> = _transactionType.asStateFlow()
 
     private val _transactionCategoryId = MutableStateFlow<Long?>(null)
-    val transactionCategoryId: StateFlow<Long?> = _transactionCategoryId.stateFlow()
+    val transactionCategoryId: StateFlow<Long?> = _transactionCategoryId.asStateFlow()
 
     private val _transactionFromAccountId = MutableStateFlow<Long?>(null)
-    val transactionFromAccountId: StateFlow<Long?> = _transactionFromAccountId.stateFlow()
+    val transactionFromAccountId: StateFlow<Long?> = _transactionFromAccountId.asStateFlow()
 
     private val _transactionToAccountId = MutableStateFlow<Long?>(null)
-    val transactionToAccountId: StateFlow<Long?> = _transactionToAccountId.stateFlow()
+    val transactionToAccountId: StateFlow<Long?> = _transactionToAccountId.asStateFlow()
 
     private val _transactionDescription = MutableStateFlow("")
-    val transactionDescription: StateFlow<String> = _transactionDescription.stateFlow()
+    val transactionDescription: StateFlow<String> = _transactionDescription.asStateFlow()
 
     /** Data for categories based on transaction type. */
     val categories: StateFlow<Map<CategoryEntity, List<CategoryEntity>>> =
@@ -87,7 +91,7 @@ class NewTransactionViewModel @Inject constructor(
 
     /** Available accounts for transaction. */
     private val _accounts = MutableStateFlow<List<AccountEntity>>(emptyList())
-    val accounts: StateFlow<List<AccountEntity>> = _accounts.stateFlow()
+    val accounts: StateFlow<List<AccountEntity>> = _accounts.asStateFlow()
 
     /** Pre-calculates the valid "To" accounts to prevent main-thread filtering. */
     val availableToAccounts: StateFlow<List<AccountEntity>> = combine(
@@ -277,7 +281,7 @@ class NewTransactionViewModel @Inject constructor(
                 reset()
                 onSuccess()
             } catch (e: Exception) {
-                onError(e.message ?: "Failed to create transaction")
+                onError(e.message ?: context.getString(R.string.failed_to_create_transaction))
             }
         }
     }
@@ -298,6 +302,4 @@ class NewTransactionViewModel @Inject constructor(
         if (id == null) return null
         return _accounts.value.find { it.id == id }
     }
-
-    private fun <T> MutableStateFlow<T>.stateFlow(): StateFlow<T> = this.asStateFlow()
 }

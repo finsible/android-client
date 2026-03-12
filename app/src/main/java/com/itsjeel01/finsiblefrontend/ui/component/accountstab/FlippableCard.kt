@@ -12,14 +12,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,9 +31,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.itsjeel01.finsiblefrontend.R
+import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentSize
+import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentType
+import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleIconButton
+import com.itsjeel01.finsiblefrontend.ui.component.fin.IconButtonConfig
+import com.itsjeel01.finsiblefrontend.ui.component.fin.IconButtonShape
 import com.itsjeel01.finsiblefrontend.ui.model.item.FlippableCardUIModel
 import com.itsjeel01.finsiblefrontend.ui.model.item.StatEntry
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
@@ -176,17 +177,18 @@ private fun CardFace(
                     color = FinsibleTheme.colors.white.copy(alpha = 0.9f)
                 )
 
-                IconButton(
+                FinsibleIconButton(
+                    icon = R.drawable.ic_rotate,
                     onClick = onRotateClick,
-                    modifier = Modifier.size(FinsibleTheme.dimes.d32)
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_rotate),
-                        contentDescription = stringResource(R.string.cd_rotate_card),
-                        tint = FinsibleTheme.colors.white.copy(alpha = 0.95f),
-                        modifier = Modifier.size(FinsibleTheme.dimes.d20)
+                    contentDescription = stringResource(R.string.cd_rotate_card),
+                    config = IconButtonConfig(
+                        size = ComponentSize.Small,
+                        type = ComponentType.Tertiary,
+                        shape = IconButtonShape.Circle,
+                        tintIcon = true,
+                        customTint = FinsibleTheme.colors.white.copy(alpha = 0.95f)
                     )
-                }
+                )
             }
 
             // Large text

@@ -14,9 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,6 +30,8 @@ import com.itsjeel01.finsiblefrontend.ui.component.fin.ButtonConfig
 import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentSize
 import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentType
 import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleButton
+import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleCheckbox
+import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleSwitch
 import com.itsjeel01.finsiblefrontend.ui.component.fin.IconPosition
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.bold
@@ -249,7 +249,7 @@ private fun SwitchRow(
             color = FinsibleTheme.colors.primaryContent,
             modifier = Modifier.weight(1f)
         )
-        Switch(checked = checked, onCheckedChange = onToggle)
+        FinsibleSwitch(checked = checked, onCheckedChange = onToggle)
     }
 }
 
@@ -265,7 +265,7 @@ private fun CheckboxRow(
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Checkbox(
+        FinsibleCheckbox(
             checked = checked,
             onCheckedChange = onToggle
         )

@@ -18,16 +18,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -45,6 +41,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.TransactionRecurringFrequency
+import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleDatePicker
+import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleSwitch
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.medium
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -86,23 +84,9 @@ fun Step2Date(
                 .clip(RoundedCornerShape(FinsibleTheme.dimes.d16))
                 .background(FinsibleTheme.colors.surface)
         ) {
-            DatePicker(
+            FinsibleDatePicker(
                 state = datePickerState,
-                modifier = Modifier.matchParentSize(),
-                showModeToggle = false,
-                title = null,
-                headline = null,
-                colors = DatePickerDefaults.colors().copy(
-                    containerColor = FinsibleTheme.colors.surface,
-                    selectedDayContainerColor = FinsibleTheme.colors.brandAccent,
-                    todayContentColor = FinsibleTheme.colors.link,
-                    todayDateBorderColor = FinsibleTheme.colors.brandAccent,
-                    dayContentColor = FinsibleTheme.colors.primaryContent,
-                    weekdayContentColor = FinsibleTheme.colors.secondaryContent,
-                    currentYearContentColor = FinsibleTheme.colors.link,
-                    selectedYearContainerColor = FinsibleTheme.colors.brandAccent,
-                    yearContentColor = FinsibleTheme.colors.primaryContent
-                )
+                modifier = Modifier.matchParentSize()
             )
         }
 
@@ -124,16 +108,9 @@ fun Step2Date(
                 style = FinsibleTheme.typography.t18.medium(),
                 color = FinsibleTheme.colors.primaryContent
             )
-            Switch(
+            FinsibleSwitch(
                 checked = isRecurring,
-                onCheckedChange = { onIsRecurringChange(it) },
-                colors = SwitchDefaults.colors(
-                    checkedThumbColor = FinsibleTheme.colors.white,
-                    checkedTrackColor = FinsibleTheme.colors.brandAccent,
-                    uncheckedThumbColor = FinsibleTheme.colors.white,
-                    uncheckedTrackColor = FinsibleTheme.colors.border,
-                    uncheckedBorderColor = FinsibleTheme.colors.border
-                )
+                onCheckedChange = { onIsRecurringChange(it) }
             )
         }
 

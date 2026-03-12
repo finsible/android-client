@@ -19,9 +19,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,8 +32,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.TransactionType
+import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleSegmentedButtonRow
 import com.itsjeel01.finsiblefrontend.ui.model.item.CategoryUIModel
-import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleDimes.Companion.inverted
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.extraBold
 import com.itsjeel01.finsiblefrontend.ui.theme.medium
@@ -61,36 +58,22 @@ fun Step3Category(
         verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d12)
     ) {
         // Transaction type selector
-        SingleChoiceSegmentedButtonRow(
+        FinsibleSegmentedButtonRow(
+            options = options,
+            selectedOption = transactionType,
+            onOptionSelected = onTransactionTypeChange,
             modifier = Modifier.fillMaxWidth(),
-            space = FinsibleTheme.dimes.d8.inverted()
-        ) {
-            options.forEach { type ->
-                val isSelected = type == transactionType
-                SegmentedButton(
-                    shape = RoundedCornerShape(FinsibleTheme.dimes.d12),
-                    onClick = { if (!isSelected) onTransactionTypeChange(type) },
-                    colors = SegmentedButtonDefaults.colors().copy(
-                        activeContentColor = FinsibleTheme.colors.primaryContent,
-                        activeContainerColor = FinsibleTheme.colors.surface,
-                        inactiveContentColor = FinsibleTheme.colors.secondaryContent,
-                        inactiveBorderColor = FinsibleTheme.colors.transparent,
-                        inactiveContainerColor = FinsibleTheme.colors.input
-                    ),
-                    selected = isSelected,
-                    label = {
-                        Text(stringResource(type.displayText), style = FinsibleTheme.typography.t16.medium())
-                    },
-                    icon = {
-                        if (isSelected) Icon(
-                            painter = painterResource(id = type.icon),
-                            contentDescription = stringResource(R.string.cd_type_icon, stringResource(type.displayText)),
-                            tint = type.getColor()
-                        )
-                    }
+            label = { type ->
+                Text(stringResource(type.displayText), style = FinsibleTheme.typography.t16.medium())
+            },
+            icon = { type, isSelected ->
+                if (isSelected) Icon(
+                    painter = painterResource(id = type.icon),
+                    contentDescription = stringResource(R.string.cd_type_icon, stringResource(type.displayText)),
+                    tint = type.getColor()
                 )
             }
-        }
+        )
 
         LazyColumn(
             modifier = Modifier.weight(1f),

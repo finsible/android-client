@@ -42,11 +42,11 @@ fun <T> FinsibleSegmentedButtonRow(
                 shape = RoundedCornerShape(cornerRadius),
                 onClick = { if (!isSelected) onOptionSelected(option) },
                 colors = SegmentedButtonDefaults.colors().copy(
-                    activeContentColor = if (config.activeContentColor == Color.Unspecified) FinsibleTheme.colors.primaryContent else config.activeContentColor,
-                    activeContainerColor = if (config.activeContainerColor == Color.Unspecified) FinsibleTheme.colors.surface else config.activeContainerColor,
-                    inactiveContentColor = if (config.inactiveContentColor == Color.Unspecified) FinsibleTheme.colors.secondaryContent else config.inactiveContentColor,
-                    inactiveBorderColor = if (config.inactiveBorderColor == Color.Unspecified) FinsibleTheme.colors.transparent else config.inactiveBorderColor,
-                    inactiveContainerColor = if (config.inactiveContainerColor == Color.Unspecified) FinsibleTheme.colors.input else config.inactiveContainerColor
+                    activeContentColor = config.activeContentColor.takeOrDefault(FinsibleTheme.colors.primaryContent),
+                    activeContainerColor = config.activeContainerColor.takeOrDefault(FinsibleTheme.colors.surface),
+                    inactiveContentColor = config.inactiveContentColor.takeOrDefault(FinsibleTheme.colors.secondaryContent),
+                    inactiveBorderColor = config.inactiveBorderColor.takeOrDefault(FinsibleTheme.colors.transparent),
+                    inactiveContainerColor = config.inactiveContainerColor.takeOrDefault(FinsibleTheme.colors.input)
                 ),
                 selected = isSelected,
                 label = { label(option) },

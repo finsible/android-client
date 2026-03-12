@@ -29,9 +29,9 @@ fun FinsibleCheckbox(
         modifier = modifier,
         enabled = config.enabled,
         colors = CheckboxDefaults.colors(
-            checkedColor = if (config.checkedColor == Color.Unspecified) FinsibleTheme.colors.brandAccent else config.checkedColor,
-            uncheckedColor = if (config.uncheckedColor == Color.Unspecified) FinsibleTheme.colors.border else config.uncheckedColor,
-            checkmarkColor = if (config.checkmarkColor == Color.Unspecified) FinsibleTheme.colors.white else config.checkmarkColor
+            checkedColor = config.checkedColor.takeOrDefault(FinsibleTheme.colors.brandAccent),
+            uncheckedColor = config.uncheckedColor.takeOrDefault(FinsibleTheme.colors.border),
+            checkmarkColor = config.checkmarkColor.takeOrDefault(FinsibleTheme.colors.white)
         )
     )
 }

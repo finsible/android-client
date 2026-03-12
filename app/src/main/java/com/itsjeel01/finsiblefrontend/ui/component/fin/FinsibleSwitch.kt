@@ -39,7 +39,3 @@ fun FinsibleSwitch(
         )
     )
 }
-
-/** Returns [this] color if it is specified, otherwise returns [default]. */
-private fun Color.takeOrDefault(default: Color): Color =
-    if (this == Color.Unspecified) default else this

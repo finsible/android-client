@@ -120,3 +120,7 @@ enum class LoadingSpeed(val durationMs: Int) {
     NORMAL(2000),
     SLOW(2400);
 }
+
+/** Returns [this] color if it is specified, otherwise returns [default]. */
+internal fun Color.takeOrDefault(default: Color): Color =
+    if (this == Color.Unspecified) default else this

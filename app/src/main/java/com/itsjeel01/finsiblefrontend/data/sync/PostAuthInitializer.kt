@@ -9,6 +9,7 @@ import com.itsjeel01.finsiblefrontend.data.local.entity.CategoryEntity
 import com.itsjeel01.finsiblefrontend.data.repository.AccountGroupRepository
 import com.itsjeel01.finsiblefrontend.data.repository.AccountRepository
 import com.itsjeel01.finsiblefrontend.data.repository.CategoryRepository
+import com.itsjeel01.finsiblefrontend.data.repository.TransactionRepository
 import io.objectbox.BoxStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +23,7 @@ class PostAuthInitializer @Inject constructor(
     private val categoryRepository: CategoryRepository,
     private val accountGroupRepository: AccountGroupRepository,
     private val accountRepository: AccountRepository,
+    private val transactionRepository: TransactionRepository,
     private val dataFetcher: DataFetcher,
     private val boxStore: BoxStore,
     private val integrityChecker: IntegrityChecker
@@ -59,6 +61,8 @@ class PostAuthInitializer @Inject constructor(
 
         // Fetch accounts using DataFetcher
         fetchAccounts(shouldForceRefresh)
+
+        fetchTransactions(shouldForceRefresh)
 
         Logger.Sync.i("Post-authentication initialization tasks dispatched")
     }
@@ -148,6 +152,30 @@ class PostAuthInitializer @Inject constructor(
                 Logger.Sync.i("Accounts synced successfully")
             } else {
                 Logger.Sync.w("Accounts sync unsuccessful")
+            }
+        }
+    }
+
+    private fun fetchTransactions(forceRefresh: Boolean) {
+        applicationScope.launch {
+            val action = if (forceRefresh) "Force refreshing" else "Ensuring"
+            Logger.Sync.d("$action transactions")
+
+            val success = if (forceRefresh) {
+                dataFetcher.refreshData(
+                    fetcher = { transactionRepository.getTransactions() }
+                )
+            } else {
+                dataFetcher.ensureDataFetched(
+                    fetcher = { transactionRepository.getTransactions() },
+                    verifyIntegrity = { integrityChecker.verifyTransactionsIntegrity() }
+                )
+            }
+
+            if (success) {
+                Logger.Sync.i("Transactions synced successfully")
+            } else {
+                Logger.Sync.w("Transactions sync unsuccessful")
             }
         }
     }

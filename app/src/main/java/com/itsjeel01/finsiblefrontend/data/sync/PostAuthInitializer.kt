@@ -163,11 +163,11 @@ class PostAuthInitializer @Inject constructor(
 
             val success = if (forceRefresh) {
                 dataFetcher.refreshData(
-                    fetcher = { transactionRepository.getTransactions() }
+                    fetcher = { transactionRepository.fetchAllTransactions() }
                 )
             } else {
                 dataFetcher.ensureDataFetched(
-                    fetcher = { transactionRepository.getTransactions() },
+                    fetcher = { transactionRepository.fetchAllTransactions() },
                     verifyIntegrity = { integrityChecker.verifyTransactionsIntegrity() }
                 )
             }

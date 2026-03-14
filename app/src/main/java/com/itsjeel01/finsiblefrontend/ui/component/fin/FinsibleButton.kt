@@ -261,13 +261,13 @@ private fun ButtonContent(
     val isDark = FinsibleTheme.isDarkTheme()
     val isFilled = colors.containerColor != Color.Transparent
     // SemiBold improves contrast: filled buttons on dark backgrounds and unfilled on light.
-    val adjustWeight = (isDark && isFilled) || (!isDark && !isFilled)
+    val useSemiBoldForContrast = (isDark && isFilled) || (!isDark && !isFilled)
 
     @Composable
     fun ButtonLabel() = Text(
         text = text,
         style = sizes.textStyle.copy(
-            fontWeight = if (adjustWeight) FontWeight.SemiBold else FontWeight.Medium
+            fontWeight = if (useSemiBoldForContrast) FontWeight.SemiBold else FontWeight.Medium
         )
     )
 

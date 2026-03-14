@@ -140,13 +140,13 @@ fun FinsibleIconButton(
     val effectiveBorderColor = if (enabled) colors.borderColor
     else colors.borderColor?.copy(alpha = DISABLED_ALPHA)
 
-    val isFilled = colors.containerColor != Color.Transparent
-    val hasBorder = colors.borderColor != null
+    val hasFilledBackground = colors.containerColor != Color.Transparent
+    val hasBorderStyle = colors.borderColor != null
 
     val baseModifier = modifier.clip(shape)
 
     val styledModifier = when {
-        isFilled -> baseModifier
+        hasFilledBackground -> baseModifier
             .background(color = effectiveContainerColor, shape = shape)
             .clickable(
                 interactionSource = interactionSource,
@@ -158,7 +158,7 @@ fun FinsibleIconButton(
                 onClick = onClick
             )
 
-        hasBorder -> baseModifier
+        hasBorderStyle -> baseModifier
             .background(color = effectiveContainerColor, shape = shape)
             .border(
                 width = SECONDARY_BORDER_WIDTH_DP.dp,

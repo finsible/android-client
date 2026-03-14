@@ -20,10 +20,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.itsjeel01.finsiblefrontend.R
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ButtonConfig
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentSize
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentType
 import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleButton
+import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleButtonDefaults
 import com.itsjeel01.finsiblefrontend.ui.model.state.TransactionsFilterState
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.TransactionsFilterViewModel
@@ -131,7 +129,8 @@ fun TransactionFilterSheet(
                     onApply(applied)
                     onDismiss()
                 },
-                config = ButtonConfig(type = ComponentType.Primary, size = ComponentSize.Medium, fullWidth = true)
+                colors = FinsibleButtonDefaults.primaryColors(),
+                fullWidth = true
             )
         }
     }

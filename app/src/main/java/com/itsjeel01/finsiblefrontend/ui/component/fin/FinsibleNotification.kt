@@ -336,11 +336,9 @@ private fun ActionButton(label: String?, action: () -> Unit) {
         FinsibleButton(
             label,
             action,
-            config = ButtonConfig(
-                type = ComponentType.Secondary,
-                customCornerRadius = FinsibleTheme.dimes.d48,
-                size = ComponentSize.Small
-            )
+            colors = FinsibleButtonDefaults.secondaryColors(),
+            sizes = FinsibleButtonDefaults.smallSizes(),
+            cornerRadius = FinsibleTheme.dimes.d48
         )
     }
 }

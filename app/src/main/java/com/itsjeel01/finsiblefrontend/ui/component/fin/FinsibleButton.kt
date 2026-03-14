@@ -19,68 +19,205 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
+
+/** Color configuration for [FinsibleButton]. */
+@Immutable
+data class FinsibleButtonColors(
+    val containerColor: Color,
+    val contentColor: Color,
+    val borderColor: Color?
+)
+
+/** Size configuration for [FinsibleButton]. */
+@Immutable
+data class FinsibleButtonSizes(
+    val height: Dp,
+    val cornerRadius: Dp,
+    val iconSize: Dp,
+    val horizontalPadding: Dp,
+    val textStyle: TextStyle
+)
+
+/** Icon position relative to the button label. */
+enum class FinsibleButtonIconPosition {
+    /** Aligned to the start edge of the button. */
+    Leading,
+
+    /** Aligned to the end edge of the button. */
+    Trailing,
+
+    /** Adjacent to the label with spacing, placed before the text. */
+    BeforeLabel,
+
+    /** Adjacent to the label with spacing, placed after the text. */
+    AfterLabel
+}
+
+/** Defaults factory for [FinsibleButton] colors and sizes. */
+object FinsibleButtonDefaults {
+
+    /** Brand-accent filled button colors. */
+    @Composable
+    fun brandColors(
+        containerColor: Color = FinsibleTheme.colors.brandAccent,
+        contentColor: Color = FinsibleTheme.colors.primaryBackground
+    ) = FinsibleButtonColors(
+        containerColor = containerColor,
+        contentColor = contentColor,
+        borderColor = null
+    )
+
+    /** Primary filled button colors. */
+    @Composable
+    fun primaryColors(
+        containerColor: Color = FinsibleTheme.colors.primaryContent,
+        contentColor: Color = FinsibleTheme.colors.primaryBackground
+    ) = FinsibleButtonColors(
+        containerColor = containerColor,
+        contentColor = contentColor,
+        borderColor = null
+    )
+
+    /** Secondary outlined button colors. */
+    @Composable
+    fun secondaryColors(
+        contentColor: Color = FinsibleTheme.colors.primaryContent,
+        borderColor: Color = FinsibleTheme.colors.border
+    ) = FinsibleButtonColors(
+        containerColor = Color.Transparent,
+        contentColor = contentColor,
+        borderColor = borderColor
+    )
+
+    /** Text-only button colors. */
+    @Composable
+    fun textColors(
+        contentColor: Color = FinsibleTheme.colors.secondaryContent
+    ) = FinsibleButtonColors(
+        containerColor = Color.Transparent,
+        contentColor = contentColor,
+        borderColor = null
+    )
+
+    /** Small button sizes. */
+    @Composable
+    fun smallSizes() = FinsibleButtonSizes(
+        height = FinsibleTheme.dimes.d32,
+        cornerRadius = FinsibleTheme.dimes.d8,
+        iconSize = FinsibleTheme.dimes.d16,
+        horizontalPadding = FinsibleTheme.dimes.d12,
+        textStyle = FinsibleTheme.typography.t14
+    )
+
+    /** Medium button sizes. */
+    @Composable
+    fun mediumSizes() = FinsibleButtonSizes(
+        height = FinsibleTheme.dimes.d48,
+        cornerRadius = FinsibleTheme.dimes.d12,
+        iconSize = FinsibleTheme.dimes.d20,
+        horizontalPadding = FinsibleTheme.dimes.d16,
+        textStyle = FinsibleTheme.typography.t20
+    )
+
+    /** Large button sizes. */
+    @Composable
+    fun largeSizes() = FinsibleButtonSizes(
+        height = FinsibleTheme.dimes.d56,
+        cornerRadius = FinsibleTheme.dimes.d12,
+        iconSize = FinsibleTheme.dimes.d24,
+        horizontalPadding = FinsibleTheme.dimes.d20,
+        textStyle = FinsibleTheme.typography.t24
+    )
+}
 
 @Composable
 fun FinsibleButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    config: ButtonConfig = ButtonConfig()
+    enabled: Boolean = true,
+    loading: Boolean = false,
+    fullWidth: Boolean = false,
+    colors: FinsibleButtonColors = FinsibleButtonDefaults.brandColors(),
+    sizes: FinsibleButtonSizes = FinsibleButtonDefaults.mediumSizes(),
+    cornerRadius: Dp? = null,
+    icon: Int? = null,
+    iconPosition: FinsibleButtonIconPosition = FinsibleButtonIconPosition.Leading,
+    tintIcon: Boolean = true
 ) {
-    val isEnabled = config.enabled && !config.loading
+    val isEnabled = enabled && !loading
     val interactionSource = remember { MutableInteractionSource() }
+    val effectiveCornerRadius = cornerRadius ?: sizes.cornerRadius
 
     val buttonModifier = modifier
-        .then(
-            if (config.fullWidth)
-                Modifier.fillMaxWidth()
-            else Modifier
-        )
-        .height(config.size.buttonHeight)
+        .then(if (fullWidth) Modifier.fillMaxWidth() else Modifier)
+        .height(sizes.height)
 
-    when (config.type) {
-        ComponentType.Secondary -> {
+    val isOutlined = colors.borderColor != null && colors.containerColor == Color.Transparent
+    val isText = colors.containerColor == Color.Transparent && colors.borderColor == null
+
+    when {
+        isOutlined -> {
             OutlinedButton(
                 onClick = onClick,
                 enabled = isEnabled,
-                shape = RoundedCornerShape(config.effectiveCornerRadius),
+                shape = RoundedCornerShape(effectiveCornerRadius),
                 colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = config.type.contentColor()
+                    contentColor = colors.contentColor
                 ),
                 border = BorderStroke(
                     width = FinsibleTheme.dimes.d1,
-                    color = config.type.borderColor() ?: FinsibleTheme.colors.border
+                    color = colors.borderColor ?: FinsibleTheme.colors.border
                 ),
                 interactionSource = interactionSource,
-                contentPadding = PaddingValues(horizontal = config.size.horizontalPadding),
+                contentPadding = PaddingValues(horizontal = sizes.horizontalPadding),
                 modifier = buttonModifier
             ) {
-                ButtonContent(text = text, config = config)
+                ButtonContent(
+                    text = text,
+                    colors = colors,
+                    sizes = sizes,
+                    icon = icon,
+                    iconPosition = iconPosition,
+                    tintIcon = tintIcon,
+                    loading = loading
+                )
             }
         }
 
-        ComponentType.Tertiary -> {
+        isText -> {
             TextButton(
                 onClick = onClick,
                 enabled = isEnabled,
-                shape = RoundedCornerShape(config.effectiveCornerRadius),
+                shape = RoundedCornerShape(effectiveCornerRadius),
                 colors = ButtonDefaults.textButtonColors(
-                    contentColor = if (isEnabled) config.type.contentColor() else FinsibleTheme.colors.disabledContent
+                    contentColor = if (isEnabled) colors.contentColor
+                    else FinsibleTheme.colors.disabledContent
                 ),
                 interactionSource = interactionSource,
-                contentPadding = PaddingValues(horizontal = config.size.horizontalPadding),
+                contentPadding = PaddingValues(horizontal = sizes.horizontalPadding),
                 modifier = buttonModifier
             ) {
-                ButtonContent(text = text, config = config)
+                ButtonContent(
+                    text = text,
+                    colors = colors,
+                    sizes = sizes,
+                    icon = icon,
+                    iconPosition = iconPosition,
+                    tintIcon = tintIcon,
+                    loading = loading
+                )
             }
         }
 
@@ -88,16 +225,24 @@ fun FinsibleButton(
             Button(
                 onClick = onClick,
                 enabled = isEnabled,
-                shape = RoundedCornerShape(config.effectiveCornerRadius),
+                shape = RoundedCornerShape(effectiveCornerRadius),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = config.type.containerColor(),
-                    contentColor = config.type.contentColor()
+                    containerColor = colors.containerColor,
+                    contentColor = colors.contentColor
                 ),
                 interactionSource = interactionSource,
-                contentPadding = PaddingValues(horizontal = config.size.horizontalPadding),
+                contentPadding = PaddingValues(horizontal = sizes.horizontalPadding),
                 modifier = buttonModifier
             ) {
-                ButtonContent(text = text, config = config)
+                ButtonContent(
+                    text = text,
+                    colors = colors,
+                    sizes = sizes,
+                    icon = icon,
+                    iconPosition = iconPosition,
+                    tintIcon = tintIcon,
+                    loading = loading
+                )
             }
         }
     }
@@ -106,71 +251,71 @@ fun FinsibleButton(
 @Composable
 private fun ButtonContent(
     text: String,
-    config: ButtonConfig
+    colors: FinsibleButtonColors,
+    sizes: FinsibleButtonSizes,
+    icon: Int?,
+    iconPosition: FinsibleButtonIconPosition,
+    tintIcon: Boolean,
+    loading: Boolean
 ) {
-
     val isDark = FinsibleTheme.isDarkTheme()
-    val adjustWeightForVisibility =
-        (isDark && (config.type == ComponentType.Primary || config.type == ComponentType.Brand)) ||
-                (!isDark && (config.type == ComponentType.Secondary || config.type == ComponentType.Tertiary))
+    val isFilled = colors.containerColor != Color.Transparent
+    // SemiBold improves contrast: filled buttons on dark backgrounds and unfilled on light.
+    val adjustWeight = (isDark && isFilled) || (!isDark && !isFilled)
 
     @Composable
     fun ButtonLabel() = Text(
         text = text,
-        style = config.size.typography().copy(
-            fontWeight =
-                if (adjustWeightForVisibility)
-                    FontWeight.SemiBold
-                else FontWeight.Medium
+        style = sizes.textStyle.copy(
+            fontWeight = if (adjustWeight) FontWeight.SemiBold else FontWeight.Medium
         )
     )
 
     @Composable
     fun ButtonIcon(modifier: Modifier) = Icon(
-        painter = painterResource(id = config.icon!!),
+        painter = painterResource(id = icon!!),
         contentDescription = null,
-        modifier = modifier.size(config.size.iconSize),
-        tint = if (config.tintIcon) LocalContentColor.current else Color.Unspecified
+        modifier = modifier.size(sizes.iconSize),
+        tint = if (tintIcon) LocalContentColor.current else Color.Unspecified
     )
 
-    // Loading state
-    if (config.loading) {
+    if (loading) {
         CircularProgressIndicator(
-            modifier = Modifier.size(config.size.iconSize),
+            modifier = Modifier.size(sizes.iconSize),
             strokeWidth = FinsibleTheme.dimes.d2,
             color = LocalContentColor.current
         )
         return
     }
 
-    // Icon attached before/after label
-    if (config.iconPosition == IconPosition.BeforeLabel || config.iconPosition == IconPosition.AfterLabel) {
+    if (iconPosition == FinsibleButtonIconPosition.BeforeLabel ||
+        iconPosition == FinsibleButtonIconPosition.AfterLabel
+    ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            if (config.icon != null && config.iconPosition == IconPosition.BeforeLabel)
-                ButtonIcon(modifier = Modifier.size(config.size.iconSize))
+            if (icon != null && iconPosition == FinsibleButtonIconPosition.BeforeLabel)
+                ButtonIcon(modifier = Modifier.size(sizes.iconSize))
 
             ButtonLabel()
 
-            if (config.icon != null && config.iconPosition == IconPosition.AfterLabel)
-                ButtonIcon(modifier = Modifier.size(config.size.iconSize))
+            if (icon != null && iconPosition == FinsibleButtonIconPosition.AfterLabel)
+                ButtonIcon(modifier = Modifier.size(sizes.iconSize))
         }
         return
     }
 
-    // Icon aligned to start/end of the button
     Box(
         contentAlignment = Alignment.Center,
-        modifier = if (config.icon != null) Modifier.fillMaxWidth() else Modifier
+        modifier = if (icon != null) Modifier.fillMaxWidth() else Modifier
     ) {
-        if (config.icon != null)
+        if (icon != null)
             ButtonIcon(
                 modifier = Modifier
-                    .size(config.size.iconSize)
+                    .size(sizes.iconSize)
                     .align(
-                        if (config.iconPosition == IconPosition.Leading)
+                        if (iconPosition == FinsibleButtonIconPosition.Leading)
                             Alignment.CenterStart
                         else Alignment.CenterEnd
                     )
@@ -178,20 +323,4 @@ private fun ButtonContent(
 
         ButtonLabel()
     }
-}
-
-data class ButtonConfig(
-    val type: ComponentType = ComponentType.Primary,
-    val size: ComponentSize = ComponentSize.Medium,
-    val fullWidth: Boolean = false,
-    val icon: Int? = null,
-    val iconPosition: IconPosition = IconPosition.Leading,
-    val enabled: Boolean = true,
-    val loading: Boolean = false,
-    val customCornerRadius: Dp? = null,
-    val tintIcon: Boolean = true
-) {
-    val effectiveCornerRadius: Dp
-        @Composable
-        get() = customCornerRadius ?: size.cornerRadius
 }

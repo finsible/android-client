@@ -13,10 +13,8 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import com.itsjeel01.finsiblefrontend.R
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ButtonConfig
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentSize
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentType
 import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleButton
+import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleButtonDefaults
 import com.itsjeel01.finsiblefrontend.ui.navigation.NewTransactionSteps
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
@@ -46,12 +44,7 @@ fun StepControlButtons(
             FinsibleButton(
                 text = stringResource(R.string.back),
                 onClick = onBack,
-                config = ButtonConfig(
-                    type = ComponentType.Tertiary,
-                    size = ComponentSize.Medium,
-                    fullWidth = false,
-                    enabled = true
-                )
+                colors = FinsibleButtonDefaults.textColors()
             )
         }
 
@@ -65,11 +58,8 @@ fun StepControlButtons(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
-            config = ButtonConfig(
-                type = ComponentType.Primary,
-                size = ComponentSize.Medium,
-                enabled = canContinue
-            )
+            colors = FinsibleButtonDefaults.primaryColors(),
+            enabled = canContinue
         )
     }
 }

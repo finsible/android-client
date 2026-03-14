@@ -12,10 +12,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.itsjeel01.finsiblefrontend.R
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ButtonConfig
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentSize
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentType
 import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleButton
+import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleButtonDefaults
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
 @Composable
@@ -36,11 +34,8 @@ fun OnboardingHeader(onSkip: () -> Unit = {}, isLastItem: Boolean) {
             FinsibleButton(
                 stringResource(R.string.skip),
                 onClick = onSkip,
-                config = ButtonConfig(
-                    size = ComponentSize.Small,
-                    type = ComponentType.Tertiary,
-                    fullWidth = false
-                )
+                colors = FinsibleButtonDefaults.textColors(),
+                sizes = FinsibleButtonDefaults.smallSizes()
             )
         }
     }

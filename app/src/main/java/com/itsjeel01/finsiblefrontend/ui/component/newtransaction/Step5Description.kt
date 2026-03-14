@@ -12,9 +12,8 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import com.itsjeel01.finsiblefrontend.R
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentSize
+import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleTextFieldDefaults
 import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleTextFieldWithCounter
-import com.itsjeel01.finsiblefrontend.ui.component.fin.TextFieldConfig
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
 @Composable
@@ -37,12 +36,10 @@ fun Step5Description(
             modifier = Modifier
                 .fillMaxWidth()
                 .focusRequester(focusRequester),
-            config = TextFieldConfig(
-                size = ComponentSize.Large,
-                singleLine = false,
-                minLines = 4,
-                maxLines = 8
-            ),
+            sizes = FinsibleTextFieldDefaults.largeSizes(),
+            singleLine = false,
+            minLines = 4,
+            maxLines = 8,
             label = stringResource(R.string.description_label),
             placeholder = stringResource(R.string.description_placeholder),
             showCounter = true,

@@ -209,12 +209,8 @@ fun FinsibleNotification(
                             icon = R.drawable.ic_close,
                             contentDescription = stringResource(R.string.cd_dismiss_notification),
                             onClick = onDismiss,
-                            config = IconButtonConfig(
-                                type = ComponentType.Tertiary,
-                                size = ComponentSize.Medium,
-                                shape = IconButtonShape.Circle,
-                                tintIcon = true
-                            )
+                            colors = FinsibleIconButtonDefaults.tertiaryColors(),
+                            sizes = FinsibleIconButtonDefaults.mediumSizes()
                         )
                     }
                 }
@@ -336,11 +332,9 @@ private fun ActionButton(label: String?, action: () -> Unit) {
         FinsibleButton(
             label,
             action,
-            config = ButtonConfig(
-                type = ComponentType.Secondary,
-                customCornerRadius = FinsibleTheme.dimes.d48,
-                size = ComponentSize.Small
-            )
+            colors = FinsibleButtonDefaults.secondaryColors(),
+            sizes = FinsibleButtonDefaults.smallSizes(),
+            cornerRadius = FinsibleTheme.dimes.d48
         )
     }
 }

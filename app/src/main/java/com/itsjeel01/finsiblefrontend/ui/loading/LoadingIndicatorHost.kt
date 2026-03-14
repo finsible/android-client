@@ -13,10 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentSize
 import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleLoadingIndicator
-import com.itsjeel01.finsiblefrontend.ui.component.fin.LoadingIndicatorConfig
-import com.itsjeel01.finsiblefrontend.ui.component.fin.LoadingSpeed
+import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleLoadingIndicatorDefaults
+import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleLoadingSpeed
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
 private const val OVERLAY_ALPHA = 0.5f
@@ -60,10 +59,8 @@ private fun FullScreenLoadingOverlay(
             verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d20)
         ) {
             FinsibleLoadingIndicator(
-                config = LoadingIndicatorConfig(
-                    size = ComponentSize.Large,
-                    speed = LoadingSpeed.NORMAL
-                )
+                size = FinsibleLoadingIndicatorDefaults.largeSize(),
+                speed = FinsibleLoadingSpeed.Normal
             )
 
             message?.let { msg ->

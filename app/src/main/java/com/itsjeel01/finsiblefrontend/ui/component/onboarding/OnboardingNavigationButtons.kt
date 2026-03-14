@@ -13,11 +13,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.itsjeel01.finsiblefrontend.R
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ButtonConfig
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentSize
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentType
 import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleButton
-import com.itsjeel01.finsiblefrontend.ui.component.fin.IconPosition
+import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleButtonDefaults
+import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleButtonIconPosition
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
 @Composable
@@ -36,11 +34,8 @@ fun OnboardingNavigationButtons(
                 text = stringResource(R.string.back),
                 onClick = onSecondaryButtonClick,
                 modifier = Modifier.weight(1f),
-                config = ButtonConfig(
-                    size = ComponentSize.Medium,
-                    type = ComponentType.Secondary,
-                    fullWidth = true
-                )
+                colors = FinsibleButtonDefaults.secondaryColors(),
+                fullWidth = true
             )
         }
 
@@ -52,9 +47,13 @@ fun OnboardingNavigationButtons(
         else if (currentItem == 0) R.drawable.ic_right_arrow_dotted
         else null
 
-        val iconPosition = if (isLastItem()) IconPosition.BeforeLabel else IconPosition.Trailing
+        val iconPosition =
+            if (isLastItem()) FinsibleButtonIconPosition.BeforeLabel
+            else FinsibleButtonIconPosition.Trailing
 
-        val type = if (currentItem == 0) ComponentType.Brand else ComponentType.Primary
+        val colors =
+            if (currentItem == 0) FinsibleButtonDefaults.brandColors()
+            else FinsibleButtonDefaults.primaryColors()
 
         Column(
             Modifier
@@ -65,14 +64,11 @@ fun OnboardingNavigationButtons(
             FinsibleButton(
                 text = label,
                 onClick = onPrimaryButtonClick,
-                config = ButtonConfig(
-                    size = ComponentSize.Medium,
-                    icon = icon,
-                    iconPosition = iconPosition,
-                    type = type,
-                    fullWidth = true,
-                    tintIcon = !isLastItem()
-                )
+                fullWidth = true,
+                colors = colors,
+                icon = icon,
+                iconPosition = iconPosition,
+                tintIcon = !isLastItem()
             )
             Spacer(Modifier.height(FinsibleTheme.dimes.d8))
 
@@ -81,11 +77,8 @@ fun OnboardingNavigationButtons(
                     modifier = Modifier.padding(vertical = FinsibleTheme.dimes.d8),
                     text = stringResource(R.string.go_back),
                     onClick = onSecondaryButtonClick,
-                    config = ButtonConfig(
-                        size = ComponentSize.Small,
-                        type = ComponentType.Tertiary,
-                        fullWidth = false
-                    )
+                    colors = FinsibleButtonDefaults.textColors(),
+                    sizes = FinsibleButtonDefaults.smallSizes()
                 )
             } else {
                 Spacer(Modifier.height(FinsibleTheme.dimes.d48))

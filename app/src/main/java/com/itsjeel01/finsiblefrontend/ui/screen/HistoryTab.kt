@@ -32,11 +32,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.data.di.hiltCurrencyFormatter
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentSize
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentType
 import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleIconButton
-import com.itsjeel01.finsiblefrontend.ui.component.fin.IconButtonConfig
-import com.itsjeel01.finsiblefrontend.ui.component.fin.IconButtonShape
+import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleIconButtonDefaults
 import com.itsjeel01.finsiblefrontend.ui.component.historytab.FilteredResultsSummary
 import com.itsjeel01.finsiblefrontend.ui.component.historytab.TransactionEmptyContent
 import com.itsjeel01.finsiblefrontend.ui.component.historytab.TransactionListContent
@@ -203,11 +200,8 @@ fun HistoryTab(
                 icon = R.drawable.ic_arrow_up,
                 onClick = onScrollToTop,
                 modifier = modifier,
-                config = IconButtonConfig(
-                    type = ComponentType.Primary,
-                    size = ComponentSize.Medium,
-                    shape = IconButtonShape.Circle
-                )
+                colors = FinsibleIconButtonDefaults.primaryColors(),
+                sizes = FinsibleIconButtonDefaults.mediumSizes()
             )
         }
     }

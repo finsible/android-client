@@ -18,9 +18,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.itsjeel01.finsiblefrontend.R
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentSize
 import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleTextField
-import com.itsjeel01.finsiblefrontend.ui.component.fin.TextFieldConfig
+import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleTextFieldDefaults
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.medium
@@ -46,7 +45,7 @@ fun AmountFilter(
                 onValueChange = { onMinChange(sanitizeDecimalInput(it)) },
                 modifier = Modifier.weight(1f),
                 placeholder = stringResource(R.string.amount_min_placeholder),
-                config = TextFieldConfig(size = ComponentSize.Small),
+                sizes = FinsibleTextFieldDefaults.smallSizes(),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Decimal,
                     imeAction = ImeAction.Done
@@ -63,7 +62,7 @@ fun AmountFilter(
                 onValueChange = { onMaxChange(sanitizeDecimalInput(it)) },
                 modifier = Modifier.weight(1f),
                 placeholder = stringResource(R.string.amount_max_placeholder),
-                config = TextFieldConfig(size = ComponentSize.Small),
+                sizes = FinsibleTextFieldDefaults.smallSizes(),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Decimal,
                     imeAction = ImeAction.Done

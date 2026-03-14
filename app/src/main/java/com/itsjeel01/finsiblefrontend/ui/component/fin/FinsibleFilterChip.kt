@@ -5,21 +5,40 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
-/** Configuration for [FinsibleFilterChip]. */
-data class FilterChipConfig(
-    val enabled: Boolean = true,
-    val selectedContainerColor: Color = Color.Unspecified,
-    val selectedLabelColor: Color = Color.Unspecified,
-    val containerColor: Color = Color.Unspecified,
-    val labelColor: Color = Color.Unspecified,
-    val selectedBorderColor: Color = Color.Unspecified,
-    val borderColor: Color = Color.Unspecified
+/** Color configuration for [FinsibleFilterChip]. */
+@Immutable
+data class FinsibleFilterChipColors(
+    val selectedContainerColor: Color,
+    val selectedLabelColor: Color,
+    val containerColor: Color,
+    val labelColor: Color,
+    val selectedBorderColor: Color,
+    val borderColor: Color
 )
+
+/** Defaults factory for [FinsibleFilterChip] colors. */
+object FinsibleFilterChipDefaults {
+
+    /** Brand-themed filter chip colors. */
+    @Composable
+    fun colors(
+        selectedContainerColor: Color = FinsibleTheme.colors.inverse,
+        selectedLabelColor: Color = FinsibleTheme.colors.same,
+        containerColor: Color = FinsibleTheme.colors.surfaceContainer,
+        labelColor: Color = FinsibleTheme.colors.primaryContent,
+        selectedBorderColor: Color = FinsibleTheme.colors.brandAccent,
+        borderColor: Color = FinsibleTheme.colors.border
+    ) = FinsibleFilterChipColors(
+        selectedContainerColor, selectedLabelColor,
+        containerColor, labelColor, selectedBorderColor, borderColor
+    )
+}
 
 /** Themed filter chip with Finsible brand colors by default. */
 @Composable
@@ -28,7 +47,8 @@ fun FinsibleFilterChip(
     onClick: () -> Unit,
     label: String,
     modifier: Modifier = Modifier,
-    config: FilterChipConfig = FilterChipConfig(),
+    enabled: Boolean = true,
+    colors: FinsibleFilterChipColors = FinsibleFilterChipDefaults.colors(),
     leadingIcon: @Composable (() -> Unit)? = null
 ) {
     FilterChip(
@@ -42,19 +62,19 @@ fun FinsibleFilterChip(
             )
         },
         modifier = modifier,
-        enabled = config.enabled,
+        enabled = enabled,
         leadingIcon = leadingIcon,
         shape = RoundedCornerShape(FinsibleTheme.dimes.d20),
         colors = FilterChipDefaults.filterChipColors(
-            selectedContainerColor = config.selectedContainerColor.takeOrDefault(FinsibleTheme.colors.inverse),
-            selectedLabelColor = config.selectedLabelColor.takeOrDefault(FinsibleTheme.colors.same),
-            containerColor = config.containerColor.takeOrDefault(FinsibleTheme.colors.surfaceContainer),
-            labelColor = config.labelColor.takeOrDefault(FinsibleTheme.colors.primaryContent)
+            selectedContainerColor = colors.selectedContainerColor,
+            selectedLabelColor = colors.selectedLabelColor,
+            containerColor = colors.containerColor,
+            labelColor = colors.labelColor
         ),
         border = FilterChipDefaults.filterChipBorder(
-            borderColor = config.borderColor.takeOrDefault(FinsibleTheme.colors.border),
-            selectedBorderColor = config.selectedBorderColor.takeOrDefault(FinsibleTheme.colors.brandAccent),
-            enabled = config.enabled,
+            borderColor = colors.borderColor,
+            selectedBorderColor = colors.selectedBorderColor,
+            enabled = enabled,
             selected = selected
         )
     )

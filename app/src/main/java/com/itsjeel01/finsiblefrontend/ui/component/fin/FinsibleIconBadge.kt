@@ -15,15 +15,20 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
-private const val DEFAULT_BACKGROUND_ALPHA = 0.1f
+/** Defaults factory for [FinsibleIconBadge] sizes. */
+object FinsibleIconBadgeDefaults {
 
-/** Configuration for [FinsibleIconBadge]. */
-data class IconBadgeConfig(
-    val badgeSize: Dp = Dp.Unspecified,
-    val iconSize: Dp = Dp.Unspecified,
-    val shape: Shape = CircleShape,
-    val backgroundAlpha: Float = DEFAULT_BACKGROUND_ALPHA
-)
+    /** Default badge (outer container) size. */
+    @Composable
+    fun badgeSize(): Dp = FinsibleTheme.dimes.d40
+
+    /** Default icon (inner drawable) size. */
+    @Composable
+    fun iconSize(): Dp = FinsibleTheme.dimes.d20
+
+    /** Default background alpha applied to [tint]. */
+    const val BackgroundAlpha = 0.1f
+}
 
 /** Icon rendered inside a tinted background shape. */
 @Composable
@@ -32,16 +37,16 @@ fun FinsibleIconBadge(
     tint: Color,
     modifier: Modifier = Modifier,
     contentDescription: String? = null,
-    config: IconBadgeConfig = IconBadgeConfig()
+    badgeSize: Dp = FinsibleIconBadgeDefaults.badgeSize(),
+    iconSize: Dp = FinsibleIconBadgeDefaults.iconSize(),
+    shape: Shape = CircleShape,
+    backgroundAlpha: Float = FinsibleIconBadgeDefaults.BackgroundAlpha
 ) {
-    val badgeSize = if (config.badgeSize == Dp.Unspecified) FinsibleTheme.dimes.d40 else config.badgeSize
-    val iconSize = if (config.iconSize == Dp.Unspecified) FinsibleTheme.dimes.d20 else config.iconSize
-
     Box(
         modifier = modifier
             .size(badgeSize)
-            .clip(config.shape)
-            .background(tint.copy(alpha = config.backgroundAlpha)),
+            .clip(shape)
+            .background(tint.copy(alpha = backgroundAlpha)),
         contentAlignment = Alignment.Center
     ) {
         Icon(

@@ -209,12 +209,8 @@ fun FinsibleNotification(
                             icon = R.drawable.ic_close,
                             contentDescription = stringResource(R.string.cd_dismiss_notification),
                             onClick = onDismiss,
-                            config = IconButtonConfig(
-                                type = ComponentType.Tertiary,
-                                size = ComponentSize.Medium,
-                                shape = IconButtonShape.Circle,
-                                tintIcon = true
-                            )
+                            colors = FinsibleIconButtonDefaults.tertiaryColors(),
+                            sizes = FinsibleIconButtonDefaults.mediumSizes()
                         )
                     }
                 }

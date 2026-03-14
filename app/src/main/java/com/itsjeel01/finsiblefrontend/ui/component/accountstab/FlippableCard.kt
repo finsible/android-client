@@ -33,11 +33,8 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import com.itsjeel01.finsiblefrontend.R
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentSize
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentType
 import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleIconButton
-import com.itsjeel01.finsiblefrontend.ui.component.fin.IconButtonConfig
-import com.itsjeel01.finsiblefrontend.ui.component.fin.IconButtonShape
+import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleIconButtonDefaults
 import com.itsjeel01.finsiblefrontend.ui.model.item.FlippableCardUIModel
 import com.itsjeel01.finsiblefrontend.ui.model.item.StatEntry
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
@@ -181,13 +178,9 @@ private fun CardFace(
                     icon = R.drawable.ic_rotate,
                     onClick = onRotateClick,
                     contentDescription = stringResource(R.string.cd_rotate_card),
-                    config = IconButtonConfig(
-                        size = ComponentSize.Small,
-                        type = ComponentType.Tertiary,
-                        shape = IconButtonShape.Circle,
-                        tintIcon = true,
-                        customTint = FinsibleTheme.colors.white.copy(alpha = 0.95f)
-                    )
+                    colors = FinsibleIconButtonDefaults.tertiaryColors(),
+                    sizes = FinsibleIconButtonDefaults.smallSizes(),
+                    customTint = FinsibleTheme.colors.white.copy(alpha = 0.95f)
                 )
             }
 

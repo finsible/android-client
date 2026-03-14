@@ -9,11 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import com.itsjeel01.finsiblefrontend.R
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentSize
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentType
 import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleIconButton
-import com.itsjeel01.finsiblefrontend.ui.component.fin.IconButtonConfig
-import com.itsjeel01.finsiblefrontend.ui.component.fin.IconButtonShape
+import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleIconButtonDefaults
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.bold
 
@@ -28,11 +25,8 @@ fun NewTransactionHeader(onClose: () -> Unit) {
             onClick = onClose,
             modifier = Modifier.align(Alignment.CenterStart),
             contentDescription = stringResource(R.string.cd_close),
-            config = IconButtonConfig(
-                size = ComponentSize.Large,
-                type = ComponentType.Tertiary,
-                shape = IconButtonShape.Circle
-            )
+            colors = FinsibleIconButtonDefaults.tertiaryColors(),
+            sizes = FinsibleIconButtonDefaults.largeSizes()
         )
         Text(
             stringResource(R.string.new_transaction),

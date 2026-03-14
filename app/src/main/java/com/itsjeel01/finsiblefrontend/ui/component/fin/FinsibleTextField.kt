@@ -21,33 +21,67 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.medium
 
-data class TextFieldConfig(
-    val size: ComponentSize = ComponentSize.Medium,
-    val type: ComponentType = ComponentType.Secondary,
-    val enabled: Boolean = true,
-    val readOnly: Boolean = false,
-    val isError: Boolean = false,
-    val singleLine: Boolean = true,
-    val maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
-    val minLines: Int = 1
+/** Size configuration for [FinsibleTextField]. */
+@Immutable
+data class FinsibleTextFieldSizes(
+    val cornerRadius: Dp,
+    val horizontalPadding: Dp,
+    val textStyle: TextStyle
 )
+
+/** Defaults factory for [FinsibleTextField] sizes. */
+object FinsibleTextFieldDefaults {
+
+    /** Small text field sizes. */
+    @Composable
+    fun smallSizes() = FinsibleTextFieldSizes(
+        cornerRadius = FinsibleTheme.dimes.d8,
+        horizontalPadding = FinsibleTheme.dimes.d12,
+        textStyle = FinsibleTheme.typography.t14
+    )
+
+    /** Medium text field sizes. */
+    @Composable
+    fun mediumSizes() = FinsibleTextFieldSizes(
+        cornerRadius = FinsibleTheme.dimes.d12,
+        horizontalPadding = FinsibleTheme.dimes.d16,
+        textStyle = FinsibleTheme.typography.t20
+    )
+
+    /** Large text field sizes. */
+    @Composable
+    fun largeSizes() = FinsibleTextFieldSizes(
+        cornerRadius = FinsibleTheme.dimes.d12,
+        horizontalPadding = FinsibleTheme.dimes.d20,
+        textStyle = FinsibleTheme.typography.t24
+    )
+}
 
 @Composable
 fun FinsibleTextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    config: TextFieldConfig = TextFieldConfig(),
+    enabled: Boolean = true,
+    readOnly: Boolean = false,
+    isError: Boolean = false,
+    singleLine: Boolean = true,
+    maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
+    minLines: Int = 1,
+    sizes: FinsibleTextFieldSizes = FinsibleTextFieldDefaults.mediumSizes(),
     label: String? = null,
     placeholder: String? = null,
     helperText: String? = null,
@@ -61,31 +95,28 @@ fun FinsibleTextField(
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
 ) {
     val isFocused = interactionSource.collectIsFocusedAsState().value
-    val effectiveError = config.isError && errorText != null
+    val effectiveError = isError && errorText != null
 
     val borderColor = when {
         effectiveError -> FinsibleTheme.colors.error
         isFocused -> FinsibleTheme.colors.primaryContent
-        !config.enabled -> FinsibleTheme.colors.disabled
+        !enabled -> FinsibleTheme.colors.disabled
         else -> FinsibleTheme.colors.border
     }
 
     val backgroundColor = when {
-        !config.enabled -> FinsibleTheme.colors.disabled.copy(alpha = 0.1f)
+        !enabled -> FinsibleTheme.colors.disabled.copy(alpha = 0.1f)
         else -> FinsibleTheme.colors.input
     }
 
     val textColor = when {
-        !config.enabled -> FinsibleTheme.colors.disabledContent
+        !enabled -> FinsibleTheme.colors.disabledContent
         else -> FinsibleTheme.colors.primaryContent
     }
 
-    val cornerRadius = config.size.cornerRadius
-    val horizontalPadding = config.size.horizontalPadding
-    val textStyle = config.size.typography().copy(color = textColor)
+    val textStyle = sizes.textStyle.copy(color = textColor)
 
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d4)) {
-        // Label
         label?.let {
             Text(
                 text = it,
@@ -94,19 +125,18 @@ fun FinsibleTextField(
             )
         }
 
-        // Text Field
         BasicTextField(
             value = value,
             onValueChange = onValueChange,
             modifier = Modifier.fillMaxWidth(),
-            enabled = config.enabled,
-            readOnly = config.readOnly,
+            enabled = enabled,
+            readOnly = readOnly,
             textStyle = textStyle,
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
-            singleLine = config.singleLine,
-            maxLines = config.maxLines,
-            minLines = config.minLines,
+            singleLine = singleLine,
+            maxLines = maxLines,
+            minLines = minLines,
             visualTransformation = visualTransformation,
             interactionSource = interactionSource,
             cursorBrush = SolidColor(FinsibleTheme.colors.primaryContent80),
@@ -115,22 +145,21 @@ fun FinsibleTextField(
                     modifier = Modifier
                         .fillMaxWidth()
                         .let { mod ->
-                            if (config.singleLine) mod.padding(vertical = FinsibleTheme.dimes.d12)
+                            if (singleLine) mod.padding(vertical = FinsibleTheme.dimes.d12)
                             else mod
                         }
-                        .background(backgroundColor, RoundedCornerShape(cornerRadius))
+                        .background(backgroundColor, RoundedCornerShape(sizes.cornerRadius))
                         .border(
                             width = FinsibleTheme.dimes.d1,
                             color = borderColor,
-                            shape = RoundedCornerShape(cornerRadius)
+                            shape = RoundedCornerShape(sizes.cornerRadius)
                         )
-                        .padding(horizontal = horizontalPadding, vertical = FinsibleTheme.dimes.d12)
+                        .padding(horizontal = sizes.horizontalPadding, vertical = FinsibleTheme.dimes.d12)
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d8)
                     ) {
-                        // Leading icon
                         leadingIcon?.let {
                             Icon(
                                 painter = painterResource(id = it),
@@ -140,20 +169,17 @@ fun FinsibleTextField(
                             )
                         }
 
-                        // Text field content
                         Box(modifier = Modifier.weight(1f)) {
-                            // Placeholder
                             if (value.isEmpty() && placeholder != null) {
                                 Text(
                                     text = placeholder,
                                     style = textStyle.copy(color = FinsibleTheme.colors.primaryContent40),
-                                    maxLines = if (config.singleLine) 1 else Int.MAX_VALUE
+                                    maxLines = if (singleLine) 1 else Int.MAX_VALUE
                                 )
                             }
                             innerTextField()
                         }
 
-                        // Trailing icon
                         trailingIcon?.let {
                             Icon(
                                 painter = painterResource(id = it),
@@ -172,7 +198,6 @@ fun FinsibleTextField(
             }
         )
 
-        // Helper or Error text
         AnimatedVisibility(
             visible = (helperText != null && !effectiveError) || effectiveError,
             enter = fadeIn(),
@@ -182,7 +207,7 @@ fun FinsibleTextField(
                 text = if (effectiveError) errorText else helperText ?: "",
                 style = FinsibleTheme.typography.t14,
                 color = if (effectiveError) FinsibleTheme.colors.error else FinsibleTheme.colors.secondaryContent,
-                modifier = Modifier.padding(start = horizontalPadding)
+                modifier = Modifier.padding(start = sizes.horizontalPadding)
             )
         }
     }
@@ -194,7 +219,11 @@ fun FinsibleTextFieldWithCounter(
     onValueChange: (String) -> Unit,
     maxLength: Int,
     modifier: Modifier = Modifier,
-    config: TextFieldConfig = TextFieldConfig(),
+    enabled: Boolean = true,
+    singleLine: Boolean = true,
+    maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
+    minLines: Int = 1,
+    sizes: FinsibleTextFieldSizes = FinsibleTextFieldDefaults.mediumSizes(),
     label: String? = null,
     placeholder: String? = null,
     showCounter: Boolean = true,
@@ -211,7 +240,6 @@ fun FinsibleTextFieldWithCounter(
     }
 
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d4)) {
-        // Label with counter
         if (label != null || showCounter) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -239,7 +267,11 @@ fun FinsibleTextFieldWithCounter(
         FinsibleTextField(
             value = value,
             onValueChange = { if (it.length <= maxLength) onValueChange(it) },
-            config = config.copy(isError = value.length >= maxLength),
+            isError = value.length >= maxLength,
+            singleLine = singleLine,
+            maxLines = maxLines,
+            minLines = minLines,
+            sizes = sizes,
             placeholder = placeholder,
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,

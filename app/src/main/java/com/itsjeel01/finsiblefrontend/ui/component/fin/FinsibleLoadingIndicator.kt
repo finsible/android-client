@@ -9,6 +9,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -56,28 +57,63 @@ private const val BALL_HIGHLIGHT_ALPHA_MULTIPLIER = 0.3f
 private const val BALL_HIGHLIGHT_X_OFFSET_MULTIPLIER = 0.2f
 private const val BALL_HIGHLIGHT_Y_OFFSET_MULTIPLIER = 0.2f
 
+/** Loading speed presets for [FinsibleLoadingIndicator]. */
+enum class FinsibleLoadingSpeed(val durationMs: Int) {
+    Fast(1200), Normal(2000), Slow(2400)
+}
+
+/** Color configuration for [FinsibleLoadingIndicator]. */
+@Immutable
+data class FinsibleLoadingIndicatorColors(
+    val barColor: Color,
+    val ballColor: Color
+)
+
+/** Defaults factory for [FinsibleLoadingIndicator] sizes and colors. */
+object FinsibleLoadingIndicatorDefaults {
+
+    /** Small indicator size. */
+    @Composable
+    fun smallSize(): Dp = FinsibleTheme.dimes.d24
+
+    /** Medium indicator size. */
+    @Composable
+    fun mediumSize(): Dp = FinsibleTheme.dimes.d48
+
+    /** Large indicator size. */
+    @Composable
+    fun largeSize(): Dp = FinsibleTheme.dimes.d72
+
+    /** Default loading indicator colors. */
+    @Composable
+    fun colors(
+        barColor: Color = FinsibleTheme.colors.primaryContent80,
+        ballColor: Color = FinsibleTheme.colors.brandAccent
+    ) = FinsibleLoadingIndicatorColors(barColor, ballColor)
+}
+
 @Composable
 fun FinsibleLoadingIndicator(
     modifier: Modifier = Modifier,
-    config: LoadingIndicatorConfig = LoadingIndicatorConfig()
+    size: Dp = FinsibleLoadingIndicatorDefaults.mediumSize(),
+    speed: FinsibleLoadingSpeed = FinsibleLoadingSpeed.Normal,
+    colors: FinsibleLoadingIndicatorColors = FinsibleLoadingIndicatorDefaults.colors()
 ) {
-    val size = config.size.loadingIndicatorSize
-
     LoadingAnimation(
         modifier = modifier.size(
             width = size,
             height = (size.value * INDICATOR_HEIGHT_RATIO).dp
         ),
-        speed = config.speed,
-        barColor = config.barColor(),
-        ballColor = config.ballColor()
+        speed = speed,
+        barColor = colors.barColor,
+        ballColor = colors.ballColor
     )
 }
 
 @Composable
 private fun LoadingAnimation(
     modifier: Modifier = Modifier,
-    speed: LoadingSpeed,
+    speed: FinsibleLoadingSpeed,
     barColor: Color,
     ballColor: Color
 ) {
@@ -318,16 +354,3 @@ private data class BallMovementConfig(
     val progress: Float,
     val isLanding: Boolean
 )
-
-data class LoadingIndicatorConfig(
-    val size: ComponentSize = ComponentSize.Medium,
-    val speed: LoadingSpeed = LoadingSpeed.NORMAL,
-    val customSize: Dp? = null,
-    val tint: Color? = null
-) {
-    @Composable
-    fun barColor(): Color = tint ?: FinsibleTheme.colors.primaryContent80
-
-    @Composable
-    fun ballColor(): Color = tint ?: FinsibleTheme.colors.brandAccent
-}

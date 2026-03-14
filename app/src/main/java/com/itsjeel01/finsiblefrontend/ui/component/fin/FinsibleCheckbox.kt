@@ -3,17 +3,30 @@ package com.itsjeel01.finsiblefrontend.ui.component.fin
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
-/** Configuration for [FinsibleCheckbox]. */
-data class CheckboxConfig(
-    val enabled: Boolean = true,
-    val checkedColor: Color = Color.Unspecified,
-    val uncheckedColor: Color = Color.Unspecified,
-    val checkmarkColor: Color = Color.Unspecified
+/** Color configuration for [FinsibleCheckbox]. */
+@Immutable
+data class FinsibleCheckboxColors(
+    val checkedColor: Color,
+    val uncheckedColor: Color,
+    val checkmarkColor: Color
 )
+
+/** Defaults factory for [FinsibleCheckbox] colors. */
+object FinsibleCheckboxDefaults {
+
+    /** Brand-themed checkbox colors. */
+    @Composable
+    fun colors(
+        checkedColor: Color = FinsibleTheme.colors.brandAccent,
+        uncheckedColor: Color = FinsibleTheme.colors.border,
+        checkmarkColor: Color = FinsibleTheme.colors.white
+    ) = FinsibleCheckboxColors(checkedColor, uncheckedColor, checkmarkColor)
+}
 
 /** Themed checkbox that applies Finsible brand colors by default. */
 @Composable
@@ -21,17 +34,18 @@ fun FinsibleCheckbox(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    config: CheckboxConfig = CheckboxConfig()
+    enabled: Boolean = true,
+    colors: FinsibleCheckboxColors = FinsibleCheckboxDefaults.colors()
 ) {
     Checkbox(
         checked = checked,
         onCheckedChange = onCheckedChange,
         modifier = modifier,
-        enabled = config.enabled,
+        enabled = enabled,
         colors = CheckboxDefaults.colors(
-            checkedColor = config.checkedColor.takeOrDefault(FinsibleTheme.colors.brandAccent),
-            uncheckedColor = config.uncheckedColor.takeOrDefault(FinsibleTheme.colors.border),
-            checkmarkColor = config.checkmarkColor.takeOrDefault(FinsibleTheme.colors.white)
+            checkedColor = colors.checkedColor,
+            uncheckedColor = colors.uncheckedColor,
+            checkmarkColor = colors.checkmarkColor
         )
     )
 }

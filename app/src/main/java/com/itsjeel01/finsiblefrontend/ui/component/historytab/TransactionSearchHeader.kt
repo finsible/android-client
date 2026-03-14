@@ -41,10 +41,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import com.itsjeel01.finsiblefrontend.R
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentSize
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentType
 import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleIconButton
-import com.itsjeel01.finsiblefrontend.ui.component.fin.IconButtonConfig
+import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleIconButtonDefaults
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.extraBold
 import com.itsjeel01.finsiblefrontend.ui.theme.semiBold
@@ -193,12 +191,9 @@ private fun SearchTextField(
                     onClick = dismissAction,
                     icon = com.composables.icons.materialicons.outlined.R.drawable.materialicons_ic_close_outlined,
                     contentDescription = stringResource(R.string.cd_close_search),
-                    config = IconButtonConfig(
-                        size = ComponentSize.Small,
-                        tintIcon = true,
-                        customTint = FinsibleTheme.colors.onSurfaceVariant,
-                        type = ComponentType.Tertiary
-                    )
+                    colors = FinsibleIconButtonDefaults.tertiaryColors(),
+                    sizes = FinsibleIconButtonDefaults.smallSizes(),
+                    customTint = FinsibleTheme.colors.onSurfaceVariant
                 )
             }
         }

@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,15 +24,35 @@ import com.itsjeel01.finsiblefrontend.ui.constants.Duration
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.medium
 
-/** Configuration for [FinsibleRadioButton]. */
-data class RadioButtonConfig(
-    val selectedDotColor: Color = Color.Unspecified,
-    val unselectedDotColor: Color = Color.Unspecified,
-    val selectedRingColor: Color = Color.Unspecified,
-    val unselectedRingColor: Color = Color.Unspecified,
-    val selectedLabelColor: Color = Color.Unspecified,
-    val unselectedLabelColor: Color = Color.Unspecified
+/** Color configuration for [FinsibleRadioButton]. */
+@Immutable
+data class FinsibleRadioButtonColors(
+    val selectedDotColor: Color,
+    val unselectedDotColor: Color,
+    val selectedRingColor: Color,
+    val unselectedRingColor: Color,
+    val selectedLabelColor: Color,
+    val unselectedLabelColor: Color
 )
+
+/** Defaults factory for [FinsibleRadioButton] colors. */
+object FinsibleRadioButtonDefaults {
+
+    /** Brand-themed radio button colors. */
+    @Composable
+    fun colors(
+        selectedDotColor: Color = FinsibleTheme.colors.primaryContent,
+        unselectedDotColor: Color = FinsibleTheme.colors.transparent,
+        selectedRingColor: Color = FinsibleTheme.colors.primaryContent,
+        unselectedRingColor: Color = FinsibleTheme.colors.outlineVariant,
+        selectedLabelColor: Color = FinsibleTheme.colors.primaryContent,
+        unselectedLabelColor: Color = FinsibleTheme.colors.secondaryContent
+    ) = FinsibleRadioButtonColors(
+        selectedDotColor, unselectedDotColor,
+        selectedRingColor, unselectedRingColor,
+        selectedLabelColor, unselectedLabelColor
+    )
+}
 
 /** Themed radio button with animated dot, ring, and label. */
 @Composable
@@ -40,27 +61,18 @@ fun FinsibleRadioButton(
     selected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    config: RadioButtonConfig = RadioButtonConfig()
+    colors: FinsibleRadioButtonColors = FinsibleRadioButtonDefaults.colors()
 ) {
     val dotColor by animateColorAsState(
-        targetValue = if (selected)
-            config.selectedDotColor.takeOrDefault(FinsibleTheme.colors.primaryContent)
-        else
-            config.unselectedDotColor.takeOrDefault(FinsibleTheme.colors.transparent),
+        targetValue = if (selected) colors.selectedDotColor else colors.unselectedDotColor,
         animationSpec = tween(Duration.MS_150.toInt()), label = "radio_dot"
     )
     val ringColor by animateColorAsState(
-        targetValue = if (selected)
-            config.selectedRingColor.takeOrDefault(FinsibleTheme.colors.primaryContent)
-        else
-            config.unselectedRingColor.takeOrDefault(FinsibleTheme.colors.outlineVariant),
+        targetValue = if (selected) colors.selectedRingColor else colors.unselectedRingColor,
         animationSpec = tween(Duration.MS_150.toInt()), label = "radio_ring"
     )
     val labelColor by animateColorAsState(
-        targetValue = if (selected)
-            config.selectedLabelColor.takeOrDefault(FinsibleTheme.colors.primaryContent)
-        else
-            config.unselectedLabelColor.takeOrDefault(FinsibleTheme.colors.secondaryContent),
+        targetValue = if (selected) colors.selectedLabelColor else colors.unselectedLabelColor,
         animationSpec = tween(Duration.MS_150.toInt()), label = "radio_label"
     )
 

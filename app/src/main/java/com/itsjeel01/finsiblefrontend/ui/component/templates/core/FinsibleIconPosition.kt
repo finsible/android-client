@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.ui.component.templates
+package com.itsjeel01.finsiblefrontend.ui.component.templates.core
 
 /** Common icon position options for components with labels and icons. */
 enum class FinsibleIconPosition {

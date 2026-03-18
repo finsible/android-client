@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.ui.component.templates
+package com.itsjeel01.finsiblefrontend.ui.component.templates.core
 
 /**
  * Global size tokens for Finsible UI components.

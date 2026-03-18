@@ -150,4 +150,9 @@
     <string name="nav_new_transaction">New Transaction</string>
     <string name="nav_transactions">Transactions</string>
     <string name="nav_settings">Settings</string>
+
+    <!-- Template Button -->
+    <string name="finsible_button_loading_state">Loading</string>
+    <string name="finsible_button_badge_dot">Notification badge</string>
+    <string name="finsible_button_badge_count">%1$d notifications</string>
 </resources>

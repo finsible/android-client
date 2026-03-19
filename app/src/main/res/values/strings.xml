@@ -155,4 +155,8 @@
     <string name="finsible_button_loading_state">Loading</string>
     <string name="finsible_button_badge_dot">Notification badge</string>
     <string name="finsible_button_badge_count">%1$d notifications</string>
+
+    <!-- Template Checkbox -->
+    <string name="finsible_checkbox_checked_state">Checked</string>
+    <string name="finsible_checkbox_unchecked_state">Unchecked</string>
 </resources>

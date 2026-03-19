@@ -13,12 +13,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.itsjeel01.finsiblefrontend.ui.component.templates.button.FinsibleBadgeType
-import com.itsjeel01.finsiblefrontend.ui.component.templates.button.FinsibleButton
-import com.itsjeel01.finsiblefrontend.ui.component.templates.button.FinsibleButtonVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleButton
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleIconPosition
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleBadgeType
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleButtonVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.bold
 import com.itsjeel01.finsiblefrontend.ui.theme.semiBold

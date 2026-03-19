@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.ui.component.templates.button
+package com.itsjeel01.finsiblefrontend.ui.component.templates.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -12,6 +12,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleBadgeType
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleButtonBadgeSpec
 
 @Composable
 fun FinsibleButtonBadge(

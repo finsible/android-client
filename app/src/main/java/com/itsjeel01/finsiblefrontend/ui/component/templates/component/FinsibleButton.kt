@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.ui.component.templates.button
+package com.itsjeel01.finsiblefrontend.ui.component.templates.component
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.LocalIndication
@@ -37,6 +37,10 @@ import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleIconPosition
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
+import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleButtonDefaults
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleBadgeType
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleButtonColors
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleButtonVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
 /**
@@ -54,7 +58,7 @@ import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
  * @param colors The resolved color styles for the button. Defaults based on [variant].
  * @param contentPadding Custom padding for the button content. If null, defaults to [size] specific padding.
  * @param badgeType In-house badge style.
- * @param badgeCount Count value used when [badgeType] is [com.itsjeel01.finsiblefrontend.ui.component.templates.defaults.FinsibleBadgeType.Count].
+ * @param badgeCount Count value used when [badgeType] is [com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleBadgeType.Count].
  * @param icon Optional composable icon displayed with the label.
  * @param iconPosition Position for [icon] relative to the label.
  * @param content The main content of the button (usually text).
@@ -84,11 +88,11 @@ fun FinsibleButton(
     require(!(iconOnly && fullWidth)) {
         "iconOnly and fullWidth cannot be used together."
     }
-    require(!(badgeType == FinsibleBadgeType.Count && size == FinsibleSize.ExtraSmall)) {
-        "Count badge is not supported on ExtraSmall buttons."
-    }
     require(!(badgeType != FinsibleBadgeType.None && !iconOnly)) {
         "Badges are only supported on iconOnly buttons."
+    }
+    require(!(badgeType == FinsibleBadgeType.Count && size == FinsibleSize.ExtraSmall)) {
+        "Count badge is not supported on ExtraSmall buttons."
     }
     require(!(badgeType == FinsibleBadgeType.Count && badgeCount < 0)) {
         "badgeCount cannot be negative."
@@ -198,7 +202,7 @@ fun FinsibleButton(
                             modifier = Modifier.size(buttonSizes.iconSize),
                             contentAlignment = Alignment.Center
                         ) {
-                            icon?.invoke()
+                            icon!!.invoke()
                         }
                     } else {
                         Row(

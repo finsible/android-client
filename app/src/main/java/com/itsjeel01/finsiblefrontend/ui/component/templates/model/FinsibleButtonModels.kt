@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.ui.component.templates.button
+package com.itsjeel01.finsiblefrontend.ui.component.templates.model
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Immutable

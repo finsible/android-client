@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.ui.component.templates.button
+package com.itsjeel01.finsiblefrontend.ui.component.templates.default
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.CircleShape
@@ -11,9 +11,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleButtonBadgeSpec
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleButtonColors
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleButtonSizes
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleButtonVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
-/** Defaults for [FinsibleButton]. */
+/** Defaults for [com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleButton]. */
 object FinsibleButtonDefaults {
 
     @Composable

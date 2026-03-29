@@ -159,4 +159,20 @@
     <!-- Template Checkbox -->
     <string name="finsible_checkbox_checked_state">Checked</string>
     <string name="finsible_checkbox_unchecked_state">Unchecked</string>
+
+    <!-- Template Date Picker -->
+    <string name="finsible_date_picker_previous_year">Previous</string>
+    <string name="finsible_date_picker_next_year">Next</string>
+    <string name="finsible_date_picker_no_date_selected">No date selected</string>
+    <string name="finsible_date_picker_previous_month">&lt;</string>
+    <string name="finsible_date_picker_next_month">&gt;</string>
+    <string name="finsible_date_picker_expand_year">v</string>
+    <string name="finsible_date_picker_all_months">All months</string>
+    <string name="finsible_date_picker_jump_to_today">Jump to today</string>
+    <string name="finsible_date_picker_previous_month_label">Previous month</string>
+    <string name="finsible_date_picker_next_month_label">Next month</string>
+    <string name="finsible_date_picker_state_selected">Selected</string>
+    <string name="finsible_date_picker_state_available">Available</string>
+    <string name="finsible_date_picker_state_unavailable">Unavailable</string>
+
 </resources>

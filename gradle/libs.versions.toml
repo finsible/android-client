@@ -36,6 +36,7 @@ composeUi = "1.10.0"
 coreTesting = "2.2.0"
 composeIcons = "2.2.1"
 kotlinxCollectionsImmutable = "0.3.7"
+kizitonwoseCalendar = "2.10.0"
 
 [libraries]
 androidx-activity = { module = "androidx.activity:activity", version.ref = "activityCompose" }
@@ -96,6 +97,8 @@ composables-icons-material-symbols-rounded-filled = { group = "com.composables",
 composables-icons-material-symbols-sharp-filled = { group = "com.composables", name = "icons-material-symbols-sharp-filled-android", version.ref = "composeIcons" }
 composables-icons-tabler-outline = { group = "com.composables", name = "icons-tabler-outline-android", version.ref = "composeIcons" }
 composables-icons-tabler-filled = { group = "com.composables", name = "icons-tabler-filled-android", version.ref = "composeIcons" }
+kizitonwose-calendar-compose = { module = "com.kizitonwose.calendar:compose", version.ref = "kizitonwoseCalendar" }
+kizitonwose-calendar-core = { module = "com.kizitonwose.calendar:core", version.ref = "kizitonwoseCalendar" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

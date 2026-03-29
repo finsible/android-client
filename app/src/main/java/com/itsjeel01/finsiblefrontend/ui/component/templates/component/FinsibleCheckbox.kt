@@ -50,14 +50,28 @@ private const val CHECK_START_X = 0.24f  // Left foot of the tick
 private const val CHECK_START_Y = 0.53f
 private const val CHECK_ELBOW_X = 0.44f  // The bend point — bottom of the short stroke / top of the long stroke
 private const val CHECK_ELBOW_Y = 0.73f
-private const val CHECK_END_X   = 0.76f  // Right tip of the tick
-private const val CHECK_END_Y   = 0.33f
+private const val CHECK_END_X = 0.76f  // Right tip of the tick
+private const val CHECK_END_Y = 0.33f
 
 // The animation is split into two equal halves: [0, 0.5) draws the short stroke, [0.5, 1] draws the long stroke.
 // This gives the tick a natural "drawing" feel — short arm first, then the long sweep.
 private const val ANIMATION_MIDPOINT = 0.5f
 
-/** A stateless semantic checkbox with size, color, and animation controls. */
+/**
+ * A stateless semantic checkbox with size, color, and animation controls.
+ *
+ * @param checked Whether the checkbox is checked.
+ * @param onCheckedChange Callback when the checkbox is checked or unchecked.
+ * @param modifier Composable modifier.
+ * @param enabled Whether the checkbox is enabled.
+ * @param animateChecking Controls whether to render animated checking or instant checking.
+ * @param variant The visual style of the checkbox (Colorful, Subtle, etc.).
+ * @param size The semantic size of the checkbox (Small, Medium, Large).
+ * @param shapeVariant The semantic shape of the checkbox (Rounded, Sharp, etc.).
+ * @param colors The resolved color styles for the checkbox.
+ * @param label Optional label to display next to the checkbox.
+ * @param checkboxContentDescription Optional content description for the checkbox.
+ **/
 @Composable
 fun FinsibleCheckbox(
     checked: Boolean,
@@ -194,9 +208,9 @@ private fun DrawScope.drawCheckmark(
     color: Color,
     strokeWidth: Dp
 ) {
-    val start  = Offset(x = size.width * CHECK_START_X, y = size.height * CHECK_START_Y)
-    val elbow  = Offset(x = size.width * CHECK_ELBOW_X, y = size.height * CHECK_ELBOW_Y)
-    val end    = Offset(x = size.width * CHECK_END_X,   y = size.height * CHECK_END_Y)
+    val start = Offset(x = size.width * CHECK_START_X, y = size.height * CHECK_START_Y)
+    val elbow = Offset(x = size.width * CHECK_ELBOW_X, y = size.height * CHECK_ELBOW_Y)
+    val end = Offset(x = size.width * CHECK_END_X, y = size.height * CHECK_END_Y)
 
     // Normalize each animation half independently into 0→1 so lerp gets a clean fraction.
     val segment1Progress = (progress / ANIMATION_MIDPOINT).coerceIn(0f, 1f)

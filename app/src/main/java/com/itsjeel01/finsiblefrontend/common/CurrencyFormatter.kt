@@ -54,7 +54,7 @@ class CurrencyFormatter @Inject constructor(
         val cache = threadLocalFormatters.get()!!
 
         return cache.getOrPut(currency) {
-            val locale = CURRENCY_LOCALES[currency] ?: Locale.getDefault()
+            val locale = CURRENCY_LOCALES[currency] ?: UserLocaleRegistry.currentLocale()
             val pattern = CURRENCY_PATTERNS[currency] ?: "###,###,##0.##"
 
             DecimalFormat(pattern, DecimalFormatSymbols(locale)).apply {
@@ -83,7 +83,7 @@ class CurrencyFormatter @Inject constructor(
         val cache = threadLocalCompactFormatters.get()!!
 
         return cache.getOrPut(currency) {
-            val locale = CURRENCY_LOCALES[currency] ?: Locale.getDefault()
+            val locale = CURRENCY_LOCALES[currency] ?: UserLocaleRegistry.currentLocale()
             val pattern = CURRENCY_PATTERNS[currency] ?: "###,###,##0.##"
 
             DecimalFormat(pattern, DecimalFormatSymbols(locale)).apply {

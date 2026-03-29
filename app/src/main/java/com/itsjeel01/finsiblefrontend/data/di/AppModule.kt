@@ -2,6 +2,8 @@ package com.itsjeel01.finsiblefrontend.data.di
 
 import android.app.Application
 import android.content.Context
+import com.itsjeel01.finsiblefrontend.common.DeviceLocaleProvider
+import com.itsjeel01.finsiblefrontend.common.LocaleProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,5 +18,11 @@ object AppModule {
     @Singleton
     fun context(application: Application): Context {
         return application.applicationContext
+    }
+
+    @Provides
+    @Singleton
+    fun localeProvider(deviceLocaleProvider: DeviceLocaleProvider): LocaleProvider {
+        return deviceLocaleProvider
     }
 }

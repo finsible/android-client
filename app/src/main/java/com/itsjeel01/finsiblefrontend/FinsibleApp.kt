@@ -1,6 +1,8 @@
 package com.itsjeel01.finsiblefrontend
 
 import android.app.Application
+import com.itsjeel01.finsiblefrontend.common.LocaleProvider
+import com.itsjeel01.finsiblefrontend.common.UserLocaleRegistry
 import com.itsjeel01.finsiblefrontend.common.logging.DebugLogTree
 import com.itsjeel01.finsiblefrontend.common.logging.Logger
 import com.itsjeel01.finsiblefrontend.common.logging.ReleaseLogTree
@@ -18,8 +20,12 @@ class FinsibleApp : Application() {
     @Inject
     lateinit var integrityResolverService: IntegrityResolverService
 
+    @Inject
+    lateinit var localeProvider: LocaleProvider
+
     override fun onCreate() {
         super.onCreate()
+        UserLocaleRegistry.initialize(localeProvider)
         initializeLogging()
         integrityResolverService.checkAndResolveOnLaunch()
     }

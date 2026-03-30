@@ -16,7 +16,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleBadge
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleButtonBadgeSpec
 
 @Composable
-fun FinsibleButtonBadge(
+internal fun FinsibleButtonBadge(
     badgeType: FinsibleBadgeType,
     badgeCount: Int,
     badgeMetrics: FinsibleButtonBadgeSpec,

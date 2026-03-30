@@ -175,4 +175,8 @@
     <string name="finsible_date_picker_state_available">Available</string>
     <string name="finsible_date_picker_state_unavailable">Unavailable</string>
 
+    <!-- Template Filter Chip -->
+    <string name="finsible_filter_chip_selected_state">Selected</string>
+    <string name="finsible_filter_chip_unselected_state">Not selected</string>
+
 </resources>

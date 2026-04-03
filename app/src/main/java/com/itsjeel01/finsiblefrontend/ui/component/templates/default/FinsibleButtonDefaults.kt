@@ -17,7 +17,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleButto
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleButtonVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
-/** Defaults for [com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleButton]. */
+/** Defaults for Button Component. */
 object FinsibleButtonDefaults {
 
     @Composable
@@ -132,7 +132,7 @@ object FinsibleButtonDefaults {
             FinsibleSize.Small -> FinsibleButtonSizes(
                 height = dimes.d32,
                 contentPadding = PaddingValues(horizontal = dimes.d12),
-                textStyle = type.t14.copy(fontWeight = FontWeight.Medium),
+                textStyle = type.t16.copy(fontWeight = FontWeight.Medium),
                 iconSize = dimes.d16,
                 iconSpacing = dimes.d6
             )
@@ -140,7 +140,7 @@ object FinsibleButtonDefaults {
             FinsibleSize.Medium -> FinsibleButtonSizes(
                 height = dimes.d48,
                 contentPadding = PaddingValues(horizontal = dimes.d20),
-                textStyle = type.t16.copy(fontWeight = FontWeight.Medium),
+                textStyle = type.t18.copy(fontWeight = FontWeight.Medium),
                 iconSize = dimes.d20,
                 iconSpacing = dimes.d8
             )

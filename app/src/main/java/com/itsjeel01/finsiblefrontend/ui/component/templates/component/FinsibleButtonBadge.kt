@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,6 +13,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleBadgeType
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleButtonBadgeSpec
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleTextVariant
 
 @Composable
 internal fun FinsibleButtonBadge(
@@ -51,10 +51,11 @@ internal fun FinsibleButtonBadge(
                     .background(containerColor, CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
+                FinsibleText(
                     text = displayText,
+                    variant = FinsibleTextVariant.MicroLabelSemiBold,
                     color = contentColor,
-                    style = badgeMetrics.textStyle,
+                    textStyleOverride = badgeMetrics.textStyle,
                     maxLines = 1,
                     softWrap = false
                 )

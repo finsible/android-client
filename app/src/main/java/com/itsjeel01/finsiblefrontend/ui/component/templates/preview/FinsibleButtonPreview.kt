@@ -7,21 +7,20 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleButton
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleIconPosition
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleBadgeType
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleButtonVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
-import com.itsjeel01.finsiblefrontend.ui.theme.bold
-import com.itsjeel01.finsiblefrontend.ui.theme.semiBold
 
 @Preview(name = "Light Mode", showBackground = true, widthDp = 700, heightDp = 2800)
 @Preview(name = "Dark Mode", showBackground = true, widthDp = 700, heightDp = 2800, uiMode = Configuration.UI_MODE_NIGHT_YES)
@@ -37,18 +36,17 @@ fun FinsibleButtonPreview() {
     FinsibleComponentPreviewScaffold {
         val dimes = FinsibleTheme.dimes
         val colors = FinsibleTheme.colors
-        val typography = FinsibleTheme.typography
 
         // Header
         Column {
-            Text(
+            FinsibleText(
                 text = "Finsible Buttons",
-                style = typography.t32.bold(),
+                variant = FinsibleTextVariant.SmallHeadingBold,
                 color = colors.brandAccent
             )
-            Text(
+            FinsibleText(
                 text = "Visual Component Guide",
-                style = typography.t16,
+                variant = FinsibleTextVariant.BodyRegular,
                 color = colors.secondaryContent
             )
         }
@@ -57,26 +55,26 @@ fun FinsibleButtonPreview() {
 
         FinsiblePreviewSection("Variants") {
             Row(horizontalArrangement = Arrangement.spacedBy(dimes.d12)) {
-                FinsibleButton(onClick = {}, variant = FinsibleButtonVariant.Filled) { Text("Filled") }
-                FinsibleButton(onClick = {}, variant = FinsibleButtonVariant.FilledTonal) { Text("Tonal") }
-                FinsibleButton(onClick = {}, variant = FinsibleButtonVariant.Outlined) { Text("Outlined") }
-                FinsibleButton(onClick = {}, variant = FinsibleButtonVariant.Text) { Text("Text") }
-                FinsibleButton(onClick = {}, variant = FinsibleButtonVariant.Link) { Text("Link Button") }
+                FinsibleButton(onClick = {}, variant = FinsibleButtonVariant.Filled, text = "Filled")
+                FinsibleButton(onClick = {}, variant = FinsibleButtonVariant.FilledTonal, text = "Tonal")
+                FinsibleButton(onClick = {}, variant = FinsibleButtonVariant.Outlined, text = "Outlined")
+                FinsibleButton(onClick = {}, variant = FinsibleButtonVariant.Text, text = "Text")
+                FinsibleButton(onClick = {}, variant = FinsibleButtonVariant.Link, text = "Link Button")
             }
         }
 
         FinsiblePreviewSection("Interactive States") {
             // Filled Comparison
             Row(horizontalArrangement = Arrangement.spacedBy(dimes.d12)) {
-                FinsibleButton(onClick = {}, variant = FinsibleButtonVariant.Filled) { Text("Enabled") }
-                FinsibleButton(onClick = {}, enabled = false, variant = FinsibleButtonVariant.Filled) { Text("Disabled") }
-                FinsibleButton(onClick = {}, loading = true, variant = FinsibleButtonVariant.Filled) { Text("Loading") }
+                FinsibleButton(onClick = {}, variant = FinsibleButtonVariant.Filled, text = "Enabled")
+                FinsibleButton(onClick = {}, enabled = false, variant = FinsibleButtonVariant.Filled, text = "Disabled")
+                FinsibleButton(onClick = {}, loading = true, variant = FinsibleButtonVariant.Filled, text = "Loading")
             }
             // Outlined Comparison
             Row(horizontalArrangement = Arrangement.spacedBy(dimes.d12)) {
-                FinsibleButton(onClick = {}, variant = FinsibleButtonVariant.Outlined) { Text("Default") }
-                FinsibleButton(onClick = {}, enabled = false, variant = FinsibleButtonVariant.Outlined) { Text("Disabled") }
-                FinsibleButton(onClick = {}, loading = true, variant = FinsibleButtonVariant.Outlined) { Text("Loading") }
+                FinsibleButton(onClick = {}, variant = FinsibleButtonVariant.Outlined, text = "Default")
+                FinsibleButton(onClick = {}, enabled = false, variant = FinsibleButtonVariant.Outlined, text = "Disabled")
+                FinsibleButton(onClick = {}, loading = true, variant = FinsibleButtonVariant.Outlined, text = "Loading")
             }
         }
 
@@ -100,15 +98,17 @@ fun FinsibleButtonPreview() {
                 FinsibleButton(
                     onClick = {},
                     icon = callIcon,
-                    iconPosition = FinsibleIconPosition.Leading
-                ) { Text("Leading") }
+                    iconPosition = FinsibleIconPosition.Leading,
+                    text = "Leading"
+                )
 
                 FinsibleButton(
                     onClick = {},
                     variant = FinsibleButtonVariant.FilledTonal,
                     icon = callIcon,
-                    iconPosition = FinsibleIconPosition.Trailing
-                ) { Text("Trailing") }
+                    iconPosition = FinsibleIconPosition.Trailing,
+                    text = "Trailing"
+                )
 
                 FinsibleButton(
                     onClick = {},
@@ -116,7 +116,7 @@ fun FinsibleButtonPreview() {
                     iconOnly = true,
                     icon = callIcon,
                     badgeType = FinsibleBadgeType.Dot
-                ) {}
+                )
 
                 FinsibleButton(
                     onClick = {},
@@ -125,32 +125,34 @@ fun FinsibleButtonPreview() {
                     icon = callIcon,
                     badgeType = FinsibleBadgeType.Count,
                     badgeCount = 24
-                ) {}
+                )
             }
         }
 
         FinsiblePreviewSection("Shapes & Layout") {
             Row(horizontalArrangement = Arrangement.spacedBy(dimes.d12)) {
-                FinsibleButton(onClick = {}, shapeVariant = FinsibleShape.Pill) { Text("Pill") }
+                FinsibleButton(onClick = {}, shapeVariant = FinsibleShape.Pill, text = "Pill")
                 FinsibleButton(
                     onClick = {},
                     shapeVariant = FinsibleShape.Rounded,
-                    variant = FinsibleButtonVariant.FilledTonal
-                ) { Text("Rounded") }
-                FinsibleButton(onClick = {}, shapeVariant = FinsibleShape.Sharp, variant = FinsibleButtonVariant.Outlined) { Text("Sharp") }
+                    variant = FinsibleButtonVariant.FilledTonal,
+                    text = "Rounded"
+                )
+                FinsibleButton(onClick = {}, shapeVariant = FinsibleShape.Sharp, variant = FinsibleButtonVariant.Outlined, text = "Sharp")
             }
 
             FinsibleButton(
                 onClick = {},
-                fullWidth = true
-            ) { Text("Full Width Button") }
+                fullWidth = true,
+                text = "Full Width Button"
+            )
         }
 
         FinsiblePreviewSection("Coverage Matrix") {
             FinsibleButtonVariant.entries.forEach { matrixVariant ->
-                Text(
+                FinsibleText(
                     text = matrixVariant.name,
-                    style = typography.t14.semiBold(),
+                    variant = FinsibleTextVariant.SmallBodySemiBold,
                     color = colors.brandAccent
                 )
 
@@ -162,22 +164,25 @@ fun FinsibleButtonPreview() {
                         FinsibleButton(
                             onClick = {},
                             variant = matrixVariant,
-                            size = matrixSize
-                        ) { Text("${matrixSize.name}-On") }
+                            size = matrixSize,
+                            text = "${matrixSize.name}-On"
+                        )
 
                         FinsibleButton(
                             onClick = {},
                             variant = matrixVariant,
                             size = matrixSize,
-                            enabled = false
-                        ) { Text("Off") }
+                            enabled = false,
+                            text = "Off"
+                        )
 
                         FinsibleButton(
                             onClick = {},
                             variant = matrixVariant,
                             size = matrixSize,
-                            loading = true
-                        ) { Text("Load") }
+                            loading = true,
+                            text = "Load"
+                        )
 
                         if (matrixVariant != FinsibleButtonVariant.Text && matrixVariant != FinsibleButtonVariant.Link && matrixSize != FinsibleSize.ExtraSmall) {
                             FinsibleButton(
@@ -187,7 +192,7 @@ fun FinsibleButtonPreview() {
                                 iconOnly = true,
                                 icon = callIcon,
                                 badgeType = FinsibleBadgeType.Dot
-                            ) {}
+                            )
                         }
 
                         if (matrixVariant != FinsibleButtonVariant.Text && matrixVariant != FinsibleButtonVariant.Link && matrixSize != FinsibleSize.ExtraSmall) {
@@ -199,7 +204,7 @@ fun FinsibleButtonPreview() {
                                 icon = callIcon,
                                 badgeType = FinsibleBadgeType.Count,
                                 badgeCount = 24
-                            ) {}
+                            )
                         }
                     }
                 }
@@ -212,5 +217,5 @@ fun FinsibleButtonPreview() {
 
 @Composable
 private fun SizeDemo(size: FinsibleSize, label: String) {
-    FinsibleButton(onClick = {}, size = size) { Text(label) }
+    FinsibleButton(onClick = {}, size = size, text = label)
 }

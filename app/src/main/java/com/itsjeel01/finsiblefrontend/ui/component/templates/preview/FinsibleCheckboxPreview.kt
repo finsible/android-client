@@ -5,19 +5,18 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.tooling.preview.Preview
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleCheckbox
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleCheckboxVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
-import com.itsjeel01.finsiblefrontend.ui.theme.bold
-import com.itsjeel01.finsiblefrontend.ui.theme.semiBold
 
 private val SupportedCheckboxSizes = listOf(FinsibleSize.Small, FinsibleSize.Medium, FinsibleSize.Large)
 
@@ -28,17 +27,15 @@ fun FinsibleCheckboxPreview() {
     FinsibleComponentPreviewScaffold {
         val dimes = FinsibleTheme.dimes
         val colors = FinsibleTheme.colors
-        val type = FinsibleTheme.typography
-
         Column {
-            Text(
+            FinsibleText(
                 text = "Finsible Checkbox",
-                style = type.t32.bold(),
+                variant = FinsibleTextVariant.SmallHeadingBold,
                 color = colors.brandAccent
             )
-            Text(
+            FinsibleText(
                 text = "Visual Component Guide",
-                style = type.t16,
+                variant = FinsibleTextVariant.BodyRegular,
                 color = colors.secondaryContent
             )
         }
@@ -60,9 +57,9 @@ fun FinsibleCheckboxPreview() {
                         size = FinsibleSize.Medium,
                         checkboxContentDescription = "${checkboxVariant.name} checkbox preview"
                     )
-                    Text(
+                    FinsibleText(
                         text = checkboxVariant.name,
-                        style = type.t16.semiBold(),
+                        variant = FinsibleTextVariant.BodySemiBold,
                         color = colors.primaryContent
                     )
                 }
@@ -114,9 +111,9 @@ fun FinsibleCheckboxPreview() {
 
         FinsiblePreviewSection("Coverage Matrix") {
             FinsibleCheckboxVariant.entries.forEach { checkboxVariant ->
-                Text(
+                FinsibleText(
                     text = checkboxVariant.name,
-                    style = type.t14.semiBold(),
+                    variant = FinsibleTextVariant.SmallBodySemiBold,
                     color = colors.brandAccent
                 )
 
@@ -164,7 +161,7 @@ private fun SizeSample(size: FinsibleSize, label: String) {
             size = size,
             checkboxContentDescription = "$label size preview"
         )
-        Text(text = label, style = FinsibleTheme.typography.t14, color = FinsibleTheme.colors.secondaryContent)
+        FinsibleText(text = label, variant = FinsibleTextVariant.SmallBodyRegular, color = FinsibleTheme.colors.secondaryContent)
     }
 }
 
@@ -177,7 +174,7 @@ private fun StateSample(label: String, checked: Boolean, enabled: Boolean) {
             enabled = enabled,
             checkboxContentDescription = "$label state preview"
         )
-        Text(text = label, style = FinsibleTheme.typography.t12, color = FinsibleTheme.colors.secondaryContent)
+        FinsibleText(text = label, variant = FinsibleTextVariant.SmallLabelRegular, color = FinsibleTheme.colors.secondaryContent)
     }
 }
 
@@ -192,7 +189,7 @@ private fun ShapeSample(label: String, shapeVariant: FinsibleShape) {
             shapeVariant = shapeVariant,
             checkboxContentDescription = "$label shape preview"
         )
-        Text(text = label, style = FinsibleTheme.typography.t12, color = FinsibleTheme.colors.secondaryContent)
+        FinsibleText(text = label, variant = FinsibleTextVariant.SmallLabelRegular, color = FinsibleTheme.colors.secondaryContent)
     }
 }
 

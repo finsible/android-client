@@ -1,5 +1,6 @@
 package com.itsjeel01.finsiblefrontend.ui.component.templates.component
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.tween
@@ -14,8 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.toggleable
-import androidx.compose.material3.Text
-import androidx.compose.material3.ripple
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -28,50 +28,32 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.disabled
-import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.Dp
-import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleCheckboxDefaults
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleCheckboxColors
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleCheckboxVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.util.finsibleBounceIndication
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
 
-// Checkmark anchor points as fractions of the box size.
-// These were tuned visually to sit centered and balanced inside the box at all sizes.
-private const val CHECK_START_X = 0.24f  // Left foot of the tick
-private const val CHECK_START_Y = 0.53f
-private const val CHECK_ELBOW_X = 0.44f  // The bend point — bottom of the short stroke / top of the long stroke
-private const val CHECK_ELBOW_Y = 0.73f
-private const val CHECK_END_X = 0.76f  // Right tip of the tick
-private const val CHECK_END_Y = 0.33f
-
-// The animation is split into two equal halves: [0, 0.5) draws the short stroke, [0.5, 1] draws the long stroke.
-// This gives the tick a natural "drawing" feel — short arm first, then the long sweep.
-private const val ANIMATION_MIDPOINT = 0.5f
-
-/**
- * A stateless semantic checkbox with size, color, and animation controls.
+/** Stateless checkbox component.
  *
- * @param checked Whether the checkbox is checked.
- * @param onCheckedChange Callback when the checkbox is checked or unchecked.
- * @param modifier Composable modifier.
- * @param enabled Whether the checkbox is enabled.
- * @param animateChecking Controls whether to render animated checking or instant checking.
- * @param variant The visual style of the checkbox (Colorful, Subtle, etc.).
- * @param size The semantic size of the checkbox (Small, Medium, Large).
- * @param shapeVariant The semantic shape of the checkbox (Rounded, Sharp, etc.).
- * @param colors The resolved color styles for the checkbox.
- * @param label Optional label to display next to the checkbox.
- * @param checkboxContentDescription Optional content description for the checkbox.
- **/
+ * @param checked Whether the checkbox is currently checked.
+ * @param onCheckedChange Called when the user clicks the checkbox, and toggles checked.
+ * @param modifier Modifier to be applied to the layout.
+ * @param enabled Controls the enabled state of the checkbox
+ * @param animateChecking Whether to animate the checkmark when toggling. Disabling this will make the checkmark appear instantly, which can be useful in certain contexts like forms or lists where many checkboxes may be toggled rapidly.
+ * @param variant The visual tone of the checkbox.
+ * @param size The size of the checkbox.
+ * @param shapeVariant The shape of the checkbox.
+ * @param colors The colors of the checkbox.
+ * @param label The label for the checkbox.
+ * @param checkboxContentDescription A content description for the checkbox.
+ */
 @Composable
 fun FinsibleCheckbox(
     checked: Boolean,
@@ -98,37 +80,42 @@ fun FinsibleCheckbox(
 
     val checkboxSizes = FinsibleCheckboxDefaults.sizes(size)
     val checkboxShape = FinsibleCheckboxDefaults.shape(shapeVariant, size)
-    val checkboxStateDescription = if (checked) {
-        stringResource(R.string.finsible_checkbox_checked_state)
-    } else {
-        stringResource(R.string.finsible_checkbox_unchecked_state)
-    }
 
-    val animationSpec = if (animateChecking) {
+    val dynamicFloatSpec = if (animateChecking) {
         tween<Float>(durationMillis = Duration.MS_200.toInt())
-    } else {
-        snap()
-    }
+    } else snap()
+
+    val dynamicColorSpec = if (animateChecking) {
+        tween<Color>(durationMillis = Duration.MS_200.toInt())
+    } else snap()
+
+    val containerColor by animateColorAsState(
+        targetValue = when {
+            enabled && checked -> colors.checkedContainerColor
+            enabled && !checked -> colors.uncheckedContainerColor
+            !enabled && checked -> colors.disabledCheckedContainerColor
+            else -> colors.disabledUncheckedContainerColor
+        },
+        animationSpec = dynamicColorSpec,
+        label = "finsible-checkbox-container"
+    )
+
+    val borderColor by animateColorAsState(
+        targetValue = when {
+            enabled && checked -> colors.checkedBorderColor
+            enabled && !checked -> colors.uncheckedBorderColor
+            !enabled && checked -> colors.disabledCheckedBorderColor
+            else -> colors.disabledUncheckedBorderColor
+        },
+        animationSpec = dynamicColorSpec,
+        label = "finsible-checkbox-border"
+    )
 
     val checkProgress by animateFloatAsState(
         targetValue = if (checked) 1f else 0f,
-        animationSpec = animationSpec,
+        animationSpec = dynamicFloatSpec,
         label = "finsible-checkbox-progress"
     )
-
-    val containerColor = when {
-        enabled && checked -> colors.checkedContainerColor
-        enabled && !checked -> colors.uncheckedContainerColor
-        !enabled && checked -> colors.disabledCheckedContainerColor
-        else -> colors.disabledUncheckedContainerColor
-    }
-
-    val borderColor = when {
-        enabled && checked -> colors.checkedBorderColor
-        enabled && !checked -> colors.uncheckedBorderColor
-        !enabled && checked -> colors.disabledCheckedBorderColor
-        else -> colors.disabledUncheckedBorderColor
-    }
 
     val checkColor = when {
         enabled && checked -> colors.checkedIconColor
@@ -143,22 +130,23 @@ fun FinsibleCheckbox(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
+            .finsibleBounceIndication(
+                interactionSource = interactionSource,
+            )
+            .minimumInteractiveComponentSize()
+            .semantics {
+                if (checkboxContentDescription != null) {
+                    this.contentDescription = checkboxContentDescription
+                }
+            }
             .toggleable(
                 value = checked,
                 enabled = enabled,
                 role = Role.Checkbox,
                 interactionSource = interactionSource,
-                indication = ripple(color = colors.rippleColor),
+                indication = null,
                 onValueChange = onCheckedChange
             )
-            .semantics {
-                role = Role.Checkbox
-                stateDescription = checkboxStateDescription
-                if (!enabled) {
-                    disabled()
-                }
-                checkboxContentDescription?.let { contentDescription = it }
-            }
     ) {
         Box(
             modifier = Modifier
@@ -180,29 +168,23 @@ fun FinsibleCheckbox(
 
         if (label != null) {
             Spacer(modifier = Modifier.width(checkboxSizes.labelSpacing))
-            Text(
+            FinsibleText(
                 text = label,
-                style = checkboxSizes.labelTextStyle,
-                color = resolvedLabelColor
+                color = resolvedLabelColor,
+                textStyleOverride = checkboxSizes.labelTextStyle
             )
         }
     }
 }
 
-/**
- * Draws an animated two-segment checkmark inside a [DrawScope].
- *
- * The tick is made of two line segments that share a bend point (elbow):
- *   - Segment 1 (short): start → elbow  — the bottom-left downstroke
- *   - Segment 2 (long):  elbow → end    — the top-right upstroke
- *
- * [progress] runs 0→1 and is split at [ANIMATION_MIDPOINT]:
- *   - 0.0–0.5: segment 1 draws from start to elbow
- *   - 0.5–1.0: segment 2 draws from elbow to end
- *
- * Each half is re-normalized to its own 0→1 range so [lerp] always receives
- * a clean fraction regardless of where in the overall animation we are.
- */
+private const val CHECK_START_X = 0.24f
+private const val CHECK_START_Y = 0.53f
+private const val CHECK_ELBOW_X = 0.44f
+private const val CHECK_ELBOW_Y = 0.73f
+private const val CHECK_END_X = 0.76f
+private const val CHECK_END_Y = 0.33f
+private const val ANIMATION_MIDPOINT = 0.5f
+
 private fun DrawScope.drawCheckmark(
     progress: Float,
     color: Color,
@@ -212,13 +194,11 @@ private fun DrawScope.drawCheckmark(
     val elbow = Offset(x = size.width * CHECK_ELBOW_X, y = size.height * CHECK_ELBOW_Y)
     val end = Offset(x = size.width * CHECK_END_X, y = size.height * CHECK_END_Y)
 
-    // Normalize each animation half independently into 0→1 so lerp gets a clean fraction.
     val segment1Progress = (progress / ANIMATION_MIDPOINT).coerceIn(0f, 1f)
     val segment2Progress = ((progress - ANIMATION_MIDPOINT) / ANIMATION_MIDPOINT).coerceIn(0f, 1f)
 
     val stroke = Stroke(width = strokeWidth.toPx(), cap = StrokeCap.Round)
 
-    // Segment 1 — always draw when progress > 0 (caller already guards this)
     drawLine(
         color = color,
         start = start,
@@ -227,7 +207,6 @@ private fun DrawScope.drawCheckmark(
         cap = stroke.cap
     )
 
-    // Segment 2 — only begins once the animation crosses the midpoint
     if (progress > ANIMATION_MIDPOINT) {
         drawLine(
             color = color,

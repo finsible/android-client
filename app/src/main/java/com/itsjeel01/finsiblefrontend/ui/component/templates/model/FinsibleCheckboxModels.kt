@@ -22,7 +22,6 @@ data class FinsibleCheckboxColors(
     val disabledUncheckedIconColor: Color,
     val labelColor: Color,
     val disabledLabelColor: Color,
-    val rippleColor: Color
 )
 
 /** Immutable holder for Checkbox sizes and stroke values. */

@@ -34,7 +34,6 @@ object FinsibleCheckboxDefaults {
         disabledUncheckedIconColor: Color = Color.Unspecified,
         labelColor: Color = Color.Unspecified,
         disabledLabelColor: Color = Color.Unspecified,
-        rippleColor: Color = Color.Unspecified
     ): FinsibleCheckboxColors {
         val theme = FinsibleTheme.colors
 
@@ -73,7 +72,6 @@ object FinsibleCheckboxDefaults {
             disabledUncheckedIconColor = if (disabledUncheckedIconColor != Color.Unspecified) disabledUncheckedIconColor else baseDisabledUncheckedIcon,
             labelColor = if (labelColor != Color.Unspecified) labelColor else baseLabelColor,
             disabledLabelColor = if (disabledLabelColor != Color.Unspecified) disabledLabelColor else baseDisabledLabelColor,
-            rippleColor = if (rippleColor != Color.Unspecified) rippleColor else baseCheckedContainer.copy(alpha = 0.12f)
         )
     }
 
@@ -82,13 +80,7 @@ object FinsibleCheckboxDefaults {
         val d = FinsibleTheme.dimes
         val type = FinsibleTheme.typography
 
-        val supportedSize = when (size) {
-            FinsibleSize.ExtraSmall -> FinsibleSize.Small
-            FinsibleSize.ExtraLarge -> FinsibleSize.Large
-            else -> size
-        }
-
-        return when (supportedSize) {
+        return when (size) {
             FinsibleSize.Small -> FinsibleCheckboxSizes(
                 boxSize = d.d16,
                 cornerRadius = d.d4,
@@ -116,8 +108,7 @@ object FinsibleCheckboxDefaults {
                 labelTextStyle = type.t20
             )
 
-            FinsibleSize.ExtraSmall,
-            FinsibleSize.ExtraLarge -> error("Unreachable: unsupported sizes are normalized before this branch.")
+            else -> error("Invalid checkbox size: $size. Supported sizes are: Small, Medium, and Large.")
         }
     }
 
@@ -129,8 +120,7 @@ object FinsibleCheckboxDefaults {
         return when (shapeVariant) {
             FinsibleShape.Sharp -> d.d0
             FinsibleShape.Rounded -> resolvedSizes.cornerRadius
-            FinsibleShape.Circle,
-            FinsibleShape.Pill -> resolvedSizes.boxSize / 2
+            else -> error("Invalid shape variant: $shapeVariant. Supported variants are: Rounded and Sharp.")
         }
     }
 

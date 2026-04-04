@@ -16,29 +16,39 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleIconBadgeDefaults
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleIconBadgeColors
 
-/** Decorative icon badge with optional background surface. */
+/** Decorative icon badge with optional background surface.
+ *
+ * @param icon The icon to display in the badge.
+ * @param modifier The [Modifier] to be applied to this icon badge.
+ * @param size The size of the badge.
+ * @param showBackground Whether to show a background surface.
+ * @param contentDescription A content description for the icon badge.
+ * @param shapeVariant The shape variant of the badge.
+ * @param colors The colors of the badge.
+ * @param backgroundAlpha The alpha value of the background surface.
+ */
 @Composable
 fun FinsibleIconBadge(
     icon: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     size: FinsibleSize = FinsibleSize.Medium,
     showBackground: Boolean = true,
+    contentDescription: String? = null,
     shapeVariant: FinsibleShape = FinsibleShape.Circle,
     colors: FinsibleIconBadgeColors = FinsibleIconBadgeDefaults.colors(),
     backgroundAlpha: Float = FinsibleIconBadgeDefaults.DEFAULT_BACKGROUND_ALPHA,
-    contentDescription: String? = null
 ) {
     require(size == FinsibleSize.Small || size == FinsibleSize.Medium || size == FinsibleSize.Large) {
         "FinsibleIconBadge supports only Small, Medium, and Large sizes."
+    }
+    require(shapeVariant != FinsibleShape.Pill) {
+        "FinsibleIconBadge does not support Pill shape."
     }
     require(backgroundAlpha in 0f .. 1f) {
         "backgroundAlpha must be between 0f and 1f."
     }
     require(showBackground || backgroundAlpha == FinsibleIconBadgeDefaults.DEFAULT_BACKGROUND_ALPHA) {
         "backgroundAlpha can be customized only when showBackground is true."
-    }
-    require(contentDescription == null || contentDescription.isNotBlank()) {
-        "contentDescription must be null or non-blank."
     }
 
     val badgeSizes = FinsibleIconBadgeDefaults.sizes(size)
@@ -50,7 +60,9 @@ fun FinsibleIconBadge(
     val baseModifier = modifier
         .size(badgeSizes.containerSize)
         .semantics(mergeDescendants = true) {
-            contentDescription?.let { this.contentDescription = it }
+            if (contentDescription != null) {
+                this.contentDescription = contentDescription
+            }
         }
 
     val surfaceModifier = if (!showBackground) {
@@ -58,7 +70,7 @@ fun FinsibleIconBadge(
     } else {
         baseModifier
             .clip(badgeShape)
-            .background(colors.backgroundTint.copy(alpha = backgroundAlpha))
+            .background(colors.backgroundColor.copy(alpha = backgroundAlpha))
     }
 
     Box(

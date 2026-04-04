@@ -6,18 +6,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleIconBadge
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleIconBadgeDefaults
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
-import com.itsjeel01.finsiblefrontend.ui.theme.bold
-import com.itsjeel01.finsiblefrontend.ui.theme.semiBold
 
 private val SupportedIconBadgeSizes = listOf(FinsibleSize.Small, FinsibleSize.Medium, FinsibleSize.Large)
 private val SupportedIconBadgeShapes = listOf(FinsibleShape.Circle, FinsibleShape.Rounded, FinsibleShape.Sharp)
@@ -36,17 +35,16 @@ fun FinsibleIconBadgePreview() {
     FinsibleComponentPreviewScaffold {
         val d = FinsibleTheme.dimes
         val colors = FinsibleTheme.colors
-        val type = FinsibleTheme.typography
 
         Column {
-            Text(
+            FinsibleText(
                 text = "Finsible Icon Badge",
-                style = type.t32.bold(),
+                variant = FinsibleTextVariant.SmallHeadingBold,
                 color = colors.brandAccent
             )
-            Text(
+            FinsibleText(
                 text = "Visual Component Guide",
-                style = type.t16,
+                variant = FinsibleTextVariant.BodyRegular,
                 color = colors.secondaryContent
             )
         }
@@ -64,17 +62,18 @@ fun FinsibleIconBadgePreview() {
                 ) {
                     FinsibleIconBadge(
                         icon = walletIcon,
-                        showBackground = false
+                        showBackground = false,
+                        contentDescription = "Icon badge with no background"
                     )
-                    Text(text = "None", style = type.t12, color = colors.secondaryContent)
+                    FinsibleText(text = "None", variant = FinsibleTextVariant.SmallLabelRegular, color = colors.secondaryContent)
                 }
                 SupportedIconBadgeShapes.forEach { badgeShape ->
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(d.d6)
                     ) {
-                        FinsibleIconBadge(icon = walletIcon, shapeVariant = badgeShape)
-                        Text(text = badgeShape.name, style = type.t12, color = colors.secondaryContent)
+                        FinsibleIconBadge(icon = walletIcon, shapeVariant = badgeShape, contentDescription = badgeShape.name)
+                        FinsibleText(text = badgeShape.name, variant = FinsibleTextVariant.SmallLabelRegular, color = colors.secondaryContent)
                     }
                 }
             }
@@ -90,8 +89,8 @@ fun FinsibleIconBadgePreview() {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(d.d6)
                     ) {
-                        FinsibleIconBadge(icon = walletIcon, size = badgeSize)
-                        Text(text = badgeSize.name, style = type.t12, color = colors.secondaryContent)
+                        FinsibleIconBadge(icon = walletIcon, size = badgeSize, contentDescription = badgeSize.name)
+                        FinsibleText(text = badgeSize.name, variant = FinsibleTextVariant.SmallLabelRegular, color = colors.secondaryContent)
                     }
                 }
             }
@@ -102,9 +101,13 @@ fun FinsibleIconBadgePreview() {
                 horizontalArrangement = Arrangement.spacedBy(d.d12),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                FinsibleIconBadge(icon = walletIcon, backgroundAlpha = 0.08f)
-                FinsibleIconBadge(icon = walletIcon, backgroundAlpha = FinsibleIconBadgeDefaults.DEFAULT_BACKGROUND_ALPHA)
-                FinsibleIconBadge(icon = walletIcon, backgroundAlpha = 0.28f)
+                FinsibleIconBadge(icon = walletIcon, backgroundAlpha = 0.08f, contentDescription = "Background alpha 0.08")
+                FinsibleIconBadge(
+                    icon = walletIcon,
+                    backgroundAlpha = FinsibleIconBadgeDefaults.DEFAULT_BACKGROUND_ALPHA,
+                    contentDescription = "Default background alpha"
+                )
+                FinsibleIconBadge(icon = walletIcon, backgroundAlpha = 0.28f, contentDescription = "Background alpha 0.28")
             }
         }
 
@@ -118,7 +121,8 @@ fun FinsibleIconBadgePreview() {
                     colors = FinsibleIconBadgeDefaults.colors(
                         iconTint = colors.link,
                         backgroundTint = colors.info
-                    )
+                    ),
+                    contentDescription = "Icon badge with custom icon and background colors"
                 )
                 FinsibleIconBadge(
                     icon = walletIcon,
@@ -127,21 +131,23 @@ fun FinsibleIconBadgePreview() {
                         iconTint = colors.brandAccent,
                         backgroundTint = colors.brandAccent20
                     ),
-                    backgroundAlpha = 1f
+                    backgroundAlpha = 1f,
+                    contentDescription = "Icon badge with custom icon and background colors"
                 )
                 FinsibleIconBadge(
                     icon = walletIcon,
                     showBackground = false,
-                    colors = FinsibleIconBadgeDefaults.colors(iconTint = colors.warning)
+                    colors = FinsibleIconBadgeDefaults.colors(iconTint = colors.warning),
+                    contentDescription = "Icon badge with custom icon tint and no background"
                 )
             }
         }
 
         FinsiblePreviewSection("Coverage Matrix") {
             SupportedIconBadgeSizes.forEach { badgeSize ->
-                Text(
+                FinsibleText(
                     text = badgeSize.name,
-                    style = type.t14.semiBold(),
+                    variant = FinsibleTextVariant.SmallBodySemiBold,
                     color = colors.brandAccent
                 )
 
@@ -152,13 +158,15 @@ fun FinsibleIconBadgePreview() {
                     FinsibleIconBadge(
                         icon = walletIcon,
                         size = badgeSize,
-                        showBackground = false
+                        showBackground = false,
+                        contentDescription = "Icon badge with size ${badgeSize.name} and no background"
                     )
                     SupportedIconBadgeShapes.forEach { badgeShape ->
                         FinsibleIconBadge(
                             icon = walletIcon,
                             size = badgeSize,
-                            shapeVariant = badgeShape
+                            shapeVariant = badgeShape,
+                            contentDescription = "Icon badge with size ${badgeSize.name}, shape ${badgeShape.name}, and no background"
                         )
                     }
                 }

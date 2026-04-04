@@ -29,7 +29,7 @@ object FinsibleIconBadgeDefaults {
 
         return FinsibleIconBadgeColors(
             iconTint = if (iconTint != Color.Unspecified) iconTint else baseIconTint,
-            backgroundTint = if (backgroundTint != Color.Unspecified) backgroundTint else baseBackgroundTint
+            backgroundColor = if (backgroundTint != Color.Unspecified) backgroundTint else baseBackgroundTint
         )
     }
 
@@ -38,9 +38,7 @@ object FinsibleIconBadgeDefaults {
         val d = FinsibleTheme.dimes
 
         fun containerSizeFor(iconSize: Dp): Dp {
-            val horizontalPadding = iconSize / 2
-            // Horizontal and vertical padding are both iconSize / 2.
-            return iconSize + (horizontalPadding * 2)
+            return iconSize.times(2.5f)
         }
 
         return when (size) {
@@ -62,17 +60,7 @@ object FinsibleIconBadgeDefaults {
                 roundedCornerRadius = d.d10
             )
 
-            FinsibleSize.ExtraSmall -> FinsibleIconBadgeSizes(
-                containerSize = containerSizeFor(d.d12),
-                iconSize = d.d12,
-                roundedCornerRadius = d.d6
-            )
-
-            FinsibleSize.ExtraLarge -> FinsibleIconBadgeSizes(
-                containerSize = containerSizeFor(d.d20),
-                iconSize = d.d20,
-                roundedCornerRadius = d.d10
-            )
+            else -> error("Invalid icon badge size: $size. Supported sizes are: Small, Medium, and Large.")
         }
     }
 
@@ -81,11 +69,10 @@ object FinsibleIconBadgeDefaults {
         val d = FinsibleTheme.dimes
 
         return when (shapeVariant) {
-            FinsibleShape.Circle,
-            FinsibleShape.Pill -> sizes.containerSize / 2
-
+            FinsibleShape.Circle -> sizes.containerSize / 2
             FinsibleShape.Rounded -> sizes.roundedCornerRadius
             FinsibleShape.Sharp -> d.d0
+            else -> error("Invalid shape variant: $shapeVariant. Supported variants are: Circle, Rounded, and Sharp.")
         }
     }
 
@@ -97,11 +84,10 @@ object FinsibleIconBadgeDefaults {
     @Composable
     fun shape(shapeVariant: FinsibleShape, sizes: FinsibleIconBadgeSizes): Shape {
         return when (shapeVariant) {
-            FinsibleShape.Circle,
-            FinsibleShape.Pill -> CircleShape
-
+            FinsibleShape.Circle -> CircleShape
             FinsibleShape.Rounded -> RoundedCornerShape(cornerRadius(shapeVariant, sizes))
             FinsibleShape.Sharp -> RectangleShape
+            else -> error("Invalid shape variant: $shapeVariant. Supported variants are: Circle, Rounded, and Sharp.")
         }
     }
 

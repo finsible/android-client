@@ -8,7 +8,7 @@ import androidx.compose.ui.unit.Dp
 @Immutable
 data class FinsibleIconBadgeColors(
     val iconTint: Color,
-    val backgroundTint: Color
+    val backgroundColor: Color
 )
 
 /** Immutable holder for Icon Badge dimensions. */

@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -16,12 +15,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleFilterChip
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleIconPosition
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleFilterChipVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
-import com.itsjeel01.finsiblefrontend.ui.theme.bold
-import com.itsjeel01.finsiblefrontend.ui.theme.semiBold
 
 private val SupportedFilterChipSizes = listOf(FinsibleSize.Small, FinsibleSize.Medium, FinsibleSize.Large)
 
@@ -39,17 +39,16 @@ fun FinsibleFilterChipPreview() {
     FinsibleComponentPreviewScaffold {
         val dimes = FinsibleTheme.dimes
         val colors = FinsibleTheme.colors
-        val type = FinsibleTheme.typography
 
         Column {
-            Text(
+            FinsibleText(
                 text = "Finsible Filter Chips",
-                style = type.t32.bold(),
+                variant = FinsibleTextVariant.SmallHeadingBold,
                 color = colors.brandAccent
             )
-            Text(
+            FinsibleText(
                 text = "Visual Component Guide",
-                style = type.t16,
+                variant = FinsibleTextVariant.BodyRegular,
                 color = colors.secondaryContent
             )
         }
@@ -126,11 +125,43 @@ fun FinsibleFilterChipPreview() {
             }
         }
 
+        FinsiblePreviewSection("Variants") {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(dimes.d10),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                FinsibleFilterChip(
+                    selected = true,
+                    onSelectedChange = {},
+                    label = "Filled",
+                    variant = FinsibleFilterChipVariant.Filled
+                )
+                FinsibleFilterChip(
+                    selected = true,
+                    onSelectedChange = {},
+                    label = "Tonal",
+                    variant = FinsibleFilterChipVariant.Tonal
+                )
+                FinsibleFilterChip(
+                    selected = true,
+                    onSelectedChange = {},
+                    label = "Outlined",
+                    variant = FinsibleFilterChipVariant.Outlined
+                )
+                FinsibleFilterChip(
+                    selected = true,
+                    onSelectedChange = {},
+                    label = "Outlined Tonal",
+                    variant = FinsibleFilterChipVariant.OutlinedTonal
+                )
+            }
+        }
+
         FinsiblePreviewSection("Coverage Matrix") {
             SupportedFilterChipSizes.forEach { chipSize ->
-                Text(
+                FinsibleText(
                     text = chipSize.name,
-                    style = type.t14.semiBold(),
+                    variant = FinsibleTextVariant.SmallBodySemiBold,
                     color = colors.brandAccent
                 )
 

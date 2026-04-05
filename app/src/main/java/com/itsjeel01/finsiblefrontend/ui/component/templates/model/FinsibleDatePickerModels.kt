@@ -3,9 +3,12 @@ package com.itsjeel01.finsiblefrontend.ui.component.templates.model
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
+import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.Month
 import java.time.YearMonth
+import java.util.Locale
 
 @Immutable
 data class FinsibleDateRange(
@@ -24,13 +27,6 @@ data class FinsibleMonthYear(
 ) {
     fun toYearMonthOrNull(): YearMonth? = month?.let { YearMonth.of(year, it) }
 
-    fun toYearMonth(): YearMonth {
-        val resolvedMonth = requireNotNull(month) {
-            "Month is required to convert FinsibleMonthYear to YearMonth."
-        }
-        return YearMonth.of(year, resolvedMonth)
-    }
-
     companion object {
         fun from(yearMonth: YearMonth): FinsibleMonthYear {
             return FinsibleMonthYear(year = yearMonth.year, month = yearMonth.month)
@@ -44,6 +40,7 @@ data class FinsibleDatePickerColors(
     val monthHeaderColor: Color,
     val monthHeaderContentColor: Color,
     val weekdayContentColor: Color,
+    val dayContainerColor: Color,
     val dayContentColor: Color,
     val outOfMonthDayContentColor: Color,
     val disabledDayContentColor: Color,
@@ -52,37 +49,107 @@ data class FinsibleDatePickerColors(
     val inRangeDayContainerColor: Color,
     val inRangeDayContentColor: Color,
     val todayBorderColor: Color,
+    val disabledMonthOpacity: Float,
 )
 
 @Immutable
 data class FinsibleDatePickerSizes(
+    val containerElevation: Dp,
     val containerCornerRadius: Dp,
     val contentPadding: Dp,
     val monthHeaderVerticalPadding: Dp,
+    val monthHeaderCornerRadius: Dp,
     val weekdayHeaderBottomPadding: Dp,
     val contentVerticalSpacing: Dp,
     val monthGridHorizontalSpacing: Dp,
     val daysVerticalSpacing: Dp,
     val dayCellSize: Dp,
+    val dayCellInnerSpacing: Dp,
     val dayCellCornerRadius: Dp,
+    val monthGridItemCornerRadius: Dp,
     val monthYearPickerSpacing: Dp,
+    val todayBorderWidth: Dp,
 )
 
-fun FinsibleDateRange.normalized(): FinsibleDateRange {
-    if (startDate == null || endDate == null) {
-        return this
+@Immutable
+data class FinsibleDatePickerTypography(
+    val weekdayTextVariant: FinsibleTextVariant,
+    val daySelectedTextVariant: FinsibleTextVariant,
+    val dayDefaultTextVariant: FinsibleTextVariant,
+    val monthGridYearTextVariant: FinsibleTextVariant,
+    val monthGridItemTextVariant: FinsibleTextVariant,
+)
+
+@Immutable
+data class FinsibleDatePickerShapes(
+    val navigationIconButtonShape: FinsibleShape,
+    val dayShape: FinsibleShape,
+    val monthGridItemShape: FinsibleShape,
+)
+
+@Immutable
+data class CalendarConstraints(
+    val startMonth: YearMonth = YearMonth.now().minusYears(10),
+    val endMonth: YearMonth = YearMonth.now().plusYears(10),
+    val firstVisibleMonth: YearMonth? = null,
+    val today: LocalDate = LocalDate.now(),
+    val firstDayOfWeek: DayOfWeek? = null,
+    val displayYear: Int = YearMonth.now().year,
+    val yearRange: IntRange =
+        (displayYear - DEFAULT_YEAR_WINDOW) ..
+                (displayYear + DEFAULT_YEAR_WINDOW),
+    val availableMonths: List<Month> = Month.entries,
+    val includeAllMonthsOption: Boolean = true,
+    val locale: Locale? = null,
+) {
+    init {
+        require(!endMonth.isBefore(startMonth)) { "endMonth must be on or after startMonth." }
+        require(!yearRange.isEmpty()) { "yearRange must not be empty." }
+        require(displayYear in yearRange) { "displayYear must be inside yearRange." }
+        require(availableMonths.isNotEmpty()) { "availableMonths must not be empty." }
+        require(availableMonths.distinct().size == availableMonths.size) {
+            "availableMonths must not contain duplicate months."
+        }
     }
-    return if (startDate <= endDate) this else copy(startDate = endDate, endDate = startDate)
+
+    fun resolveFirstVisibleMonth(selectedDate: LocalDate? = null, fallbackMonth: YearMonth? = null): YearMonth {
+        val fallback = fallbackMonth ?: selectedDate?.let(YearMonth::from) ?: YearMonth.from(today)
+        return (firstVisibleMonth ?: fallback).coerceIn(startMonth, endMonth)
+    }
+
+    fun resolveFirstDayOfWeek(defaultFirstDayOfWeek: DayOfWeek): DayOfWeek {
+        return firstDayOfWeek ?: defaultFirstDayOfWeek
+    }
+
+    fun resolveLocale(fallbackLocale: Locale): Locale = locale ?: fallbackLocale
+
+    fun validateSelection(selectedMonthYear: FinsibleMonthYear) {
+        require(selectedMonthYear.year in yearRange) {
+            "selectedMonthYear.year must be inside yearRange."
+        }
+        require(selectedMonthYear.month == null || selectedMonthYear.month in availableMonths) {
+            "selectedMonthYear.month must be part of availableMonths when provided."
+        }
+        require(includeAllMonthsOption || selectedMonthYear.month != null) {
+            "selectedMonthYear.month cannot be null when includeAllMonthsOption is false."
+        }
+    }
+
+    companion object {
+        const val DEFAULT_YEAR_WINDOW: Int = 20
+        const val ID_ALL_MONTHS: String = "ALL_MONTHS"
+    }
+}
+
+fun FinsibleDateRange.normalized(): FinsibleDateRange {
+    if (startDate == null || endDate == null) return this
+    return if (startDate > endDate) copy(startDate = endDate, endDate = startDate) else this
 }
 
 fun calculateNextDateRange(
     current: FinsibleDateRange,
     clickedDate: LocalDate,
-    enabledDatePredicate: (LocalDate) -> Boolean = { true },
 ): FinsibleDateRange {
-    if (!enabledDatePredicate(clickedDate)) {
-        return current
-    }
 
     val startDate = current.startDate
     val endDate = current.endDate

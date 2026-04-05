@@ -13,13 +13,15 @@ import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.data.di.hiltUserLocale
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleDatePickerDefaults
+import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleDropdownDefaults
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.CalendarConstraints
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleDatePickerColors
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleDatePickerSizes
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleDropdownOption
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleMonthYear
 import java.time.Month
 import java.time.YearMonth
 import java.time.format.TextStyle
-import java.util.Locale
 
 /**
  * A highly configurable semantic month/year picker component that adheres to Finsible Design System.
@@ -27,10 +29,8 @@ import java.util.Locale
  * @param onDisplayYearChange Callback when the display year changes.
  * @param modifier Composable modifier.
  * @param selectedMonthYear The currently selected month/year.
- * @param displayYear The currently displayed year.
- * @param yearRange The range of years that can be displayed.
+ * @param constraints Shared superset config consumed by all temporal pickers.
  * @param size The size of the picker.
- * @param locale The locale to use for formatting.
  * @param colors The resolved color styles for the date picker.
  * @param sizes The resolved size styles for the date picker.
  */
@@ -40,67 +40,108 @@ fun FinsibleMonthYearPicker(
     onDisplayYearChange: (Int) -> Unit,
     modifier: Modifier = Modifier,
     selectedMonthYear: FinsibleMonthYear = FinsibleMonthYear.from(YearMonth.now()),
-    displayYear: Int = selectedMonthYear.year,
-    yearRange: IntRange = (displayYear - DEFAULT_YEAR_WINDOW) .. (displayYear + DEFAULT_YEAR_WINDOW),
+    constraints: CalendarConstraints = CalendarConstraints(
+        displayYear = selectedMonthYear.year,
+        yearRange =
+            (selectedMonthYear.year - CalendarConstraints.DEFAULT_YEAR_WINDOW) ..
+                    (selectedMonthYear.year + CalendarConstraints.DEFAULT_YEAR_WINDOW),
+    ),
     size: FinsibleSize = FinsibleSize.Medium,
-    locale: Locale? = null,
     colors: FinsibleDatePickerColors = FinsibleDatePickerDefaults.colors(),
     sizes: FinsibleDatePickerSizes = FinsibleDatePickerDefaults.sizes(),
 ) {
-    require(!yearRange.isEmpty()) { "yearRange must not be empty." }
-    require(displayYear in yearRange) { "displayYear must be inside yearRange." }
-    require(selectedMonthYear.year in yearRange) { "selectedMonthYear.year must be inside yearRange." }
-    require(size in SUPPORTED_MONTH_YEAR_PICKER_SIZES) {
+    constraints.validateSelection(selectedMonthYear)
+    require(size in setOf(FinsibleSize.Small, FinsibleSize.Medium, FinsibleSize.Large)) {
         "FinsibleMonthYearPicker supports only Small, Medium, and Large sizes."
     }
-    val resolvedLocale = locale ?: hiltUserLocale()
+
+    val resolvedLocale = constraints.resolveLocale(hiltUserLocale())
 
     val allMonthsLabel = stringResource(R.string.finsible_date_picker_all_months)
-    val monthOptions = remember { listOf<Month?>(null) + Month.entries }
-    val yearOptions = remember(yearRange) { yearRange.toList() }
+    val validMonthsForYear = remember(constraints.availableMonths, constraints.startMonth, constraints.endMonth, constraints.displayYear) {
+        constraints.availableMonths.filter { month ->
+            val ym = YearMonth.of(constraints.displayYear, month)
+            !ym.isBefore(constraints.startMonth) && !ym.isAfter(constraints.endMonth)
+        }
+    }
+    val monthOptions = remember(validMonthsForYear, constraints.includeAllMonthsOption, resolvedLocale, allMonthsLabel) {
+        buildList {
+            if (constraints.includeAllMonthsOption) {
+                add(FinsibleDropdownOption(id = CalendarConstraints.ID_ALL_MONTHS, label = allMonthsLabel))
+            }
+            validMonthsForYear.forEach { month ->
+                add(
+                    FinsibleDropdownOption(
+                        id = month.value.toString(),
+                        label = month.getDisplayName(TextStyle.FULL, resolvedLocale),
+                    ),
+                )
+            }
+        }
+    }
+    val yearOptions = remember(constraints.yearRange) {
+        constraints.yearRange.map { year ->
+            FinsibleDropdownOption(id = year.toString(), label = year.toString())
+        }
+    }
     var isMonthExpanded by remember { mutableStateOf(false) }
     var isYearExpanded by remember { mutableStateOf(false) }
+    val dropdownColors = FinsibleDropdownDefaults.colors(
+        optionTextColor = colors.dayContentColor,
+        selectedOptionTextColor = colors.dayContentColor,
+        placeholderColor = colors.dayContentColor,
+        iconTint = colors.dayContentColor,
+        selectedIconTint = colors.dayContentColor,
+    )
+    val selectedMonthId = selectedMonthYear.month?.value?.toString() ?: CalendarConstraints.ID_ALL_MONTHS
 
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(sizes.monthYearPickerSpacing),
     ) {
-        FinsibleDropdownPicker(
+        FinsibleDropdown(
             modifier = Modifier,
-            value = selectedMonthYear.month?.getDisplayName(TextStyle.FULL, resolvedLocale) ?: allMonthsLabel,
-            expanded = isMonthExpanded,
-            onExpandedChange = { isMonthExpanded = it },
             options = monthOptions,
-            optionLabel = { month -> month?.getDisplayName(TextStyle.FULL, resolvedLocale) ?: allMonthsLabel },
-            isOptionSelected = { option -> option == selectedMonthYear.month },
-            onOptionSelected = { month ->
-                onMonthYearSelected(FinsibleMonthYear(displayYear, month))
+            selectedId = selectedMonthId,
+            onSelected = { selectedId ->
+                val month = if (selectedId == CalendarConstraints.ID_ALL_MONTHS) null else Month.of(selectedId.toInt())
+                onMonthYearSelected(FinsibleMonthYear(constraints.displayYear, month))
                 isMonthExpanded = false
             },
+            placeholder = allMonthsLabel,
+            expanded = isMonthExpanded,
+            onExpandedChange = { isMonthExpanded = it },
             size = size,
-            menuItemTextColor = colors.dayContentColor,
+            colors = dropdownColors,
+            fullWidth = false,
         )
 
-        FinsibleDropdownPicker(
+        FinsibleDropdown(
             modifier = Modifier,
-            value = displayYear.toString(),
-            expanded = isYearExpanded,
-            onExpandedChange = { isYearExpanded = it },
             options = yearOptions,
-            optionLabel = { year -> year.toString() },
-            isOptionSelected = { option -> option == displayYear },
-            onOptionSelected = { year ->
-                onDisplayYearChange(year)
+            selectedId = constraints.displayYear.toString(),
+            onSelected = { selectedId ->
+                val newYear = selectedId.toInt()
+                onDisplayYearChange(newYear)
+
+                val newValidMonths = constraints.availableMonths.filter { m ->
+                    val ym = YearMonth.of(newYear, m)
+                    !ym.isBefore(constraints.startMonth) && !ym.isAfter(constraints.endMonth)
+                }
+                if (selectedMonthYear.month != null && selectedMonthYear.month !in newValidMonths) {
+                    newValidMonths.firstOrNull()?.let { fallbackMonth ->
+                        onMonthYearSelected(FinsibleMonthYear(newYear, fallbackMonth))
+                    }
+                }
                 isYearExpanded = false
             },
+            placeholder = constraints.displayYear.toString(),
+            expanded = isYearExpanded,
+            onExpandedChange = { isYearExpanded = it },
             size = size,
-            menuItemTextColor = colors.dayContentColor,
+            colors = dropdownColors,
+            fullWidth = false,
         )
     }
 }
 
-private val SUPPORTED_MONTH_YEAR_PICKER_SIZES = setOf(
-    FinsibleSize.Small,
-    FinsibleSize.Medium,
-    FinsibleSize.Large,
-)

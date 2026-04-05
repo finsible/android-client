@@ -4,7 +4,6 @@ import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -15,11 +14,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleDatePicker
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleDateRangePicker
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleMonthYearPicker
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.CalendarConstraints
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleDateRange
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleMonthYear
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
-import com.itsjeel01.finsiblefrontend.ui.theme.bold
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -34,11 +35,10 @@ fun FinsibleDatePickerPreview() {
 
     FinsibleComponentPreviewScaffold {
         val colors = FinsibleTheme.colors
-        val typography = FinsibleTheme.typography
 
-        Text(
+        FinsibleText(
             text = "Finsible Date Picker",
-            style = typography.t32.bold(),
+            variant = FinsibleTextVariant.SmallHeadingBold,
             color = colors.brandAccent,
         )
 
@@ -83,20 +83,19 @@ private fun MonthYearPreviewRow(
     size: FinsibleSize,
 ) {
     val colors = FinsibleTheme.colors
-    val typography = FinsibleTheme.typography
 
     Column(verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d4)) {
 
-        Text(
+        FinsibleText(
             text = size.name,
-            style = typography.t12,
+            variant = FinsibleTextVariant.SmallLabelRegular,
             color = colors.secondaryContent,
         )
 
         FinsibleMonthYearPicker(
             onMonthYearSelected = onMonthYearSelected,
             selectedMonthYear = selectedMonthYear,
-            displayYear = displayYear,
+            constraints = CalendarConstraints(displayYear = displayYear),
             onDisplayYearChange = onDisplayYearChange,
             size = size,
         )

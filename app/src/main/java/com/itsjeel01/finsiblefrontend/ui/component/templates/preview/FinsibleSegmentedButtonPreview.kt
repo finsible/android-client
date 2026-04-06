@@ -18,7 +18,7 @@ import com.composables.icons.lucide.R as LucideR
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleSegmentedButtonRow
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleSegmentedButtonOption
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleSegmentedButtonVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleSegmentedButtonVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
 @Preview(name = "Light Mode", showBackground = true, widthDp = 700, heightDp = 500)

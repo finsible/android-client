@@ -22,7 +22,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleSegmentAlignment
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleSegmentedButtonOption
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleSegmentedButtonVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleSegmentedButtonVariant
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.OptionDropdown
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.OptionSlider
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.OptionToggle

@@ -42,11 +42,6 @@ data class FinsibleSegmentedButtonOption(
 @Immutable
 enum class FinsibleSegmentAlignment { Start, Center, End }
 
-@Immutable
-enum class FinsibleSegmentedButtonVariant {
-    Filled,
-    Tonal
-}
 
 
 

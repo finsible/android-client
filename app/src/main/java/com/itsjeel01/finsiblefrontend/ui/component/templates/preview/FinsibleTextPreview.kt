@@ -8,8 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleTextColorVariant
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleTextVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
 @Preview(name = "Light Mode", showBackground = true, widthDp = 700, heightDp = 1000)

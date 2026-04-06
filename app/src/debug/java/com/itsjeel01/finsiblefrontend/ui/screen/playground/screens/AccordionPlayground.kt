@@ -19,8 +19,8 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleA
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleAccordionIconVariant
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleTextVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleAccordionIconVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.OptionDropdown
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.OptionToggle
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme

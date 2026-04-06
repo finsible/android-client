@@ -7,7 +7,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleDateP
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleDatePickerShapes
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleDatePickerSizes
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleDatePickerTypography
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleTextVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
 object FinsibleDatePickerDefaults {

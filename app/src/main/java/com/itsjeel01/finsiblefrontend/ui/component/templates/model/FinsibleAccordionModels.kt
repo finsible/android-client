@@ -5,12 +5,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 
-/** Icon style variants for accordion affordances. */
-@Immutable
-enum class FinsibleAccordionIconVariant {
-    Chevron,
-    PlusMinus
-}
 
 /** Immutable holder for accordion colors. */
 @Immutable

@@ -12,7 +12,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleFilterChipColors
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleFilterChipSizes
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleFilterChipVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleFilterChipVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
 /** Defaults for `FinsibleFilterChip`. */

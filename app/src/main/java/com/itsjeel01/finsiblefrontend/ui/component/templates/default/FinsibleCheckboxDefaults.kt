@@ -11,7 +11,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleCheckboxColors
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleCheckboxSizes
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleCheckboxVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleCheckboxVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
 /** Defaults for `FinsibleCheckbox`. */

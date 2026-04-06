@@ -19,8 +19,8 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleT
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleIconPosition
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleFilterChipVariant
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleTextVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleFilterChipVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
 private val SupportedFilterChipSizes = listOf(FinsibleSize.Small, FinsibleSize.Medium, FinsibleSize.Large)

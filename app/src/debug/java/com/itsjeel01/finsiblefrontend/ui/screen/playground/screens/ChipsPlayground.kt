@@ -23,7 +23,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleF
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleIconPosition
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleFilterChipVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleFilterChipVariant
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.OptionDropdown
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.OptionSlider
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.OptionToggle

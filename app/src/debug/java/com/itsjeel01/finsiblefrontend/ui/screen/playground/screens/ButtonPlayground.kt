@@ -21,7 +21,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleIconPo
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleBadgeType
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleButtonVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleButtonVariant
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.OptionDropdown
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.OptionSlider
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.OptionToggle

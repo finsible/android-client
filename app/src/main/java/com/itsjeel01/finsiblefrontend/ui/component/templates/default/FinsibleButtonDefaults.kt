@@ -14,7 +14,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleButtonBadgeSpec
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleButtonColors
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleButtonSizes
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleButtonVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleButtonVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
 /** Defaults for Button Component. */

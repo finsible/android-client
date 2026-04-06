@@ -17,8 +17,8 @@ import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleScrubber
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleScrubberDefaults
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleScrubberVariant
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleTextVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleScrubberVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.OptionDropdown
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.OptionSlider
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.OptionToggle

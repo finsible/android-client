@@ -34,9 +34,27 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleButtonDefaults
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleBadgeType
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleButtonColors
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleButtonVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleButtonVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
+/** Renders a templatised button with support for icons, loading, and optional badges.
+ * @param onClick Callback invoked when the button is clicked.
+ * @param modifier Modifier applied to the button container.
+ * @param text Text label shown when the button is not icon-only.
+ * @param enabled Whether the button is enabled for interaction.
+ * @param loading Whether to show a loading indicator and suppress clicks.
+ * @param iconOnly Whether to render only the icon without text.
+ * @param fullWidth Whether the button should expand to the parent width.
+ * @param variant Visual variant used to style the button.
+ * @param size Size token used to resolve button dimensions and typography.
+ * @param shapeVariant Shape token used to resolve the button shape.
+ * @param colors Color tokens used for all enabled/disabled states.
+ * @param contentPadding Optional explicit content padding override.
+ * @param badgeType Badge style applied to icon-only buttons.
+ * @param badgeCount Numeric badge value when [badgeType] is count.
+ * @param icon Optional icon content for icon-only and icon+text modes.
+ * @param iconPosition Position of [icon] relative to text content.
+ */
 @Composable
 fun FinsibleButton(
     onClick: () -> Unit,

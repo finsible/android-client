@@ -41,7 +41,7 @@ import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleScrubberDefaults
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleScrubberColors
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleScrubberSizes
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleScrubberVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleScrubberVariant
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import kotlin.math.max

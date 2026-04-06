@@ -40,7 +40,7 @@ import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleIconPosition
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleToggleDefaults
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleTextVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleToggleArrangement
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleToggleColors
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleToggleLabelPosition

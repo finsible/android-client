@@ -18,8 +18,8 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleIconPo
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleBadgeType
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleButtonVariant
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleTextVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleButtonVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
 @Preview(name = "Light Mode", showBackground = true, widthDp = 700, heightDp = 2800)

@@ -12,14 +12,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
-import com.itsjeel01.finsiblefrontend.ui.theme.medium
 
 /** A single labelled radio option. */
 @Composable
@@ -65,6 +65,6 @@ fun RadioOption(
                     .background(dotColor)
             )
         }
-        Text(label, style = FinsibleTheme.typography.t14.medium(), color = labelColor)
+        FinsibleText(text = label, variant = FinsibleTextVariant.SmallBodyMedium, color = labelColor)
     }
 }

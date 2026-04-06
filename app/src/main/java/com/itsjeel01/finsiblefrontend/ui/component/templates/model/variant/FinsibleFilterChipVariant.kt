@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.ui.component.templates.model
+package com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant
 
 enum class FinsibleFilterChipVariant {
     Filled,

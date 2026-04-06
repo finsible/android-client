@@ -10,8 +10,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import com.itsjeel01.finsiblefrontend.data.di.hiltUserLocale
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleTextDefaults
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleTextColorVariant
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleTextVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 
 /** Stateless text wrapper that applies semantic variants and casing rules.
  * @param text The text to display.

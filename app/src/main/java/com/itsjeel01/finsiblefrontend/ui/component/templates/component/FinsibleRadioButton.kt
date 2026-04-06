@@ -32,7 +32,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleRadioButtonDefaults
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleRadioButtonColors
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleRadioButtonSizes
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleTextVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.component.templates.util.finsibleBounceIndication
 
 /** Stateless radio button with optional leading icon and label.

@@ -38,7 +38,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleAccordionDefaults
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleAccordionColors
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleAccordionIconVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleAccordionIconVariant
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleAccordionSizes
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 

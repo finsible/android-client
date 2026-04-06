@@ -60,13 +60,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
-import com.itsjeel01.finsiblefrontend.ui.component.templates.FlushDropdownPositionProvider
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleDropdownDefaults
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleDropdownColors
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleDropdownOption
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleDropdownSizes
+import com.itsjeel01.finsiblefrontend.ui.component.templates.util.FlushDropdownPositionProvider
 
 /** Finsible dropdown component.
  *

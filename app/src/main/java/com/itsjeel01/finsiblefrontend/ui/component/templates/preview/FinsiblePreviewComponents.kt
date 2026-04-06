@@ -8,11 +8,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
-import com.itsjeel01.finsiblefrontend.ui.theme.semiBold
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 
 /** Shared scaffold for long, section-based component previews. */
 @Composable
@@ -42,10 +43,10 @@ fun FinsiblePreviewSection(
     val dimes = FinsibleTheme.dimes
 
     Column(verticalArrangement = Arrangement.spacedBy(dimes.d12)) {
-        Text(
+        FinsibleText(
             text = title,
-            style = FinsibleTheme.typography.t20.semiBold(),
-            color = FinsibleTheme.colors.brandAccent
+            variant = FinsibleTextVariant.MediumTitleSemiBold,
+            colorVariant = FinsibleTextColorVariant.Accent,
         )
         content()
     }

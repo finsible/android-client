@@ -48,7 +48,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleButtonDefaults
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.CalendarConstraints
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleButtonVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleButtonVariant
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleDatePickerColors
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleDatePickerShapes
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleDatePickerSizes

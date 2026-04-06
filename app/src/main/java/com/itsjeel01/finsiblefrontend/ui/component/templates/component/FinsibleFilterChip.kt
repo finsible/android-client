@@ -38,7 +38,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleFilterChipDefaults
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleFilterChipColors
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleFilterChipVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleFilterChipVariant
 
 /** A stateless selectable chip with optional icon support.
  *
@@ -57,6 +57,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleFilte
  * @param chipContentDescription A content description for this chip.
  * @param selectedTint The tint to apply to the selected chip.
  * @param inverted Whether the chip should be inverted.
+ * @param enforceMinTouchTarget Whether to enforce Material minimum touch target sizing.
  */
 @Composable
 fun FinsibleFilterChip(

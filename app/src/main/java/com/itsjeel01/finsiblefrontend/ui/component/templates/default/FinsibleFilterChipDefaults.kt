@@ -18,10 +18,6 @@ import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 /** Defaults for `FinsibleFilterChip`. */
 object FinsibleFilterChipDefaults {
 
-    private const val SELECTED_TINT_TONAL_CONTAINER_ALPHA = 0.16f
-    private const val SELECTED_TINT_OUTLINED_TONAL_CONTAINER_ALPHA = 0.1f
-    private const val SELECTED_TINT_RIPPLE_ALPHA = 0.12f
-
     @Composable
     fun colors(
         selectedContainerColor: Color = Color.Unspecified,
@@ -53,22 +49,46 @@ object FinsibleFilterChipDefaults {
         }
         val baseSelectedLabel = theme.primaryContent
         val baseSelectedIcon = theme.primaryContent
-        val baseSelectedBorder = theme.brandAccent
+        val baseSelectedBorder = when (variant) {
+            FinsibleFilterChipVariant.Outlined,
+            FinsibleFilterChipVariant.OutlinedTonal -> theme.brandAccent
+
+            FinsibleFilterChipVariant.Filled,
+            FinsibleFilterChipVariant.Tonal -> Color.Transparent
+        }
 
         val baseUnselectedContainer = theme.transparent
         val baseUnselectedLabel = theme.primaryContent
         val baseUnselectedIcon = theme.secondaryContent
-        val baseUnselectedBorder = theme.border
+        val baseUnselectedBorder = when (variant) {
+            FinsibleFilterChipVariant.Outlined,
+            FinsibleFilterChipVariant.OutlinedTonal -> theme.border
+
+            FinsibleFilterChipVariant.Filled,
+            FinsibleFilterChipVariant.Tonal -> Color.Transparent
+        }
 
         val baseDisabledSelectedContainer = theme.disabled
         val baseDisabledSelectedLabel = theme.disabledContent
         val baseDisabledSelectedIcon = theme.disabledContent
-        val baseDisabledSelectedBorder = theme.disabled
+        val baseDisabledSelectedBorder = when (variant) {
+            FinsibleFilterChipVariant.Outlined,
+            FinsibleFilterChipVariant.OutlinedTonal -> theme.disabled
+
+            FinsibleFilterChipVariant.Filled,
+            FinsibleFilterChipVariant.Tonal -> Color.Transparent
+        }
 
         val baseDisabledUnselectedContainer = theme.transparent
         val baseDisabledUnselectedLabel = theme.disabledContent
         val baseDisabledUnselectedIcon = theme.disabledContent
-        val baseDisabledUnselectedBorder = theme.disabled
+        val baseDisabledUnselectedBorder = when (variant) {
+            FinsibleFilterChipVariant.Outlined,
+            FinsibleFilterChipVariant.OutlinedTonal -> theme.disabled
+
+            FinsibleFilterChipVariant.Filled,
+            FinsibleFilterChipVariant.Tonal -> Color.Transparent
+        }
 
         return FinsibleFilterChipColors(
             selectedContainerColor = if (selectedContainerColor != Color.Unspecified) selectedContainerColor else baseSelectedContainer,
@@ -87,7 +107,7 @@ object FinsibleFilterChipDefaults {
             disabledUnselectedLabelColor = if (disabledUnselectedLabelColor != Color.Unspecified) disabledUnselectedLabelColor else baseDisabledUnselectedLabel,
             disabledUnselectedIconTint = if (disabledUnselectedIconTint != Color.Unspecified) disabledUnselectedIconTint else baseDisabledUnselectedIcon,
             disabledUnselectedBorderColor = if (disabledUnselectedBorderColor != Color.Unspecified) disabledUnselectedBorderColor else baseDisabledUnselectedBorder,
-            rippleColor = if (rippleColor != Color.Unspecified) rippleColor else baseSelectedBorder.copy(alpha = 0.12f)
+            rippleColor = if (rippleColor != Color.Unspecified) rippleColor else theme.primaryContent.copy(alpha = 0.12f)
         )
     }
 
@@ -105,21 +125,26 @@ object FinsibleFilterChipDefaults {
     ): FinsibleFilterChipColors {
         if (selectedTint == Color.Unspecified) return colors
 
-        val selectedContainer = when (variant) {
-            FinsibleFilterChipVariant.Filled -> selectedTint
-            FinsibleFilterChipVariant.Tonal -> selectedTint.copy(alpha = SELECTED_TINT_TONAL_CONTAINER_ALPHA)
-            FinsibleFilterChipVariant.Outlined -> Color.Transparent
-            FinsibleFilterChipVariant.OutlinedTonal ->
-                selectedTint.copy(alpha = SELECTED_TINT_OUTLINED_TONAL_CONTAINER_ALPHA)
-        }
+        val selectedContainer = FinsibleSelectableTintDefaults.selectedContainerColor(
+            selectedTint = selectedTint,
+            variant = variant.toSelectableTintVariant()
+        )
 
         return colors.copy(
             selectedContainerColor = selectedContainer,
             selectedLabelColor = selectedContentColor,
             selectedIconTint = selectedContentColor,
-            selectedBorderColor = selectedTint,
-            rippleColor = selectedTint.copy(alpha = SELECTED_TINT_RIPPLE_ALPHA)
+            selectedBorderColor = selectedTint
         )
+    }
+
+    private fun FinsibleFilterChipVariant.toSelectableTintVariant(): FinsibleSelectableTintVariant {
+        return when (this) {
+            FinsibleFilterChipVariant.Filled -> FinsibleSelectableTintVariant.Filled
+            FinsibleFilterChipVariant.Tonal -> FinsibleSelectableTintVariant.Tonal
+            FinsibleFilterChipVariant.Outlined -> FinsibleSelectableTintVariant.Outlined
+            FinsibleFilterChipVariant.OutlinedTonal -> FinsibleSelectableTintVariant.OutlinedTonal
+        }
     }
 
     @Composable

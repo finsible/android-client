@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.ui.screen.playground.screens
+package com.itsjeel01.finsiblefrontend.ui.screen.playground.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,8 +20,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.CalendarConstraints
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleMonthYear
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
-import com.itsjeel01.finsiblefrontend.ui.screen.playground.OptionDropdown
-import com.itsjeel01.finsiblefrontend.ui.screen.playground.OptionToggle
+import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.*
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import java.time.Month
 import java.time.YearMonth

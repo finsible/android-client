@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.ui.screen.playground.screens
+package com.itsjeel01.finsiblefrontend.ui.screen.playground.component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,9 +29,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleTextFieldDefaults
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
-import com.itsjeel01.finsiblefrontend.ui.screen.playground.FinsibleLabeledTextField
-import com.itsjeel01.finsiblefrontend.ui.screen.playground.OptionDropdown
-import com.itsjeel01.finsiblefrontend.ui.screen.playground.OptionToggle
+import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.*
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.composables.icons.lucide.R as LucideR
 

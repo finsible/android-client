@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.ui.screen.playground.screens
+package com.itsjeel01.finsiblefrontend.ui.screen.playground.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,9 +18,11 @@ import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
-import com.itsjeel01.finsiblefrontend.ui.screen.playground.FinsibleLabeledTextField
-import com.itsjeel01.finsiblefrontend.ui.screen.playground.OptionDropdown
-import com.itsjeel01.finsiblefrontend.ui.screen.playground.OptionToggle
+import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.FinsibleLabeledTextField
+import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.OptionDropdown
+import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.OptionToggle
+import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.textColorVariantLabel
+import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.textVariantLabel
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
 @Composable

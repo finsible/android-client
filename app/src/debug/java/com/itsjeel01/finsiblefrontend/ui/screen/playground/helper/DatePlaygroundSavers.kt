@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.ui.screen.playground.screens
+package com.itsjeel01.finsiblefrontend.ui.screen.playground.helper
 
 import androidx.compose.runtime.saveable.mapSaver
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleDateRange

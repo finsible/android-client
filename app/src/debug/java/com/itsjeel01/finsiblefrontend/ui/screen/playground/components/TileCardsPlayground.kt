@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.ui.screen.playground.screens
+package com.itsjeel01.finsiblefrontend.ui.screen.playground.component
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
@@ -25,9 +25,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleTileCardDefaults
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTileCardRotationVariant
 import com.itsjeel01.finsiblefrontend.ui.model.item.StatEntry
-import com.itsjeel01.finsiblefrontend.ui.screen.playground.OptionDropdown
-import com.itsjeel01.finsiblefrontend.ui.screen.playground.OptionSlider
-import com.itsjeel01.finsiblefrontend.ui.screen.playground.OptionToggle
+import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.*
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleGradients
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.GradientType

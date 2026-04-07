@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.ui.screen.playground.screens
+package com.itsjeel01.finsiblefrontend.ui.screen.playground.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,9 +24,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleIconPo
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleFilterChipVariant
-import com.itsjeel01.finsiblefrontend.ui.screen.playground.OptionDropdown
-import com.itsjeel01.finsiblefrontend.ui.screen.playground.OptionSlider
-import com.itsjeel01.finsiblefrontend.ui.screen.playground.OptionToggle
+import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.*
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleColors
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 

@@ -122,43 +122,38 @@ object FinsibleButtonDefaults {
 
         return when (size) {
             FinsibleSize.ExtraSmall -> FinsibleButtonSizes(
-                height = dimes.d24,
-                contentPadding = PaddingValues(horizontal = dimes.d8),
+                contentPadding = PaddingValues(horizontal = dimes.d6, vertical = dimes.d2),
                 textStyle = type.t12.copy(fontWeight = FontWeight.Medium),
                 iconSize = dimes.d12,
                 iconSpacing = dimes.d4,
             )
 
             FinsibleSize.Small -> FinsibleButtonSizes(
-                height = dimes.d32,
-                contentPadding = PaddingValues(horizontal = dimes.d12),
+                contentPadding = PaddingValues(horizontal = dimes.d10, vertical = dimes.d4),
                 textStyle = type.t16.copy(fontWeight = FontWeight.Medium),
                 iconSize = dimes.d16,
-                iconSpacing = dimes.d6
+                iconSpacing = dimes.d4
             )
 
             FinsibleSize.Medium -> FinsibleButtonSizes(
-                height = dimes.d48,
-                contentPadding = PaddingValues(horizontal = dimes.d20),
+                contentPadding = PaddingValues(horizontal = dimes.d16, vertical = dimes.d6),
                 textStyle = type.t18.copy(fontWeight = FontWeight.Medium),
                 iconSize = dimes.d20,
-                iconSpacing = dimes.d8
+                iconSpacing = dimes.d6
             )
 
             FinsibleSize.Large -> FinsibleButtonSizes(
-                height = dimes.d56,
-                contentPadding = PaddingValues(horizontal = dimes.d24),
+                contentPadding = PaddingValues(horizontal = dimes.d20, vertical = dimes.d8),
                 textStyle = type.t20.copy(fontWeight = FontWeight.Medium),
                 iconSize = dimes.d24,
-                iconSpacing = dimes.d8
+                iconSpacing = dimes.d6
             )
 
             FinsibleSize.ExtraLarge -> FinsibleButtonSizes(
-                height = dimes.d64,
-                contentPadding = PaddingValues(horizontal = dimes.d32),
+                contentPadding = PaddingValues(horizontal = dimes.d28, vertical = dimes.d10),
                 textStyle = type.t24.copy(fontWeight = FontWeight.Medium),
                 iconSize = dimes.d28,
-                iconSpacing = dimes.d12
+                iconSpacing = dimes.d10
             )
         }
     }
@@ -178,7 +173,13 @@ object FinsibleButtonDefaults {
             }
 
             FinsibleShape.Circle,
-            FinsibleShape.Pill -> sizes(size).height / 2
+            FinsibleShape.Pill -> when (size) {
+                FinsibleSize.ExtraSmall -> dimes.d12
+                FinsibleSize.Small -> dimes.d16
+                FinsibleSize.Medium -> dimes.d24
+                FinsibleSize.Large -> dimes.d28
+                FinsibleSize.ExtraLarge -> dimes.d32
+            }
         }
     }
 

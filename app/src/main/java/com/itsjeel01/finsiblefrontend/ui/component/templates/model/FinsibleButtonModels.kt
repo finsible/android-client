@@ -23,7 +23,6 @@ data class FinsibleButtonColors(
 /** Immutable holder for Button sizes and typography. */
 @Immutable
 data class FinsibleButtonSizes(
-    val height: Dp,
     val contentPadding: PaddingValues,
     val textStyle: TextStyle,
     val iconSize: Dp,

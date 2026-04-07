@@ -39,7 +39,7 @@ object FinsibleTextFieldDefaults {
             contentColor = if (contentColor != Color.Unspecified) contentColor else colors.primaryContent,
             placeholderColor = if (placeholderColor != Color.Unspecified) placeholderColor else colors.secondaryContent,
             borderColor = if (borderColor != Color.Unspecified) borderColor else colors.border,
-            focusedBorderColor = if (focusedBorderColor != Color.Unspecified) focusedBorderColor else colors.brandAccent,
+            focusedBorderColor = if (focusedBorderColor != Color.Unspecified) focusedBorderColor else colors.primaryContent80,
             errorBorderColor = if (errorBorderColor != Color.Unspecified) errorBorderColor else colors.error,
             disabledContainerColor = if (disabledContainerColor != Color.Unspecified) disabledContainerColor else colors.disabled,
             disabledContentColor = if (disabledContentColor != Color.Unspecified) disabledContentColor else colors.disabledContent,
@@ -58,8 +58,8 @@ object FinsibleTextFieldDefaults {
 
         val spec = when (size) {
             FinsibleSize.ExtraSmall -> FinsibleTextFieldSizes(
-                height = d.d36,
-                contentPadding = d.d10,
+                horizontalPadding = d.d10,
+                verticalPadding = d.d8,
                 textStyle = t.t14,
                 placeholderStyle = t.t14,
                 supportingTextStyle = t.t12,
@@ -68,8 +68,8 @@ object FinsibleTextFieldDefaults {
             )
 
             FinsibleSize.Small -> FinsibleTextFieldSizes(
-                height = d.d44,
-                contentPadding = d.d12,
+                horizontalPadding = d.d12,
+                verticalPadding = d.d10,
                 textStyle = t.t16,
                 placeholderStyle = t.t16,
                 supportingTextStyle = t.t12,
@@ -78,8 +78,8 @@ object FinsibleTextFieldDefaults {
             )
 
             FinsibleSize.Medium -> FinsibleTextFieldSizes(
-                height = d.d52,
-                contentPadding = d.d14,
+                horizontalPadding = d.d14,
+                verticalPadding = d.d12,
                 textStyle = t.t18,
                 placeholderStyle = t.t18,
                 supportingTextStyle = t.t12,
@@ -88,8 +88,8 @@ object FinsibleTextFieldDefaults {
             )
 
             FinsibleSize.Large -> FinsibleTextFieldSizes(
-                height = d.d60,
-                contentPadding = d.d16,
+                horizontalPadding = d.d16,
+                verticalPadding = d.d14,
                 textStyle = t.t20.medium(),
                 placeholderStyle = t.t20,
                 supportingTextStyle = t.t14,
@@ -98,8 +98,8 @@ object FinsibleTextFieldDefaults {
             )
 
             FinsibleSize.ExtraLarge -> FinsibleTextFieldSizes(
-                height = d.d68,
-                contentPadding = d.d16,
+                horizontalPadding = d.d16,
+                verticalPadding = d.d16,
                 textStyle = t.t24.medium(),
                 placeholderStyle = t.t24,
                 supportingTextStyle = t.t16,
@@ -111,8 +111,8 @@ object FinsibleTextFieldDefaults {
         val corner = when (shapeVariant) {
             FinsibleShape.Sharp -> FinsibleTheme.dimes.d0
             FinsibleShape.Rounded -> spec.cornerRadius
-            FinsibleShape.Pill -> spec.height / 2
-            FinsibleShape.Circle -> spec.height / 2
+            FinsibleShape.Pill,
+            FinsibleShape.Circle -> (spec.iconSize / 2) + spec.verticalPadding
         }
 
         return spec.copy(cornerRadius = corner)

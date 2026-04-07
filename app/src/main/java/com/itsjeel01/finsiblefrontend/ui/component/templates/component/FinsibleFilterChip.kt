@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -39,6 +38,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleFilterChipDefaults
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleFilterChipColors
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleFilterChipVariant
+import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
 /** A stateless selectable chip with optional icon support.
  *
@@ -88,6 +88,10 @@ fun FinsibleFilterChip(
     }
 
     val chipSizes = FinsibleFilterChipDefaults.sizes(size)
+    require(chipSizes.iconSize > FinsibleTheme.dimes.d0) { "chipSizes.iconSize must be > 0." }
+    require(chipSizes.horizontalPadding >= FinsibleTheme.dimes.d0) { "chipSizes.horizontalPadding must be >= 0." }
+    require(chipSizes.verticalPadding >= FinsibleTheme.dimes.d0) { "chipSizes.verticalPadding must be >= 0." }
+
     val chipShape = FinsibleFilterChipDefaults.shape(shapeVariant, chipSizes)
     val selectedTintContentColor = FinsibleFilterChipDefaults.selectedTintContentColor(inverted)
     val resolvedColors = FinsibleFilterChipDefaults.applySelectedTint(
@@ -149,7 +153,6 @@ fun FinsibleFilterChip(
     Row(
         modifier = modifier
             .then(sizeModifier)
-            .defaultMinSize(minHeight = chipSizes.height)
             .clip(chipShape)
             .background(containerColor)
             .border(chipSizes.borderWidth, borderColor, chipShape)
@@ -168,7 +171,7 @@ fun FinsibleFilterChip(
                 }
                 chipContentDescription?.let { contentDescription = it }
             }
-            .padding(chipSizes.contentPadding),
+            .padding(horizontal = chipSizes.horizontalPadding, vertical = chipSizes.verticalPadding),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {

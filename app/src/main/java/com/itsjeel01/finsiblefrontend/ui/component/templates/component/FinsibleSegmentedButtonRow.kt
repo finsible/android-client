@@ -6,10 +6,10 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -164,6 +164,9 @@ private fun FinsibleSegmentedButtonRowBase(
     sizes: FinsibleSegmentedButtonSizes = FinsibleSegmentedButtonDefaults.sizes(size)
 ) {
     require(options.isNotEmpty()) { "options must not be empty." }
+    require(sizes.iconSize > 0.dp) { "sizes.iconSize must be > 0." }
+    require(sizes.horizontalPadding >= 0.dp) { "sizes.horizontalPadding must be >= 0." }
+    require(sizes.verticalPadding >= 0.dp) { "sizes.verticalPadding must be >= 0." }
 
     val segmentShape = FinsibleButtonDefaults.shape(shapeVariant, size)
     val middleShape = FinsibleButtonDefaults.shape(FinsibleShape.Sharp, size)
@@ -212,7 +215,6 @@ private fun FinsibleSegmentedButtonRowBase(
                 Box(
                     modifier = Modifier
                         .weight(1f)
-                        .height(sizes.height)
                         .clip(middleShape)
                         .background(resolvedContainer)
                         .toggleable(
@@ -236,7 +238,7 @@ private fun FinsibleSegmentedButtonRowBase(
                             if (!enabled) disabled()
                             contentDescription = option.label
                         }
-                        .padding(horizontal = sizes.horizontalPadding),
+                        .padding(horizontal = sizes.horizontalPadding, vertical = sizes.verticalPadding),
                     contentAlignment = Alignment.Center
                 ) {
                     val contentArrangement = when (option.alignment) {
@@ -271,7 +273,7 @@ private fun FinsibleSegmentedButtonRowBase(
                 if (!isLast) {
                     Surface(
                         color = resolvedColors.borderColor, modifier = Modifier
-                            .height(sizes.height)
+                            .fillMaxHeight()
                             .width(1.dp)
                     ) {}
                 }

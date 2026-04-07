@@ -50,57 +50,62 @@ object FinsibleDropdownDefaults {
 
         val base = when (size) {
             FinsibleSize.ExtraSmall -> FinsibleDropdownSizes(
-                height = d.d36,
+                horizontalPadding = d.d8,
+                verticalPadding = d.d6,
                 textStyle = t.t14,
                 placeholderStyle = t.t14,
                 iconSize = d.d14,
-                iconSpacing = d.d12,
+                iconSpacing = d.d10,
                 cornerRadius = d.d8,
-                itemPadding = d.d10,
+                itemPadding = d.d8,
                 borderWidth = d.d1
             )
 
             FinsibleSize.Small -> FinsibleDropdownSizes(
-                height = d.d44,
+                horizontalPadding = d.d10,
+                verticalPadding = d.d8,
                 textStyle = t.t16,
                 placeholderStyle = t.t16,
                 iconSize = d.d16,
-                iconSpacing = d.d12,
+                iconSpacing = d.d10,
                 cornerRadius = d.d10,
-                itemPadding = d.d12,
+                itemPadding = d.d10,
                 borderWidth = d.d1
             )
 
             FinsibleSize.Medium -> FinsibleDropdownSizes(
-                height = d.d52,
+                horizontalPadding = d.d12,
+                verticalPadding = d.d10,
                 textStyle = t.t18.medium(),
                 placeholderStyle = t.t18,
                 iconSize = d.d18,
-                iconSpacing = d.d12,
+                iconSpacing = d.d10,
                 cornerRadius = d.d12,
-                itemPadding = d.d14,
+                itemPadding = d.d12,
                 borderWidth = d.d1
             )
 
             FinsibleSize.Large -> FinsibleDropdownSizes(
-                height = d.d60,
+                horizontalPadding = d.d14,
+                verticalPadding = d.d12,
                 textStyle = t.t20.medium(),
                 placeholderStyle = t.t20,
                 iconSize = d.d20,
-                iconSpacing = d.d12,
+                iconSpacing = d.d10,
                 cornerRadius = d.d14,
-                itemPadding = d.d16,
+                itemPadding = d.d14,
                 borderWidth = d.d1
             )
 
             FinsibleSize.ExtraLarge -> FinsibleDropdownSizes(
-                height = d.d68,
+                horizontalPadding = d.d16,
+                verticalPadding = d.d14,
                 textStyle = t.t24.medium(),
                 placeholderStyle = t.t24,
                 iconSize = d.d24,
-                iconSpacing = d.d12,
+                iconSpacing = d.d10,
                 cornerRadius = d.d16,
-                itemPadding = d.d18,
+                itemPadding = d.d16,
                 borderWidth = d.d1
             )
         }
@@ -108,8 +113,8 @@ object FinsibleDropdownDefaults {
         val cornerRadius = when (shapeVariant) {
             FinsibleShape.Sharp -> FinsibleTheme.dimes.d0
             FinsibleShape.Rounded -> base.cornerRadius
-            FinsibleShape.Pill -> base.height / 2
-            FinsibleShape.Circle -> base.height / 2
+            FinsibleShape.Pill,
+            FinsibleShape.Circle -> (base.iconSize / 2) + base.verticalPadding
         }
 
         return base.copy(cornerRadius = cornerRadius)

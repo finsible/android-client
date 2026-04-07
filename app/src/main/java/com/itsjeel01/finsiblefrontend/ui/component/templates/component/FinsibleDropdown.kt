@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -104,6 +103,9 @@ fun FinsibleDropdown(
 ) {
     require(options.isNotEmpty()) { "options must not be empty." }
     require(placeholder.isNotBlank()) { "placeholder must be non-blank." }
+    require(sizes.iconSize > 0.dp) { "sizes.iconSize must be > 0." }
+    require(sizes.horizontalPadding >= 0.dp) { "sizes.horizontalPadding must be >= 0." }
+    require(sizes.verticalPadding >= 0.dp) { "sizes.verticalPadding must be >= 0." }
 
     var internalExpanded by remember { mutableStateOf(false) }
     val isExpanded = onExpandedChange?.let { expanded } ?: internalExpanded
@@ -165,7 +167,6 @@ fun FinsibleDropdown(
         Row(
             modifier = Modifier
                 .run { if (fullWidth) fillMaxWidth() else this }
-                .height(sizes.height)
                 .clip(anchorShape)
                 .background(colors.containerColor)
                 .border(width = sizes.borderWidth, color = borderColor, shape = anchorShape)
@@ -179,7 +180,7 @@ fun FinsibleDropdown(
                     role = Role.DropdownList
                     contentDescription = placeholder
                 }
-                .padding(horizontal = sizes.itemPadding),
+                .padding(horizontal = sizes.horizontalPadding, vertical = sizes.verticalPadding),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(sizes.iconSpacing)
         ) {
@@ -253,7 +254,6 @@ fun FinsibleDropdown(
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .height(sizes.height)
                                         .background(itemBgColor)
                                         .selectable(
                                             selected = isSelected,
@@ -263,7 +263,7 @@ fun FinsibleDropdown(
                                                 onSelected(option.id)
                                             }
                                         )
-                                        .padding(horizontal = sizes.itemPadding),
+                                        .padding(horizontal = sizes.horizontalPadding, vertical = sizes.verticalPadding),
                                     verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.spacedBy(sizes.iconSpacing)
                                 ) {

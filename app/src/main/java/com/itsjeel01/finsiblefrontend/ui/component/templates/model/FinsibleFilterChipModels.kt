@@ -1,6 +1,5 @@
 package com.itsjeel01.finsiblefrontend.ui.component.templates.model
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -31,8 +30,8 @@ data class FinsibleFilterChipColors(
 /** Immutable holder for Filter Chip dimensions and typography. */
 @Immutable
 data class FinsibleFilterChipSizes(
-    val height: Dp,
-    val contentPadding: PaddingValues,
+    val horizontalPadding: Dp,
+    val verticalPadding: Dp,
     val textStyle: TextStyle,
     val iconSize: Dp,
     val iconSpacing: Dp,

@@ -7,10 +7,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
@@ -27,6 +25,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.dp
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleIconPosition
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
@@ -84,6 +83,7 @@ fun FinsibleButton(
     require(!(variant == FinsibleButtonVariant.Link && badgeType != FinsibleBadgeType.None)) { "Link variant does not support badges." }
     require(!(icon == null && iconPosition != FinsibleIconPosition.Leading)) { "iconPosition has no effect when no icon is provided." }
     require(iconOnly || text != null) { "A label (text) must be provided if the button is not iconOnly." }
+    require(shapeVariant != FinsibleShape.Circle || iconOnly) { "Circle shape is supported only for iconOnly buttons." }
 
     val buttonSizes = FinsibleButtonDefaults.sizes(size)
     val badgeMetrics = FinsibleButtonDefaults.badgeSpec(size)
@@ -110,20 +110,24 @@ fun FinsibleButton(
     val borderStroke = borderColor?.let { BorderStroke(FinsibleTheme.dimes.d1, it) }
     val rippleIndication = ripple(color = colors.rippleColor)
 
+    val circleSide = buttonSizes.iconSize + FinsibleTheme.dimes.d16
     val containerModifier = when {
-        iconOnly -> modifier.size(buttonSizes.height)
-        fullWidth -> modifier
-            .fillMaxWidth()
-            .height(buttonSizes.height)
-        else -> modifier.height(buttonSizes.height)
+        shapeVariant == FinsibleShape.Circle && iconOnly -> modifier.size(circleSide)
+        fullWidth -> modifier.fillMaxWidth()
+        else -> modifier
     }
 
-    val buttonModifier = if (fullWidth || iconOnly) Modifier.fillMaxSize() else Modifier.fillMaxHeight()
+    val buttonModifier = when {
+        shapeVariant == FinsibleShape.Circle && iconOnly -> Modifier
+            .size(circleSide)
+            .defaultMinSize(minWidth = 0.dp, minHeight = 0.dp)
+        iconOnly -> Modifier.defaultMinSize(minWidth = 0.dp, minHeight = 0.dp)
+        fullWidth -> Modifier.fillMaxWidth()
+        else -> Modifier
+    }
 
     val padding = contentPadding ?: when {
         iconOnly -> PaddingValues(FinsibleTheme.dimes.d0)
-        variant == FinsibleButtonVariant.Text || variant == FinsibleButtonVariant.Link ->
-            PaddingValues(horizontal = FinsibleTheme.dimes.d8)
 
         else -> buttonSizes.contentPadding
     }

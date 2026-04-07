@@ -1,9 +1,9 @@
 package com.itsjeel01.finsiblefrontend.ui.component.templates.model
 
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.unit.Dp
 
 /** Immutable holder for text field colors. */
@@ -27,8 +27,8 @@ data class FinsibleTextFieldColors(
 /** Immutable holder for text field sizing. */
 @Immutable
 data class FinsibleTextFieldSizes(
-    val height: Dp,
-    val contentPadding: Dp,
+    val horizontalPadding: Dp,
+    val verticalPadding: Dp,
     val textStyle: TextStyle,
     val placeholderStyle: TextStyle,
     val supportingTextStyle: TextStyle,

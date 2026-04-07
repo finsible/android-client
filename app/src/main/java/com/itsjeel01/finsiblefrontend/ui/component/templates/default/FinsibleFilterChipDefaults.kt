@@ -1,6 +1,5 @@
 package com.itsjeel01.finsiblefrontend.ui.component.templates.default
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -65,7 +64,7 @@ object FinsibleFilterChipDefaults {
             FinsibleFilterChipVariant.OutlinedTonal -> theme.border
 
             FinsibleFilterChipVariant.Filled,
-            FinsibleFilterChipVariant.Tonal -> Color.Transparent
+            FinsibleFilterChipVariant.Tonal -> theme.border
         }
 
         val baseDisabledSelectedContainer = theme.disabled
@@ -87,7 +86,7 @@ object FinsibleFilterChipDefaults {
             FinsibleFilterChipVariant.OutlinedTonal -> theme.disabled
 
             FinsibleFilterChipVariant.Filled,
-            FinsibleFilterChipVariant.Tonal -> Color.Transparent
+            FinsibleFilterChipVariant.Tonal -> theme.disabled
         }
 
         return FinsibleFilterChipColors(
@@ -154,8 +153,8 @@ object FinsibleFilterChipDefaults {
 
         return when (size) {
             FinsibleSize.Small -> FinsibleFilterChipSizes(
-                height = d.d28,
-                contentPadding = PaddingValues(horizontal = d.d10, vertical = d.d6),
+                horizontalPadding = d.d10,
+                verticalPadding = d.d6,
                 textStyle = type.t14.copy(fontWeight = FontWeight.Medium),
                 iconSize = d.d14,
                 iconSpacing = d.d6,
@@ -164,8 +163,8 @@ object FinsibleFilterChipDefaults {
             )
 
             FinsibleSize.Medium -> FinsibleFilterChipSizes(
-                height = d.d36,
-                contentPadding = PaddingValues(horizontal = d.d12, vertical = d.d8),
+                horizontalPadding = d.d12,
+                verticalPadding = d.d8,
                 textStyle = type.t16.copy(fontWeight = FontWeight.Medium),
                 iconSize = d.d16,
                 iconSpacing = d.d8,
@@ -174,8 +173,8 @@ object FinsibleFilterChipDefaults {
             )
 
             FinsibleSize.Large -> FinsibleFilterChipSizes(
-                height = d.d44,
-                contentPadding = PaddingValues(horizontal = d.d16, vertical = d.d10),
+                horizontalPadding = d.d16,
+                verticalPadding = d.d10,
                 textStyle = type.t18.copy(fontWeight = FontWeight.Medium),
                 iconSize = d.d18,
                 iconSpacing = d.d8,
@@ -195,7 +194,7 @@ object FinsibleFilterChipDefaults {
         return when (shapeVariant) {
             FinsibleShape.Sharp -> d.d0
             FinsibleShape.Rounded -> chipSizes.cornerRadius
-            FinsibleShape.Pill -> chipSizes.height / 2
+            FinsibleShape.Pill -> (chipSizes.iconSize / 2) + chipSizes.verticalPadding
             FinsibleShape.Circle -> error("FinsibleFilterChip does not support Circle shape.")
         }
     }

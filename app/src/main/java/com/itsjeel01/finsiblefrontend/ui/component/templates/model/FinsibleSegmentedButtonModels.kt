@@ -23,11 +23,11 @@ data class FinsibleSegmentedButtonColors(
 /** Immutable holder for segmented row sizing. */
 @Immutable
 data class FinsibleSegmentedButtonSizes(
-    val height: Dp,
     val textStyle: TextStyle,
     val iconSize: Dp,
     val iconSpacing: Dp,
-    val horizontalPadding: Dp
+    val horizontalPadding: Dp,
+    val verticalPadding: Dp
 )
 
 /** Represents a single option within the segmented control. */

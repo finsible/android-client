@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -56,7 +55,7 @@ import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
  * @param size Size token used to resolve default dimensions.
  * @param shapeVariant Shape token used to resolve default field shape.
  * @param colors Color tokens used for container, border, text, and icons.
- * @param sizes Size tokens used for spacing, height, and typography.
+ * @param sizes Size tokens used for spacing and typography.
  * @param inputConfig Input configuration for keyboard and max-length behavior.
  * @param leadingIcon Optional icon content placed before the text.
  * @param trailingIcon Optional icon content placed after the text.
@@ -102,6 +101,10 @@ fun FinsibleTextField(
     require(label == null || label.isNotBlank()) { "label must be non-blank when provided." }
     require(inputConfig.maxLength == null || inputConfig.maxLength > 0) { "maxLength must be > 0 when provided." }
     require(minLines in 1 .. maxLines) { "minLines must be > 0 and maxLines >= minLines." }
+    require(sizes.iconSize > FinsibleTheme.dimes.d0) { "sizes.iconSize must be > 0." }
+    require(sizes.horizontalPadding >= FinsibleTheme.dimes.d0) { "sizes.horizontalPadding must be >= 0." }
+    require(sizes.verticalPadding >= FinsibleTheme.dimes.d0) { "sizes.verticalPadding must be >= 0." }
+    require(sizes.cornerRadius >= FinsibleTheme.dimes.d0) { "sizes.cornerRadius must be >= 0." }
 
     val interactionSource = remember { MutableInteractionSource() }
 
@@ -231,11 +234,10 @@ private fun SurfaceField(
     ) { innerTextField ->
         Row(
             modifier = Modifier
-                .heightIn(min = sizes.height)
                 .clip(shape)
                 .background(containerColor)
                 .border(width = FinsibleTheme.dimes.d1, color = borderColor, shape = shape)
-                .padding(horizontal = sizes.contentPadding),
+                .padding(horizontal = sizes.horizontalPadding, vertical = sizes.verticalPadding),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d8)
         ) {

@@ -25,7 +25,8 @@ data class FinsibleDropdownColors(
 /** Immutable holder for dropdown sizing. */
 @Immutable
 data class FinsibleDropdownSizes(
-    val height: Dp,
+    val horizontalPadding: Dp,
+    val verticalPadding: Dp,
     val textStyle: TextStyle,
     val placeholderStyle: TextStyle,
     val iconSize: Dp,

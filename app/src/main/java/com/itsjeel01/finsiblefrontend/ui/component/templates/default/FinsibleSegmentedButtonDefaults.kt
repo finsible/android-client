@@ -87,43 +87,43 @@ object FinsibleSegmentedButtonDefaults {
 
         return when (size) {
             FinsibleSize.ExtraSmall -> FinsibleSegmentedButtonSizes(
-                height = d.d28,
                 textStyle = t.t12.medium(),
                 iconSize = d.d12,
                 iconSpacing = d.d4,
-                horizontalPadding = d.d10
+                horizontalPadding = d.d10,
+                verticalPadding = d.d6
             )
 
             FinsibleSize.Small -> FinsibleSegmentedButtonSizes(
-                height = d.d32,
                 textStyle = t.t14.medium(),
                 iconSize = d.d14,
                 iconSpacing = d.d6,
-                horizontalPadding = d.d12
+                horizontalPadding = d.d12,
+                verticalPadding = d.d8
             )
 
             FinsibleSize.Medium -> FinsibleSegmentedButtonSizes(
-                height = d.d40,
                 textStyle = t.t16.medium(),
                 iconSize = d.d18,
                 iconSpacing = d.d8,
-                horizontalPadding = d.d14
+                horizontalPadding = d.d14,
+                verticalPadding = d.d10
             )
 
             FinsibleSize.Large -> FinsibleSegmentedButtonSizes(
-                height = d.d48,
                 textStyle = t.t18.medium(),
                 iconSize = d.d20,
                 iconSpacing = d.d10,
-                horizontalPadding = d.d16
+                horizontalPadding = d.d16,
+                verticalPadding = d.d12
             )
 
             FinsibleSize.ExtraLarge -> FinsibleSegmentedButtonSizes(
-                height = d.d56,
                 textStyle = t.t20.medium(),
                 iconSize = d.d24,
                 iconSpacing = d.d12,
-                horizontalPadding = d.d18
+                horizontalPadding = d.d18,
+                verticalPadding = d.d14
             )
         }
     }

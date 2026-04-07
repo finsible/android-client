@@ -80,7 +80,6 @@ private fun PlaygroundScaffold(
             subtitle = subtitle,
             onBack = onBack,
             backLabel = backLabel,
-            subtitleColor = FinsibleTheme.colors.brandAccent
         )
         content()
     }

@@ -280,7 +280,6 @@ private fun CheckboxRow(
     isDestructive: Boolean = false
 ) {
     FinsibleCheckbox(
-        modifier = Modifier.fillMaxWidth(),
         checked = checked,
         onCheckedChange = onToggle,
         enforceMinTouchTarget = false,

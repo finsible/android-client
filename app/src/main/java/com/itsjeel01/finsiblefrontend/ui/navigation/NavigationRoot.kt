@@ -12,6 +12,8 @@ import com.itsjeel01.finsiblefrontend.BuildConfig
 import com.itsjeel01.finsiblefrontend.ui.screen.Launch
 import com.itsjeel01.finsiblefrontend.ui.screen.Onboarding
 import com.itsjeel01.finsiblefrontend.ui.screen.TestScreen
+import com.itsjeel01.finsiblefrontend.ui.screen.playground.core.ComponentPlaygroundEntryScreen
+import com.itsjeel01.finsiblefrontend.ui.screen.playground.core.ComponentPlaygroundListScreen
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.AuthViewModel
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.OnboardingViewModel
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.TestViewModel
@@ -41,8 +43,70 @@ fun NavigationRoot(
                                 rootBackStack.clear()
                                 rootBackStack.add(Route.Launch)
                             },
+                            onNavigateToPlayground = {
+                                rootBackStack.add(Route.Playground)
+                            },
                             viewModel = viewModel
                         )
+                    }
+
+                    entry<Route.Playground> {
+                        ComponentPlaygroundListScreen(
+                            onBack = { popLast(rootBackStack) },
+                            onSelect = { route -> rootBackStack.add(route) }
+                        )
+                    }
+
+                    entry<Route.Playground.Accordion> {
+                        ComponentPlaygroundEntryScreen(Route.Playground.Accordion) { popLast(rootBackStack) }
+                    }
+                    entry<Route.Playground.Button> {
+                        ComponentPlaygroundEntryScreen(Route.Playground.Button) { popLast(rootBackStack) }
+                    }
+                    entry<Route.Playground.Checkbox> {
+                        ComponentPlaygroundEntryScreen(Route.Playground.Checkbox) { popLast(rootBackStack) }
+                    }
+                    entry<Route.Playground.ChipsRow> {
+                        ComponentPlaygroundEntryScreen(Route.Playground.ChipsRow) { popLast(rootBackStack) }
+                    }
+                    entry<Route.Playground.DatePicker> {
+                        ComponentPlaygroundEntryScreen(Route.Playground.DatePicker) { popLast(rootBackStack) }
+                    }
+                    entry<Route.Playground.DateRangePicker> {
+                        ComponentPlaygroundEntryScreen(Route.Playground.DateRangePicker) { popLast(rootBackStack) }
+                    }
+                    entry<Route.Playground.Dropdown> {
+                        ComponentPlaygroundEntryScreen(Route.Playground.Dropdown) { popLast(rootBackStack) }
+                    }
+                    entry<Route.Playground.FilterChip> {
+                        ComponentPlaygroundEntryScreen(Route.Playground.FilterChip) { popLast(rootBackStack) }
+                    }
+                    entry<Route.Playground.IconBadge> {
+                        ComponentPlaygroundEntryScreen(Route.Playground.IconBadge) { popLast(rootBackStack) }
+                    }
+                    entry<Route.Playground.MonthYearPicker> {
+                        ComponentPlaygroundEntryScreen(Route.Playground.MonthYearPicker) { popLast(rootBackStack) }
+                    }
+                    entry<Route.Playground.RadioButton> {
+                        ComponentPlaygroundEntryScreen(Route.Playground.RadioButton) { popLast(rootBackStack) }
+                    }
+                    entry<Route.Playground.Scrubber> {
+                        ComponentPlaygroundEntryScreen(Route.Playground.Scrubber) { popLast(rootBackStack) }
+                    }
+                    entry<Route.Playground.SegmentedButtons> {
+                        ComponentPlaygroundEntryScreen(Route.Playground.SegmentedButtons) { popLast(rootBackStack) }
+                    }
+                    entry<Route.Playground.Text> {
+                        ComponentPlaygroundEntryScreen(Route.Playground.Text) { popLast(rootBackStack) }
+                    }
+                    entry<Route.Playground.TextField> {
+                        ComponentPlaygroundEntryScreen(Route.Playground.TextField) { popLast(rootBackStack) }
+                    }
+                    entry<Route.Playground.TileCards> {
+                        ComponentPlaygroundEntryScreen(Route.Playground.TileCards) { popLast(rootBackStack) }
+                    }
+                    entry<Route.Playground.Toggle> {
+                        ComponentPlaygroundEntryScreen(Route.Playground.Toggle) { popLast(rootBackStack) }
                     }
                 }
 
@@ -78,4 +142,10 @@ fun NavigationRoot(
                 }
             }
     )
+}
+
+private fun <T> popLast(backStack: MutableList<T>) {
+    if (backStack.size > 1) {
+        backStack.removeAt(backStack.lastIndex)
+    }
 }

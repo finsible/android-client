@@ -60,6 +60,7 @@ fun FinsibleCheckbox(
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    enforceMinTouchTarget: Boolean = true,
     animateChecking: Boolean = true,
     variant: FinsibleCheckboxVariant = FinsibleCheckboxVariant.Colorful,
     size: FinsibleSize = FinsibleSize.Medium,
@@ -133,7 +134,7 @@ fun FinsibleCheckbox(
             .finsibleBounceIndication(
                 interactionSource = interactionSource,
             )
-            .minimumInteractiveComponentSize()
+            .let { base -> if (enforceMinTouchTarget) base.minimumInteractiveComponentSize() else base }
             .semantics {
                 if (checkboxContentDescription != null) {
                     this.contentDescription = checkboxContentDescription

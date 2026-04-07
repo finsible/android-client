@@ -18,14 +18,17 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.itsjeel01.finsiblefrontend.R
-import com.itsjeel01.finsiblefrontend.ui.component.templates.component.allowedStats
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleIconBadge
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleTileCards
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.allowedStats
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleTileCardDefaults
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTileCardRotationVariant
 import com.itsjeel01.finsiblefrontend.ui.model.item.StatEntry
-import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.*
+import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.OptionDropdown
+import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.OptionSlider
+import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.OptionToggle
+import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.sizeLabel
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleGradients
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.GradientType
@@ -254,9 +257,9 @@ private enum class TileContentVariantPreset(
             kpiPositive = true,
             stats = if (
                 this == HeroOnly ||
-                    this == HeroWithMeta ||
-                    this == HeroWithKpi ||
-                    this == HeroWithMetaAndKpi
+                this == HeroWithMeta ||
+                this == HeroWithKpi ||
+                this == HeroWithMetaAndKpi
             ) {
                 persistentListOf()
             } else {

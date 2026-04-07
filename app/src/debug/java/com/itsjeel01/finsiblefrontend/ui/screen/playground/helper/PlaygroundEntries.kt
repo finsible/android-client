@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.ui.screen.playground.core
+package com.itsjeel01.finsiblefrontend.ui.screen.playground.helper
 
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable

@@ -12,8 +12,8 @@ import com.itsjeel01.finsiblefrontend.BuildConfig
 import com.itsjeel01.finsiblefrontend.ui.screen.Launch
 import com.itsjeel01.finsiblefrontend.ui.screen.Onboarding
 import com.itsjeel01.finsiblefrontend.ui.screen.TestScreen
-import com.itsjeel01.finsiblefrontend.ui.screen.playground.core.ComponentPlaygroundEntryScreen
-import com.itsjeel01.finsiblefrontend.ui.screen.playground.core.ComponentPlaygroundListScreen
+import com.itsjeel01.finsiblefrontend.ui.screen.playground.ComponentPlaygroundEntryScreen
+import com.itsjeel01.finsiblefrontend.ui.screen.playground.ComponentPlaygroundListScreen
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.AuthViewModel
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.OnboardingViewModel
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.TestViewModel

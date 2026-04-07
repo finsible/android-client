@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.ui.screen.playground.core
+package com.itsjeel01.finsiblefrontend.ui.screen.playground
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -27,6 +27,8 @@ import com.itsjeel01.finsiblefrontend.ui.component.DebugTitleBar
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.navigation.Route
+import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.entryForRoute
+import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.playgroundEntries
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.composables.icons.lucide.R as LucideR
 

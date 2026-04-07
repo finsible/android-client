@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import com.composables.icons.lucide.R as LucideR
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleChipsRow
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleFilterChip
@@ -24,9 +23,17 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleIconPo
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleFilterChipVariant
-import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.*
+import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.FilterChipTintOption
+import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.OptionDropdown
+import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.OptionSlider
+import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.OptionToggle
+import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.filterChipTintOptionLabel
+import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.filterChipVariantLabel
+import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.shapeLabel
+import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.sizeLabel
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleColors
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
+import com.composables.icons.lucide.R as LucideR
 
 @Composable
 fun ChipsPlayground() {
@@ -135,14 +142,14 @@ fun ChipsPlayground() {
         OptionSlider(
             label = stringResource(R.string.component_playground_filterchip_tint_alpha),
             value = tintAlpha,
-            valueRange = 0.2f..1f,
+            valueRange = 0.2f .. 1f,
             steps = 7,
             onValueChange = { tintAlpha = it }
         )
         OptionSlider(
             label = stringResource(R.string.component_playground_chips_count),
             value = count,
-            valueRange = 1f..6f,
+            valueRange = 1f .. 6f,
             steps = 5,
             onValueChange = {
                 count = it

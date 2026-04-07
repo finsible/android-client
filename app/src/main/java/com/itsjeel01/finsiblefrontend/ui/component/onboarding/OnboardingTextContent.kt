@@ -16,16 +16,17 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
-import com.itsjeel01.finsiblefrontend.ui.theme.bold
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.OnboardingViewModel
 
 @Composable
@@ -69,10 +70,10 @@ fun OnboardingTextContent(
                 )
             }
         ) { index ->
-            Text(
-                stringResource(carouselItems[index].headline),
-                style = FinsibleTheme.typography.t56.bold(),
-                textAlign = TextAlign.Start,
+            FinsibleText(
+                text = stringResource(carouselItems[index].headline),
+                variant = FinsibleTextVariant.XLargeHeadingBold,
+                textAlign = TextAlign.Start
             )
         }
 
@@ -104,15 +105,16 @@ fun OnboardingTextContent(
         ) { index ->
             val textStyle = FinsibleTheme.typography.t16
 
-            Text(
-                stringResource(carouselItems[index].description),
+            FinsibleText(
+                text = stringResource(carouselItems[index].description),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = FinsibleTheme.dimes.d2)
                     .height((textStyle.lineHeight.value.times(3)).dp),
-                style = textStyle,
-                color = FinsibleTheme.colors.secondaryContent,
+                variant = FinsibleTextVariant.BodyRegular,
+                colorVariant = FinsibleTextColorVariant.Secondary,
                 textAlign = TextAlign.Start,
+                maxLines = Int.MAX_VALUE
             )
         }
     }

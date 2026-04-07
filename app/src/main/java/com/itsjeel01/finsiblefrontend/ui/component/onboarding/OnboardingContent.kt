@@ -9,7 +9,10 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsiblePageIndicators
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleScrubber
+import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleScrubberDefaults
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleScrubberSizes
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleScrubberVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.OnboardingViewModel
 
@@ -58,10 +61,27 @@ fun OnboardingContent(
 
         Spacer(Modifier.height(FinsibleTheme.dimes.d32))
 
-        FinsiblePageIndicators(
-            Modifier.align(Alignment.CenterHorizontally),
-            currentItem,
-            carouselItems.size
+        FinsibleScrubber(
+            currentIndex = currentItem,
+            totalCount = carouselItems.size,
+            onIndexChange = {},
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            variant = FinsibleScrubberVariant.Separate,
+            enabled = false,
+            sizes = FinsibleScrubberSizes(
+                activeBarWidth = FinsibleTheme.dimes.d48,
+                inactiveBarWidth = FinsibleTheme.dimes.d12,
+                barHeight = FinsibleTheme.dimes.d4,
+                barSpacing = FinsibleTheme.dimes.d8,
+                cornerRadius = FinsibleTheme.dimes.d2,
+                minTouchTargetHeight = FinsibleTheme.dimes.d4
+            ),
+            colors = FinsibleScrubberDefaults.colors(
+                currentColor = FinsibleTheme.colors.brandAccent,
+                restColor = FinsibleTheme.colors.primaryContent40,
+                disabledCurrentColor = FinsibleTheme.colors.brandAccent,
+                disabledRestColor = FinsibleTheme.colors.primaryContent40
+            )
         )
 
         Spacer(Modifier.weight(SPACER_BELOW_INDICATORS_WEIGHT))

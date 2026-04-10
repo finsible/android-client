@@ -1,23 +1,39 @@
-package com.itsjeel01.finsiblefrontend.ui.inappnotification
+package com.itsjeel01.finsiblefrontend.ui.component.templates.util
 
 import androidx.annotation.DrawableRes
-import com.itsjeel01.finsiblefrontend.ui.component.fin.NotificationConfig
-import com.itsjeel01.finsiblefrontend.ui.component.fin.NotificationType
+import androidx.compose.runtime.staticCompositionLocalOf
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleNotificationPosition
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleNotificationVariant
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
+val LocalFinsibleNotification = staticCompositionLocalOf<FinsibleNotificationManager> {
+    error("No FinsibleNotificationManager provided, make sure to wrap your content in a FinsibleNotificationHost")
+}
+
+data class FinsibleNotificationStateConfig(
+    val title: String,
+    val variant: FinsibleNotificationVariant,
+    val subtitle: String? = null,
+    val position: FinsibleNotificationPosition = FinsibleNotificationPosition.Top,
+    @DrawableRes val customIcon: Int? = null,
+    val autoDismiss: Boolean = false,
+    val autoDismissDelay: Long = 5000L,
+    val actionLabel: String? = null,
+    val onAction: (() -> Unit)? = null
+)
+
 @Singleton
-class NotificationManager @Inject constructor() {
+class FinsibleNotificationManager @Inject constructor() {
 
-    private val _currentNotification = MutableStateFlow<NotificationConfig?>(null)
-    val currentNotification: StateFlow<NotificationConfig?> =
-        _currentNotification.asStateFlow()
+    private val _currentNotification = MutableStateFlow<FinsibleNotificationStateConfig?>(null)
+    val currentNotification: StateFlow<FinsibleNotificationStateConfig?> = _currentNotification.asStateFlow()
 
-    fun show(notification: NotificationConfig) {
-        _currentNotification.value = notification
+    fun show(config: FinsibleNotificationStateConfig) {
+        _currentNotification.value = config
     }
 
     fun dismiss() {
@@ -29,6 +45,7 @@ class NotificationManager @Inject constructor() {
     fun showSuccess(
         title: String,
         subtitle: String? = null,
+        position: FinsibleNotificationPosition = FinsibleNotificationPosition.Top,
         @DrawableRes customIcon: Int? = null,
         autoDismiss: Boolean = false,
         actionLabel: String? = null,
@@ -36,10 +53,11 @@ class NotificationManager @Inject constructor() {
         autoDismissDelay: Long = 5000L
     ) {
         show(
-            NotificationConfig(
+            FinsibleNotificationStateConfig(
                 title = title,
                 subtitle = subtitle,
-                type = NotificationType.SUCCESS,
+                position = position,
+                variant = FinsibleNotificationVariant.Success,
                 customIcon = customIcon,
                 autoDismiss = autoDismiss,
                 actionLabel = actionLabel,
@@ -52,6 +70,7 @@ class NotificationManager @Inject constructor() {
     fun showError(
         title: String,
         subtitle: String? = null,
+        position: FinsibleNotificationPosition = FinsibleNotificationPosition.Top,
         @DrawableRes customIcon: Int? = null,
         autoDismiss: Boolean = false,
         actionLabel: String? = null,
@@ -59,10 +78,11 @@ class NotificationManager @Inject constructor() {
         autoDismissDelay: Long = 5000L
     ) {
         show(
-            NotificationConfig(
+            FinsibleNotificationStateConfig(
                 title = title,
                 subtitle = subtitle,
-                type = NotificationType.ERROR,
+                position = position,
+                variant = FinsibleNotificationVariant.Error,
                 customIcon = customIcon,
                 autoDismiss = autoDismiss,
                 actionLabel = actionLabel,
@@ -75,6 +95,7 @@ class NotificationManager @Inject constructor() {
     fun showWarning(
         title: String,
         subtitle: String? = null,
+        position: FinsibleNotificationPosition = FinsibleNotificationPosition.Top,
         @DrawableRes customIcon: Int? = null,
         autoDismiss: Boolean = false,
         actionLabel: String? = null,
@@ -82,10 +103,11 @@ class NotificationManager @Inject constructor() {
         autoDismissDelay: Long = 5000L
     ) {
         show(
-            NotificationConfig(
+            FinsibleNotificationStateConfig(
                 title = title,
                 subtitle = subtitle,
-                type = NotificationType.WARNING,
+                position = position,
+                variant = FinsibleNotificationVariant.Warning,
                 customIcon = customIcon,
                 autoDismiss = autoDismiss,
                 actionLabel = actionLabel,
@@ -98,6 +120,7 @@ class NotificationManager @Inject constructor() {
     fun showInfo(
         title: String,
         subtitle: String? = null,
+        position: FinsibleNotificationPosition = FinsibleNotificationPosition.Top,
         @DrawableRes customIcon: Int? = null,
         autoDismiss: Boolean = false,
         actionLabel: String? = null,
@@ -105,10 +128,11 @@ class NotificationManager @Inject constructor() {
         autoDismissDelay: Long = 5000L
     ) {
         show(
-            NotificationConfig(
+            FinsibleNotificationStateConfig(
                 title = title,
                 subtitle = subtitle,
-                type = NotificationType.INFO,
+                position = position,
+                variant = FinsibleNotificationVariant.Info,
                 customIcon = customIcon,
                 autoDismiss = autoDismiss,
                 actionLabel = actionLabel,

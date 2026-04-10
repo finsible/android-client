@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.ui.component.fin
+package com.itsjeel01.finsiblefrontend.ui.component.templates.component
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
@@ -17,9 +17,11 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
+import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
+import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleLoaderDefaults
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleLoaderColors
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleLoaderSpeed
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.pow
@@ -56,34 +58,57 @@ private const val BALL_HIGHLIGHT_ALPHA_MULTIPLIER = 0.3f
 private const val BALL_HIGHLIGHT_X_OFFSET_MULTIPLIER = 0.2f
 private const val BALL_HIGHLIGHT_Y_OFFSET_MULTIPLIER = 0.2f
 
+val BALL_TRAJECTORY = arrayOf(
+    2 to 1, // Short->Medium
+    1 to 0, // Medium->Tall
+    0 to 1, // Tall->Medium
+    1 to 2  // Medium->Short
+)
+
+private val BAR_POSITION_RATIOS = floatArrayOf(
+    BAR_POSITION_TALL_RATIO,
+    BAR_POSITION_MEDIUM_RATIO,
+    BAR_POSITION_SHORT_RATIO
+)
+
+private val BAR_HEIGHT_RATIOS = floatArrayOf(
+    BAR_HEIGHT_TALL_RATIO,
+    BAR_HEIGHT_MEDIUM_RATIO,
+    BAR_HEIGHT_SHORT_RATIO
+)
+
 @Composable
-fun FinsibleLoadingIndicator(
+fun FinsibleLoader(
     modifier: Modifier = Modifier,
-    config: LoadingIndicatorConfig = LoadingIndicatorConfig()
+    size: FinsibleSize = FinsibleSize.Medium,
+    speed: FinsibleLoaderSpeed = FinsibleLoaderSpeed.Normal,
+    colors: FinsibleLoaderColors = FinsibleLoaderDefaults.colors()
 ) {
-    val size = config.size.loadingIndicatorSize
+    val indicatorSize = FinsibleLoaderDefaults.size(size)
 
     LoadingAnimation(
         modifier = modifier.size(
-            width = size,
-            height = (size.value * INDICATOR_HEIGHT_RATIO).dp
+            width = indicatorSize,
+            height = (indicatorSize.value * INDICATOR_HEIGHT_RATIO).dp
         ),
-        speed = config.speed,
-        barColor = config.barColor(),
-        ballColor = config.ballColor()
+        speed = speed,
+        barColor = colors.barColor,
+        ballColor = colors.ballColor
     )
 }
 
 @Composable
 private fun LoadingAnimation(
     modifier: Modifier = Modifier,
-    speed: LoadingSpeed,
+    speed: FinsibleLoaderSpeed,
     barColor: Color,
     ballColor: Color
 ) {
     val progress = remember { Animatable(0f) }
 
     LaunchedEffect(speed) {
+        progress.snapTo(0f)
+
         progress.animateTo(
             targetValue = 1f,
             animationSpec = infiniteRepeatable(
@@ -110,29 +135,22 @@ private fun DrawScope.drawLoadingAnimation(
     val canvasWidth = size.width
     val canvasHeight = size.height
 
-    val barLayoutConfig = calculateBarLayout(canvasWidth, canvasHeight)
     val ballMovementConfig = calculateBallMovement(progress)
 
-    val ballPositionOffset = calculateBallPosition(ballMovementConfig, barLayoutConfig, canvasHeight)
+    // Pass canvas dimensions instead of the layout config
+    val ballPositionOffset = calculateBallPosition(ballMovementConfig, canvasWidth, canvasHeight)
     val ballScaleFactor = calculateBallScale(ballMovementConfig.progress)
 
-    drawBars(barLayoutConfig, barColor)
+    drawBars(canvasWidth, canvasHeight, barColor)
     animateBall(ballPositionOffset, ballScaleFactor, canvasWidth, ballColor)
 }
 
 private fun calculateBallMovement(progress: Float): BallMovementConfig {
-    val trajectory = arrayOf(
-        2 to 1, // Short->Medium
-        1 to 0, // Medium->Tall
-        0 to 1, // Tall->Medium
-        1 to 2  // Medium->Short
-    )
-
     val cyclePosition = (progress * BALL_TRAJECTORY_CYCLE_LENGTH) % BALL_TRAJECTORY_CYCLE_LENGTH
     val currentTrajectoryIndex = cyclePosition.toInt()
     val trajectoryStepProgress = cyclePosition - currentTrajectoryIndex
 
-    val (sourceBar, destinationBar) = trajectory[currentTrajectoryIndex]
+    val (sourceBar, destinationBar) = BALL_TRAJECTORY[currentTrajectoryIndex]
 
     return if (trajectoryStepProgress < BALL_LANDING_PHASE_DURATION) {
         BallMovementConfig(
@@ -153,30 +171,14 @@ private fun calculateBallMovement(progress: Float): BallMovementConfig {
     }
 }
 
-private fun calculateBarLayout(
-    canvasWidth: Float,
-    canvasHeight: Float,
-): BarLayoutConfig {
-    val barThickness = canvasWidth * BAR_THICKNESS_RATIO
-    val spacingRatio = BAR_SPACING_RATIO
-    val availableWidth = canvasWidth * (1f - spacingRatio)
-    val leftMargin = spacingRatio * canvasWidth * 0.5f
+private fun getBarX(canvasWidth: Float, barIndex: Int): Float {
+    val availableWidth = canvasWidth * (1f - BAR_SPACING_RATIO)
+    val leftMargin = BAR_SPACING_RATIO * canvasWidth * 0.5f
+    return leftMargin + availableWidth * BAR_POSITION_RATIOS[barIndex]
+}
 
-    return BarLayoutConfig(
-        horizontalPositions = listOf(
-            leftMargin + availableWidth * BAR_POSITION_TALL_RATIO,   // Tall bar
-            leftMargin + availableWidth * BAR_POSITION_MEDIUM_RATIO, // Medium bar
-            leftMargin + availableWidth * BAR_POSITION_SHORT_RATIO   // Short bar
-        ),
-        verticalHeights = listOf(
-            canvasHeight * BAR_HEIGHT_TALL_RATIO,    // Tall bar
-            canvasHeight * BAR_HEIGHT_MEDIUM_RATIO,  // Medium bar
-            canvasHeight * BAR_HEIGHT_SHORT_RATIO    // Short bar
-        ),
-        thickness = barThickness,
-        shadowOffset = canvasWidth * BAR_SHADOW_OFFSET_RATIO,
-        cornerRadius = barThickness * BAR_CORNER_RADIUS_RATIO,
-    )
+private fun getBarHeight(canvasHeight: Float, barIndex: Int): Float {
+    return canvasHeight * BAR_HEIGHT_RATIOS[barIndex]
 }
 
 private fun applyOptimizedSpringEasing(progress: Float): Float {
@@ -189,32 +191,27 @@ private fun applyOptimizedSpringEasing(progress: Float): Float {
 
 private fun calculateBallPosition(
     ballMovementState: BallMovementConfig,
-    trampolineLayout: BarLayoutConfig,
+    canvasWidth: Float,
     canvasHeight: Float
 ): Offset {
-    val sourceX = trampolineLayout.horizontalPositions[ballMovementState.sourceBar]
-    val sourceY =
-        canvasHeight - trampolineLayout.verticalHeights[ballMovementState.sourceBar]
+    val sourceX = getBarX(canvasWidth, ballMovementState.sourceBar)
+    val sourceY = canvasHeight - getBarHeight(canvasHeight, ballMovementState.sourceBar)
 
     if (ballMovementState.isLanding) {
         return Offset(sourceX, sourceY)
     }
 
-    val destinationX =
-        trampolineLayout.horizontalPositions[ballMovementState.destBar]
-    val destinationY =
-        canvasHeight - trampolineLayout.verticalHeights[ballMovementState.destBar]
+    val destinationX = getBarX(canvasWidth, ballMovementState.destBar)
+    val destinationY = canvasHeight - getBarHeight(canvasHeight, ballMovementState.destBar)
 
     val ballX = sourceX + (destinationX - sourceX) * ballMovementState.progress
 
     val baseArcHeight = canvasHeight * BALL_ARC_BASE_HEIGHT_RATIO
-    val distanceMultiplier =
-        abs(ballMovementState.destBar - ballMovementState.sourceBar) * BALL_ARC_DISTANCE_MULTIPLIER + BALL_ARC_DISTANCE_OFFSET
+    val distanceMultiplier = abs(ballMovementState.destBar - ballMovementState.sourceBar) * BALL_ARC_DISTANCE_MULTIPLIER + BALL_ARC_DISTANCE_OFFSET
     val arcHeight = baseArcHeight * distanceMultiplier
 
     val arcProgress = sin(ballMovementState.progress * PI).toFloat()
-    val ballY =
-        sourceY + (destinationY - sourceY) * ballMovementState.progress - arcHeight * arcProgress
+    val ballY = sourceY + (destinationY - sourceY) * ballMovementState.progress - arcHeight * arcProgress
 
     return Offset(ballX, ballY)
 }
@@ -226,33 +223,40 @@ private fun calculateBallScale(trajectoryProgress: Float): Float {
 }
 
 private fun DrawScope.drawBars(
-    trampolineLayout: BarLayoutConfig,
+    canvasWidth: Float,
+    canvasHeight: Float,
     barColor: Color,
 ) {
     val shadowColor = Color.Black.copy(alpha = BALL_SHADOW_ALPHA)
+    val barThickness = canvasWidth * BAR_THICKNESS_RATIO
+    val shadowOffset = canvasWidth * BAR_SHADOW_OFFSET_RATIO
+    val cornerRadius = CornerRadius(barThickness * BAR_CORNER_RADIUS_RATIO)
 
-    trampolineLayout.verticalHeights.forEachIndexed { index, height ->
-        val xPosition = trampolineLayout.horizontalPositions[index]
-        val yPosition = size.height - height
-        val leftXPosition = xPosition - trampolineLayout.thickness / 2
+    for (index in 0 .. 2) {
+        val xPosition = getBarX(canvasWidth, index)
+        val height = getBarHeight(canvasHeight, index)
+        val yPosition = canvasHeight - height
+        val leftXPosition = xPosition - barThickness / 2f
+
+        val barSize = Size(barThickness, height)
 
         // Shadow
         drawRoundRect(
             color = shadowColor,
             topLeft = Offset(
-                leftXPosition + trampolineLayout.shadowOffset,
-                yPosition + trampolineLayout.shadowOffset
+                leftXPosition + shadowOffset,
+                yPosition + shadowOffset
             ),
-            size = Size(trampolineLayout.thickness, height),
-            cornerRadius = CornerRadius(trampolineLayout.cornerRadius)
+            size = barSize,
+            cornerRadius = cornerRadius
         )
 
         // Main bar
         drawRoundRect(
             color = barColor,
             topLeft = Offset(leftXPosition, yPosition),
-            size = Size(trampolineLayout.thickness, height),
-            cornerRadius = CornerRadius(trampolineLayout.cornerRadius)
+            size = barSize,
+            cornerRadius = cornerRadius
         )
     }
 }
@@ -304,30 +308,9 @@ private fun DrawScope.animateBall(
     }
 }
 
-private data class BarLayoutConfig(
-    val horizontalPositions: List<Float>,
-    val verticalHeights: List<Float>,
-    val thickness: Float,
-    val shadowOffset: Float,
-    val cornerRadius: Float,
-)
-
 private data class BallMovementConfig(
     val sourceBar: Int,
     val destBar: Int,
     val progress: Float,
     val isLanding: Boolean
 )
-
-data class LoadingIndicatorConfig(
-    val size: ComponentSize = ComponentSize.Medium,
-    val speed: LoadingSpeed = LoadingSpeed.NORMAL,
-    val customSize: Dp? = null,
-    val tint: Color? = null
-) {
-    @Composable
-    fun barColor(): Color = tint ?: FinsibleTheme.colors.primaryContent80
-
-    @Composable
-    fun ballColor(): Color = tint ?: FinsibleTheme.colors.brandAccent
-}

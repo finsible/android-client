@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.runtime.Composable
@@ -41,7 +43,12 @@ fun <T> OptionDropdown(
     val placeholderText = selectedLabel.ifBlank { label }
 
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-        Column(verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d4)) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(end = FinsibleTheme.dimes.d16),
+            verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d4)
+        ) {
             FinsibleText(
                 text = label,
                 variant = FinsibleTextVariant.BodyRegular,
@@ -164,7 +171,7 @@ fun FinsibleLabeledTextField(
             variant = FinsibleTextVariant.SmallBodyRegular,
             color = FinsibleTheme.colors.primaryContent
         )
-        androidx.compose.material3.OutlinedTextField(
+        OutlinedTextField(
             value = value,
             onValueChange = onValueChange,
             singleLine = true,

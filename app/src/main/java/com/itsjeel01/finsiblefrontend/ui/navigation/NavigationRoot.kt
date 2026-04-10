@@ -1,6 +1,8 @@
 package com.itsjeel01.finsiblefrontend.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
@@ -14,6 +16,7 @@ import com.itsjeel01.finsiblefrontend.ui.screen.Onboarding
 import com.itsjeel01.finsiblefrontend.ui.screen.TestScreen
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.ComponentPlaygroundEntryScreen
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.ComponentPlaygroundListScreen
+import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.AuthViewModel
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.OnboardingViewModel
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.TestViewModel
@@ -27,7 +30,9 @@ fun NavigationRoot(
     val rootBackStack = rememberNavBackStack(startDestination)
 
     NavDisplay(
-        modifier = modifier,
+        modifier = modifier
+            .fillMaxSize()
+            .background(FinsibleTheme.colors.primaryBackground),
         backStack = rootBackStack,
         entryDecorators = listOf(
             rememberSaveableStateHolderNavEntryDecorator(),
@@ -84,8 +89,14 @@ fun NavigationRoot(
                     entry<Route.Playground.IconBadge> {
                         ComponentPlaygroundEntryScreen(Route.Playground.IconBadge) { popLast(rootBackStack) }
                     }
+                    entry<Route.Playground.Loader> {
+                        ComponentPlaygroundEntryScreen(Route.Playground.Loader) { popLast(rootBackStack) }
+                    }
                     entry<Route.Playground.MonthYearPicker> {
                         ComponentPlaygroundEntryScreen(Route.Playground.MonthYearPicker) { popLast(rootBackStack) }
+                    }
+                    entry<Route.Playground.Notification> {
+                        ComponentPlaygroundEntryScreen(Route.Playground.Notification) { popLast(rootBackStack) }
                     }
                     entry<Route.Playground.RadioButton> {
                         ComponentPlaygroundEntryScreen(Route.Playground.RadioButton) { popLast(rootBackStack) }

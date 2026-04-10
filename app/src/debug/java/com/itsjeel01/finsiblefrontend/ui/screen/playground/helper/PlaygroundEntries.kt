@@ -13,7 +13,9 @@ import com.itsjeel01.finsiblefrontend.ui.screen.playground.component.DateRangePi
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.component.DropdownPlayground
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.component.FilterChipPlayground
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.component.IconBadgePlayground
+import com.itsjeel01.finsiblefrontend.ui.screen.playground.component.LoaderPlayground
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.component.MonthYearPickerPlayground
+import com.itsjeel01.finsiblefrontend.ui.screen.playground.component.NotificationPlayground
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.component.RadioButtonPlayground
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.component.ScrubberPlayground
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.component.SegmentedButtonsPlayground
@@ -85,10 +87,22 @@ val playgroundEntries = listOf(
         content = { IconBadgePlayground() }
     ),
     PlaygroundEntry(
+        route = Route.Playground.Loader,
+        titleRes = R.string.component_playground_loading_indicator_name,
+        descriptionRes = R.string.component_playground_loading_indicator_summary,
+        content = { LoaderPlayground() }
+    ),
+    PlaygroundEntry(
         route = Route.Playground.MonthYearPicker,
         titleRes = R.string.component_playground_monthyearpicker_name,
         descriptionRes = R.string.component_playground_monthyearpicker_summary,
         content = { MonthYearPickerPlayground() }
+    ),
+    PlaygroundEntry(
+        route = Route.Playground.Notification,
+        titleRes = R.string.component_playground_notification_name,
+        descriptionRes = R.string.component_playground_notification_summary,
+        content = { NotificationPlayground() }
     ),
     PlaygroundEntry(
         route = Route.Playground.RadioButton,

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
@@ -72,6 +73,7 @@ private fun PlaygroundScaffold(
 
     Column(
         modifier = Modifier
+            .fillMaxSize()
             .background(FinsibleTheme.colors.primaryBackground)
             .padding(safePadding)
     ) {
@@ -142,4 +144,3 @@ private fun ComponentEntry(title: String, description: String, onOpen: () -> Uni
         )
     }
 }
-

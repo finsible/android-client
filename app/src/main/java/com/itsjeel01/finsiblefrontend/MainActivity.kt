@@ -4,11 +4,14 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.CompositionLocalProvider
 import com.itsjeel01.finsiblefrontend.common.TestPreferenceManager
-import com.itsjeel01.finsiblefrontend.data.di.hiltLoadingManager
-import com.itsjeel01.finsiblefrontend.data.di.hiltNotificationManager
-import com.itsjeel01.finsiblefrontend.ui.inappnotification.NotificationHost
-import com.itsjeel01.finsiblefrontend.ui.loading.LoadingIndicatorHost
+import com.itsjeel01.finsiblefrontend.ui.component.templates.util.FinsibleLoaderHost
+import com.itsjeel01.finsiblefrontend.ui.component.templates.util.FinsibleLoaderManager
+import com.itsjeel01.finsiblefrontend.ui.component.templates.util.FinsibleNotificationHost
+import com.itsjeel01.finsiblefrontend.ui.component.templates.util.FinsibleNotificationManager
+import com.itsjeel01.finsiblefrontend.ui.component.templates.util.LocalFinsibleLoader
+import com.itsjeel01.finsiblefrontend.ui.component.templates.util.LocalFinsibleNotification
 import com.itsjeel01.finsiblefrontend.ui.navigation.NavigationRoot
 import com.itsjeel01.finsiblefrontend.ui.navigation.Route
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
@@ -20,6 +23,12 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var testPrefs: TestPreferenceManager
+
+    @Inject
+    lateinit var finsibleLoaderManager: FinsibleLoaderManager
+
+    @Inject
+    lateinit var finsibleNotificationManager: FinsibleNotificationManager
 
     companion object {
         private var hasShownTestScreen = false
@@ -41,12 +50,18 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            FinsibleTheme {
-                LoadingIndicatorHost(loadingIndicatorManager = hiltLoadingManager()) {
-                    NotificationHost(notificationManager = hiltNotificationManager()) {
-                        NavigationRoot(startDestination = startDestination)
+            CompositionLocalProvider(
+                LocalFinsibleLoader provides finsibleLoaderManager,
+                LocalFinsibleNotification provides finsibleNotificationManager
+            ) {
+                FinsibleTheme {
+                    FinsibleLoaderHost(finsibleLoaderManager = finsibleLoaderManager) {
+                        FinsibleNotificationHost(notificationManager = finsibleNotificationManager) {
+                            NavigationRoot(startDestination = startDestination)
+                        }
                     }
                 }
+
             }
         }
     }

@@ -41,10 +41,16 @@ sealed interface Route : NavKey {
         data object IconBadge : Route
 
         @Serializable
+        data object Loader : Route
+
+        @Serializable
         data object MonthYearPicker : Route
 
         @Serializable
         data object RadioButton : Route
+
+        @Serializable
+        data object Notification : Route
 
         @Serializable
         data object Scrubber : Route

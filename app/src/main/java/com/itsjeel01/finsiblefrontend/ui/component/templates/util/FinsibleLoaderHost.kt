@@ -1,5 +1,6 @@
-package com.itsjeel01.finsiblefrontend.ui.loading
+package com.itsjeel01.finsiblefrontend.ui.component.templates.util
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,60 +11,69 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentSize
-import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleLoadingIndicator
-import com.itsjeel01.finsiblefrontend.ui.component.fin.LoadingIndicatorConfig
-import com.itsjeel01.finsiblefrontend.ui.component.fin.LoadingSpeed
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleLoader
+import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleLoaderSpeed
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleOverlayOpacity
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
-private const val OVERLAY_ALPHA = 0.5f
-
 @Composable
-fun LoadingIndicatorHost(
+fun FinsibleLoaderHost(
     modifier: Modifier = Modifier,
-    loadingIndicatorManager: LoadingIndicatorManager,
+    finsibleLoaderManager: FinsibleLoaderManager,
     content: @Composable () -> Unit
 ) {
-    val isActive by loadingIndicatorManager.isActive.collectAsStateWithLifecycle()
-    val message by loadingIndicatorManager.message.collectAsStateWithLifecycle()
+    val isActive by finsibleLoaderManager.isActive.collectAsStateWithLifecycle()
+    val message by finsibleLoaderManager.message.collectAsStateWithLifecycle()
+    val opacity by finsibleLoaderManager.opacity.collectAsStateWithLifecycle()
+
+    BackHandler(enabled = isActive) { } // Block hardware back button
 
     Box(modifier = modifier.fillMaxSize()) {
         content()
 
         if (isActive) {
-            FullScreenLoadingOverlay(
+            FullScreenLoaderOverlay(
                 message = message,
+                opacity = opacity,
                 modifier = Modifier
                     .fillMaxSize()
                     .zIndex(Float.MAX_VALUE)
+                    .pointerInput(Unit) {
+                        awaitPointerEventScope {
+                            while (true) {
+                                awaitPointerEvent().changes.forEach { it.consume() }
+                            }
+                        }
+                    }
             )
         }
     }
 }
 
 @Composable
-private fun FullScreenLoadingOverlay(
+private fun FullScreenLoaderOverlay(
     modifier: Modifier = Modifier,
-    message: String?
+    message: String?,
+    opacity: FinsibleOverlayOpacity
 ) {
+    val scrimColor = FinsibleTheme.colors.primaryBackground.copy(alpha = opacity.alpha)
+
     Box(
-        modifier = modifier.background(
-            FinsibleTheme.colors.primaryBackground.copy(alpha = OVERLAY_ALPHA)
-        ),
+        modifier = modifier.background(scrimColor),
         contentAlignment = Alignment.Center
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d20)
         ) {
-            FinsibleLoadingIndicator(
-                config = LoadingIndicatorConfig(
-                    size = ComponentSize.Large,
-                    speed = LoadingSpeed.NORMAL
-                )
+            FinsibleLoader(
+                size = FinsibleSize.Large,
+                speed = FinsibleLoaderSpeed.Normal
             )
 
             message?.let { msg ->

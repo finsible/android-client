@@ -74,7 +74,7 @@ internal fun TileCardFace(
                 isNarrowCard = isNarrowCard
             )
 
-            Spacer(Modifier.height(FinsibleTheme.dimes.d8))
+            Spacer(Modifier.height(FinsibleTheme.dimes.d4))
 
             FinsibleText(
                 text = card.heroText,

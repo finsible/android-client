@@ -11,11 +11,11 @@ import com.itsjeel01.finsiblefrontend.data.local.entity.AccountEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.AccountGroupEntity
 import com.itsjeel01.finsiblefrontend.data.local.repository.AccountGroupLocalRepository
 import com.itsjeel01.finsiblefrontend.data.local.repository.AccountLocalRepository
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleTileCardData
 import com.itsjeel01.finsiblefrontend.ui.mapper.toUiModel
-import com.itsjeel01.finsiblefrontend.ui.model.item.FlippableCardUIModel
-import com.itsjeel01.finsiblefrontend.ui.model.item.StatEntry
 import com.itsjeel01.finsiblefrontend.ui.model.state.AccountListItem
 import com.itsjeel01.finsiblefrontend.ui.model.state.AccountsUIState
+import com.itsjeel01.finsiblefrontend.ui.model.uimodel.StatEntryUIModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.collections.immutable.toPersistentList
@@ -108,7 +108,7 @@ class AccountsViewModel @Inject constructor(
             }
 
         return AccountsUIState(
-            accountCards = cards.toPersistentList(),
+            tileCards = cards.toPersistentList(),
             listItems = listItems.toPersistentList(),
             accountGroups = groups.map { it.toUiModel() }.toPersistentList(),
             selectedGroupId = selectedGroupId,
@@ -127,24 +127,24 @@ class AccountsViewModel @Inject constructor(
         return assets to liabilities
     }
 
-    private fun createNetWorthCard(netWorthCentis: Long, assetCentis: Long, liabilityCentis: Long) = FlippableCardUIModel(
+    private fun createNetWorthCard(netWorthCentis: Long, assetCentis: Long, liabilityCentis: Long) = FinsibleTileCardData(
         title = context.getString(R.string.net_worth),
-        largeText = netWorthCentis.centisToFormattedCurrency(currencyFormatter),
+        heroText = netWorthCentis.centisToFormattedCurrency(currencyFormatter),
         statistics = listOf(
-            StatEntry(context.getString(R.string.assets), assetCentis.centisToCompactCurrency(currencyFormatter)),
-            StatEntry(context.getString(R.string.liabilities), liabilityCentis.centisToCompactCurrency(currencyFormatter))
+            StatEntryUIModel(context.getString(R.string.assets), assetCentis.centisToCompactCurrency(currencyFormatter)),
+            StatEntryUIModel(context.getString(R.string.liabilities), liabilityCentis.centisToCompactCurrency(currencyFormatter))
         ).toPersistentList()
     )
 
-    private fun createAssetsCard(totalAssetCentis: Long, statistics: List<StatEntry>) = FlippableCardUIModel(
+    private fun createAssetsCard(totalAssetCentis: Long, statistics: List<StatEntryUIModel>) = FinsibleTileCardData(
         title = context.getString(R.string.total_assets),
-        largeText = totalAssetCentis.centisToFormattedCurrency(currencyFormatter),
+        heroText = totalAssetCentis.centisToFormattedCurrency(currencyFormatter),
         statistics = statistics.toPersistentList()
     )
 
-    private fun createLiabilitiesCard(totalLiabilityCentis: Long, statistics: List<StatEntry>) = FlippableCardUIModel(
+    private fun createLiabilitiesCard(totalLiabilityCentis: Long, statistics: List<StatEntryUIModel>) = FinsibleTileCardData(
         title = context.getString(R.string.total_liabilities),
-        largeText = totalLiabilityCentis.centisToFormattedCurrency(currencyFormatter),
+        heroText = totalLiabilityCentis.centisToFormattedCurrency(currencyFormatter),
         statistics = statistics.toPersistentList()
     )
 
@@ -152,7 +152,7 @@ class AccountsViewModel @Inject constructor(
         accounts: List<AccountEntity>,
         includePredicate: (Long) -> Boolean,
         valueSelector: (AccountEntity) -> Long
-    ): List<StatEntry> {
+    ): List<StatEntryUIModel> {
         val matchingAccounts = accounts.filter { includePredicate(it.balanceCentis) }
         if (matchingAccounts.isEmpty()) return emptyList()
 
@@ -169,7 +169,7 @@ class AccountsViewModel @Inject constructor(
 
         return buildList {
             namedGroups.take(2).forEach { (name, totalCentis) ->
-                add(StatEntry(name, totalCentis.centisToCompactCurrency(currencyFormatter)))
+                add(StatEntryUIModel(name, totalCentis.centisToCompactCurrency(currencyFormatter)))
             }
 
             var othersTotalCentis = orphanTotal
@@ -178,7 +178,7 @@ class AccountsViewModel @Inject constructor(
             }
 
             if (othersTotalCentis > 0L) {
-                add(StatEntry(context.getString(R.string.others), othersTotalCentis.centisToCompactCurrency(currencyFormatter)))
+                add(StatEntryUIModel(context.getString(R.string.others), othersTotalCentis.centisToCompactCurrency(currencyFormatter)))
             }
         }
     }

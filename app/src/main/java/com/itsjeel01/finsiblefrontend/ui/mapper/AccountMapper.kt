@@ -4,8 +4,8 @@ import com.itsjeel01.finsiblefrontend.common.CurrencyFormatter
 import com.itsjeel01.finsiblefrontend.common.centisToFormattedCurrency
 import com.itsjeel01.finsiblefrontend.data.local.entity.AccountEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.AccountGroupEntity
-import com.itsjeel01.finsiblefrontend.ui.model.item.AccountGroupUIModel
-import com.itsjeel01.finsiblefrontend.ui.model.item.AccountUIModel
+import com.itsjeel01.finsiblefrontend.ui.model.uimodel.AccountGroupUIModel
+import com.itsjeel01.finsiblefrontend.ui.model.uimodel.AccountUIModel
 
 /** Map an [AccountEntity] to a stable [AccountUIModel] for Compose. */
 fun AccountEntity.toUiModel(currencyFormatter: CurrencyFormatter): AccountUIModel = AccountUIModel(

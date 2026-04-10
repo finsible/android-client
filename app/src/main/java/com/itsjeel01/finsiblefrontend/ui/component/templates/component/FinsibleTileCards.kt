@@ -35,8 +35,8 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleTil
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleTileCardColors
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleTileCardData
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleTileCardSizes
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTileCardRotationVariant
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleScrubberVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTileCardRotationVariant
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import kotlinx.collections.immutable.ImmutableList
@@ -95,9 +95,10 @@ fun FinsibleTileCards(
         }
 
         isFlipping = true
-        targetIndex = bounded
+        targetIndex = bounded // The back face gets the new data immediately
 
         scope.launch {
+            // 1. Single, continuous animation from 0 to 180
             rotation.animateTo(
                 targetValue = 180f,
                 animationSpec = tween(
@@ -105,10 +106,14 @@ fun FinsibleTileCards(
                     easing = elasticEasing
                 )
             )
+
+            // 2. Swap the front face to the new data only AFTER the animation finishes
             displayedIndex = bounded
             if (!isControlled) {
                 internalIndex = bounded
             }
+
+            // 3. Snap back to 0 seamlessly
             rotation.snapTo(0f)
             isFlipping = false
 
@@ -180,14 +185,16 @@ fun FinsibleTileCards(
                 contentPadding = PaddingValues(horizontal = FinsibleTheme.dimes.d16),
                 pageSpacing = FinsibleTheme.dimes.d16
             ) { page ->
+                val card = cards[page]
+                val cardColors = resolveCardColors(card = card, colors = colors, inverted = inverted)
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(shape)
                 ) {
                     TileCardFace(
-                        card = cards[page],
-                        colors = colors,
+                        card = card,
+                        colors = cardColors,
                         sizes = sizes,
                         shape = shape,
                         rotationVariant = rotationVariant,
@@ -198,6 +205,10 @@ fun FinsibleTileCards(
                 }
             }
         } else {
+            // MATCHING FLIPPABLE CARD: Always keep the back card calculated, drawn, and ready
+            val frontIndex = displayedIndex
+            val backIndex = if (isControlled) targetIndex else (displayedIndex + 1) % cards.size
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -211,12 +222,17 @@ fun FinsibleTileCards(
                         role = Role.Button,
                         onClickLabel = rotateCardLabel
                     ) {
-                        flipToIndex((displayedIndex + 1) % cards.size, notifyParent = true)
+                        // Request flip to the eagerly calculated next card
+                        val nextToFlip = if (isControlled) (displayedIndex + 1) % cards.size else backIndex
+                        flipToIndex(nextToFlip, notifyParent = true)
                     }
             ) {
+                // BACK CARD (Drawn pre-rotated 180deg and hidden/ready)
+                val backCard = cards[backIndex]
+                val backCardColors = resolveCardColors(card = backCard, colors = colors, inverted = inverted)
                 TileCardFace(
-                    card = cards[targetIndex],
-                    colors = colors,
+                    card = backCard,
+                    colors = backCardColors,
                     sizes = sizes,
                     shape = shape,
                     rotationVariant = rotationVariant,
@@ -225,9 +241,12 @@ fun FinsibleTileCards(
                     showFace = !showFront
                 )
 
+                // FRONT CARD
+                val frontCard = cards[frontIndex]
+                val frontCardColors = resolveCardColors(card = frontCard, colors = colors, inverted = inverted)
                 TileCardFace(
-                    card = cards[displayedIndex],
-                    colors = colors,
+                    card = frontCard,
+                    colors = frontCardColors,
                     sizes = sizes,
                     shape = shape,
                     rotationVariant = rotationVariant,
@@ -249,6 +268,20 @@ fun FinsibleTileCards(
                 variant = FinsibleScrubberVariant.Separate
             )
         }
+    }
+}
+
+@Composable
+private fun resolveCardColors(
+    card: FinsibleTileCardData,
+    colors: FinsibleTileCardColors,
+    inverted: Boolean
+): FinsibleTileCardColors {
+    val cardInverted = card.inverted ?: inverted
+    return if (card.inverted == null || cardInverted == inverted) {
+        colors
+    } else {
+        FinsibleTileCardDefaults.colors(inverted = cardInverted)
     }
 }
 

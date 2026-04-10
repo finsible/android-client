@@ -47,7 +47,6 @@ internal fun TileCardFace(
     val backgroundBrush = card.backgroundBrush ?: Brush.verticalGradient(
         colors = listOf(colors.containerColor, colors.containerColor)
     )
-    val slotVariant = remember(card) { resolveSlotVariant(card) }
 
     BoxWithConstraints(
         modifier = Modifier
@@ -61,7 +60,10 @@ internal fun TileCardFace(
             .padding(sizes.padding)
     ) {
         val isNarrowCard = maxWidth <= FinsibleTheme.dimes.d260
+        // Resolve the slot variant directly using the card
+        val slotVariant = remember(card) { resolveSlotVariant(card) }
 
+        // Removed AnimatedContent wrapper here
         Column(modifier = Modifier.fillMaxWidth()) {
             TileCardHeader(
                 card = card,

@@ -44,8 +44,9 @@ data class FinsibleTileCardSizes(
 data class FinsibleTileCardData(
     val title: String,
     val heroText: String,
-    val statistics: ImmutableList<com.itsjeel01.finsiblefrontend.ui.model.item.StatEntry>,
+    val statistics: ImmutableList<com.itsjeel01.finsiblefrontend.ui.model.uimodel.StatEntryUIModel>,
     val backgroundBrush: Brush? = null,
+    val inverted: Boolean? = null,
     val subtitle: String? = null,
     val pillText: String? = null,
     val kpiText: String? = null,

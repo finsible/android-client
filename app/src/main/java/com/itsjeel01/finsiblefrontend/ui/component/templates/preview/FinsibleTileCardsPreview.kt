@@ -16,7 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleTileCards
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleTileCardData
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTileCardRotationVariant
-import com.itsjeel01.finsiblefrontend.ui.model.item.StatEntry
+import com.itsjeel01.finsiblefrontend.ui.model.uimodel.StatEntryUIModel
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import kotlinx.collections.immutable.persistentListOf
 
@@ -32,8 +32,8 @@ fun FinsibleTileCardsPreview() {
             pillText = "Live",
             kpiText = "+8.4% this month",
             statistics = persistentListOf(
-                StatEntry("Assets", "$60k"),
-                StatEntry("Liabilities", "$17.5k")
+                StatEntryUIModel("Assets", "$60k"),
+                StatEntryUIModel("Liabilities", "$17.5k")
             ),
             backgroundBrush = Brush.linearGradient(colors = listOf(Color(0xFF3C4BDA), Color(0xFF5F74F2)))
         ),
@@ -44,9 +44,9 @@ fun FinsibleTileCardsPreview() {
             pillText = "On track",
             kpiText = "+2.1% this week",
             statistics = persistentListOf(
-                StatEntry("Goal", "$20k"),
-                StatEntry("Progress", "62%"),
-                StatEntry("ETA", "5 mo")
+                StatEntryUIModel("Goal", "$20k"),
+                StatEntryUIModel("Progress", "62%"),
+                StatEntryUIModel("ETA", "5 mo")
             )
         )
     )

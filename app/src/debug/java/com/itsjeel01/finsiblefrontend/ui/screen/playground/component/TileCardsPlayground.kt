@@ -24,7 +24,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.component.allowedSt
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleTileCardDefaults
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTileCardRotationVariant
-import com.itsjeel01.finsiblefrontend.ui.model.item.StatEntry
+import com.itsjeel01.finsiblefrontend.ui.model.uimodel.StatEntryUIModel
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.OptionDropdown
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.OptionSlider
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.OptionToggle
@@ -48,6 +48,8 @@ fun TileCardsPlayground() {
     var statsCount by rememberSaveable { mutableStateOf(2f) }
     var carouselFraction by rememberSaveable { mutableStateOf(0.92f) }
     var backgroundPreset by rememberSaveable { mutableStateOf(TileBackgroundPreset.Default) }
+    var usePerCardBackground by rememberSaveable { mutableStateOf(false) }
+    var usePerCardInverted by rememberSaveable { mutableStateOf(false) }
     var contentVariant by rememberSaveable { mutableStateOf(TileContentVariantPreset.HeroWithMetaKpiAndStats) }
     val maxStatsForSize = allowedStats(size)
 
@@ -55,12 +57,23 @@ fun TileCardsPlayground() {
 
     val cards = List(count.toInt().coerceAtLeast(1)) { index ->
         val sample = contentVariant.sample(index, statsCount.toInt().coerceIn(0, maxStatsForSize))
+        val cardBackground = if (usePerCardBackground) {
+            TileBackgroundPreset.perCardCycle[index % TileBackgroundPreset.perCardCycle.size].asBrush()
+        } else {
+            backgroundBrush
+        }
+        val cardInverted = if (usePerCardInverted) {
+            index % 2 == 1
+        } else {
+            null
+        }
         com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleTileCardData(
             title = sample.title,
             subtitle = if (showSubtitle) sample.subtitle else null,
             heroText = sample.hero,
             statistics = sample.stats,
-            backgroundBrush = backgroundBrush,
+            backgroundBrush = cardBackground,
+            inverted = cardInverted,
             pillText = if (showPill) sample.pill else null,
             kpiText = if (showTrend) sample.kpiText else null,
             kpiPositive = sample.kpiPositive
@@ -154,6 +167,13 @@ fun TileCardsPlayground() {
             onSelect = { preset -> backgroundPreset = preset }
         )
 
+        OptionToggle(
+            label = stringResource(R.string.component_playground_tile_per_card_background_toggle),
+            checked = usePerCardBackground,
+            onCheckedChange = { usePerCardBackground = it },
+            helperText = stringResource(R.string.component_playground_tile_per_card_background_helper)
+        )
+
         OptionDropdown(
             label = stringResource(R.string.component_playground_tile_rotation_variant_label),
             selectedLabel = stringResource(
@@ -199,6 +219,13 @@ fun TileCardsPlayground() {
             checked = inverted,
             onCheckedChange = { inverted = it }
         )
+
+        OptionToggle(
+            label = stringResource(R.string.component_playground_tile_per_card_inverted_toggle),
+            checked = usePerCardInverted,
+            onCheckedChange = { usePerCardInverted = it },
+            helperText = stringResource(R.string.component_playground_tile_per_card_inverted_helper)
+        )
     }
 }
 
@@ -218,7 +245,11 @@ private enum class TileBackgroundPreset(@StringRes val labelRes: Int, val gradie
     Brand(R.string.component_playground_tile_background_brand, GradientType.BRAND),
     NetWorth(R.string.component_playground_tile_background_net_worth, GradientType.NET_WORTH),
     Assets(R.string.component_playground_tile_background_assets, GradientType.ASSETS),
-    Liabilities(R.string.component_playground_tile_background_liabilities, GradientType.LIABILITIES)
+    Liabilities(R.string.component_playground_tile_background_liabilities, GradientType.LIABILITIES);
+
+    companion object {
+        val perCardCycle = listOf(Default, Brand, NetWorth, Assets, Liabilities)
+    }
 }
 
 @Composable
@@ -244,9 +275,9 @@ private enum class TileContentVariantPreset(
 
     fun sample(index: Int, statsCount: Int): TileSample {
         val allStats = persistentListOf(
-            StatEntry(title = "Stat A", value = "24%"),
-            StatEntry(title = "Stat B", value = "$342"),
-            StatEntry(title = "Stat C", value = "7d")
+            StatEntryUIModel(title = "Stat A", value = "24%"),
+            StatEntryUIModel(title = "Stat B", value = "$342"),
+            StatEntryUIModel(title = "Stat C", value = "7d")
         )
         return TileSample(
             title = "Card ${index + 1}",
@@ -276,6 +307,6 @@ private data class TileSample(
     val pill: String,
     val kpiText: String,
     val kpiPositive: Boolean,
-    val stats: kotlinx.collections.immutable.PersistentList<StatEntry>
+    val stats: kotlinx.collections.immutable.PersistentList<StatEntryUIModel>
 )
 

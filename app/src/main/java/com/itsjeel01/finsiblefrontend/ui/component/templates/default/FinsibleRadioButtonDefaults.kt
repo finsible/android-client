@@ -13,23 +13,31 @@ object FinsibleRadioButtonDefaults {
 
     @Composable
     fun colors(
-        ringColor: Color = Color.Unspecified,
-        dotColor: Color = Color.Unspecified,
-        labelColor: Color = Color.Unspecified,
-        disabledRingColor: Color = Color.Unspecified,
-        disabledDotColor: Color = Color.Unspecified,
-        disabledLabelColor: Color = Color.Unspecified,
+        selectedRingColor: Color = Color.Unspecified,
+        unselectedRingColor: Color = Color.Unspecified,
+        selectedDotColor: Color = Color.Unspecified,
+        selectedLabelColor: Color = Color.Unspecified,
+        unselectedLabelColor: Color = Color.Unspecified,
+        disabledSelectedRingColor: Color = Color.Unspecified,
+        disabledUnselectedRingColor: Color = Color.Unspecified,
+        disabledSelectedDotColor: Color = Color.Unspecified,
+        disabledSelectedLabelColor: Color = Color.Unspecified,
+        disabledUnselectedLabelColor: Color = Color.Unspecified,
         rippleColor: Color = Color.Unspecified
     ): FinsibleRadioButtonColors {
         val theme = FinsibleTheme.colors
 
         return FinsibleRadioButtonColors(
-            ringColor = if (ringColor != Color.Unspecified) ringColor else theme.primaryContent,
-            dotColor = if (dotColor != Color.Unspecified) dotColor else theme.primaryContent,
-            labelColor = if (labelColor != Color.Unspecified) labelColor else theme.primaryContent,
-            disabledRingColor = if (disabledRingColor != Color.Unspecified) disabledRingColor else theme.disabledContent,
-            disabledDotColor = if (disabledDotColor != Color.Unspecified) disabledDotColor else theme.disabledContent,
-            disabledLabelColor = if (disabledLabelColor != Color.Unspecified) disabledLabelColor else theme.disabledContent,
+            selectedRingColor = if (selectedRingColor != Color.Unspecified) selectedRingColor else theme.primaryContent,
+            unselectedRingColor = if (unselectedRingColor != Color.Unspecified) unselectedRingColor else theme.outlineVariant,
+            selectedDotColor = if (selectedDotColor != Color.Unspecified) selectedDotColor else theme.primaryContent,
+            selectedLabelColor = if (selectedLabelColor != Color.Unspecified) selectedLabelColor else theme.primaryContent,
+            unselectedLabelColor = if (unselectedLabelColor != Color.Unspecified) unselectedLabelColor else theme.secondaryContent,
+            disabledSelectedRingColor = if (disabledSelectedRingColor != Color.Unspecified) disabledSelectedRingColor else theme.disabledContent,
+            disabledUnselectedRingColor = if (disabledUnselectedRingColor != Color.Unspecified) disabledUnselectedRingColor else theme.disabledContent,
+            disabledSelectedDotColor = if (disabledSelectedDotColor != Color.Unspecified) disabledSelectedDotColor else theme.disabledContent,
+            disabledSelectedLabelColor = if (disabledSelectedLabelColor != Color.Unspecified) disabledSelectedLabelColor else theme.disabledContent,
+            disabledUnselectedLabelColor = if (disabledUnselectedLabelColor != Color.Unspecified) disabledUnselectedLabelColor else theme.disabledContent,
             rippleColor = if (rippleColor != Color.Unspecified) rippleColor else theme.primaryContent.copy(alpha = 0.12f)
         )
     }

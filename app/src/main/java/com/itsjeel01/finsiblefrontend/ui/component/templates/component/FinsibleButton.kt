@@ -33,6 +33,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleButtonDefaults
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleBadgeType
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleButtonColors
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleButtonSizes
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleButtonVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
@@ -72,6 +73,7 @@ fun FinsibleButton(
     badgeCount: Int = 0,
     icon: (@Composable () -> Unit)? = null,
     iconPosition: FinsibleIconPosition = FinsibleIconPosition.Leading,
+    sizes: FinsibleButtonSizes = FinsibleButtonDefaults.sizes(size),
 ) {
     require(!iconOnly || icon != null) { "iconOnly requires a non-null icon." }
     require(!(iconOnly && fullWidth)) { "iconOnly and fullWidth cannot be used together." }
@@ -85,7 +87,6 @@ fun FinsibleButton(
     require(iconOnly || text != null) { "A label (text) must be provided if the button is not iconOnly." }
     require(shapeVariant != FinsibleShape.Circle || iconOnly) { "Circle shape is supported only for iconOnly buttons." }
 
-    val buttonSizes = FinsibleButtonDefaults.sizes(size)
     val badgeMetrics = FinsibleButtonDefaults.badgeSpec(size)
     val buttonShape = FinsibleButtonDefaults.shape(shapeVariant, size)
 
@@ -97,9 +98,9 @@ fun FinsibleButton(
     }
 
     val textStyle = if (variant == FinsibleButtonVariant.Link) {
-        buttonSizes.textStyle.copy(textDecoration = TextDecoration.Underline)
+        sizes.textStyle.copy(textDecoration = TextDecoration.Underline)
     } else {
-        buttonSizes.textStyle
+        sizes.textStyle
     }
 
     val containerColor = if (enabled) colors.containerColor else colors.disabledContainerColor
@@ -110,26 +111,26 @@ fun FinsibleButton(
     val borderStroke = borderColor?.let { BorderStroke(FinsibleTheme.dimes.d1, it) }
     val rippleIndication = ripple(color = colors.rippleColor)
 
-    val circleSide = buttonSizes.iconSize + FinsibleTheme.dimes.d16
+    val circleSide = sizes.iconSize + FinsibleTheme.dimes.d16
     val containerModifier = when {
         shapeVariant == FinsibleShape.Circle && iconOnly -> modifier.size(circleSide)
         fullWidth -> modifier.fillMaxWidth()
         else -> modifier
     }
 
+    val baseButtonModifier = Modifier.defaultMinSize(minWidth = 0.dp, minHeight = 0.dp)
+
     val buttonModifier = when {
-        shapeVariant == FinsibleShape.Circle && iconOnly -> Modifier
-            .size(circleSide)
-            .defaultMinSize(minWidth = 0.dp, minHeight = 0.dp)
-        iconOnly -> Modifier.defaultMinSize(minWidth = 0.dp, minHeight = 0.dp)
-        fullWidth -> Modifier.fillMaxWidth()
-        else -> Modifier
+        shapeVariant == FinsibleShape.Circle && iconOnly -> baseButtonModifier.size(circleSide)
+        iconOnly -> baseButtonModifier
+        fullWidth -> baseButtonModifier.fillMaxWidth()
+        else -> baseButtonModifier
     }
 
     val padding = contentPadding ?: when {
         iconOnly -> PaddingValues(FinsibleTheme.dimes.d0)
 
-        else -> buttonSizes.contentPadding
+        else -> sizes.contentPadding
     }
 
     val showBadge = badgeType != FinsibleBadgeType.None && !loading
@@ -148,6 +149,7 @@ fun FinsibleButton(
             }
         }
     ) {
+
         CompositionLocalProvider(LocalIndication provides rippleIndication) {
             Button(
                 onClick = onClick,
@@ -169,21 +171,21 @@ fun FinsibleButton(
             ) {
                 if (loading) {
                     CircularProgressIndicator(
-                        modifier = Modifier.size(buttonSizes.iconSize),
+                        modifier = Modifier.size(sizes.iconSize),
                         color = contentColor,
                         strokeWidth = FinsibleTheme.dimes.d2
                     )
                 } else if (iconOnly) {
-                    Box(modifier = Modifier.size(buttonSizes.iconSize), contentAlignment = Alignment.Center) {
+                    Box(modifier = Modifier.size(sizes.iconSize), contentAlignment = Alignment.Center) {
                         icon!!.invoke()
                     }
                 } else {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(buttonSizes.iconSpacing)
+                        horizontalArrangement = Arrangement.spacedBy(sizes.iconSpacing)
                     ) {
                         if (icon != null && iconPosition == FinsibleIconPosition.Leading) {
-                            Box(modifier = Modifier.size(buttonSizes.iconSize), contentAlignment = Alignment.Center) { icon() }
+                            Box(modifier = Modifier.size(sizes.iconSize), contentAlignment = Alignment.Center) { icon() }
                         }
 
                         FinsibleText(
@@ -193,7 +195,7 @@ fun FinsibleButton(
                         )
 
                         if (icon != null && iconPosition == FinsibleIconPosition.Trailing) {
-                            Box(modifier = Modifier.size(buttonSizes.iconSize), contentAlignment = Alignment.Center) { icon() }
+                            Box(modifier = Modifier.size(sizes.iconSize), contentAlignment = Alignment.Center) { icon() }
                         }
                     }
                 }

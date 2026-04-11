@@ -70,17 +70,27 @@ fun FinsibleRadioButton(
     val interactionSource = remember { MutableInteractionSource() }
 
     val animatedRingColor by animateColorAsState(
-        targetValue = if (enabled) colors.ringColor else colors.disabledRingColor,
+        targetValue = when {
+            enabled && selected -> colors.selectedRingColor
+            enabled && !selected -> colors.unselectedRingColor
+            !enabled && selected -> colors.disabledSelectedRingColor
+            else -> colors.disabledUnselectedRingColor
+        },
         animationSpec = tween(),
         label = "ringColor"
     )
     val animatedDotColor by animateColorAsState(
-        targetValue = if (enabled) colors.dotColor else colors.disabledDotColor,
+        targetValue = if (enabled) colors.selectedDotColor else colors.disabledSelectedDotColor,
         animationSpec = tween(),
         label = "dotColor"
     )
     val animatedLabelColor by animateColorAsState(
-        targetValue = if (enabled) colors.labelColor else colors.disabledLabelColor,
+        targetValue = when {
+            enabled && selected -> colors.selectedLabelColor
+            enabled && !selected -> colors.unselectedLabelColor
+            !enabled && selected -> colors.disabledSelectedLabelColor
+            else -> colors.disabledUnselectedLabelColor
+        },
         animationSpec = tween(),
         label = "labelColor"
     )

@@ -247,8 +247,17 @@ fun FinsibleDropdown(
                         ) {
                             options.forEach { option ->
                                 val isSelected = option.id == selectedId
-                                val itemTextColor = if (isSelected) colors.selectedOptionTextColor else colors.optionTextColor
-                                val itemIconTint = if (isSelected) colors.selectedIconTint else colors.iconTint
+                                val isEnabled = option.enabled
+                                val itemTextColor = when {
+                                    !isEnabled -> colors.optionTextColor.copy(alpha = 0.5f)
+                                    isSelected -> colors.selectedOptionTextColor
+                                    else -> colors.optionTextColor
+                                }
+                                val itemIconTint = when {
+                                    !isEnabled -> colors.disabledIconTint
+                                    isSelected -> colors.selectedIconTint
+                                    else -> colors.iconTint
+                                }
                                 val itemBgColor = if (isSelected) colors.selectedOptionColor else Color.Transparent
 
                                 Row(
@@ -258,6 +267,7 @@ fun FinsibleDropdown(
                                         .selectable(
                                             selected = isSelected,
                                             role = Role.RadioButton,
+                                            enabled = isEnabled,
                                             onClick = {
                                                 closeMenu()
                                                 onSelected(option.id)

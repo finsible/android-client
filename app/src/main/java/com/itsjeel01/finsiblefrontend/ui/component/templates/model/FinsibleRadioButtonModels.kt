@@ -8,12 +8,16 @@ import androidx.compose.ui.unit.Dp
 /** Immutable holder for radio button colors. */
 @Immutable
 data class FinsibleRadioButtonColors(
-    val ringColor: Color,
-    val dotColor: Color,
-    val labelColor: Color,
-    val disabledRingColor: Color,
-    val disabledDotColor: Color,
-    val disabledLabelColor: Color,
+    val selectedRingColor: Color,
+    val unselectedRingColor: Color,
+    val selectedDotColor: Color,
+    val selectedLabelColor: Color,
+    val unselectedLabelColor: Color,
+    val disabledSelectedRingColor: Color,
+    val disabledUnselectedRingColor: Color,
+    val disabledSelectedDotColor: Color,
+    val disabledSelectedLabelColor: Color,
+    val disabledUnselectedLabelColor: Color,
     val rippleColor: Color
 )
 

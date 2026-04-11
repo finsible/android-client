@@ -48,13 +48,13 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleButtonDefaults
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.CalendarConstraints
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleButtonVariant
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleDatePickerColors
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleDatePickerShapes
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleDatePickerSizes
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleDatePickerTypography
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleDateRange
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleMonthYear
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleButtonVariant
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.kizitonwose.calendar.core.CalendarDay
@@ -566,10 +566,18 @@ private fun orderedDaysOfWeek(firstDayOfWeek: DayOfWeek): List<DayOfWeek> {
 }
 
 private val headerDateLabelFormatters = ConcurrentHashMap<Locale, DateTimeFormatter>()
+private val rangeHeaderDateLabelFormatters = ConcurrentHashMap<Locale, DateTimeFormatter>()
 
 internal fun LocalDate.toHeaderDateLabel(locale: Locale): String {
     val formatter = headerDateLabelFormatters.getOrPut(locale) {
-        DateTimeFormatter.ofPattern("dd MMM ''yy", locale)
+        DateTimeFormatter.ofPattern("dd MMM yyyy", locale)
+    }
+    return this.format(formatter)
+}
+
+internal fun LocalDate.toRangeHeaderDateLabel(locale: Locale): String {
+    val formatter = rangeHeaderDateLabelFormatters.getOrPut(locale) {
+        DateTimeFormatter.ofPattern("dd MMM", locale)
     }
     return this.format(formatter)
 }
@@ -583,8 +591,8 @@ internal fun rangeHeaderText(
     val end = selectedRange.endDate
     return when {
         start == null -> fallback
-        end == null -> start.toHeaderDateLabel(locale)
-        else -> start.toHeaderDateLabel(locale) + " - " + end.toHeaderDateLabel(locale)
+        end == null -> start.toRangeHeaderDateLabel(locale)
+        else -> start.toRangeHeaderDateLabel(locale) + " - " + end.toRangeHeaderDateLabel(locale)
     }
 }
 

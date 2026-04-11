@@ -51,10 +51,10 @@ object FinsibleDropdownDefaults {
         val base = when (size) {
             FinsibleSize.ExtraSmall -> FinsibleDropdownSizes(
                 horizontalPadding = d.d8,
-                verticalPadding = d.d6,
+                verticalPadding = d.d8,
                 textStyle = t.t14,
                 placeholderStyle = t.t14,
-                iconSize = d.d14,
+                iconSize = d.d16,
                 iconSpacing = d.d10,
                 cornerRadius = d.d8,
                 itemPadding = d.d8,
@@ -63,10 +63,10 @@ object FinsibleDropdownDefaults {
 
             FinsibleSize.Small -> FinsibleDropdownSizes(
                 horizontalPadding = d.d10,
-                verticalPadding = d.d8,
+                verticalPadding = d.d10,
                 textStyle = t.t16,
                 placeholderStyle = t.t16,
-                iconSize = d.d16,
+                iconSize = d.d18,
                 iconSpacing = d.d10,
                 cornerRadius = d.d10,
                 itemPadding = d.d10,
@@ -75,10 +75,10 @@ object FinsibleDropdownDefaults {
 
             FinsibleSize.Medium -> FinsibleDropdownSizes(
                 horizontalPadding = d.d12,
-                verticalPadding = d.d10,
+                verticalPadding = d.d12,
                 textStyle = t.t18.medium(),
                 placeholderStyle = t.t18,
-                iconSize = d.d18,
+                iconSize = d.d20,
                 iconSpacing = d.d10,
                 cornerRadius = d.d12,
                 itemPadding = d.d12,
@@ -87,10 +87,10 @@ object FinsibleDropdownDefaults {
 
             FinsibleSize.Large -> FinsibleDropdownSizes(
                 horizontalPadding = d.d14,
-                verticalPadding = d.d12,
+                verticalPadding = d.d14,
                 textStyle = t.t20.medium(),
                 placeholderStyle = t.t20,
-                iconSize = d.d20,
+                iconSize = d.d24,
                 iconSpacing = d.d10,
                 cornerRadius = d.d14,
                 itemPadding = d.d14,
@@ -99,10 +99,10 @@ object FinsibleDropdownDefaults {
 
             FinsibleSize.ExtraLarge -> FinsibleDropdownSizes(
                 horizontalPadding = d.d16,
-                verticalPadding = d.d14,
+                verticalPadding = d.d16,
                 textStyle = t.t24.medium(),
                 placeholderStyle = t.t24,
-                iconSize = d.d24,
+                iconSize = d.d28,
                 iconSpacing = d.d10,
                 cornerRadius = d.d16,
                 itemPadding = d.d16,

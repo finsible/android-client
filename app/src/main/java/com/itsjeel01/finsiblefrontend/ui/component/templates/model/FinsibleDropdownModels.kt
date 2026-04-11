@@ -41,5 +41,6 @@ data class FinsibleDropdownSizes(
 data class FinsibleDropdownOption(
     val id: String,
     val label: String,
-    val icon: (@Composable () -> Unit)? = null
+    val icon: (@Composable () -> Unit)? = null,
+    val enabled: Boolean = true
 )

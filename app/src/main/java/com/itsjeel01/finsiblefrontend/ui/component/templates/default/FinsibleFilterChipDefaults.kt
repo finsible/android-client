@@ -1,5 +1,6 @@
 package com.itsjeel01.finsiblefrontend.ui.component.templates.default
 
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -207,7 +208,7 @@ object FinsibleFilterChipDefaults {
     @Composable
     fun shape(shapeVariant: FinsibleShape, chipSizes: FinsibleFilterChipSizes): Shape {
         return when (shapeVariant) {
-            FinsibleShape.Pill -> RoundedCornerShape(cornerRadius(shapeVariant, chipSizes))
+            FinsibleShape.Pill -> CircleShape
             FinsibleShape.Rounded -> RoundedCornerShape(cornerRadius(shapeVariant, chipSizes))
             FinsibleShape.Sharp -> RectangleShape
             FinsibleShape.Circle -> error("FinsibleFilterChip does not support Circle shape.")

@@ -22,17 +22,17 @@
     <string name="apply_filters">Apply Filters</string>
     <string name="filters_and_sort">Filters &amp; Sort</string>
     <string name="clear_all">Clear All</string>
-    <string name="sort_by">SORT BY</string>
-    <string name="transaction_type">TRANSACTION TYPE</string>
-    <string name="time_period">TIME PERIOD</string>
-    <string name="amount_range">AMOUNT RANGE</string>
+    <string name="sort_by">Sort by</string>
+    <string name="transaction_type">Transaction Type</string>
+    <string name="time_period">Time Period</string>
+    <string name="amount_range">Amount Range</string>
     <string name="amount_min_placeholder">Min</string>
     <string name="amount_max_placeholder">Max</string>
     <string name="all_months">All months</string>
     <string name="date_range_full">%1$s – %2$s</string>
     <string name="date_range_from">From %s</string>
     <string name="select_date_range">Select date range</string>
-    <string name="date_range_dialog_ok">OK</string>
+    <string name="date_range_dialog_ok">Done</string>
     <string name="date_range_dialog_cancel">Cancel</string>
     <string name="min_exceeds_max_error">Min amount cannot exceed max amount</string>
 
@@ -278,8 +278,12 @@
     <string name="component_playground_filterchip_summary">Toggle chip sizes, shapes, icons, and tint colors.</string>
     <string name="component_playground_iconbadge_name">Icon badge</string>
     <string name="component_playground_iconbadge_summary">Preview badge variants and counts.</string>
+    <string name="component_playground_loading_indicator_name">Loader</string>
+    <string name="component_playground_loading_indicator_summary">Preview loading indicator sizes, speed, and color overrides.</string>
     <string name="component_playground_monthyearpicker_name">Month/year picker</string>
     <string name="component_playground_monthyearpicker_summary">Inspect month/year navigation states.</string>
+    <string name="component_playground_notification_name">Notification</string>
+    <string name="component_playground_notification_summary">Preview in-app notification states, action, and auto-dismiss timer.</string>
     <string name="component_playground_radiobutton_name">Radio button</string>
     <string name="component_playground_radiobutton_summary">Toggle radio options with labels.</string>
     <string name="component_playground_scrubber_name">Scrubber</string>
@@ -530,6 +534,10 @@
     <string name="component_playground_tile_pill_toggle">Show pill badge</string>
     <string name="component_playground_tile_trend_toggle">Show trend KPI</string>
     <string name="component_playground_tile_inverted_toggle">Invert content colors</string>
+    <string name="component_playground_tile_per_card_background_toggle">Use per-card backgrounds</string>
+    <string name="component_playground_tile_per_card_background_helper">Cycles each card through a different background preset.</string>
+    <string name="component_playground_tile_per_card_inverted_toggle">Use per-card inverted colors</string>
+    <string name="component_playground_tile_per_card_inverted_helper">Alternates inverted colors per card and overrides the global inverted setting.</string>
     <string name="component_playground_tile_stat_one">Growth</string>
     <string name="component_playground_tile_stat_two">Cashback</string>
 

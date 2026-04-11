@@ -7,14 +7,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.itsjeel01.finsiblefrontend.R
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
-import com.itsjeel01.finsiblefrontend.ui.theme.medium
 
 @Composable
 fun TransactionEmptyContent(
@@ -27,23 +28,23 @@ fun TransactionEmptyContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(
+        FinsibleText(
             text = if (isFilterActive) stringResource(R.string.no_matching_transactions)
             else stringResource(R.string.no_transactions_yet),
-            style = FinsibleTheme.typography.t16.medium(),
-            color = FinsibleTheme.colors.secondaryContent
+            variant = FinsibleTextVariant.BodyMedium,
+            colorVariant = FinsibleTextColorVariant.Secondary
         )
         if (isFilterActive) {
             Spacer(Modifier.height(FinsibleTheme.dimes.d12))
-            Text(
+            FinsibleText(
                 text = stringResource(R.string.try_adjusting_filters),
-                style = FinsibleTheme.typography.t14,
+                variant = FinsibleTextVariant.SmallBodyRegular,
                 color = FinsibleTheme.colors.tertiaryContent
             )
             Spacer(Modifier.height(FinsibleTheme.dimes.d16))
-            Text(
+            FinsibleText(
                 text = stringResource(R.string.clear_filters),
-                style = FinsibleTheme.typography.t14.medium(),
+                variant = FinsibleTextVariant.SmallBodyMedium,
                 color = FinsibleTheme.colors.link,
                 modifier = Modifier
                     .clickable(onClick = onClearFilters)

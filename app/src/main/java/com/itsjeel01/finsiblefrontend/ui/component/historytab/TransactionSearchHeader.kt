@@ -4,50 +4,38 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import com.itsjeel01.finsiblefrontend.R
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentSize
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentType
-import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleIconButton
-import com.itsjeel01.finsiblefrontend.ui.component.fin.IconButtonConfig
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleButton
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleTextField
+import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
+import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
+import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleTextFieldDefaults
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleBadgeType
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleButtonVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
-import com.itsjeel01.finsiblefrontend.ui.theme.extraBold
-import com.itsjeel01.finsiblefrontend.ui.theme.semiBold
 
 /** Transaction search header with vertical slide animation between title and search bar. */
 @Composable
@@ -62,6 +50,8 @@ fun TransactionSearchHeader(
     activeFilterCount: Int = 0,
     hasActiveSort: Boolean = false,
 ) {
+    val headerIconSide = FinsibleTheme.dimes.d40
+
     val onClose = remember(onSearchQueryChange, onCancelClick) {
         {
             onSearchQueryChange("")
@@ -76,8 +66,7 @@ fun TransactionSearchHeader(
         AnimatedContent(
             targetState = isExpanded,
             modifier = Modifier
-                .weight(1f)
-                .height(FinsibleTheme.dimes.d40),
+                .weight(1f),
             transitionSpec = {
                 if (targetState) {
                     slideInVertically { it } togetherWith slideOutVertically { -it }
@@ -100,11 +89,15 @@ fun TransactionSearchHeader(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
+                    FinsibleText(
                         text = stringResource(R.string.transaction_history_title),
-                        style = FinsibleTheme.typography.t24.extraBold()
+                        variant = FinsibleTextVariant.LargeTitleExtraBold,
+                        colorVariant = FinsibleTextColorVariant.Primary
                     )
-                    SearchIconButton(onClick = onSearchIconClick)
+                    SearchIconButton(
+                        onClick = onSearchIconClick,
+                        modifier = Modifier.size(headerIconSide)
+                    )
                 }
             }
         }
@@ -113,6 +106,7 @@ fun TransactionSearchHeader(
 
         FilterIconButton(
             onClick = onFilterClick,
+            modifier = Modifier.size(headerIconSide),
             badgeCount = activeFilterCount,
             hasActiveSort = hasActiveSort
         )
@@ -129,15 +123,8 @@ private fun SearchTextField(
 ) {
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
-    val interactionSource = remember { MutableInteractionSource() }
-    val isFocused by interactionSource.collectIsFocusedAsState()
 
     LaunchedEffect(Unit) { focusRequester.requestFocus() }
-
-    val borderColor = if (isFocused) FinsibleTheme.colors.outline else FinsibleTheme.colors.outlineVariant
-    val cornerRadius = FinsibleTheme.dimes.d10
-    val shape = remember(cornerRadius) { RoundedCornerShape(cornerRadius) }
-    val textStyle = FinsibleTheme.typography.t14.copy(color = FinsibleTheme.colors.primaryContent)
 
     val dismissAction = remember(keyboardController, onClose) {
         {
@@ -146,62 +133,45 @@ private fun SearchTextField(
         }
     }
 
-    BasicTextField(
+    FinsibleTextField(
         value = value,
         onValueChange = onValueChange,
-        modifier = modifier
-            .fillMaxWidth()
-            .focusRequester(focusRequester),
-        textStyle = textStyle,
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+        placeholder = stringResource(R.string.search_transactions_placeholder),
+        modifier = modifier.fillMaxWidth(),
+        size = FinsibleSize.Small,
+        shapeVariant = FinsibleShape.Rounded,
+        focusRequester = focusRequester,
+        inputConfig = FinsibleTextFieldDefaults.inputConfig(imeAction = ImeAction.Search),
         keyboardActions = KeyboardActions(onSearch = { keyboardController?.hide() }),
-        interactionSource = interactionSource,
-        cursorBrush = SolidColor(FinsibleTheme.colors.primaryContent80),
-        decorationBox = { innerTextField ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(FinsibleTheme.dimes.d40)
-                    .clip(shape)
-                    .background(FinsibleTheme.colors.surfaceContainerLow, shape)
-                    .border(FinsibleTheme.dimes.d1, borderColor, shape)
-                    .padding(horizontal = FinsibleTheme.dimes.d12),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d8)
-            ) {
-                Icon(
-                    painter = painterResource(com.composables.icons.tabler.outline.R.drawable.tabler_ic_search_outline),
-                    contentDescription = null,
-                    tint = FinsibleTheme.colors.tertiaryContent,
-                    modifier = Modifier.size(FinsibleTheme.dimes.d18)
-                )
-
-                Box(modifier = Modifier.weight(1f)) {
-                    if (value.isEmpty()) {
-                        Text(
-                            text = stringResource(R.string.search_transactions_placeholder),
-                            style = textStyle.copy(color = FinsibleTheme.colors.primaryContent40),
-                            maxLines = 1,
-                            softWrap = false
-                        )
-                    }
-                    innerTextField()
-                }
-
-                FinsibleIconButton(
-                    onClick = dismissAction,
-                    icon = com.composables.icons.materialicons.outlined.R.drawable.materialicons_ic_close_outlined,
-                    contentDescription = stringResource(R.string.cd_close_search),
-                    config = IconButtonConfig(
-                        size = ComponentSize.Small,
-                        tintIcon = true,
-                        customTint = FinsibleTheme.colors.onSurfaceVariant,
-                        type = ComponentType.Tertiary
+        leadingIcon = {
+            Icon(
+                painter = painterResource(com.composables.icons.tabler.outline.R.drawable.tabler_ic_search_outline),
+                contentDescription = null
+            )
+        },
+        trailingIcon = {
+            FinsibleButton(
+                onClick = dismissAction,
+                iconOnly = true,
+                variant = FinsibleButtonVariant.Text,
+                size = FinsibleSize.ExtraSmall,
+                shapeVariant = FinsibleShape.Circle,
+                icon = {
+                    Icon(
+                        painter = painterResource(com.composables.icons.materialicons.outlined.R.drawable.materialicons_ic_close_outlined),
+                        contentDescription = stringResource(R.string.cd_close_search)
                     )
-                )
-            }
-        }
+                }
+            )
+        },
+        colors = FinsibleTextFieldDefaults.colors(
+            containerColor = FinsibleTheme.colors.transparent,
+            borderColor = FinsibleTheme.colors.outlineVariant,
+            focusedBorderColor = FinsibleTheme.colors.outline,
+            contentColor = FinsibleTheme.colors.primaryContent,
+            placeholderColor = FinsibleTheme.colors.primaryContent40,
+            iconTint = FinsibleTheme.colors.tertiaryContent
+        )
     )
 }
 
@@ -211,29 +181,20 @@ private fun SearchIconButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val cornerRadius = FinsibleTheme.dimes.d10
-    val shape = remember(cornerRadius) { RoundedCornerShape(cornerRadius) }
-
-    Box(
-        modifier = modifier
-            .size(FinsibleTheme.dimes.d40)
-            .clip(shape)
-            .background(FinsibleTheme.colors.surfaceContainerLow)
-            .border(
-                width = FinsibleTheme.dimes.d1,
-                color = FinsibleTheme.colors.border,
-                shape = shape
+    FinsibleButton(
+        onClick = onClick,
+        iconOnly = true,
+        modifier = modifier,
+        variant = FinsibleButtonVariant.Outlined,
+        size = FinsibleSize.Medium,
+        shapeVariant = FinsibleShape.Rounded,
+        icon = {
+            Icon(
+                painter = painterResource(com.composables.icons.tabler.outline.R.drawable.tabler_ic_search_outline),
+                contentDescription = stringResource(R.string.cd_search),
             )
-            .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center
-    ) {
-        Icon(
-            painter = painterResource(com.composables.icons.tabler.outline.R.drawable.tabler_ic_search_outline),
-            contentDescription = stringResource(R.string.cd_search),
-            tint = FinsibleTheme.colors.secondaryContent,
-            modifier = Modifier.size(FinsibleTheme.dimes.d20)
-        )
-    }
+        }
+    )
 }
 
 /** Icon button that opens the filter sheet, with an optional badge for active filter count. */
@@ -244,54 +205,30 @@ private fun FilterIconButton(
     badgeCount: Int = 0,
     hasActiveSort: Boolean = false,
 ) {
-    val isActive = badgeCount > 0 || hasActiveSort
-    val cornerRadius = FinsibleTheme.dimes.d10
-    val shape = remember(cornerRadius) { RoundedCornerShape(cornerRadius) }
+    badgeCount > 0 || hasActiveSort
 
     Box(
         modifier = modifier.wrapContentSize(),
         contentAlignment = Alignment.Center
     ) {
-        Box(
-            modifier = Modifier
-                .size(FinsibleTheme.dimes.d40)
-                .clip(shape)
-                .background(
-                    if (isActive) FinsibleTheme.colors.surfaceContainerHigh
-                    else FinsibleTheme.colors.surfaceContainerLow
-                )
-                .border(
-                    width = FinsibleTheme.dimes.d1,
-                    color = if (isActive) FinsibleTheme.colors.outline else FinsibleTheme.colors.outlineVariant,
-                    shape = shape
-                )
-                .clickable(onClick = onClick),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                painter = painterResource(com.composables.icons.lucide.R.drawable.lucide_ic_list_filter),
-                contentDescription = stringResource(R.string.cd_filter),
-                tint = if (isActive) FinsibleTheme.colors.link else FinsibleTheme.colors.secondaryContent,
-                modifier = Modifier.size(FinsibleTheme.dimes.d20)
-            )
-        }
-
-        if (badgeCount > 0) {
-            Box(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .offset(x = FinsibleTheme.dimes.d4, y = -FinsibleTheme.dimes.d4)
-                    .size(FinsibleTheme.dimes.d16)
-                    .clip(RoundedCornerShape(FinsibleTheme.dimes.d8))
-                    .background(FinsibleTheme.colors.link),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = badgeCount.toString(),
-                    style = FinsibleTheme.typography.t10.semiBold(),
-                    color = FinsibleTheme.colors.same
+        FinsibleButton(
+            onClick = onClick,
+            iconOnly = true,
+            variant = FinsibleButtonVariant.Outlined,
+            size = FinsibleSize.Medium,
+            shapeVariant = FinsibleShape.Rounded,
+            badgeType = when {
+                badgeCount > 0 -> FinsibleBadgeType.Count
+                hasActiveSort -> FinsibleBadgeType.Dot
+                else -> FinsibleBadgeType.None
+            },
+            badgeCount = badgeCount,
+            icon = {
+                Icon(
+                    painter = painterResource(com.composables.icons.lucide.R.drawable.lucide_ic_list_filter),
+                    contentDescription = stringResource(R.string.cd_filter),
                 )
             }
-        }
+        )
     }
 }

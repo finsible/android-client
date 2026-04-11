@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -20,6 +19,9 @@ import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.Currency
 import com.itsjeel01.finsiblefrontend.common.CurrencyFormatter
 import com.itsjeel01.finsiblefrontend.common.centisToFormattedAmount
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
 import com.itsjeel01.finsiblefrontend.ui.model.DateFilterMode
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
@@ -30,7 +32,7 @@ import com.itsjeel01.finsiblefrontend.ui.theme.relaxed
 import java.util.Locale.getDefault
 
 @Composable
-fun DateHeader(
+fun DailySummaryHeader(
     dateText: String,
     filterMode: DateFilterMode,
     incomeSumCentis: Long,
@@ -63,10 +65,11 @@ fun DateHeader(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
+        FinsibleText(
             text = dateText.uppercase(getDefault()),
-            style = FinsibleTheme.typography.t12.medium().expanded(),
-            color = FinsibleTheme.colors.tertiaryContent
+            variant = FinsibleTextVariant.SmallLabelSemiBold,
+            color = FinsibleTheme.colors.tertiaryContent,
+            textStyleOverride = FinsibleTheme.typography.t12.medium().expanded()
         )
 
         Row(
@@ -76,11 +79,12 @@ fun DateHeader(
             horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d2),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
+            FinsibleText(
                 text = filterMode.name,
                 textAlign = TextAlign.End,
-                style = FinsibleTheme.typography.t12.normal().relaxed(),
-                color = FinsibleTheme.colors.secondaryContent
+                variant = FinsibleTextVariant.SmallLabelSemiBold,
+                colorVariant = FinsibleTextColorVariant.Secondary,
+                textStyleOverride = FinsibleTheme.typography.t12.normal().relaxed()
             )
             Icon(
                 modifier = Modifier.size(FinsibleTheme.dimes.d14),
@@ -88,10 +92,11 @@ fun DateHeader(
                 tint = FinsibleTheme.colors.secondaryContent,
                 contentDescription = stringResource(R.string.cd_change_view)
             )
-            Text(
+            FinsibleText(
                 text = formatAmount(displayAmountCentis, filterMode, currencyFormatter),
-                style = FinsibleTheme.typography.t14.normal().relaxed(),
-                color = animatedColor
+                variant = FinsibleTextVariant.SmallBodyRegular,
+                color = animatedColor,
+                textStyleOverride = FinsibleTheme.typography.t14.normal().relaxed()
             )
         }
     }

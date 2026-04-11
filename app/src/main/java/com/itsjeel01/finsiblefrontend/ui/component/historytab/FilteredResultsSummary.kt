@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,9 +16,11 @@ import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.Currency
 import com.itsjeel01.finsiblefrontend.common.CurrencyFormatter
 import com.itsjeel01.finsiblefrontend.common.centisToFormattedAmount
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.model.FilteredTransactionSummary
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
-import com.itsjeel01.finsiblefrontend.ui.theme.medium
 
 @Composable
 fun FilteredResultsSummary(
@@ -41,23 +42,23 @@ fun FilteredResultsSummary(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
+        FinsibleText(
             text = stringResource(R.string.transactions_count, summary.totalCount),
-            style = FinsibleTheme.typography.t14.medium(),
-            color = FinsibleTheme.colors.secondaryContent
+            variant = FinsibleTextVariant.SmallBodyMedium,
+            colorVariant = FinsibleTextColorVariant.Secondary
         )
         Row(
             horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d12),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
+            FinsibleText(
                 text = "+${Currency.INR.getSymbol()}${summary.totalIncomeCentis.centisToFormattedAmount(currencyFormatter)}",
-                style = FinsibleTheme.typography.t14.medium(),
+                variant = FinsibleTextVariant.SmallBodyMedium,
                 color = FinsibleTheme.colors.income
             )
-            Text(
+            FinsibleText(
                 text = "-${Currency.INR.getSymbol()}${summary.totalExpenseCentis.centisToFormattedAmount(currencyFormatter)}",
-                style = FinsibleTheme.typography.t14.medium(),
+                variant = FinsibleTextVariant.SmallBodyMedium,
                 color = FinsibleTheme.colors.expense
             )
         }

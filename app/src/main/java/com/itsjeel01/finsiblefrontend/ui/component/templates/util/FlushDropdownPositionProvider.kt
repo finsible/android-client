@@ -18,7 +18,12 @@ class FlushDropdownPositionProvider(
         layoutDirection: LayoutDirection,
         popupContentSize: IntSize
     ): IntOffset {
-        val x = anchorBounds.left
+        val x = if (layoutDirection == LayoutDirection.Ltr) {
+            anchorBounds.left
+        } else {
+            anchorBounds.right - popupContentSize.width
+        }
+
         val spaceBelow = windowSize.height - anchorBounds.bottom
         val spaceAbove = anchorBounds.top
 
@@ -39,6 +44,9 @@ class FlushDropdownPositionProvider(
 
         onPositionCalculated(isUpward)
 
-        return IntOffset(x, y)
+        val clampedX = x.coerceIn(0, maxOf(0, windowSize.width - popupContentSize.width))
+        val clampedY = y.coerceIn(0, maxOf(0, windowSize.height - popupContentSize.height))
+
+        return IntOffset(clampedX, clampedY)
     }
 }

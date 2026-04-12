@@ -14,6 +14,8 @@ class DeviceLocaleProvider @Inject constructor(
     private val context: Context,
 ) : LocaleProvider {
     override fun currentLocale(): Locale {
+        if (context.resources.configuration.locales.isEmpty) return Locale.getDefault()
+
         return context.resources.configuration.locales.get(0) ?: Locale.getDefault()
     }
 }

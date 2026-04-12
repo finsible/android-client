@@ -10,7 +10,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.objectbox.BoxStore
-import io.objectbox.android.Admin
 import io.objectbox.exception.DbException
 import io.objectbox.exception.DbSchemaException
 import java.io.File
@@ -25,7 +24,7 @@ object ObjectBoxModule {
     private var databaseWasCleared = false
 
     @Synchronized
-    private fun getOrCreateStore(context: Context): BoxStore {
+    private fun getOrCreateStore(context: Context, objectBoxAdminStarter: ObjectBoxAdminStarter): BoxStore {
         if (store != null) {
             return store!!
         }
@@ -46,7 +45,9 @@ object ObjectBoxModule {
             attemptDatabaseRecovery(context, e)
         }
 
-        if (BuildConfig.DEBUG) startAdmin(context)
+        if (BuildConfig.DEBUG) {
+            store?.let { objectBoxAdminStarter.start(it, context) }
+        }
 
         return store!!
     }
@@ -94,16 +95,12 @@ object ObjectBoxModule {
         Logger.Database.d("Database cleared flag reset")
     }
 
-    private fun startAdmin(context: Context) {
-        store?.let {
-            val started = Admin(it).start(context)
-            Logger.Database.d("ObjectBox Admin started: $started")
-        }
-    }
-
     @Provides
     @javax.inject.Singleton
-    fun boxStore(@ApplicationContext context: Context): BoxStore {
-        return getOrCreateStore(context)
+    fun boxStore(
+        @ApplicationContext context: Context,
+        objectBoxAdminStarter: ObjectBoxAdminStarter
+    ): BoxStore {
+        return getOrCreateStore(context, objectBoxAdminStarter)
     }
 }

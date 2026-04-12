@@ -10,15 +10,21 @@ import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun ImmutableList<FinsibleTileCardData>.toAccountsTileCards(): ImmutableList<FinsibleTileCardData> {
-    val gradients = List(size) { index ->
-        FinsibleGradients.getLinearGradient(type = gradientTypeForIndex(index))
-    }
+    val netWorthGradient = FinsibleGradients.getLinearGradient(type = GradientType.NET_WORTH)
+    val assetsGradient = FinsibleGradients.getLinearGradient(type = GradientType.ASSETS)
+    val liabilitiesGradient = FinsibleGradients.getLinearGradient(type = GradientType.LIABILITIES)
+    val brandGradient = FinsibleGradients.getLinearGradient(type = GradientType.BRAND)
 
-    return remember(this, gradients) {
+    return remember(this, size, netWorthGradient, assetsGradient, liabilitiesGradient, brandGradient) {
         mapIndexed { index, card ->
-            card.copy(
-                backgroundBrush = gradients[index]
-            )
+            val brush = when (gradientTypeForIndex(index)) {
+                GradientType.NET_WORTH -> netWorthGradient
+                GradientType.ASSETS -> assetsGradient
+                GradientType.LIABILITIES -> liabilitiesGradient
+                GradientType.BRAND -> brandGradient
+                else -> brandGradient
+            }
+            card.copy(backgroundBrush = brush)
         }.toImmutableList()
     }
 }
@@ -29,5 +35,3 @@ private fun gradientTypeForIndex(index: Int): GradientType = when (index) {
     2 -> GradientType.LIABILITIES
     else -> GradientType.BRAND
 }
-
-

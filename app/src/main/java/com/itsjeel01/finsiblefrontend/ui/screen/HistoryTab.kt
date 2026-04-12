@@ -208,7 +208,7 @@ fun HistoryTab(
                 icon = {
                     Icon(
                         painter = painterResource(R.drawable.ic_arrow_up),
-                        contentDescription = null
+                        contentDescription = stringResource(R.string.cd_scroll_to_top)
                     )
                 }
             )

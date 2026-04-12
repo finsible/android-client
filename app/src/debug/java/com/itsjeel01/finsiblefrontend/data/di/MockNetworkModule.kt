@@ -3,24 +3,37 @@ package com.itsjeel01.finsiblefrontend.data.di
 import android.content.Context
 import com.itsjeel01.finsiblefrontend.common.TestPreferenceManager
 import com.itsjeel01.finsiblefrontend.data.remote.interceptor.MockInterceptor
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import okhttp3.Interceptor
+import okhttp3.logging.HttpLoggingInterceptor
+import javax.inject.Inject
 import javax.inject.Singleton
 
-/** Debug-only module to provide MockInterceptor. */
+@Singleton
+class DebugNetworkInterceptorsProvider @Inject constructor(
+    @ApplicationContext private val context: Context,
+    private val testPrefs: TestPreferenceManager
+) : NetworkInterceptorsProvider {
+    override fun interceptors(): List<Interceptor> {
+        val mockInterceptor = MockInterceptor(context, testPrefs)
+        val loggingInterceptor = HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+
+        return listOf(mockInterceptor, loggingInterceptor)
+    }
+}
+
 @Module
 @InstallIn(SingletonComponent::class)
-object MockNetworkModule {
-
-    @Provides
+abstract class MockNetworkModule {
+    @Binds
     @Singleton
-    fun provideMockInterceptor(
-        @ApplicationContext context: Context,
-        testPrefs: TestPreferenceManager
-    ): MockInterceptor {
-        return MockInterceptor(context, testPrefs)
-    }
+    abstract fun bindNetworkInterceptorsProvider(
+        impl: DebugNetworkInterceptorsProvider
+    ): NetworkInterceptorsProvider
 }

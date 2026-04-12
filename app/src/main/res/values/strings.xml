@@ -540,6 +540,5 @@
     <string name="component_playground_tile_per_card_inverted_helper">Alternates inverted colors per card and overrides the global inverted setting.</string>
     <string name="component_playground_tile_stat_one">Growth</string>
     <string name="component_playground_tile_stat_two">Cashback</string>
-
 </resources>
 

@@ -1,11 +1,11 @@
 package com.itsjeel01.finsiblefrontend
 
+import com.itsjeel01.finsiblefrontend.ui.navigation.Route
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.CompositionLocalProvider
-import com.itsjeel01.finsiblefrontend.common.TestPreferenceManager
 import com.itsjeel01.finsiblefrontend.ui.component.templates.util.FinsibleLoaderHost
 import com.itsjeel01.finsiblefrontend.ui.component.templates.util.FinsibleLoaderManager
 import com.itsjeel01.finsiblefrontend.ui.component.templates.util.FinsibleNotificationHost
@@ -13,7 +13,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.util.FinsibleNotifi
 import com.itsjeel01.finsiblefrontend.ui.component.templates.util.LocalFinsibleLoader
 import com.itsjeel01.finsiblefrontend.ui.component.templates.util.LocalFinsibleNotification
 import com.itsjeel01.finsiblefrontend.ui.navigation.NavigationRoot
-import com.itsjeel01.finsiblefrontend.ui.navigation.Route
+import com.itsjeel01.finsiblefrontend.ui.navigation.StartDestinationResolver
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -22,7 +22,7 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
 
     @Inject
-    lateinit var testPrefs: TestPreferenceManager
+    lateinit var startDestinationResolver: StartDestinationResolver
 
     @Inject
     lateinit var finsibleLoaderManager: FinsibleLoaderManager
@@ -38,15 +38,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        val startDestination = if (BuildConfig.DEBUG) {
-            if (!testPrefs.shouldSkipDebugScreen() && !hasShownTestScreen) {
-                hasShownTestScreen = true
-                Route.Test
-            } else {
-                Route.Launch
-            }
-        } else {
-            Route.Launch
+        val startDestination = startDestinationResolver.resolveStartDestination(hasShownTestScreen)
+        if (startDestination == Route.Test) {
+            hasShownTestScreen = true
         }
 
         setContent {
@@ -61,7 +55,6 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 }
-
             }
         }
     }

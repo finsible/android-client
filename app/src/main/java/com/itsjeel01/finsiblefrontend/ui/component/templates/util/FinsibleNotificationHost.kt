@@ -34,7 +34,7 @@ fun FinsibleNotificationHost(
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(currentNotification) {
-        if (currentNotification != null) isVisible = true
+        isVisible = currentNotification != null
     }
 
     val handleDismiss = {
@@ -79,8 +79,6 @@ fun FinsibleNotificationHost(
                     onDismiss = handleDismiss
                 )
             }
-        } ?: run {
-            isVisible = false
         }
     }
 }

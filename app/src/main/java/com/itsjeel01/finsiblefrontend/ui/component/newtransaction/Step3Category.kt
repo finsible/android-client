@@ -19,10 +19,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -35,11 +35,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.TransactionType
-import com.itsjeel01.finsiblefrontend.ui.model.item.CategoryUIModel
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
+import com.itsjeel01.finsiblefrontend.ui.model.uimodel.CategoryUIModel
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleDimes.Companion.inverted
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.extraBold
-import com.itsjeel01.finsiblefrontend.ui.theme.medium
 import com.itsjeel01.finsiblefrontend.ui.util.resolveIcon
 
 /** Stateless category selection step with hoisted state. */
@@ -79,7 +80,11 @@ fun Step3Category(
                     ),
                     selected = isSelected,
                     label = {
-                        Text(stringResource(type.displayText), style = FinsibleTheme.typography.t16.medium())
+                        FinsibleText(
+                            text = stringResource(type.displayText),
+                            variant = FinsibleTextVariant.BodyMedium,
+                            color = LocalContentColor.current
+                        )
                     },
                     icon = {
                         if (isSelected) Icon(
@@ -131,10 +136,11 @@ private fun CategoryGroup(
             .animateContentSize(),
         verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d12)
     ) {
-        Text(
+        FinsibleText(
             text = parentCategory.name,
-            style = FinsibleTheme.typography.t18.extraBold(),
-            color = FinsibleTheme.colors.primaryContent
+            variant = FinsibleTextVariant.SmallTitleExtraBold,
+            color = FinsibleTheme.colors.primaryContent,
+            textStyleOverride = FinsibleTheme.typography.t18.extraBold()
         )
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
@@ -199,9 +205,9 @@ private fun CategoryChip(
                 contentDescription = null,
                 tint = if (isSelected) accentColor else FinsibleTheme.colors.primaryContent60
             )
-            Text(
+            FinsibleText(
                 text = category.name,
-                style = FinsibleTheme.typography.t16.medium(),
+                variant = FinsibleTextVariant.BodyMedium,
                 color = if (isSelected) FinsibleTheme.colors.primaryContent else FinsibleTheme.colors.primaryContent80
             )
         }

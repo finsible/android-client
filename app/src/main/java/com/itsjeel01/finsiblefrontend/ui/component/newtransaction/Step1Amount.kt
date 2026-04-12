@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -34,6 +33,9 @@ import androidx.compose.ui.text.style.TextAlign
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.toCompactCurrency
 import com.itsjeel01.finsiblefrontend.data.di.hiltCurrencyFormatter
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.bold
 import com.itsjeel01.finsiblefrontend.ui.theme.displayFont
@@ -115,9 +117,12 @@ fun Step1Amount(
                     Box(contentAlignment = Alignment.Center) {
                         // Placeholder when empty.
                         if (amount.isEmpty()) {
-                            Text(
+                            FinsibleText(
                                 text = stringResource(R.string.amount_placeholder),
-                                style = textStyle.copy(color = FinsibleTheme.colors.primaryContent40)
+                                variant = FinsibleTextVariant.XLargeHeadingBold,
+                                color = FinsibleTheme.colors.primaryContent40,
+                                textAlign = TextAlign.Center,
+                                textStyleOverride = textStyle.copy(color = FinsibleTheme.colors.primaryContent40)
                             )
                         }
                         innerTextField()
@@ -138,12 +143,13 @@ fun Step1Amount(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d4)
             ) {
-                Text(
-                    text = formattedAmount,
-                    style = FinsibleTheme.typography.t18.medium(),
-                    color = FinsibleTheme.colors.primaryContent80,
-                    textAlign = TextAlign.Center
-                )
+                    FinsibleText(
+                        text = formattedAmount,
+                        variant = FinsibleTextVariant.SmallTitleMedium,
+                        color = FinsibleTheme.colors.primaryContent80,
+                        textAlign = TextAlign.Center,
+                        textStyleOverride = FinsibleTheme.typography.t18.medium()
+                    )
             }
         }
 
@@ -153,11 +159,12 @@ fun Step1Amount(
             enter = fadeIn(),
             exit = fadeOut()
         ) {
-            Text(
+            FinsibleText(
                 text = stringResource(R.string.enter_transaction_amount),
-                style = FinsibleTheme.typography.t16,
-                color = FinsibleTheme.colors.secondaryContent,
+                variant = FinsibleTextVariant.BodyRegular,
+                colorVariant = FinsibleTextColorVariant.Secondary,
                 textAlign = TextAlign.Center,
+                textStyleOverride = FinsibleTheme.typography.t16,
                 modifier = Modifier.padding(top = FinsibleTheme.dimes.d8)
             )
         }

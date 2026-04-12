@@ -13,10 +13,10 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import com.itsjeel01.finsiblefrontend.R
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ButtonConfig
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentSize
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentType
-import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleButton
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleButton
+import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
+import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleButtonDefaults
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleButtonVariant
 import com.itsjeel01.finsiblefrontend.ui.navigation.NewTransactionSteps
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
@@ -46,11 +46,11 @@ fun StepControlButtons(
             FinsibleButton(
                 text = stringResource(R.string.back),
                 onClick = onBack,
-                config = ButtonConfig(
-                    type = ComponentType.Tertiary,
-                    size = ComponentSize.Medium,
-                    fullWidth = false,
-                    enabled = true
+                size = FinsibleSize.Medium,
+                variant = FinsibleButtonVariant.Text,
+                colors = FinsibleButtonDefaults.colors(
+                    variant = FinsibleButtonVariant.Text,
+                    contentColor = FinsibleTheme.colors.secondaryContent
                 )
             )
         }
@@ -65,11 +65,9 @@ fun StepControlButtons(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
-            config = ButtonConfig(
-                type = ComponentType.Primary,
-                size = ComponentSize.Medium,
-                enabled = canContinue
-            )
+            size = FinsibleSize.Medium,
+            variant = FinsibleButtonVariant.Filled,
+            enabled = canContinue
         )
     }
 }

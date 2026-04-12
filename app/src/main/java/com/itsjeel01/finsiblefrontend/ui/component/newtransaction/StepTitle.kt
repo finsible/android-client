@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -23,6 +22,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import com.itsjeel01.finsiblefrontend.R
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.extraBold
 
@@ -39,18 +41,20 @@ fun StepTitle(currentStep: Int, totalSteps: Int) {
 
     Spacer(Modifier.height(FinsibleTheme.dimes.d16))
     Column(Modifier.padding(vertical = FinsibleTheme.dimes.d16)) {
-        Text(
-            title,
-            style = FinsibleTheme.typography.t24.extraBold(),
-            color = FinsibleTheme.colors.primaryContent,
+        FinsibleText(
+            text = title,
+            variant = FinsibleTextVariant.LargeTitleExtraBold,
+            colorVariant = FinsibleTextColorVariant.Primary,
+            textStyleOverride = FinsibleTheme.typography.t24.extraBold()
         )
         Spacer(Modifier.height(FinsibleTheme.dimes.d4))
 
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d8)) {
-            Text(
-                stringResource(R.string.step_counter, currentStep + 1, totalSteps),
-                style = FinsibleTheme.typography.t16,
-                color = FinsibleTheme.colors.secondaryContent,
+            FinsibleText(
+                text = stringResource(R.string.step_counter, currentStep + 1, totalSteps),
+                variant = FinsibleTextVariant.BodyRegular,
+                colorVariant = FinsibleTextColorVariant.Secondary,
+                textStyleOverride = FinsibleTheme.typography.t16
             )
 
             val progress by animateFloatAsState(

@@ -13,9 +13,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
+import androidx.compose.material3.Icon
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,20 +27,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.data.di.hiltCurrencyFormatter
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentSize
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentType
-import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleIconButton
-import com.itsjeel01.finsiblefrontend.ui.component.fin.IconButtonConfig
-import com.itsjeel01.finsiblefrontend.ui.component.fin.IconButtonShape
 import com.itsjeel01.finsiblefrontend.ui.component.historytab.FilteredResultsSummary
 import com.itsjeel01.finsiblefrontend.ui.component.historytab.TransactionEmptyContent
 import com.itsjeel01.finsiblefrontend.ui.component.historytab.TransactionListContent
 import com.itsjeel01.finsiblefrontend.ui.component.historytab.TransactionSearchHeader
 import com.itsjeel01.finsiblefrontend.ui.component.historytab.filtersbottomsheet.TransactionFilterSheet
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleButton
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleLoader
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
+import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
+import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleButtonVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
 import com.itsjeel01.finsiblefrontend.ui.model.SortOption
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
@@ -138,30 +140,28 @@ fun HistoryTab(
             }
 
             when {
-                // Full screen loading indicator while freshly fetching data
                 uiState.isLoading && uiState.transactions.isEmpty() -> {
                     Box(
                         modifier = Modifier.weight(1f),
                         contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator(color = FinsibleTheme.colors.secondaryContent)
+                        FinsibleLoader(size = FinsibleSize.Medium)
                     }
                 }
 
-                // Error message while fetching data
                 uiState.error != null && uiState.transactions.isEmpty() -> {
                     Box(
                         modifier = Modifier.weight(1f),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(
+                        FinsibleText(
                             text = uiState.error ?: stringResource(R.string.unknown_error),
-                            color = FinsibleTheme.colors.error
+                            color = FinsibleTheme.colors.error,
+                            variant = FinsibleTextVariant.BodyRegular
                         )
                     }
                 }
 
-                // Empty state along with appropriate actions
                 uiState.transactions.isEmpty() -> {
                     TransactionEmptyContent(
                         modifier = Modifier.weight(1f),
@@ -170,7 +170,6 @@ fun HistoryTab(
                     )
                 }
 
-                // List of transactions
                 else -> {
                     TransactionListContent(
                         modifier = Modifier.weight(1f),
@@ -199,15 +198,19 @@ fun HistoryTab(
             enter = fadeIn(tween(Duration.MS_200.toInt())) + slideInVertically(tween(Duration.MS_200.toInt())) { it },
             exit = fadeOut(tween(Duration.MS_150.toInt())) + slideOutVertically(tween(Duration.MS_150.toInt())) { it }
         ) {
-            FinsibleIconButton(
-                icon = R.drawable.ic_arrow_up,
+            FinsibleButton(
                 onClick = onScrollToTop,
                 modifier = modifier,
-                config = IconButtonConfig(
-                    type = ComponentType.Primary,
-                    size = ComponentSize.Medium,
-                    shape = IconButtonShape.Circle
-                )
+                iconOnly = true,
+                variant = FinsibleButtonVariant.Filled,
+                size = FinsibleSize.Medium,
+                shapeVariant = FinsibleShape.Circle,
+                icon = {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_arrow_up),
+                        contentDescription = stringResource(R.string.cd_scroll_to_top)
+                    )
+                }
             )
         }
     }

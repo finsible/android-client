@@ -6,7 +6,7 @@ import com.itsjeel01.finsiblefrontend.common.CurrencyFormatter
 import com.itsjeel01.finsiblefrontend.common.TransactionType
 import com.itsjeel01.finsiblefrontend.common.centisToFormattedAmount
 import com.itsjeel01.finsiblefrontend.data.local.entity.TransactionEntity
-import com.itsjeel01.finsiblefrontend.ui.model.item.TransactionUIModel
+import com.itsjeel01.finsiblefrontend.ui.model.uimodel.TransactionUIModel
 import com.itsjeel01.finsiblefrontend.ui.util.DateUtils
 
 fun TransactionEntity.toUiModel(currencyFormatter: CurrencyFormatter, context: Context): TransactionUIModel {

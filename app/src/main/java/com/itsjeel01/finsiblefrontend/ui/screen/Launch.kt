@@ -5,7 +5,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.itsjeel01.finsiblefrontend.common.logging.Logger
-import com.itsjeel01.finsiblefrontend.data.di.hiltLoadingManager
+import com.itsjeel01.finsiblefrontend.ui.component.templates.util.LocalFinsibleLoader
 import com.itsjeel01.finsiblefrontend.ui.model.state.AuthState
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.AuthViewModel
 
@@ -17,6 +17,7 @@ fun Launch(
 ) {
 
     val authState by authViewModel.authState.collectAsStateWithLifecycle()
+    val loadingManager = LocalFinsibleLoader.current
 
     LaunchedEffect(authState) {
         when (authState) {
@@ -37,6 +38,6 @@ fun Launch(
     }
 
     if (authState is AuthState.Loading) {
-        hiltLoadingManager().show()
+        loadingManager.show()
     }
 }

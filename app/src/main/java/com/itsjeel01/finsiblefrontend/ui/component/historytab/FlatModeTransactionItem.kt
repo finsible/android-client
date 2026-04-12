@@ -9,17 +9,18 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import com.itsjeel01.finsiblefrontend.common.TransactionType
-import com.itsjeel01.finsiblefrontend.ui.model.item.TransactionUIModel
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
+import com.itsjeel01.finsiblefrontend.ui.model.uimodel.TransactionUIModel
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.bold
-import com.itsjeel01.finsiblefrontend.ui.theme.medium
 import com.itsjeel01.finsiblefrontend.ui.theme.relaxed
 
 /** Standalone card for flat mode — always full radius, shows date. */
@@ -50,24 +51,24 @@ fun FlatModeTransactionItem(transaction: TransactionUIModel) {
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d2)
             ) {
-                Text(
+                FinsibleText(
                     text = transaction.title,
-                    style = FinsibleTheme.typography.t16.medium(),
-                    color = FinsibleTheme.colors.primaryContent,
+                    variant = FinsibleTextVariant.BodyMedium,
+                    colorVariant = FinsibleTextColorVariant.Primary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                Text(
+                FinsibleText(
                     text = transaction.subtitle,
-                    style = FinsibleTheme.typography.t12,
+                    variant = FinsibleTextVariant.SmallLabelRegular,
                     color = FinsibleTheme.colors.tertiaryContent,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 if (transaction.formattedDate.isNotBlank()) {
-                    Text(
+                    FinsibleText(
                         text = transaction.formattedDate,
-                        style = FinsibleTheme.typography.t10,
+                        variant = FinsibleTextVariant.MicroLabelMedium,
                         color = FinsibleTheme.colors.placeholder,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -75,13 +76,14 @@ fun FlatModeTransactionItem(transaction: TransactionUIModel) {
                 }
             }
 
-            Text(
+            FinsibleText(
                 text = transaction.formattedAmount,
-                style = FinsibleTheme.typography.t16.bold().relaxed(),
+                variant = FinsibleTextVariant.BodyBold,
                 color = when (transaction.type) {
                     TransactionType.INCOME -> FinsibleTheme.colors.income
                     else -> FinsibleTheme.colors.primaryContent80
                 },
+                textStyleOverride = FinsibleTheme.typography.t16.bold().relaxed(),
                 modifier = Modifier.padding(top = FinsibleTheme.dimes.d2)
             )
         }

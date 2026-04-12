@@ -18,7 +18,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -29,10 +28,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.TransactionType
-import com.itsjeel01.finsiblefrontend.ui.model.item.AccountUIModel
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
+import com.itsjeel01.finsiblefrontend.ui.model.uimodel.AccountUIModel
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.extraBold
-import com.itsjeel01.finsiblefrontend.ui.theme.medium
 import com.itsjeel01.finsiblefrontend.ui.util.resolveIcon
 
 /** Stateless account selection step with hoisted state. */
@@ -104,16 +105,17 @@ private fun AccountSelector(
         verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d12)
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d4)) {
-            Text(
+            FinsibleText(
                 text = title,
-                style = FinsibleTheme.typography.t18.extraBold(),
-                color = FinsibleTheme.colors.primaryContent
+                variant = FinsibleTextVariant.SmallTitleExtraBold,
+                color = FinsibleTheme.colors.primaryContent,
+                textStyleOverride = FinsibleTheme.typography.t18.extraBold()
             )
             if (description.isNotEmpty()) {
-                Text(
+                FinsibleText(
                     text = description,
-                    style = FinsibleTheme.typography.t14,
-                    color = FinsibleTheme.colors.secondaryContent
+                    variant = FinsibleTextVariant.SmallBodyRegular,
+                    colorVariant = FinsibleTextColorVariant.Secondary
                 )
             }
         }
@@ -181,9 +183,9 @@ private fun AccountChip(
                 contentDescription = null,
                 tint = if (isSelected) accentColor else FinsibleTheme.colors.primaryContent60
             )
-            Text(
+            FinsibleText(
                 text = account.name,
-                style = FinsibleTheme.typography.t16.medium(),
+                variant = FinsibleTextVariant.BodyMedium,
                 color = if (isSelected) FinsibleTheme.colors.primaryContent else FinsibleTheme.colors.primaryContent80
             )
         }

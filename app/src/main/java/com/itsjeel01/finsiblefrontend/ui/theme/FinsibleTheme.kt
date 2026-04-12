@@ -4,7 +4,6 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -17,6 +16,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
 
 private val LocalFinsibleColors = compositionLocalOf<FinsibleColors> {
     error("No FinsibleColors provided")
@@ -82,16 +82,18 @@ fun PreloadFonts() {
             FontWeight.Bold,
             FontWeight.ExtraBold,
         ).forEach { weight ->
-            Text(
-                text = "Preload",
-                style = TextStyle(
-                    fontFamily = fontFamily,
-                    fontWeight = weight
-                ),
-                modifier = Modifier
-                    .height(0.dp)
-                    .width(0.dp)
-            )
+                FinsibleText(
+                    text = "Preload",
+                    modifier = Modifier
+                        .height(0.dp)
+                        .width(0.dp),
+                    textStyleOverride = TextStyle(
+                        fontFamily = fontFamily,
+                        fontWeight = weight
+                    ),
+                    maxLines = 1,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Clip
+                )
         }
     }
 }

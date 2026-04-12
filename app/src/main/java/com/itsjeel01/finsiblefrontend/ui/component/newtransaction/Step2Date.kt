@@ -28,7 +28,6 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
-import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDatePickerState
@@ -45,6 +44,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.TransactionRecurringFrequency
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.medium
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -119,10 +121,11 @@ fun Step2Date(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                stringResource(R.string.make_recurring),
-                style = FinsibleTheme.typography.t18.medium(),
-                color = FinsibleTheme.colors.primaryContent
+            FinsibleText(
+                text = stringResource(R.string.make_recurring),
+                variant = FinsibleTextVariant.SmallTitleMedium,
+                color = FinsibleTheme.colors.primaryContent,
+                textStyleOverride = FinsibleTheme.typography.t18.medium()
             )
             Switch(
                 checked = isRecurring,
@@ -143,10 +146,10 @@ fun Step2Date(
             exit = shrinkVertically() + fadeOut()
         ) {
             Column(Modifier.padding(top = FinsibleTheme.dimes.d12)) {
-                Text(
-                    stringResource(R.string.frequency),
-                    style = FinsibleTheme.typography.t16.medium(),
-                    color = FinsibleTheme.colors.secondaryContent,
+                FinsibleText(
+                    text = stringResource(R.string.frequency),
+                    variant = FinsibleTextVariant.BodyMedium,
+                    colorVariant = FinsibleTextColorVariant.Secondary,
                     modifier = Modifier.padding(bottom = FinsibleTheme.dimes.d8)
                 )
 
@@ -205,10 +208,11 @@ private fun RecurringFrequencyDropdown(
             options.forEach { option ->
                 DropdownMenuItem(
                     text = {
-                        Text(
-                            stringResource(option.displayText),
-                            style = FinsibleTheme.typography.t18,
-                            color = FinsibleTheme.colors.primaryContent
+                        FinsibleText(
+                            text = stringResource(option.displayText),
+                            variant = FinsibleTextVariant.SmallTitleMedium,
+                            color = FinsibleTheme.colors.primaryContent,
+                            textStyleOverride = FinsibleTheme.typography.t18
                         )
                     },
                     onClick = {

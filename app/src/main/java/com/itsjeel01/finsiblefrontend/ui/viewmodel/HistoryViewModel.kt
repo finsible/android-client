@@ -14,9 +14,9 @@ import com.itsjeel01.finsiblefrontend.ui.model.DateAggregates
 import com.itsjeel01.finsiblefrontend.ui.model.DateFilterMode
 import com.itsjeel01.finsiblefrontend.ui.model.FilteredTransactionSummary
 import com.itsjeel01.finsiblefrontend.ui.model.SortOption
-import com.itsjeel01.finsiblefrontend.ui.model.item.TransactionUIModel
 import com.itsjeel01.finsiblefrontend.ui.model.state.TransactionListState
 import com.itsjeel01.finsiblefrontend.ui.model.state.TransactionsFilterState
+import com.itsjeel01.finsiblefrontend.ui.model.uimodel.TransactionUIModel
 import com.itsjeel01.finsiblefrontend.ui.util.DateUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -60,6 +60,9 @@ class HistoryViewModel @Inject constructor(
 
     private val _dateFilterModes = MutableStateFlow(persistentMapOf<String, DateFilterMode>())
     val dateFilterModes: StateFlow<ImmutableMap<String, DateFilterMode>> = _dateFilterModes.asStateFlow()
+
+    private val todayHeaderLabel = context.getString(R.string.history_date_header_today)
+    private val yesterdayHeaderLabel = context.getString(R.string.history_date_header_yesterday)
 
     private var currentOffset: Int = 0
     private var searchDebounceJob: Job? = null
@@ -337,5 +340,9 @@ class HistoryViewModel @Inject constructor(
         return startOfDay to (cal.timeInMillis - 1)
     }
 
-    private fun formatDateHeader(timestamp: Long): String = DateUtils.formatDateHeader(timestamp)
+    private fun formatDateHeader(timestamp: Long): String = DateUtils.formatDateHeader(
+        timestamp = timestamp,
+        todayLabel = todayHeaderLabel,
+        yesterdayLabel = yesterdayHeaderLabel
+    )
 }

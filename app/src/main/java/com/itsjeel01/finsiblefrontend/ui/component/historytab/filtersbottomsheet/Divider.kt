@@ -10,7 +10,7 @@ import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 @Composable
 fun SheetDivider() =
     HorizontalDivider(
-        modifier = Modifier.padding(vertical = FinsibleTheme.dimes.d14),
+        modifier = Modifier.padding(vertical = FilterSheetSpacing.sectionDividerPadding),
         color = FinsibleTheme.colors.divider,
         thickness = FinsibleTheme.dimes.d0dot5
     )

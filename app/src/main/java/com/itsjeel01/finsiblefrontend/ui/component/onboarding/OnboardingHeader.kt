@@ -12,10 +12,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.itsjeel01.finsiblefrontend.R
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ButtonConfig
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentSize
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentType
-import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleButton
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleButton
+import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
+import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
+import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleButtonDefaults
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleButtonVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
 @Composable
@@ -34,12 +35,14 @@ fun OnboardingHeader(onSkip: () -> Unit = {}, isLastItem: Boolean) {
 
         if (!isLastItem) {
             FinsibleButton(
-                stringResource(R.string.skip),
                 onClick = onSkip,
-                config = ButtonConfig(
-                    size = ComponentSize.Small,
-                    type = ComponentType.Tertiary,
-                    fullWidth = false
+                text = stringResource(R.string.skip),
+                variant = FinsibleButtonVariant.Text,
+                size = FinsibleSize.Small,
+                shapeVariant = FinsibleShape.Rounded,
+                colors = FinsibleButtonDefaults.colors(
+                    variant = FinsibleButtonVariant.Text,
+                    contentColor = FinsibleTheme.colors.secondaryContent
                 )
             )
         }

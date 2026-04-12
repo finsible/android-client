@@ -16,9 +16,9 @@ import com.itsjeel01.finsiblefrontend.data.repository.CategoryRepository
 import com.itsjeel01.finsiblefrontend.data.sync.DataFetcher
 import com.itsjeel01.finsiblefrontend.data.sync.IntegrityChecker
 import com.itsjeel01.finsiblefrontend.ui.mapper.toUiModel
-import com.itsjeel01.finsiblefrontend.ui.model.item.AccountUIModel
-import com.itsjeel01.finsiblefrontend.ui.model.item.CategoryUIModel
 import com.itsjeel01.finsiblefrontend.ui.model.state.NewTransactionFormState
+import com.itsjeel01.finsiblefrontend.ui.model.uimodel.AccountUIModel
+import com.itsjeel01.finsiblefrontend.ui.model.uimodel.CategoryUIModel
 import com.itsjeel01.finsiblefrontend.ui.navigation.Route
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext

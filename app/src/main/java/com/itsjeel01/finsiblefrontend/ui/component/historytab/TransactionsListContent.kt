@@ -11,18 +11,19 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.itsjeel01.finsiblefrontend.common.CurrencyFormatter
 import com.itsjeel01.finsiblefrontend.common.TransactionType
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleLoader
+import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
+import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleLoaderDefaults
 import com.itsjeel01.finsiblefrontend.ui.model.DateFilterMode
 import com.itsjeel01.finsiblefrontend.ui.model.GroupAggregates
-import com.itsjeel01.finsiblefrontend.ui.model.item.TransactionUIModel
 import com.itsjeel01.finsiblefrontend.ui.model.state.TransactionListState
+import com.itsjeel01.finsiblefrontend.ui.model.uimodel.TransactionUIModel
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
 @Composable
@@ -38,7 +39,7 @@ fun TransactionListContent(
 ) {
     LazyColumn(
         state = listState,
-        verticalArrangement = Arrangement.spacedBy(0.dp),
+        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d0),
         modifier = modifier.fillMaxWidth()
     ) {
         if (showGrouping) {
@@ -58,7 +59,7 @@ fun TransactionListContent(
                         }
 
                     Box(modifier = Modifier.background(FinsibleTheme.colors.primaryBackground)) {
-                        DateHeader(
+                        DailySummaryHeader(
                             dateText = dateHeader,
                             filterMode = filterMode,
                             incomeSumCentis = groupAggregates.incomeSumCentis,
@@ -111,12 +112,16 @@ fun TransactionListContent(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .padding(FinsibleTheme.dimes.d16),
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        color = FinsibleTheme.colors.brandAccent40
+                    FinsibleLoader(
+                        modifier = Modifier.size(FinsibleTheme.dimes.d24),
+                        size = FinsibleSize.ExtraSmall,
+                        colors = FinsibleLoaderDefaults.colors(
+                            ballColor = FinsibleTheme.colors.brandAccent40,
+                            barColor = FinsibleTheme.colors.secondaryContent.copy(alpha = 0.5f)
+                        )
                     )
                 }
             }

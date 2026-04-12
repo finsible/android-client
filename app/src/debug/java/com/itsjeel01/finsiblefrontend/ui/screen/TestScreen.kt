@@ -3,7 +3,6 @@ package com.itsjeel01.finsiblefrontend.ui.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -14,32 +13,39 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.itsjeel01.finsiblefrontend.BuildConfig
 import com.itsjeel01.finsiblefrontend.R
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ButtonConfig
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentSize
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentType
-import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleButton
-import com.itsjeel01.finsiblefrontend.ui.component.fin.IconPosition
+import com.itsjeel01.finsiblefrontend.ui.component.DebugTitleBar
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleButton
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleCheckbox
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleToggle
+import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleIconPosition
+import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
+import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
+import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleButtonDefaults
+import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleCheckboxDefaults
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleToggleArrangement
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleToggleLabelPosition
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleButtonVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleCheckboxVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
-import com.itsjeel01.finsiblefrontend.ui.theme.bold
-import com.itsjeel01.finsiblefrontend.ui.theme.medium
-import com.itsjeel01.finsiblefrontend.ui.theme.normal
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.OperationStatus
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.TestViewModel
 import kotlinx.coroutines.delay
+import com.composables.icons.lucide.R as LucideR
 
 /** Data-driven checkbox action - executes when Launch clicked. */
 private data class CheckboxAction(
@@ -59,6 +65,7 @@ private data class CheckboxToggle(
 @Composable
 fun TestScreen(
     onNavigateToApp: () -> Unit,
+    onNavigateToPlayground: () -> Unit,
     viewModel: TestViewModel
 ) {
     val operationStatus by viewModel.operationStatus.collectAsStateWithLifecycle()
@@ -130,20 +137,19 @@ fun TestScreen(
             .background(FinsibleTheme.colors.primaryBackground)
             .padding(safeDrawingPadding)
     ) {
+        DebugTitleBar(
+            title = "Finsible Test Screen",
+            subtitle = "App Version v${BuildConfig.VERSION_NAME}",
+            subtitleColor = FinsibleTheme.colors.brandAccent,
+            showBack = false
+        )
+
         Column(
             modifier = Modifier
                 .weight(1f)
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = FinsibleTheme.dimes.d16)
+                .padding(horizontal = FinsibleTheme.dimes.d12)
         ) {
-            Spacer(modifier = Modifier.height(FinsibleTheme.dimes.d8))
-
-            Text(
-                text = "Test Screen",
-                style = FinsibleTheme.typography.t18.bold(),
-                color = FinsibleTheme.colors.primaryContent
-            )
-
             when (operationStatus) {
                 is OperationStatus.Loading -> StatusText((operationStatus as OperationStatus.Loading).message, false)
                 is OperationStatus.Success -> StatusText((operationStatus as OperationStatus.Success).message, false)
@@ -151,7 +157,7 @@ fun TestScreen(
                 OperationStatus.Idle -> {}
             }
 
-            Spacer(modifier = Modifier.height(FinsibleTheme.dimes.d12))
+            Spacer(modifier = Modifier.height(FinsibleTheme.dimes.d6))
 
             Section("Actions") {
                 checkboxActions.forEach { action ->
@@ -171,31 +177,35 @@ fun TestScreen(
             }
 
             Section("Mock API") {
-                SwitchRow("Enable mocking", mockApiEnabled) { viewModel.toggleMockApi(it) }
+                SwitchRow(mockApiEnabled) { viewModel.toggleMockApi(it) }
                 if (mockApiEnabled) {
-                    Spacer(modifier = Modifier.height(FinsibleTheme.dimes.d6))
-                    HorizontalDivider(color = FinsibleTheme.colors.divider)
-                    Spacer(modifier = Modifier.height(FinsibleTheme.dimes.d6))
+                    Spacer(modifier = Modifier.height(FinsibleTheme.dimes.d8))
                     endpointToggles.forEach { CheckboxRow(it.label, it.checked, it.onToggle) }
                 }
             }
 
-            Spacer(modifier = Modifier.height(FinsibleTheme.dimes.d16))
+            Section(title = stringResource(R.string.component_playground_section_title)) {
+                FinsibleButton(
+                    onClick = onNavigateToPlayground,
+                    text = stringResource(R.string.component_playground_section_button),
+                    fullWidth = true,
+                    size = FinsibleSize.Medium,
+                    variant = FinsibleButtonVariant.Outlined,
+                    iconPosition = FinsibleIconPosition.Trailing,
+                    icon = {
+                        Icon(
+                            painter = painterResource(LucideR.drawable.lucide_ic_arrow_right),
+                            contentDescription = null
+                        )
+                    }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(FinsibleTheme.dimes.d12))
         }
 
         // Launch button at bottom - executes selected actions then navigates
         FinsibleButton(
-            text = "Launch",
-            config = ButtonConfig(
-                type = ComponentType.Brand,
-                iconPosition = IconPosition.Trailing,
-                icon = R.drawable.ic_right_arrow_dotted,
-                size = ComponentSize.Medium
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = FinsibleTheme.dimes.d16)
-                .padding(bottom = FinsibleTheme.dimes.d16),
             onClick = {
                 // Execute selected actions
                 checkboxActions.forEach { action ->
@@ -206,6 +216,18 @@ fun TestScreen(
                 // Navigate to app
                 onNavigateToApp()
             },
+            text = "LAUNCH",
+            fullWidth = true,
+            shapeVariant = FinsibleShape.Rounded,
+            size = FinsibleSize.Medium,
+            variant = FinsibleButtonVariant.Filled,
+            colors = FinsibleButtonDefaults.colors(
+                variant = FinsibleButtonVariant.Filled,
+                containerColor = FinsibleTheme.colors.brandAccent,
+            ),
+            modifier = Modifier
+                .padding(horizontal = FinsibleTheme.dimes.d12)
+                .padding(bottom = FinsibleTheme.dimes.d12),
         )
     }
 }
@@ -218,39 +240,36 @@ private fun Section(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = FinsibleTheme.dimes.d8)
+            .padding(vertical = FinsibleTheme.dimes.d6),
+        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d4)
     ) {
-        Text(
-            text = title.uppercase(),
-            style = FinsibleTheme.typography.t10.medium(),
-            color = FinsibleTheme.colors.secondaryContent
+        FinsibleText(
+            text = title,
+            variant = FinsibleTextVariant.MicroLabelMedium,
+            color = FinsibleTheme.colors.secondaryContent,
+            uppercase = true
         )
-        Spacer(modifier = Modifier.height(FinsibleTheme.dimes.d6))
+        Spacer(modifier = Modifier.height(FinsibleTheme.dimes.d4))
         content()
     }
 }
 
 @Composable
 private fun SwitchRow(
-    label: String,
     checked: Boolean,
     onToggle: (Boolean) -> Unit
 ) {
-    Row(
+    FinsibleToggle(
+        checked = checked,
+        onCheckedChange = onToggle,
+        label = "Enable mocking",
+        size = FinsibleSize.Small,
+        arrangement = FinsibleToggleArrangement.SpaceBetween,
+        labelPosition = FinsibleToggleLabelPosition.Leading,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = FinsibleTheme.dimes.d4),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = label,
-            style = FinsibleTheme.typography.t14.normal(),
-            color = FinsibleTheme.colors.primaryContent,
-            modifier = Modifier.weight(1f)
-        )
-        Switch(checked = checked, onCheckedChange = onToggle)
-    }
+            .padding(vertical = FinsibleTheme.dimes.d4)
+    )
 }
 
 @Composable
@@ -260,29 +279,30 @@ private fun CheckboxRow(
     onToggle: (Boolean) -> Unit,
     isDestructive: Boolean = false
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Checkbox(
-            checked = checked,
-            onCheckedChange = onToggle
-        )
-        Text(
-            text = label,
-            style = FinsibleTheme.typography.t14.normal(),
-            color = if (isDestructive) FinsibleTheme.colors.error else FinsibleTheme.colors.primaryContent,
-            modifier = Modifier.padding(start = FinsibleTheme.dimes.d8)
-        )
-    }
+    FinsibleCheckbox(
+        checked = checked,
+        onCheckedChange = onToggle,
+        enforceMinTouchTarget = false,
+        size = FinsibleSize.Small,
+        variant = FinsibleCheckboxVariant.Colorful,
+        colors = if (isDestructive) {
+            FinsibleCheckboxDefaults.colors(
+                variant = FinsibleCheckboxVariant.Colorful,
+                labelColor = FinsibleTheme.colors.error
+            )
+        } else {
+            FinsibleCheckboxDefaults.colors(variant = FinsibleCheckboxVariant.Colorful)
+        },
+        label = label
+    )
+    Spacer(modifier = Modifier.height(FinsibleTheme.dimes.d12))
 }
 
 @Composable
 private fun StatusText(message: String, isError: Boolean) {
-    Text(
+    FinsibleText(
         text = message,
-        style = FinsibleTheme.typography.t12.normal(),
+        variant = FinsibleTextVariant.SmallLabelRegular,
         color = if (isError) FinsibleTheme.colors.error else FinsibleTheme.colors.success,
         modifier = Modifier
             .fillMaxWidth()

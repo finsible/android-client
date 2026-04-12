@@ -107,6 +107,8 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.ui.text.google.fonts)
+    implementation(libs.kizitonwose.calendar.compose)
+    implementation(libs.kizitonwose.calendar.core)
     implementation(libs.composables.icons.material.icons.filled)
     implementation(libs.composables.icons.material.icons.outlined)
     implementation(libs.composables.icons.material.icons.rounded)

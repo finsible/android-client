@@ -2,20 +2,23 @@ package com.itsjeel01.finsiblefrontend.ui.component.newtransaction
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import com.itsjeel01.finsiblefrontend.R
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentSize
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentType
-import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleIconButton
-import com.itsjeel01.finsiblefrontend.ui.component.fin.IconButtonConfig
-import com.itsjeel01.finsiblefrontend.ui.component.fin.IconButtonShape
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleButton
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
+import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
+import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
+import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleButtonDefaults
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleButtonVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
-import com.itsjeel01.finsiblefrontend.ui.theme.bold
 
 @Composable
 fun NewTransactionHeader(onClose: () -> Unit) {
@@ -23,22 +26,30 @@ fun NewTransactionHeader(onClose: () -> Unit) {
         modifier = Modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center
     ) {
-        FinsibleIconButton(
-            icon = R.drawable.ic_close,
+        FinsibleButton(
             onClick = onClose,
             modifier = Modifier.align(Alignment.CenterStart),
-            contentDescription = stringResource(R.string.cd_close),
-            config = IconButtonConfig(
-                size = ComponentSize.Large,
-                type = ComponentType.Tertiary,
-                shape = IconButtonShape.Circle
-            )
+            iconOnly = true,
+            variant = FinsibleButtonVariant.Text,
+            size = FinsibleSize.Large,
+            shapeVariant = FinsibleShape.Circle,
+            colors = FinsibleButtonDefaults.colors(
+                variant = FinsibleButtonVariant.Text,
+                contentColor = FinsibleTheme.colors.secondaryContent
+            ),
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_close),
+                    contentDescription = stringResource(R.string.cd_close),
+                    tint = LocalContentColor.current
+                )
+            }
         )
-        Text(
-            stringResource(R.string.new_transaction),
-            style = FinsibleTheme.typography.t20.bold(),
+        FinsibleText(
+            text = stringResource(R.string.new_transaction),
+            variant = FinsibleTextVariant.MediumTitleBold,
             color = FinsibleTheme.colors.primaryContent,
-            textAlign = TextAlign.Center,
+            textAlign = TextAlign.Center
         )
     }
 }

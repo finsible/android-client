@@ -20,10 +20,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.itsjeel01.finsiblefrontend.R
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ButtonConfig
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentSize
-import com.itsjeel01.finsiblefrontend.ui.component.fin.ComponentType
-import com.itsjeel01.finsiblefrontend.ui.component.fin.FinsibleButton
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleButton
+import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleButtonVariant
 import com.itsjeel01.finsiblefrontend.ui.model.state.TransactionsFilterState
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.TransactionsFilterViewModel
@@ -87,7 +86,7 @@ fun TransactionFilterSheet(
                     onApply(TransactionsFilterState.DEFAULT)
                 }
             )
-            Spacer(Modifier.height(FinsibleTheme.dimes.d20))
+            Spacer(Modifier.height(FilterSheetSpacing.headerToFirstSection))
             TransactionTypeFilter(
                 selectedTypes = sheetState.transactionTypes,
                 onTypeToggle = { viewModel.toggleType(it) }
@@ -119,9 +118,8 @@ fun TransactionFilterSheet(
                 onMaxChange = { viewModel.updateAmountMax(sanitizeDecimalInput(it)) },
                 isError = sheetState.amountRangeError
             )
-            Spacer(Modifier.height(FinsibleTheme.dimes.d20))
+            Spacer(Modifier.height(FilterSheetSpacing.lastSectionToApplyButton))
             FinsibleButton(
-                text = stringResource(R.string.apply_filters),
                 onClick = {
                     val applied = viewModel.buildAppliedState(appliedFilters.searchQuery)
                     if (applied.amountMin != null && applied.amountMax != null && applied.amountMin > applied.amountMax) {
@@ -131,7 +129,10 @@ fun TransactionFilterSheet(
                     onApply(applied)
                     onDismiss()
                 },
-                config = ButtonConfig(type = ComponentType.Primary, size = ComponentSize.Medium, fullWidth = true)
+                text = stringResource(R.string.apply_filters),
+                variant = FinsibleButtonVariant.Filled,
+                size = FinsibleSize.Medium,
+                fullWidth = true,
             )
         }
     }

@@ -1,7 +1,6 @@
 package com.itsjeel01.finsiblefrontend.common
 
 import java.text.SimpleDateFormat
-import java.util.Locale
 
 /** UTC to Local Time */
 fun Long.convertUTCToLocal(): Long {
@@ -18,7 +17,7 @@ fun Long.convertLocalToUTC(): Long {
 }
 
 fun Long.toReadableDate(): String {
-    val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    val dateFormat = SimpleDateFormat("dd/MM/yyyy", UserLocaleRegistry.currentLocale())
     return dateFormat.format(java.util.Date(this))
 }
 

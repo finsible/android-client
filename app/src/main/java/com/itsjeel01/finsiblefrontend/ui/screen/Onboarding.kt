@@ -12,10 +12,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.logging.Logger
-import com.itsjeel01.finsiblefrontend.data.di.hiltLoadingManager
-import com.itsjeel01.finsiblefrontend.data.di.hiltNotificationManager
 import com.itsjeel01.finsiblefrontend.ui.component.onboarding.OnboardingBackground
 import com.itsjeel01.finsiblefrontend.ui.component.onboarding.OnboardingContent
+import com.itsjeel01.finsiblefrontend.ui.component.templates.util.LocalFinsibleLoader
+import com.itsjeel01.finsiblefrontend.ui.component.templates.util.LocalFinsibleNotification
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
 import com.itsjeel01.finsiblefrontend.ui.model.state.AuthState
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.AuthViewModel
@@ -27,8 +27,8 @@ fun Onboarding(
     onboardingViewModel: OnboardingViewModel,
     authViewModel: AuthViewModel
 ) {
-    val inAppNotificationManager = hiltNotificationManager()
-    val loadingManager = hiltLoadingManager()
+    val inAppFinsibleNotificationManager = LocalFinsibleNotification.current
+    val loadingManager = LocalFinsibleLoader.current
     val context = LocalContext.current
 
     val carouselItems = remember { OnboardingViewModel.CarouselItem.entries }
@@ -57,7 +57,7 @@ fun Onboarding(
                 if (authState.isFailed) {
                     Logger.UI.d("Auth status: ${authState.message}")
 
-                    inAppNotificationManager.showError(
+                    inAppFinsibleNotificationManager.showError(
                         title = authFailed,
                         subtitle = authState.message,
                         autoDismiss = true,

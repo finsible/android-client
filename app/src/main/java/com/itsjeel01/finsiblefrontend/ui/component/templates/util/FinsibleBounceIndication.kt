@@ -10,6 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.graphicsLayer
+import com.itsjeel01.finsiblefrontend.ui.constants.Duration
 import kotlinx.coroutines.launch
 
 /**
@@ -29,7 +30,7 @@ fun Modifier.finsibleBounceIndication(
                 is PressInteraction.Press -> {
                     // User touches down
                     launch {
-                        scale.animateTo(downScale, tween(50))
+                        scale.animateTo(downScale, tween(Duration.MS_50.toInt()))
                     }
                 }
 
@@ -39,7 +40,7 @@ fun Modifier.finsibleBounceIndication(
                         // By animating to downScale first, we guarantee a visual pulse
                         // even if the user tapped faster than the 50ms down-animation.
                         // If they held it, it's already at downScale, so this takes 0ms.
-                        scale.animateTo(downScale, tween(50))
+                        scale.animateTo(downScale, tween(Duration.MS_50.toInt()))
                         scale.animateTo(1f, spring(dampingRatio = 0.6f, stiffness = 400f))
                     }
                 }

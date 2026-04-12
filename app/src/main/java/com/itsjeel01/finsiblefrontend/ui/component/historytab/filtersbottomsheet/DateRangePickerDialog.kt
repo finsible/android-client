@@ -20,7 +20,7 @@ import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
-import java.time.ZoneId
+import java.time.ZoneOffset
 
 @Composable
 fun DateRangePickerDialog(
@@ -89,11 +89,11 @@ private fun initialSelectedRange(startMs: Long?, endMs: Long?): FinsibleDateRang
     ).normalized()
 }
 
-private fun Long.toLocalDate(): LocalDate = Instant.ofEpochMilli(this).atZone(ZoneId.systemDefault()).toLocalDate()
+private fun Long.toLocalDate(): LocalDate = Instant.ofEpochMilli(this).atOffset(ZoneOffset.UTC).toLocalDate()
 
-private fun LocalDate.toStartOfDayMillis(): Long = atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+private fun LocalDate.toStartOfDayMillis(): Long = atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
 
 private fun LocalDate.toEndOfDayMillis(): Long =
-    plusDays(1).atStartOfDay(ZoneId.systemDefault()).minus(Duration.ofMillis(1)).toInstant().toEpochMilli()
+    plusDays(1).atStartOfDay(ZoneOffset.UTC).minus(Duration.ofMillis(1)).toInstant().toEpochMilli()
 
 

@@ -17,7 +17,11 @@ object DateUtils {
         override fun initialValue() = SimpleDateFormat("h:mm a", UserLocaleRegistry.currentLocale())
     }
 
-    fun formatDateHeader(timestamp: Long): String {
+    fun formatDateHeader(
+        timestamp: Long,
+        todayLabel: String,
+        yesterdayLabel: String
+    ): String {
         val date = Date(timestamp)
         val today = Date()
         val yesterday = Date(today.time - 24 * 60 * 60 * 1000)
@@ -29,8 +33,8 @@ object DateUtils {
         val yesterdayDay = formatter.format(yesterday)
 
         return when (transactionDay) {
-            todayDay -> "Today"
-            yesterdayDay -> "Yesterday"
+            todayDay -> todayLabel
+            yesterdayDay -> yesterdayLabel
             else -> (headerDateFormatter.get() ?: SimpleDateFormat("dd MMM yyyy", UserLocaleRegistry.currentLocale())).format(date)
         }
     }

@@ -61,6 +61,9 @@ class HistoryViewModel @Inject constructor(
     private val _dateFilterModes = MutableStateFlow(persistentMapOf<String, DateFilterMode>())
     val dateFilterModes: StateFlow<ImmutableMap<String, DateFilterMode>> = _dateFilterModes.asStateFlow()
 
+    private val todayHeaderLabel = context.getString(R.string.history_date_header_today)
+    private val yesterdayHeaderLabel = context.getString(R.string.history_date_header_yesterday)
+
     private var currentOffset: Int = 0
     private var searchDebounceJob: Job? = null
     private var loadMoreJob: Job? = null
@@ -337,5 +340,9 @@ class HistoryViewModel @Inject constructor(
         return startOfDay to (cal.timeInMillis - 1)
     }
 
-    private fun formatDateHeader(timestamp: Long): String = DateUtils.formatDateHeader(timestamp)
+    private fun formatDateHeader(timestamp: Long): String = DateUtils.formatDateHeader(
+        timestamp = timestamp,
+        todayLabel = todayHeaderLabel,
+        yesterdayLabel = yesterdayHeaderLabel
+    )
 }

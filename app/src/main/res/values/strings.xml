@@ -104,6 +104,8 @@
     <!-- History -->
     <string name="error_failed_to_load_more">Failed to load more</string>
     <string name="error_failed_to_load_transactions">Failed to load transactions</string>
+    <string name="history_date_header_today">Today</string>
+    <string name="history_date_header_yesterday">Yesterday</string>
 
     <!-- Transaction Mapper -->
     <string name="account_unknown">?</string>

@@ -9,6 +9,7 @@ data class EntitySnapshot(
     val accountGroups: Int,
     val accounts: Int,
     val transactions: Int,
-    val lastModified: String? = null // ISO-8601 timestamp, optional for display
+    /** UTC epoch milliseconds for server snapshot last modified time (optional). */
+    val lastModified: Long? = null
 )
 

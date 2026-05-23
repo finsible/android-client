@@ -1,6 +1,6 @@
 package com.itsjeel01.finsiblefrontend.data.remote.model
 
-import com.itsjeel01.finsiblefrontend.common.Currency
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /** Partial update - all fields nullable. Only non-null fields are updated. */
@@ -11,11 +11,11 @@ data class TransactionUpdateRequest(
     val transactionDate: Long? = null,
     val categoryId: Long? = null,
     val description: String? = null,
-    val currency: Currency? = null,
+    @SerialName("currency") val currencyCode: String,
     val fromAccountId: Long? = null,
     val toAccountId: Long? = null,
     val spaceId: Long? = null,
     val userShare: String? = null,
-    val isSplit: Boolean? = null,
+    val isSplit: Boolean = false,
     val paidByUserId: Long? = null
 )

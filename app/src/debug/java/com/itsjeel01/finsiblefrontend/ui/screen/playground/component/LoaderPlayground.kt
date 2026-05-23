@@ -50,15 +50,15 @@ fun LoaderPlayground() {
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = FinsibleTheme.dimes.d16, vertical = FinsibleTheme.dimes.d12),
-        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d16)
+            .padding(horizontal = FinsibleTheme.spacing.insetLg, vertical = FinsibleTheme.spacing.gapMd),
+        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackLg)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(FinsibleTheme.dimes.d12))
-                .background(FinsibleTheme.colors.primaryBackground)
-                .padding(vertical = FinsibleTheme.dimes.d48),
+                .clip(RoundedCornerShape(FinsibleTheme.spacing.gapMd))
+                .background(FinsibleTheme.colors.surfaceBase)
+                .padding(vertical = FinsibleTheme.sizes.touch.md),
             contentAlignment = Alignment.Center
         ) {
             FinsibleLoader(

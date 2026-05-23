@@ -1,4 +1,5 @@
 package com.itsjeel01.finsiblefrontend.ui.screen.playground
+import com.itsjeel01.finsiblefrontend.ui.theme.medium
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -7,16 +8,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,9 +25,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import com.itsjeel01.finsiblefrontend.R
-import com.itsjeel01.finsiblefrontend.ui.component.DebugTitleBar
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleTopNavigationBar
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleHeaderButton
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleHeaderState
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleButtonVariant
 import com.itsjeel01.finsiblefrontend.ui.navigation.Route
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.entryForRoute
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.playgroundEntries
@@ -69,21 +72,45 @@ private fun PlaygroundScaffold(
     subtitle: String? = null,
     content: @Composable () -> Unit
 ) {
-    val safePadding = WindowInsets.safeDrawing.asPaddingValues()
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(FinsibleTheme.colors.primaryBackground)
-            .padding(safePadding)
-    ) {
-        DebugTitleBar(
+    val backButton = remember(onBack) {
+        FinsibleHeaderButton(
+            onClick = onBack,
+            iconOnly = true,
+            variant = FinsibleButtonVariant.Text,
+            icon = {
+                Icon(
+                    painter = painterResource(com.composables.icons.materialicons.outlined.R.drawable.materialicons_ic_arrow_back_outlined),
+                    contentDescription = backLabel
+                )
+            }
+        )
+    }
+    val headerState = remember(title, subtitle, backButton) {
+        FinsibleHeaderState(
             title = title,
             subtitle = subtitle,
-            onBack = onBack,
-            backLabel = backLabel,
+            leftButtons = listOf(backButton)
         )
-        content()
+    }
+
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        containerColor = FinsibleTheme.colors.surfaceBase,
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        topBar = {
+            FinsibleTopNavigationBar(state = headerState)
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .background(FinsibleTheme.colors.surfaceBase)
+        ) {
+            Column(modifier = Modifier.padding(top = FinsibleTheme.spacing.inlineMd)) {
+                content()
+            }
+        }
     }
 }
 
@@ -92,13 +119,13 @@ private fun ComponentPlaygroundList(onSelect: (Route) -> Unit) {
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = FinsibleTheme.dimes.d12, vertical = FinsibleTheme.dimes.d8),
-        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d8)
+            .padding(horizontal = FinsibleTheme.spacing.gapMd, vertical = FinsibleTheme.spacing.inlineMd),
+        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.inlineMd)
     ) {
         FinsibleText(
             text = stringResource(R.string.component_playground_list_title),
-            variant = FinsibleTextVariant.SmallBodyMedium,
-            color = FinsibleTheme.colors.primaryContent
+            textStyle = FinsibleTheme.typography.bodyMd.medium(),
+            color = FinsibleTheme.colors.contentPrimary
         )
 
         playgroundEntries.forEach { entry ->
@@ -117,30 +144,30 @@ private fun ComponentEntry(title: String, description: String, onOpen: () -> Uni
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(FinsibleTheme.dimes.d12))
-            .background(FinsibleTheme.colors.secondaryBackground)
-            .border(FinsibleTheme.dimes.d1, FinsibleTheme.colors.divider, RoundedCornerShape(FinsibleTheme.dimes.d12))
+            .clip(RoundedCornerShape(FinsibleTheme.spacing.gapMd))
+            .background(FinsibleTheme.colors.surfaceDefault)
+            .border(FinsibleTheme.stroke.thin, FinsibleTheme.colors.borderSubtle, RoundedCornerShape(FinsibleTheme.spacing.gapMd))
             .clickable(role = Role.Button, onClick = onOpen)
-            .padding(horizontal = FinsibleTheme.dimes.d10, vertical = FinsibleTheme.dimes.d8),
+            .padding(horizontal = FinsibleTheme.spacing.inlineMd, vertical = FinsibleTheme.spacing.inlineMd),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d8)
+        horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.inlineMd)
     ) {
-        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d2)) {
+        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackMicro)) {
             FinsibleText(
                 text = title,
-                variant = FinsibleTextVariant.SmallBodyMedium,
-                color = FinsibleTheme.colors.primaryContent
+                textStyle = FinsibleTheme.typography.bodyMd.medium(),
+                color = FinsibleTheme.colors.contentPrimary
             )
             FinsibleText(
                 text = description,
-                variant = FinsibleTextVariant.SmallLabelRegular,
-                color = FinsibleTheme.colors.secondaryContent
+                textStyle = FinsibleTheme.typography.bodySm,
+                color = FinsibleTheme.colors.contentSecondary
             )
         }
         Icon(
             painter = painterResource(LucideR.drawable.lucide_ic_chevron_right),
             contentDescription = null,
-            tint = FinsibleTheme.colors.tertiaryContent
+            tint = FinsibleTheme.colors.contentTertiary
         )
     }
 }

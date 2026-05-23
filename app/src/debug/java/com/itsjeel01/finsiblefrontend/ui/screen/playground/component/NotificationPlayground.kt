@@ -46,8 +46,8 @@ fun NotificationPlayground() {
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = FinsibleTheme.dimes.d16, vertical = FinsibleTheme.dimes.d12),
-        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d16)
+            .padding(horizontal = FinsibleTheme.spacing.insetLg, vertical = FinsibleTheme.spacing.gapMd),
+        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackLg)
     ) {
         OptionDropdown(
             label = "Notification Variant",

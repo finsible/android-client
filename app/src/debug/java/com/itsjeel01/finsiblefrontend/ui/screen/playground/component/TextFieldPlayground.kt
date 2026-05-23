@@ -28,7 +28,6 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleT
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleTextFieldDefaults
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.*
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.composables.icons.lucide.R as LucideR
@@ -111,8 +110,8 @@ fun TextFieldPlayground() {
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = FinsibleTheme.dimes.d16, vertical = FinsibleTheme.dimes.d12),
-        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d12)
+            .padding(horizontal = FinsibleTheme.spacing.insetLg, vertical = FinsibleTheme.spacing.gapMd),
+        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackMd)
     ) {
         FinsibleTextField(
             value = value.text,
@@ -164,8 +163,8 @@ fun TextFieldPlayground() {
                 leadingTapCount,
                 trailingTapCount
             ),
-            variant = FinsibleTextVariant.SmallLabelRegular,
-            color = FinsibleTheme.colors.secondaryContent
+            textStyle = FinsibleTheme.typography.bodySm,
+            color = FinsibleTheme.colors.contentSecondary
         )
 
         OptionToggle(

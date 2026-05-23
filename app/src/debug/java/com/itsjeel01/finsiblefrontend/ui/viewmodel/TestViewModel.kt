@@ -66,6 +66,9 @@ class TestViewModel @Inject constructor(
     private val _mockTransactions = MutableStateFlow(testPrefs.isMockTransactionsEnabled())
     val mockTransactions: StateFlow<Boolean> = _mockTransactions
 
+    private val _mockExchangeRates = MutableStateFlow(testPrefs.isMockExchangeRatesEnabled())
+    val mockExchangeRates: StateFlow<Boolean> = _mockExchangeRates
+
     /** Clears all app data including preferences and ObjectBox database. */
     fun clearAllAppData() {
         viewModelScope.launch {
@@ -193,6 +196,11 @@ class TestViewModel @Inject constructor(
         _mockTransactions.value = enabled
     }
 
+    fun toggleMockExchangeRates(enabled: Boolean) {
+        testPrefs.setMockExchangeRatesEnabled(enabled)
+        _mockExchangeRates.value = enabled
+    }
+
     /** Resets all debug settings to defaults. */
     fun resetToDefaults() {
         viewModelScope.launch {
@@ -212,6 +220,7 @@ class TestViewModel @Inject constructor(
                 _mockAccountsFresh.value = testPrefs.isMockAccountsFreshEnabled()
                 _mockSnapshot.value = testPrefs.isMockSnapshotEnabled()
                 _mockTransactions.value = testPrefs.isMockTransactionsEnabled()
+                _mockExchangeRates.value = testPrefs.isMockExchangeRatesEnabled()
 
                 _operationStatus.value = OperationStatus.Success("Settings reset to defaults")
             } catch (e: Exception) {

@@ -12,7 +12,9 @@
         "icon": "food_group",
         "parentCategory": null,
         "readOnly": true,
-        "subCategory": false
+        "subCategory": false,
+        "usageCount": 45,
+        "lastUsedAt": 1726068000000
       },
       {
         "id": 2001,
@@ -20,7 +22,9 @@
         "icon": "groceries",
         "parentCategory": 2000,
         "readOnly": true,
-        "subCategory": true
+        "subCategory": true,
+        "usageCount": 28,
+        "lastUsedAt": 1726065600000
       },
       {
         "id": 2002,
@@ -28,7 +32,9 @@
         "icon": "restaurant_takeaway",
         "parentCategory": 2000,
         "readOnly": true,
-        "subCategory": true
+        "subCategory": true,
+        "usageCount": 17,
+        "lastUsedAt": 1726054800000
       },
       {
         "id": 2010,
@@ -36,7 +42,9 @@
         "icon": "utilities_group",
         "parentCategory": null,
         "readOnly": true,
-        "subCategory": false
+        "subCategory": false,
+        "usageCount": 12,
+        "lastUsedAt": 1725984000000
       },
       {
         "id": 2011,
@@ -44,7 +52,9 @@
         "icon": "rent",
         "parentCategory": 2010,
         "readOnly": true,
-        "subCategory": true
+        "subCategory": true,
+        "usageCount": 1,
+        "lastUsedAt": 1725984000000
       },
       {
         "id": 2012,
@@ -52,7 +62,9 @@
         "icon": "utilities",
         "parentCategory": 2010,
         "readOnly": true,
-        "subCategory": true
+        "subCategory": true,
+        "usageCount": 8,
+        "lastUsedAt": 1726000000000
       },
       {
         "id": 2013,
@@ -60,7 +72,9 @@
         "icon": "internet",
         "parentCategory": 2010,
         "readOnly": true,
-        "subCategory": true
+        "subCategory": true,
+        "usageCount": 3,
+        "lastUsedAt": 1725974400000
       },
       {
         "id": 2020,
@@ -68,7 +82,9 @@
         "icon": "transport_group",
         "parentCategory": null,
         "readOnly": true,
-        "subCategory": false
+        "subCategory": false,
+        "usageCount": 22,
+        "lastUsedAt": 1726064000000
       },
       {
         "id": 2021,
@@ -76,7 +92,9 @@
         "icon": "fuel",
         "parentCategory": 2020,
         "readOnly": true,
-        "subCategory": true
+        "subCategory": true,
+        "usageCount": 22,
+        "lastUsedAt": 1726064000000
       },
       {
         "id": 2030,
@@ -84,7 +102,9 @@
         "icon": "shopping_group",
         "parentCategory": null,
         "readOnly": true,
-        "subCategory": false
+        "subCategory": false,
+        "usageCount": 14,
+        "lastUsedAt": 1726051200000
       },
       {
         "id": 2031,
@@ -92,7 +112,9 @@
         "icon": "clothing_accessories",
         "parentCategory": 2030,
         "readOnly": true,
-        "subCategory": true
+        "subCategory": true,
+        "usageCount": 7,
+        "lastUsedAt": 1725937200000
       },
       {
         "id": 2032,
@@ -100,7 +122,9 @@
         "icon": "electronics",
         "parentCategory": 2030,
         "readOnly": true,
-        "subCategory": true
+        "subCategory": true,
+        "usageCount": 7,
+        "lastUsedAt": 1726051200000
       },
       {
         "id": 2040,
@@ -108,7 +132,9 @@
         "icon": "health_group",
         "parentCategory": null,
         "readOnly": true,
-        "subCategory": false
+        "subCategory": false,
+        "usageCount": 5,
+        "lastUsedAt": 1725848400000
       },
       {
         "id": 2041,
@@ -116,7 +142,9 @@
         "icon": "medical",
         "parentCategory": 2040,
         "readOnly": true,
-        "subCategory": true
+        "subCategory": true,
+        "usageCount": 3,
+        "lastUsedAt": 1725848400000
       },
       {
         "id": 2042,
@@ -124,7 +152,9 @@
         "icon": "gym",
         "parentCategory": 2040,
         "readOnly": true,
-        "subCategory": true
+        "subCategory": true,
+        "usageCount": 2,
+        "lastUsedAt": 1725763600000
       },
       {
         "id": 2050,
@@ -132,7 +162,9 @@
         "icon": "entertainment_leisure_group",
         "parentCategory": null,
         "readOnly": true,
-        "subCategory": false
+        "subCategory": false,
+        "usageCount": 11,
+        "lastUsedAt": 1726038000000
       },
       {
         "id": 2051,
@@ -140,7 +172,9 @@
         "icon": "movies",
         "parentCategory": 2050,
         "readOnly": true,
-        "subCategory": true
+        "subCategory": true,
+        "usageCount": 5,
+        "lastUsedAt": 1726038000000
       },
       {
         "id": 2052,
@@ -148,7 +182,9 @@
         "icon": "trip",
         "parentCategory": 2050,
         "readOnly": true,
-        "subCategory": true
+        "subCategory": true,
+        "usageCount": 4,
+        "lastUsedAt": 1726010400000
       },
       {
         "id": 2053,
@@ -156,7 +192,9 @@
         "icon": "subscription",
         "parentCategory": 2050,
         "readOnly": true,
-        "subCategory": true
+        "subCategory": true,
+        "usageCount": 2,
+        "lastUsedAt": 1725932400000
       },
       {
         "id": 2060,
@@ -164,7 +202,9 @@
         "icon": "financial_group",
         "parentCategory": null,
         "readOnly": true,
-        "subCategory": false
+        "subCategory": false,
+        "usageCount": 0,
+        "lastUsedAt": null
       },
       {
         "id": 2061,
@@ -172,7 +212,9 @@
         "icon": "insurance",
         "parentCategory": 2060,
         "readOnly": true,
-        "subCategory": true
+        "subCategory": true,
+        "usageCount": 0,
+        "lastUsedAt": null
       },
       {
         "id": 2062,
@@ -180,7 +222,9 @@
         "icon": "tax",
         "parentCategory": 2060,
         "readOnly": true,
-        "subCategory": true
+        "subCategory": true,
+        "usageCount": 0,
+        "lastUsedAt": null
       }
     ]
   }

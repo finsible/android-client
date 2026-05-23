@@ -12,7 +12,9 @@ data class Category(
     val icon: String,
     val readOnly: Boolean = true,
     val parentCategory: Long?,
-    val subCategory: Boolean = false
+    val subCategory: Boolean = false,
+    val usageCount: Long = 0,
+    val lastUsedAt: Long? = null
 )
 
 fun Category.toEntity(
@@ -26,6 +28,8 @@ fun Category.toEntity(
         icon = icon,
         readOnly = readOnly,
         parentCategoryId = parentCategory ?: 0L,
+        usageCount = usageCount,
+        lastUsedAt = lastUsedAt,
         syncStatus = syncStatus
     )
 }

@@ -1,4 +1,7 @@
+
 package com.itsjeel01.finsiblefrontend.ui.screen.playground.component
+import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleSemanticColors
+
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,8 +26,8 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleSegmentAlignment
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleSegmentedButtonOption
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleSegmentedButtonVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleSegmentedButtonArrangement
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.*
-import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleColors
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.composables.icons.lucide.R as LucideR
 
@@ -36,6 +39,7 @@ fun SegmentedButtonsPlayground() {
     var size by rememberSaveable { mutableStateOf(FinsibleSize.Medium) }
     var shape by rememberSaveable { mutableStateOf(FinsibleShape.Rounded) }
     var variant by rememberSaveable { mutableStateOf(FinsibleSegmentedButtonVariant.Filled) }
+    var arrangement by rememberSaveable { mutableStateOf(FinsibleSegmentedButtonArrangement.Clubbed) }
     var useSelectedTint by rememberSaveable { mutableStateOf(false) }
     var inverted by rememberSaveable { mutableStateOf(false) }
     var tintOption by rememberSaveable { mutableStateOf(FilterChipTintOption.BrandAccent) }
@@ -79,14 +83,15 @@ fun SegmentedButtonsPlayground() {
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = FinsibleTheme.dimes.d16, vertical = FinsibleTheme.dimes.d12),
-        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d12)
+            .padding(horizontal = FinsibleTheme.spacing.insetLg, vertical = FinsibleTheme.spacing.gapMd),
+        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackMd)
     ) {
         if (singleSelection) {
             FinsibleSegmentedButtonRow(
                 options = options,
                 selectedValue = selection.firstOrNull(),
                 onSelectedValueChange = { next -> selection = next?.let(::setOf).orEmpty() },
+                arrangement = arrangement,
                 enabled = enabled,
                 size = size,
                 shapeVariant = shape,
@@ -99,6 +104,7 @@ fun SegmentedButtonsPlayground() {
                 options = options,
                 selectedValues = selection,
                 onSelectedValuesChange = { selection = it },
+                arrangement = arrangement,
                 enabled = enabled,
                 size = size,
                 shapeVariant = shape,
@@ -142,6 +148,13 @@ fun SegmentedButtonsPlayground() {
             optionLabel = { segmentedButtonVariantLabel(it) },
             onSelect = { variant = it }
         )
+        OptionDropdown(
+            label = stringResource(R.string.component_playground_segmentedbuttons_arrangement),
+            selectedLabel = segmentedButtonArrangementLabel(arrangement),
+            options = FinsibleSegmentedButtonArrangement.entries,
+            optionLabel = { segmentedButtonArrangementLabel(it) },
+            onSelect = { arrangement = it }
+        )
         OptionToggle(
             label = stringResource(R.string.component_playground_filterchip_tint_enabled),
             checked = useSelectedTint,
@@ -169,12 +182,12 @@ fun SegmentedButtonsPlayground() {
     }
 }
 
-private fun FilterChipTintOption.resolveColor(colors: FinsibleColors): Color = when (this) {
-    FilterChipTintOption.BrandAccent -> colors.brandAccent
-    FilterChipTintOption.Success -> colors.success
-    FilterChipTintOption.Info -> colors.info
-    FilterChipTintOption.Warning -> colors.warning
-    FilterChipTintOption.Error -> colors.error
+private fun FilterChipTintOption.resolveColor(colors: FinsibleSemanticColors): Color = when (this) {
+    FilterChipTintOption.BrandAccent -> colors.brandInteractive
+    FilterChipTintOption.Success -> colors.feedbackSuccess
+    FilterChipTintOption.Info -> colors.feedbackInfo
+    FilterChipTintOption.Warning -> colors.feedbackWarning
+    FilterChipTintOption.Error -> colors.feedbackError
 }
 
 

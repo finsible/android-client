@@ -21,7 +21,6 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleDropdownOption
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleToggleArrangement
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleToggleLabelPosition
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
 @Composable
@@ -46,19 +45,19 @@ fun <T> OptionDropdown(
         Column(
             modifier = Modifier
                 .weight(1f)
-                .padding(end = FinsibleTheme.dimes.d16),
-            verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d4)
+                .padding(end = FinsibleTheme.spacing.insetLg),
+            verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackXs)
         ) {
             FinsibleText(
                 text = label,
-                variant = FinsibleTextVariant.BodyRegular,
-                color = FinsibleTheme.colors.primaryContent
+                textStyle = FinsibleTheme.typography.bodyLg,
+                color = FinsibleTheme.colors.contentPrimary
             )
             helperText?.let {
                 FinsibleText(
                     text = it,
-                    variant = FinsibleTextVariant.SmallLabelRegular,
-                    color = FinsibleTheme.colors.tertiaryContent
+                    textStyle = FinsibleTheme.typography.bodySm,
+                    color = FinsibleTheme.colors.contentTertiary
                 )
             }
         }
@@ -86,7 +85,7 @@ fun OptionToggle(
     helperText: String? = null
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d4)
+        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackXs)
     ) {
         FinsibleToggle(
             checked = checked,
@@ -101,8 +100,8 @@ fun OptionToggle(
         helperText?.let {
             FinsibleText(
                 text = it,
-                variant = FinsibleTextVariant.SmallLabelRegular,
-                color = FinsibleTheme.colors.tertiaryContent
+                textStyle = FinsibleTheme.typography.bodySm,
+                color = FinsibleTheme.colors.contentTertiary
             )
         }
     }
@@ -118,7 +117,7 @@ fun OptionSlider(
     enabled: Boolean = true,
     helperText: String? = null
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d4)) {
+    Column(verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackXs)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -126,13 +125,13 @@ fun OptionSlider(
         ) {
             FinsibleText(
                 text = label,
-                variant = FinsibleTextVariant.SmallBodyRegular,
-                color = FinsibleTheme.colors.primaryContent
+                textStyle = FinsibleTheme.typography.bodyMd,
+                color = FinsibleTheme.colors.contentPrimary
             )
             FinsibleText(
                 text = value.toInt().toString(),
-                variant = FinsibleTextVariant.SmallLabelRegular,
-                color = FinsibleTheme.colors.secondaryContent
+                textStyle = FinsibleTheme.typography.bodySm,
+                color = FinsibleTheme.colors.contentSecondary
             )
         }
 
@@ -143,17 +142,17 @@ fun OptionSlider(
             steps = steps,
             enabled = enabled,
             colors = SliderDefaults.colors(
-                activeTrackColor = FinsibleTheme.colors.brandAccent,
-                inactiveTrackColor = FinsibleTheme.colors.divider,
-                thumbColor = FinsibleTheme.colors.brandAccent
+                activeTrackColor = FinsibleTheme.colors.brandInteractive,
+                inactiveTrackColor = FinsibleTheme.colors.borderSubtle,
+                thumbColor = FinsibleTheme.colors.brandInteractive
             )
         )
 
         helperText?.let {
             FinsibleText(
                 text = it,
-                variant = FinsibleTextVariant.SmallLabelRegular,
-                color = FinsibleTheme.colors.tertiaryContent
+                textStyle = FinsibleTheme.typography.bodySm,
+                color = FinsibleTheme.colors.contentTertiary
             )
         }
     }
@@ -165,11 +164,11 @@ fun FinsibleLabeledTextField(
     value: TextFieldValue,
     onValueChange: (TextFieldValue) -> Unit
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d4)) {
+    Column(verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackXs)) {
         FinsibleText(
             text = label,
-            variant = FinsibleTextVariant.SmallBodyRegular,
-            color = FinsibleTheme.colors.primaryContent
+            textStyle = FinsibleTheme.typography.bodyMd,
+            color = FinsibleTheme.colors.contentPrimary
         )
         OutlinedTextField(
             value = value,
@@ -179,8 +178,8 @@ fun FinsibleLabeledTextField(
             placeholder = {
                 FinsibleText(
                     text = stringResource(R.string.component_playground_text_placeholder),
-                    variant = FinsibleTextVariant.SmallLabelRegular,
-                    color = FinsibleTheme.colors.secondaryContent
+                    textStyle = FinsibleTheme.typography.bodySm,
+                    color = FinsibleTheme.colors.contentSecondary
                 )
             }
         )

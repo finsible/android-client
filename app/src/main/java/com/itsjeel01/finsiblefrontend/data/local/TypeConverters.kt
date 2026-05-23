@@ -1,6 +1,5 @@
 package com.itsjeel01.finsiblefrontend.data.local
 
-import com.itsjeel01.finsiblefrontend.common.Currency
 import com.itsjeel01.finsiblefrontend.common.EntityType
 import com.itsjeel01.finsiblefrontend.common.OperationType
 import com.itsjeel01.finsiblefrontend.common.Status
@@ -25,8 +24,3 @@ class EntityTypeConverter : EnumPropertyConverter<EntityType>(EntityType.entries
 class OperationTypeConverter : EnumPropertyConverter<OperationType>(OperationType.entries)
 
 class StatusConverter : EnumPropertyConverter<Status>(Status.entries)
-
-class CurrencyConverter : PropertyConverter<Currency, String> {
-    override fun convertToDatabaseValue(entityProperty: Currency?): String? = entityProperty?.name
-    override fun convertToEntityProperty(databaseValue: String?): Currency? = databaseValue?.let { Currency.valueOf(it) }
-}

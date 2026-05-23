@@ -33,7 +33,6 @@ data class TransactionDailySummary(
 /** Aggregate financial data for a specific date, stored as centis (×100). */
 @Immutable
 data class DateAggregates(
-    val dateHeader: String,
     val startOfDayMs: Long,
     val endOfDayMs: Long,
     val incomeSumCentis: Long,
@@ -43,9 +42,8 @@ data class DateAggregates(
 ) {
     companion object {
         /** Create DateAggregates with zero values. */
-        fun zero(dateHeader: String, startOfDayMs: Long, endOfDayMs: Long): DateAggregates {
+        fun zero(startOfDayMs: Long, endOfDayMs: Long): DateAggregates {
             return DateAggregates(
-                dateHeader = dateHeader,
                 startOfDayMs = startOfDayMs,
                 endOfDayMs = endOfDayMs,
                 incomeSumCentis = 0L,

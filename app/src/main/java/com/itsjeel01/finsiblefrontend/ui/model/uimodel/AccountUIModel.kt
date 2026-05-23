@@ -11,5 +11,8 @@ data class AccountUIModel(
     val icon: String,
     val formattedBalance: String,
     val groupColor: String?,
-    val isPositiveBalance: Boolean
+    val groupName: String?,
+    val isPositiveBalance: Boolean,
+    val usageCount: Long = 0,
+    val lastUsedAt: Long? = null,
 )

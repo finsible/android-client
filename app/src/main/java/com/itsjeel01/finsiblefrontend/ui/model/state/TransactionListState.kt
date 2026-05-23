@@ -13,9 +13,8 @@ import kotlinx.collections.immutable.persistentMapOf
 @Immutable
 data class TransactionListState(
     val transactions: ImmutableList<TransactionUIModel> = persistentListOf(),
-    val groupedTransactions: ImmutableMap<String, ImmutableList<TransactionUIModel>> = persistentMapOf(),
-    val dateAggregates: ImmutableMap<String, DateAggregates> = persistentMapOf(),
-
+    val groupedTransactions: ImmutableMap<Long, ImmutableList<TransactionUIModel>> = persistentMapOf(),
+    val dateAggregates: ImmutableMap<Long, DateAggregates> = persistentMapOf(),
     val isLoading: Boolean = false,
     val hasMoreData: Boolean = true,
     val error: String? = null,

@@ -112,7 +112,7 @@ fun FinsibleAccordion(
             .fillMaxWidth()
             .clip(shape)
             .background(colors.containerColor)
-            .border(width = FinsibleTheme.dimes.d1, color = colors.borderColor, shape = shape)
+            .border(width = FinsibleTheme.stroke.thin, color = colors.borderColor, shape = shape)
             .clickable(
                 enabled = enabled,
                 role = Role.Button,
@@ -139,10 +139,10 @@ fun FinsibleAccordion(
                 }
             }
 
-            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d4)) {
+            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackXs)) {
                 FinsibleText(
                     text = title,
-                    textStyleOverride = sizes.titleStyle,
+                    textStyle = sizes.titleStyle,
                     color = colors.titleColor,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -150,7 +150,7 @@ fun FinsibleAccordion(
                 if (!subtitle.isNullOrEmpty()) {
                     FinsibleText(
                         text = subtitle,
-                        textStyleOverride = sizes.subtitleStyle,
+                        textStyle = sizes.subtitleStyle,
                         color = colors.subtitleColor,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -177,7 +177,7 @@ fun FinsibleAccordion(
         }
 
         if (resolvedExpanded) {
-            HorizontalDivider(color = FinsibleTheme.colors.divider, thickness = FinsibleTheme.dimes.d1)
+            HorizontalDivider(color = FinsibleTheme.colors.borderSubtle, thickness = FinsibleTheme.stroke.thin)
             content()
         }
     }

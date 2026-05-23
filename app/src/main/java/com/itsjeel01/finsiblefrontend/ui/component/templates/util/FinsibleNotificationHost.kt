@@ -62,7 +62,7 @@ fun FinsibleNotificationHost(
                     .fillMaxWidth()
                     .zIndex(Float.MAX_VALUE)
                     .systemBarsPadding()
-                    .padding(FinsibleTheme.dimes.d16),
+                    .padding(FinsibleTheme.spacing.insetLg),
                 contentAlignment = Alignment.Center
             ) {
                 FinsibleNotification(

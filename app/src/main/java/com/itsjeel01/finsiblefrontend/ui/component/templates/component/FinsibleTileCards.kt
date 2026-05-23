@@ -38,6 +38,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleTileC
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleScrubberVariant
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTileCardRotationVariant
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
+import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleDurations
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
@@ -102,7 +103,7 @@ fun FinsibleTileCards(
             rotation.animateTo(
                 targetValue = 180f,
                 animationSpec = tween(
-                    durationMillis = Duration.MS_800.toInt(),
+                    durationMillis = FinsibleDurations.values.slowMs,
                     easing = elasticEasing
                 )
             )
@@ -168,7 +169,7 @@ fun FinsibleTileCards(
 
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d12)
+        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackMd)
     ) {
         if (rotationVariant == FinsibleTileCardRotationVariant.Carousel && pagerState != null) {
             val customPageSize = remember(carouselCardFraction) {
@@ -182,8 +183,8 @@ fun FinsibleTileCards(
                 state = pagerState,
                 pageSize = customPageSize,
                 modifier = Modifier.fillMaxWidth(),
-                contentPadding = PaddingValues(horizontal = FinsibleTheme.dimes.d16),
-                pageSpacing = FinsibleTheme.dimes.d16
+                contentPadding = PaddingValues(horizontal = FinsibleTheme.spacing.insetLg),
+                pageSpacing = FinsibleTheme.spacing.insetLg
             ) { page ->
                 val card = cards[page]
                 val cardColors = resolveCardColors(card = card, colors = colors, inverted = inverted)

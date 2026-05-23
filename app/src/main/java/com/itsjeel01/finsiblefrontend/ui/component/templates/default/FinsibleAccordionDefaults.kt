@@ -6,6 +6,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleAccordionColors
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleAccordionSizes
+import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleRadius
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.medium
 
@@ -22,57 +23,57 @@ object FinsibleAccordionDefaults {
         borderColor: Color = Color.Unspecified,
         rippleColor: Color = Color.Unspecified
     ): FinsibleAccordionColors {
-        val colors = FinsibleTheme.colors
+        val s = FinsibleTheme.colors
 
         return FinsibleAccordionColors(
-            containerColor = if (containerColor != Color.Unspecified) containerColor else colors.secondaryBackground,
-            titleColor = if (titleColor != Color.Unspecified) titleColor else colors.primaryContent,
-            subtitleColor = if (subtitleColor != Color.Unspecified) subtitleColor else colors.secondaryContent,
-            iconTint = if (iconTint != Color.Unspecified) iconTint else colors.secondaryContent,
-            disabledIconTint = if (disabledIconTint != Color.Unspecified) disabledIconTint else colors.disabledContent,
-            borderColor = if (borderColor != Color.Unspecified) borderColor else colors.border,
-            rippleColor = if (rippleColor != Color.Unspecified) rippleColor else colors.primaryContent.copy(alpha = 0.12f)
+            containerColor = if (containerColor != Color.Unspecified) containerColor else s.surfaceDefault,
+            titleColor = if (titleColor != Color.Unspecified) titleColor else s.contentPrimary,
+            subtitleColor = if (subtitleColor != Color.Unspecified) subtitleColor else s.contentSecondary,
+            iconTint = if (iconTint != Color.Unspecified) iconTint else s.contentSecondary,
+            disabledIconTint = if (disabledIconTint != Color.Unspecified) disabledIconTint else s.contentDisabled,
+            borderColor = if (borderColor != Color.Unspecified) borderColor else s.borderDefault,
+            rippleColor = if (rippleColor != Color.Unspecified) rippleColor else s.contentPrimary.copy(alpha = 0.12f)
         )
     }
 
     @Composable
     fun sizes(size: FinsibleSize, shapeVariant: FinsibleShape = FinsibleShape.Rounded): FinsibleAccordionSizes {
-        val d = FinsibleTheme.dimes
+        val sp = FinsibleTheme.spacing
         val t = FinsibleTheme.typography
 
         val base = when (size) {
             FinsibleSize.Small -> FinsibleAccordionSizes(
-                cornerRadius = d.d10,
-                padding = d.d12,
-                titleStyle = t.t16.medium(),
-                subtitleStyle = t.t12,
-                iconSize = d.d18,
-                spacing = d.d8
+                cornerRadius = FinsibleTheme.radius.sm,
+                padding = sp.insetMd,
+                titleStyle = t.bodyLg.medium(),
+                subtitleStyle = t.bodySm,
+                iconSize = FinsibleTheme.sizes.icon.md,
+                spacing = sp.inlineMd
             )
 
             FinsibleSize.Medium -> FinsibleAccordionSizes(
-                cornerRadius = d.d12,
-                padding = d.d14,
-                titleStyle = t.t18.medium(),
-                subtitleStyle = t.t12,
-                iconSize = d.d20,
-                spacing = d.d10
+                cornerRadius = FinsibleTheme.radius.md,
+                padding = sp.insetLg - sp.insetXs / 2,
+                titleStyle = t.bodyLg.medium(),
+                subtitleStyle = t.bodySm,
+                iconSize = FinsibleTheme.sizes.icon.lg - sp.insetXs,
+                spacing = sp.inlineMd
             )
 
             FinsibleSize.Large -> FinsibleAccordionSizes(
-                cornerRadius = d.d14,
-                padding = d.d16,
-                titleStyle = t.t20.medium(),
-                subtitleStyle = t.t14,
-                iconSize = d.d24,
-                spacing = d.d12
+                cornerRadius = FinsibleRadius.md,
+                padding = sp.insetLg,
+                titleStyle = t.headingSm,
+                subtitleStyle = t.bodyMd,
+                iconSize = FinsibleTheme.sizes.icon.lg,
+                spacing = sp.gapMd
             )
 
             else -> error("Unsupported size: $size. Accordion only supports Small, Medium, and Large sizes.")
         }
 
         val corner = when (shapeVariant) {
-            FinsibleShape.Sharp -> FinsibleTheme.dimes.d0
+            FinsibleShape.Sharp -> FinsibleTheme.radius.none
             FinsibleShape.Rounded -> base.cornerRadius
             else -> error("Unsupported shape variant: $shapeVariant. Accordion only supports Rounded and Sharp shape variants.")
         }
@@ -80,4 +81,3 @@ object FinsibleAccordionDefaults {
         return base.copy(cornerRadius = corner)
     }
 }
-

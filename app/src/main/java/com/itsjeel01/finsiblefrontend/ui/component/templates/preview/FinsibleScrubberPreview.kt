@@ -1,4 +1,8 @@
 package com.itsjeel01.finsiblefrontend.ui.component.templates.preview
+import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
+import com.itsjeel01.finsiblefrontend.ui.theme.bold
+import com.itsjeel01.finsiblefrontend.ui.theme.semiBold
+
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
@@ -17,31 +21,29 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleS
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleScrubberDefaults
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleScrubberVariant
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
-import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
 @Preview(name = "Scrubber - Light", showBackground = true, widthDp = 420, heightDp = 1100)
 @Preview(name = "Scrubber - Dark", showBackground = true, widthDp = 420, heightDp = 1100, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun FinsibleScrubberPreview() {
     FinsibleComponentPreviewScaffold {
-        val colors = FinsibleTheme.colors
-        val d = FinsibleTheme.dimes
+        val s = FinsibleTheme.colors
+        val sp = FinsibleTheme.spacing
 
-        Column(verticalArrangement = Arrangement.spacedBy(d.d2)) {
+        Column(verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackMicro)) {
             FinsibleText(
                 text = "Finsible Scrubber",
-                variant = FinsibleTextVariant.SmallHeadingBold,
-                color = colors.brandAccent
+                textStyle = FinsibleTheme.typography.displaySm.bold(),
+                color = s.brandInteractive
             )
             FinsibleText(
                 text = "Visual Component Guide",
-                variant = FinsibleTextVariant.BodyRegular,
-                color = colors.secondaryContent
+                textStyle = FinsibleTheme.typography.bodyLg,
+                color = s.contentSecondary
             )
         }
 
-        HorizontalDivider(color = colors.divider)
+        HorizontalDivider(color = s.borderSubtle)
 
         var separateIndex by remember { mutableIntStateOf(1) }
         var continuousIndex by remember { mutableIntStateOf(2) }
@@ -50,8 +52,8 @@ fun FinsibleScrubberPreview() {
         FinsiblePreviewSection("Separate - Interactive") {
             FinsibleText(
                 text = "Current: ${separateIndex + 1} / 5",
-                variant = FinsibleTextVariant.SmallBodySemiBold,
-                color = colors.primaryContent
+                textStyle = FinsibleTheme.typography.bodyMd.semiBold(),
+                color = s.contentPrimary
             )
             FinsibleScrubber(
                 currentIndex = separateIndex,
@@ -65,8 +67,8 @@ fun FinsibleScrubberPreview() {
         FinsiblePreviewSection("Continuous - Interactive") {
             FinsibleText(
                 text = "Current: ${continuousIndex + 1} / 7",
-                variant = FinsibleTextVariant.SmallBodySemiBold,
-                color = colors.primaryContent
+                textStyle = FinsibleTheme.typography.bodyMd.semiBold(),
+                color = s.contentPrimary
             )
             FinsibleScrubber(
                 currentIndex = continuousIndex,
@@ -85,8 +87,8 @@ fun FinsibleScrubberPreview() {
                 modifier = Modifier.fillMaxWidth(),
                 variant = FinsibleScrubberVariant.Separate,
                 colors = FinsibleScrubberDefaults.colors(
-                    currentColor = colors.info,
-                    restColor = colors.infoContainer
+                    currentColor = s.feedbackInfo,
+                    restColor = s.feedbackInfoSurface
                 )
             )
             FinsibleScrubber(
@@ -96,8 +98,8 @@ fun FinsibleScrubberPreview() {
                 modifier = Modifier.fillMaxWidth(),
                 variant = FinsibleScrubberVariant.Continuous,
                 colors = FinsibleScrubberDefaults.colors(
-                    currentColor = colors.warning,
-                    restColor = colors.warningContainer
+                    currentColor = s.feedbackWarning,
+                    restColor = s.feedbackWarningSurface
                 )
             )
         }
@@ -110,9 +112,9 @@ fun FinsibleScrubberPreview() {
                 modifier = Modifier.fillMaxWidth(),
                 variant = FinsibleScrubberVariant.Separate,
                 sizes = FinsibleScrubberDefaults.sizes().copy(
-                    activeBarWidth = d.d20,
-                    inactiveBarWidth = d.d8,
-                    barSpacing = d.d6
+                    activeBarWidth = FinsibleTheme.sizes.icon.lg,
+                    inactiveBarWidth = sp.inlineMd,
+                    barSpacing = sp.insetSm
                 )
             )
         }
@@ -120,7 +122,7 @@ fun FinsibleScrubberPreview() {
         FinsiblePreviewSection("Disabled") {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(d.d12)
+                horizontalArrangement = Arrangement.spacedBy(sp.gapMd)
             ) {
                 FinsibleScrubber(
                     currentIndex = 1,
@@ -162,6 +164,3 @@ fun FinsibleScrubberPreview() {
         }
     }
 }
-
-
-

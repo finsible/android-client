@@ -15,8 +15,9 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleT
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleCheckboxVariant
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
+import com.itsjeel01.finsiblefrontend.ui.theme.semiBold
+import com.itsjeel01.finsiblefrontend.ui.theme.bold
 
 private val SupportedCheckboxSizes = listOf(FinsibleSize.Small, FinsibleSize.Medium, FinsibleSize.Large)
 
@@ -25,29 +26,29 @@ private val SupportedCheckboxSizes = listOf(FinsibleSize.Small, FinsibleSize.Med
 @Composable
 fun FinsibleCheckboxPreview() {
     FinsibleComponentPreviewScaffold {
-        val dimes = FinsibleTheme.dimes
-        val colors = FinsibleTheme.colors
+        val sp = FinsibleTheme.spacing
+        val s = FinsibleTheme.colors
         Column {
             FinsibleText(
                 text = "Finsible Checkbox",
-                variant = FinsibleTextVariant.SmallHeadingBold,
-                color = colors.brandAccent
+                textStyle = FinsibleTheme.typography.displaySm.bold(),
+                color = s.brandInteractive
             )
             FinsibleText(
                 text = "Visual Component Guide",
-                variant = FinsibleTextVariant.BodyRegular,
-                color = colors.secondaryContent
+                textStyle = FinsibleTheme.typography.bodyLg,
+                color = s.contentSecondary
             )
         }
 
-        HorizontalDivider(color = colors.divider)
+        HorizontalDivider(color = s.borderSubtle)
 
         FinsiblePreviewSection("Variants") {
             FinsibleCheckboxVariant.entries.forEach { checkboxVariant ->
                 val checked = remember(checkboxVariant) { mutableStateOf(true) }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(dimes.d10)
+                    horizontalArrangement = Arrangement.spacedBy(sp.gapSm)
                 ) {
                     FinsibleCheckbox(
                         checked = checked.value,
@@ -59,15 +60,15 @@ fun FinsibleCheckboxPreview() {
                     )
                     FinsibleText(
                         text = checkboxVariant.name,
-                        variant = FinsibleTextVariant.BodySemiBold,
-                        color = colors.primaryContent
+                        textStyle = FinsibleTheme.typography.bodyLg.semiBold(),
+                        color = s.contentPrimary
                     )
                 }
             }
         }
 
         FinsiblePreviewSection("Sizes") {
-            Row(horizontalArrangement = Arrangement.spacedBy(dimes.d18), verticalAlignment = Alignment.CenterVertically) {
+            Row(horizontalArrangement = Arrangement.spacedBy(sp.insetXl), verticalAlignment = Alignment.CenterVertically) {
                 SizeSample(size = FinsibleSize.Small, label = "Small")
                 SizeSample(size = FinsibleSize.Medium, label = "Regular")
                 SizeSample(size = FinsibleSize.Large, label = "Large")
@@ -78,7 +79,7 @@ fun FinsibleCheckboxPreview() {
             val withLabelChecked = remember { mutableStateOf(true) }
             val withoutLabelChecked = remember { mutableStateOf(false) }
 
-            Column(verticalArrangement = Arrangement.spacedBy(dimes.d12)) {
+            Column(verticalArrangement = Arrangement.spacedBy(sp.gapMd)) {
                 FinsibleCheckbox(
                     checked = withLabelChecked.value,
                     onCheckedChange = { withLabelChecked.value = it },
@@ -94,14 +95,14 @@ fun FinsibleCheckboxPreview() {
         }
 
         FinsiblePreviewSection("Shapes") {
-            Row(horizontalArrangement = Arrangement.spacedBy(dimes.d18), verticalAlignment = Alignment.CenterVertically) {
+            Row(horizontalArrangement = Arrangement.spacedBy(sp.insetXl), verticalAlignment = Alignment.CenterVertically) {
                 ShapeSample(label = "Rounded", shapeVariant = FinsibleShape.Rounded)
                 ShapeSample(label = "Sharp", shapeVariant = FinsibleShape.Sharp)
             }
         }
 
         FinsiblePreviewSection("States") {
-            Row(horizontalArrangement = Arrangement.spacedBy(dimes.d18), verticalAlignment = Alignment.CenterVertically) {
+            Row(horizontalArrangement = Arrangement.spacedBy(sp.insetXl), verticalAlignment = Alignment.CenterVertically) {
                 StateSample(label = "Checked", checked = true, enabled = true)
                 StateSample(label = "Unchecked", checked = false, enabled = true)
                 StateSample(label = "Disabled Checked", checked = true, enabled = false)
@@ -113,11 +114,11 @@ fun FinsibleCheckboxPreview() {
             FinsibleCheckboxVariant.entries.forEach { checkboxVariant ->
                 FinsibleText(
                     text = checkboxVariant.name,
-                    variant = FinsibleTextVariant.SmallBodySemiBold,
-                    color = colors.brandAccent
+                    textStyle = FinsibleTheme.typography.bodyMd.semiBold(),
+                    color = s.brandInteractive
                 )
 
-                Row(horizontalArrangement = Arrangement.spacedBy(dimes.d10), verticalAlignment = Alignment.CenterVertically) {
+                Row(horizontalArrangement = Arrangement.spacedBy(sp.gapSm), verticalAlignment = Alignment.CenterVertically) {
                     SupportedCheckboxSizes.forEach { checkboxSize ->
                             FinsibleCheckbox(
                                 checked = true,
@@ -144,7 +145,7 @@ fun FinsibleCheckboxPreview() {
                     }
                 }
 
-                HorizontalDivider(color = colors.divider)
+                HorizontalDivider(color = s.borderSubtle)
             }
         }
     }
@@ -154,27 +155,27 @@ fun FinsibleCheckboxPreview() {
 private fun SizeSample(size: FinsibleSize, label: String) {
     val checked = remember(size) { mutableStateOf(true) }
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d8)) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.inlineMd)) {
         FinsibleCheckbox(
             checked = checked.value,
             onCheckedChange = { checked.value = it },
             size = size,
             checkboxContentDescription = "$label size preview"
         )
-        FinsibleText(text = label, variant = FinsibleTextVariant.SmallBodyRegular, color = FinsibleTheme.colors.secondaryContent)
+        FinsibleText(text = label, textStyle = FinsibleTheme.typography.bodyMd, color = FinsibleTheme.colors.contentSecondary)
     }
 }
 
 @Composable
 private fun StateSample(label: String, checked: Boolean, enabled: Boolean) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d8)) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.inlineMd)) {
         FinsibleCheckbox(
             checked = checked,
             onCheckedChange = {},
             enabled = enabled,
             checkboxContentDescription = "$label state preview"
         )
-        FinsibleText(text = label, variant = FinsibleTextVariant.SmallLabelRegular, color = FinsibleTheme.colors.secondaryContent)
+        FinsibleText(text = label, textStyle = FinsibleTheme.typography.bodySm, color = FinsibleTheme.colors.contentSecondary)
     }
 }
 
@@ -182,14 +183,14 @@ private fun StateSample(label: String, checked: Boolean, enabled: Boolean) {
 private fun ShapeSample(label: String, shapeVariant: FinsibleShape) {
     val checked = remember(shapeVariant) { mutableStateOf(true) }
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d8)) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.inlineMd)) {
         FinsibleCheckbox(
             checked = checked.value,
             onCheckedChange = { checked.value = it },
             shapeVariant = shapeVariant,
             checkboxContentDescription = "$label shape preview"
         )
-        FinsibleText(text = label, variant = FinsibleTextVariant.SmallLabelRegular, color = FinsibleTheme.colors.secondaryContent)
+        FinsibleText(text = label, textStyle = FinsibleTheme.typography.bodySm, color = FinsibleTheme.colors.contentSecondary)
     }
 }
 

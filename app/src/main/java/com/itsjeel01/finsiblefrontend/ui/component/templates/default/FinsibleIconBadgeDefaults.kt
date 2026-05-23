@@ -23,41 +23,36 @@ object FinsibleIconBadgeDefaults {
         iconTint: Color = Color.Unspecified,
         backgroundTint: Color = Color.Unspecified
     ): FinsibleIconBadgeColors {
-        val theme = FinsibleTheme.colors
-        val baseIconTint = theme.primaryContent
-        val baseBackgroundTint = theme.primaryContent
+        val s = FinsibleTheme.colors
+        val baseTint = s.contentPrimary
 
         return FinsibleIconBadgeColors(
-            iconTint = if (iconTint != Color.Unspecified) iconTint else baseIconTint,
-            backgroundColor = if (backgroundTint != Color.Unspecified) backgroundTint else baseBackgroundTint
+            iconTint = if (iconTint != Color.Unspecified) iconTint else baseTint,
+            backgroundColor = if (backgroundTint != Color.Unspecified) backgroundTint else baseTint
         )
     }
 
     @Composable
     fun sizes(size: FinsibleSize): FinsibleIconBadgeSizes {
-        val d = FinsibleTheme.dimes
-
-        fun containerSizeFor(iconSize: Dp): Dp {
-            return iconSize.times(2.5f)
-        }
+        fun containerSizeFor(iconSize: Dp): Dp = iconSize.times(2.5f)
 
         return when (size) {
             FinsibleSize.Small -> FinsibleIconBadgeSizes(
-                containerSize = containerSizeFor(d.d12),
-                iconSize = d.d12,
-                roundedCornerRadius = d.d6
+                containerSize = containerSizeFor(FinsibleTheme.sizes.icon.xs),
+                iconSize = FinsibleTheme.sizes.icon.xs,
+                roundedCornerRadius = FinsibleTheme.radius.xs
             )
 
             FinsibleSize.Medium -> FinsibleIconBadgeSizes(
-                containerSize = containerSizeFor(d.d16),
-                iconSize = d.d16,
-                roundedCornerRadius = d.d8
+                containerSize = containerSizeFor(FinsibleTheme.sizes.icon.md),
+                iconSize = FinsibleTheme.sizes.icon.md,
+                roundedCornerRadius = FinsibleTheme.radius.sm
             )
 
             FinsibleSize.Large -> FinsibleIconBadgeSizes(
-                containerSize = containerSizeFor(d.d20),
-                iconSize = d.d20,
-                roundedCornerRadius = d.d10
+                containerSize = containerSizeFor(FinsibleTheme.sizes.icon.lg - FinsibleTheme.spacing.insetXs),
+                iconSize = FinsibleTheme.sizes.icon.lg - FinsibleTheme.spacing.insetXs,
+                roundedCornerRadius = FinsibleTheme.radius.md
             )
 
             else -> error("Invalid icon badge size: $size. Supported sizes are: Small, Medium, and Large.")
@@ -66,12 +61,10 @@ object FinsibleIconBadgeDefaults {
 
     @Composable
     fun cornerRadius(shapeVariant: FinsibleShape, sizes: FinsibleIconBadgeSizes): Dp {
-        val d = FinsibleTheme.dimes
-
         return when (shapeVariant) {
             FinsibleShape.Circle -> sizes.containerSize / 2
             FinsibleShape.Rounded -> sizes.roundedCornerRadius
-            FinsibleShape.Sharp -> d.d0
+            FinsibleShape.Sharp -> FinsibleTheme.radius.none
             else -> error("Invalid shape variant: $shapeVariant. Supported variants are: Circle, Rounded, and Sharp.")
         }
     }
@@ -96,7 +89,3 @@ object FinsibleIconBadgeDefaults {
         return shape(shapeVariant = shapeVariant, sizes = sizes(size))
     }
 }
-
-
-
-

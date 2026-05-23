@@ -1,6 +1,10 @@
 package com.itsjeel01.finsiblefrontend.ui.component.templates.component
+import androidx.compose.ui.unit.dp
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -38,6 +42,8 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleFilterChipDefaults
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleFilterChipColors
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleFilterChipVariant
+import com.itsjeel01.finsiblefrontend.ui.constants.Duration
+import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleDurations
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
 /** A stateless selectable chip with optional icon support.
@@ -88,9 +94,9 @@ fun FinsibleFilterChip(
     }
 
     val chipSizes = FinsibleFilterChipDefaults.sizes(size)
-    require(chipSizes.iconSize > FinsibleTheme.dimes.d0) { "chipSizes.iconSize must be > 0." }
-    require(chipSizes.horizontalPadding >= FinsibleTheme.dimes.d0) { "chipSizes.horizontalPadding must be >= 0." }
-    require(chipSizes.verticalPadding >= FinsibleTheme.dimes.d0) { "chipSizes.verticalPadding must be >= 0." }
+    require(chipSizes.iconSize > 0.dp) { "chipSizes.iconSize must be > 0." }
+    require(chipSizes.horizontalPadding >= 0.dp) { "chipSizes.horizontalPadding must be >= 0." }
+    require(chipSizes.verticalPadding >= 0.dp) { "chipSizes.verticalPadding must be >= 0." }
 
     val chipShape = FinsibleFilterChipDefaults.shape(shapeVariant, chipSizes)
     val selectedTintContentColor = FinsibleFilterChipDefaults.selectedTintContentColor(inverted)
@@ -117,17 +123,22 @@ fun FinsibleFilterChip(
         label = "chipContainerColor"
     )
 
-    val labelColor = when {
-        enabled && selected -> resolvedColors.selectedLabelColor
-        enabled && !selected -> resolvedColors.unselectedLabelColor
-        !enabled && selected -> resolvedColors.disabledSelectedLabelColor
-        else -> resolvedColors.disabledUnselectedLabelColor
-    }
-    val labelTextStyle = if (selected) {
-        chipSizes.textStyle.copy(fontWeight = FontWeight.Bold)
-    } else {
-        chipSizes.textStyle
-    }
+    val labelColor by animateColorAsState(
+        targetValue = when {
+            enabled && selected -> resolvedColors.selectedLabelColor
+            enabled && !selected -> resolvedColors.unselectedLabelColor
+            !enabled && selected -> resolvedColors.disabledSelectedLabelColor
+            else -> resolvedColors.disabledUnselectedLabelColor
+        },
+        label = "labelColor"
+    )
+
+    val labelFontWeight by animateIntAsState(
+        animationSpec = tween(durationMillis = FinsibleDurations.values.focusMs, easing = FastOutLinearInEasing),
+        targetValue = if (selected) FontWeight.SemiBold.weight else FontWeight.Normal.weight,
+        label = "labelFontWeight"
+    )
+    val labelTextStyle = chipSizes.textStyle.copy(fontWeight = FontWeight(labelFontWeight.toInt()))
 
     val iconTint = when {
         enabled && selected -> resolvedColors.selectedIconTint
@@ -190,7 +201,7 @@ fun FinsibleFilterChip(
         FinsibleText(
             text = label,
             color = labelColor,
-            textStyleOverride = labelTextStyle,
+            textStyle = labelTextStyle,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )

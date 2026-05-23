@@ -12,6 +12,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleCheckboxColors
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleCheckboxSizes
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleCheckboxVariant
+import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleRadius
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
 /** Defaults for `FinsibleCheckbox`. */
@@ -35,27 +36,25 @@ object FinsibleCheckboxDefaults {
         labelColor: Color = Color.Unspecified,
         disabledLabelColor: Color = Color.Unspecified,
     ): FinsibleCheckboxColors {
-        val theme = FinsibleTheme.colors
+        val s = FinsibleTheme.colors
 
         val baseCheckedContainer = when (variant) {
-            FinsibleCheckboxVariant.Monochrome -> theme.primaryContent
-            FinsibleCheckboxVariant.Colorful -> theme.brandAccent
+            FinsibleCheckboxVariant.Monochrome -> s.contentPrimary
+            FinsibleCheckboxVariant.Colorful -> s.brandInteractive
         }
-        val baseCheckedBorder = baseCheckedContainer // Checked border intentionally matches filled background.
-
-        val baseCheckedIcon = theme.primaryBackground
-        val baseUncheckedContainer = theme.transparent
-        val baseUncheckedBorder = theme.border
-        val baseUncheckedIcon = theme.transparent
-
-        val baseDisabledCheckedContainer = theme.disabled
-        val baseDisabledCheckedBorder = theme.disabled
-        val baseDisabledCheckedIcon = theme.disabledContent
-        val baseDisabledUncheckedContainer = theme.transparent
-        val baseDisabledUncheckedBorder = theme.disabled
-        val baseDisabledUncheckedIcon = theme.transparent
-        val baseLabelColor = theme.primaryContent
-        val baseDisabledLabelColor = theme.disabledContent
+        val baseCheckedBorder = baseCheckedContainer
+        val baseCheckedIcon = s.surfaceBase
+        val baseUncheckedContainer = Color.Transparent
+        val baseUncheckedBorder = s.borderDefault
+        val baseUncheckedIcon = Color.Transparent
+        val baseDisabledCheckedContainer = s.surfaceSunken
+        val baseDisabledCheckedBorder = s.surfaceSunken
+        val baseDisabledCheckedIcon = s.contentDisabled
+        val baseDisabledUncheckedContainer = Color.Transparent
+        val baseDisabledUncheckedBorder = s.surfaceSunken
+        val baseDisabledUncheckedIcon = Color.Transparent
+        val baseLabelColor = s.contentPrimary
+        val baseDisabledLabelColor = s.contentDisabled
 
         return FinsibleCheckboxColors(
             checkedContainerColor = if (checkedContainerColor != Color.Unspecified) checkedContainerColor else baseCheckedContainer,
@@ -77,35 +76,35 @@ object FinsibleCheckboxDefaults {
 
     @Composable
     fun sizes(size: FinsibleSize): FinsibleCheckboxSizes {
-        val d = FinsibleTheme.dimes
-        val type = FinsibleTheme.typography
+        val sp = FinsibleTheme.spacing
+        val t = FinsibleTheme.typography
 
         return when (size) {
             FinsibleSize.Small -> FinsibleCheckboxSizes(
-                boxSize = d.d16,
-                cornerRadius = d.d4,
-                borderWidth = d.d1,
-                checkStrokeWidth = d.d2,
-                labelSpacing = d.d8,
-                labelTextStyle = type.t14
+                boxSize = FinsibleTheme.sizes.icon.md,
+            cornerRadius = FinsibleTheme.radius.xs,
+                borderWidth = FinsibleTheme.stroke.thin,
+                checkStrokeWidth = FinsibleTheme.stroke.bold,
+                labelSpacing = sp.inlineMd,
+                labelTextStyle = t.bodyMd
             )
 
             FinsibleSize.Medium -> FinsibleCheckboxSizes(
-                boxSize = d.d20,
-                cornerRadius = d.d5,
-                borderWidth = d.d1dot5,
-                checkStrokeWidth = d.d2,
-                labelSpacing = d.d10,
-                labelTextStyle = type.t16
+                boxSize = FinsibleTheme.sizes.icon.lg - sp.insetXs,
+                cornerRadius = FinsibleRadius.xs,
+                borderWidth = FinsibleTheme.stroke.semiBold,
+                checkStrokeWidth = FinsibleTheme.stroke.bold,
+                labelSpacing = sp.gapSm + sp.insetXs / 2,
+                labelTextStyle = t.bodyLg
             )
 
             FinsibleSize.Large -> FinsibleCheckboxSizes(
-                boxSize = d.d24,
-                cornerRadius = d.d6,
-                borderWidth = d.d2,
-                checkStrokeWidth = d.d3,
-                labelSpacing = d.d12,
-                labelTextStyle = type.t20
+                boxSize = FinsibleTheme.sizes.icon.lg,
+                cornerRadius = FinsibleRadius.xs,
+                borderWidth = FinsibleTheme.stroke.bold,
+                checkStrokeWidth = FinsibleTheme.stroke.heavy,
+                labelSpacing = sp.gapMd,
+                labelTextStyle = t.headingSm
             )
 
             else -> error("Invalid checkbox size: $size. Supported sizes are: Small, Medium, and Large.")
@@ -114,11 +113,10 @@ object FinsibleCheckboxDefaults {
 
     @Composable
     fun cornerRadius(shapeVariant: FinsibleShape, size: FinsibleSize): Dp {
-        val d = FinsibleTheme.dimes
         val resolvedSizes = sizes(size)
 
         return when (shapeVariant) {
-            FinsibleShape.Sharp -> d.d0
+            FinsibleShape.Sharp -> FinsibleTheme.radius.none
             FinsibleShape.Rounded -> resolvedSizes.cornerRadius
             else -> error("Invalid shape variant: $shapeVariant. Supported variants are: Rounded and Sharp.")
         }
@@ -129,10 +127,8 @@ object FinsibleCheckboxDefaults {
         return when (shapeVariant) {
             FinsibleShape.Circle,
             FinsibleShape.Pill -> CircleShape
-
             FinsibleShape.Rounded -> RoundedCornerShape(cornerRadius(shapeVariant, size))
             FinsibleShape.Sharp -> RectangleShape
         }
     }
 }
-

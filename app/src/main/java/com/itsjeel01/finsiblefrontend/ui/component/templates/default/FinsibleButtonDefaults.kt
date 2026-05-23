@@ -15,7 +15,10 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleButto
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleButtonColors
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleButtonSizes
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleButtonVariant
+import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleRadius
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
+import com.itsjeel01.finsiblefrontend.ui.theme.bold
+import com.itsjeel01.finsiblefrontend.ui.theme.medium
 
 /** Defaults for Button Component. */
 object FinsibleButtonDefaults {
@@ -33,74 +36,74 @@ object FinsibleButtonDefaults {
         disabledBorderColor: Color = Color.Unspecified,
         rippleColor: Color = Color.Unspecified
     ): FinsibleButtonColors {
-        val theme = FinsibleTheme.colors
+        val s = FinsibleTheme.colors
 
         val (baseContainer, baseContent, baseBorder) = when (variant) {
             FinsibleButtonVariant.Filled -> Triple(
-                theme.primaryContent,
-                theme.primaryBackground,
+                s.contentPrimary,
+                s.surfaceBase,
                 null
             )
 
             FinsibleButtonVariant.FilledTonal -> Triple(
-                theme.secondaryBackground,
-                theme.primaryContent,
-                theme.primaryContent
+                s.surfaceDefault,
+                s.contentPrimary,
+                s.contentPrimary
             )
 
             FinsibleButtonVariant.Outlined -> Triple(
                 Color.Transparent,
-                theme.primaryContent,
-                theme.border
+                s.contentPrimary,
+                s.borderDefault
             )
 
             FinsibleButtonVariant.Text -> Triple(
                 Color.Transparent,
-                theme.primaryContent,
+                s.contentPrimary,
                 null
             )
 
             FinsibleButtonVariant.Link -> Triple(
                 Color.Transparent,
-                theme.link,
+                s.contentLink,
                 null
             )
         }
 
         val (baseDisabledContainer, baseDisabledContent, baseDisabledBorder) = when (variant) {
             FinsibleButtonVariant.Filled -> Triple(
-                theme.disabled,
-                theme.disabledContent,
+                s.surfaceSunken,
+                s.contentDisabled,
                 null
             )
 
             FinsibleButtonVariant.FilledTonal -> Triple(
-                theme.disabled,
-                theme.disabledContent,
-                theme.disabledContent
+                s.surfaceSunken,
+                s.contentDisabled,
+                s.contentDisabled
             )
 
             FinsibleButtonVariant.Outlined -> Triple(
                 Color.Transparent,
-                theme.disabledContent,
-                theme.disabledContent
+                s.contentDisabled,
+                s.contentDisabled
             )
 
             FinsibleButtonVariant.Text -> Triple(
                 Color.Transparent,
-                theme.disabledContent,
+                s.contentDisabled,
                 null
             )
 
             FinsibleButtonVariant.Link -> Triple(
                 Color.Transparent,
-                theme.disabledContent,
+                s.contentDisabled,
                 null
             )
         }
 
-        val baseBadgeContainer = theme.brandAccent
-        val baseBadgeContent = theme.primaryContent
+        val baseBadgeContainer = s.brandInteractive
+        val baseBadgeContent = s.contentPrimary
 
         return FinsibleButtonColors(
             containerColor = if (containerColor != Color.Unspecified) containerColor else baseContainer,
@@ -117,68 +120,77 @@ object FinsibleButtonDefaults {
 
     @Composable
     fun sizes(size: FinsibleSize): FinsibleButtonSizes {
-        val dimes = FinsibleTheme.dimes
-        val type = FinsibleTheme.typography
+        val sp = FinsibleTheme.spacing
+        val t = FinsibleTheme.typography
 
         return when (size) {
             FinsibleSize.ExtraSmall -> FinsibleButtonSizes(
-                contentPadding = PaddingValues(horizontal = dimes.d6, vertical = dimes.d2),
-                textStyle = type.t12.copy(fontWeight = FontWeight.Medium),
-                iconSize = dimes.d12,
-                iconSpacing = dimes.d4,
+                contentPadding = PaddingValues(horizontal = sp.insetSm - sp.insetXs / 2, vertical = sp.insetXs / 2),
+                textStyle = t.bodySm.medium(),
+                iconSize = FinsibleTheme.sizes.icon.xs,
+                iconSpacing = sp.insetXs,
             )
 
             FinsibleSize.Small -> FinsibleButtonSizes(
-                contentPadding = PaddingValues(horizontal = dimes.d10, vertical = dimes.d4),
-                textStyle = type.t16.copy(fontWeight = FontWeight.Medium),
-                iconSize = dimes.d16,
-                iconSpacing = dimes.d4
+                contentPadding = PaddingValues(horizontal = sp.gapSm + sp.insetXs / 2, vertical = sp.insetXs),
+                textStyle = t.bodyLg.medium(),
+                iconSize = FinsibleTheme.sizes.icon.md,
+                iconSpacing = sp.insetXs
             )
 
             FinsibleSize.Medium -> FinsibleButtonSizes(
-                contentPadding = PaddingValues(horizontal = dimes.d16, vertical = dimes.d6),
-                textStyle = type.t18.copy(fontWeight = FontWeight.Medium),
-                iconSize = dimes.d20,
-                iconSpacing = dimes.d6
+                contentPadding = PaddingValues(horizontal = sp.insetLg, vertical = sp.insetSm - sp.insetXs / 2),
+                textStyle = t.bodyLg.copy(fontWeight = FontWeight.Medium),
+                iconSize = FinsibleTheme.sizes.icon.lg - sp.insetXs,
+                iconSpacing = sp.insetSm - sp.insetXs / 2
             )
 
             FinsibleSize.Large -> FinsibleButtonSizes(
-                contentPadding = PaddingValues(horizontal = dimes.d20, vertical = dimes.d8),
-                textStyle = type.t20.copy(fontWeight = FontWeight.Medium),
-                iconSize = dimes.d24,
-                iconSpacing = dimes.d6
+                contentPadding = PaddingValues(horizontal = sp.insetXl, vertical = sp.inlineMd),
+                textStyle = t.headingSm.medium(),
+                iconSize = FinsibleTheme.sizes.icon.lg,
+                iconSpacing = sp.insetSm - sp.insetXs / 2
             )
 
             FinsibleSize.ExtraLarge -> FinsibleButtonSizes(
-                contentPadding = PaddingValues(horizontal = dimes.d28, vertical = dimes.d10),
-                textStyle = type.t24.copy(fontWeight = FontWeight.Medium),
-                iconSize = dimes.d28,
-                iconSpacing = dimes.d10
+                contentPadding = PaddingValues(horizontal = sp.inset2xl + sp.insetXs, vertical = sp.gapSm + sp.insetXs / 2),
+                textStyle = t.headingMd.medium(),
+                iconSize = FinsibleTheme.sizes.icon.xl - sp.insetXs,
+                iconSpacing = sp.gapSm + sp.insetXs / 2
             )
         }
     }
 
     @Composable
-    fun cornerRadius(shapeVariant: FinsibleShape, size: FinsibleSize): Dp {
-        val dimes = FinsibleTheme.dimes
+    fun iconOnlySize(size: FinsibleSize): Dp {
+        return when (size) {
+            FinsibleSize.ExtraSmall -> FinsibleTheme.sizes.touch.xs
+            FinsibleSize.Small      -> FinsibleTheme.sizes.touch.sm
+            FinsibleSize.Medium     -> FinsibleTheme.sizes.touch.md
+            FinsibleSize.Large      -> FinsibleTheme.sizes.touch.lg
+            FinsibleSize.ExtraLarge -> FinsibleTheme.sizes.touch.xl
+        }
+    }
 
+    @Composable
+    fun cornerRadius(shapeVariant: FinsibleShape, size: FinsibleSize): Dp {
         return when (shapeVariant) {
-            FinsibleShape.Sharp -> dimes.d0
+            FinsibleShape.Sharp -> FinsibleTheme.radius.none
             FinsibleShape.Rounded -> when (size) {
-                FinsibleSize.ExtraSmall -> dimes.d6
-                FinsibleSize.Small -> dimes.d8
-                FinsibleSize.Medium -> dimes.d12
-                FinsibleSize.Large -> dimes.d14
-                FinsibleSize.ExtraLarge -> dimes.d16
+                FinsibleSize.ExtraSmall -> FinsibleTheme.radius.xs
+                FinsibleSize.Small      -> FinsibleTheme.radius.sm
+                FinsibleSize.Medium     -> FinsibleTheme.radius.md
+                FinsibleSize.Large      -> FinsibleRadius.md
+                FinsibleSize.ExtraLarge -> FinsibleTheme.radius.lg
             }
 
             FinsibleShape.Circle,
             FinsibleShape.Pill -> when (size) {
-                FinsibleSize.ExtraSmall -> dimes.d12
-                FinsibleSize.Small -> dimes.d16
-                FinsibleSize.Medium -> dimes.d24
-                FinsibleSize.Large -> dimes.d28
-                FinsibleSize.ExtraLarge -> dimes.d32
+                FinsibleSize.ExtraSmall -> FinsibleTheme.sizes.icon.xs
+                FinsibleSize.Small      -> FinsibleTheme.sizes.icon.md
+                FinsibleSize.Medium     -> FinsibleTheme.sizes.icon.lg
+                FinsibleSize.Large      -> FinsibleTheme.sizes.icon.xl - FinsibleTheme.spacing.insetXs
+                FinsibleSize.ExtraLarge -> FinsibleTheme.sizes.icon.xl
             }
         }
     }
@@ -195,33 +207,33 @@ object FinsibleButtonDefaults {
 
     @Composable
     fun badgeSpec(size: FinsibleSize): FinsibleButtonBadgeSpec {
-        val d = FinsibleTheme.dimes
-        val type = FinsibleTheme.typography
+        val sp = FinsibleTheme.spacing
+        val t = FinsibleTheme.typography
 
         return when (size) {
             FinsibleSize.ExtraSmall -> FinsibleButtonBadgeSpec(
-                diameter = d.d10,
-                textStyle = type.t8.copy(fontWeight = FontWeight.Bold)
+                diameter = sp.gapSm + sp.insetXs / 2,
+                textStyle = t.labelSm.bold()
             )
 
             FinsibleSize.Small -> FinsibleButtonBadgeSpec(
-                diameter = d.d12,
-                textStyle = type.t8.copy(fontWeight = FontWeight.Bold)
+                diameter = sp.gapMd,
+                textStyle = t.labelSm.copy(fontWeight = FontWeight.Bold)
             )
 
             FinsibleSize.Medium -> FinsibleButtonBadgeSpec(
-                diameter = d.d16,
-                textStyle = type.t10.copy(fontWeight = FontWeight.Bold)
+                diameter = sp.insetLg,
+                textStyle = t.caption.bold()
             )
 
             FinsibleSize.Large -> FinsibleButtonBadgeSpec(
-                diameter = d.d18,
-                textStyle = type.t10.copy(fontWeight = FontWeight.Bold)
+                diameter = sp.insetLg + sp.insetXs / 2,
+                textStyle = t.caption.copy(fontWeight = FontWeight.Bold)
             )
 
             FinsibleSize.ExtraLarge -> FinsibleButtonBadgeSpec(
-                diameter = d.d20,
-                textStyle = type.t10.copy(fontWeight = FontWeight.Bold)
+                diameter = sp.insetXl,
+                textStyle = t.caption.copy(fontWeight = FontWeight.Bold)
             )
         }
     }

@@ -16,32 +16,23 @@ object FinsibleScrubberDefaults {
         disabledCurrentColor: Color = Color.Unspecified,
         disabledRestColor: Color = Color.Unspecified
     ): FinsibleScrubberColors {
-        val theme = FinsibleTheme.colors
+        val s = FinsibleTheme.colors
 
         return FinsibleScrubberColors(
-            currentColor = if (currentColor != Color.Unspecified) currentColor else theme.brandAccent,
-            restColor = if (restColor != Color.Unspecified) restColor else theme.primaryContent40,
-            disabledCurrentColor = if (disabledCurrentColor != Color.Unspecified) {
-                disabledCurrentColor
-            } else {
-                theme.disabledContent
-            },
-            disabledRestColor = if (disabledRestColor != Color.Unspecified) {
-                disabledRestColor
-            } else {
-                theme.disabled
-            }
+            currentColor = if (currentColor != Color.Unspecified) currentColor else s.brandInteractive,
+            restColor = if (restColor != Color.Unspecified) restColor else s.contentPrimary.copy(alpha = 0.4f),
+            disabledCurrentColor = if (disabledCurrentColor != Color.Unspecified) disabledCurrentColor else s.contentDisabled,
+            disabledRestColor = if (disabledRestColor != Color.Unspecified) disabledRestColor else s.surfaceSunken,
         )
     }
 
     @Composable
     fun sizes() = FinsibleScrubberSizes(
-        activeBarWidth = FinsibleTheme.dimes.d28,
-        inactiveBarWidth = FinsibleTheme.dimes.d12,
-        barHeight = FinsibleTheme.dimes.d4,
-        barSpacing = FinsibleTheme.dimes.d8,
-        cornerRadius = FinsibleTheme.dimes.d2,
-        minTouchTargetHeight = FinsibleTheme.dimes.d24
+        activeBarWidth = FinsibleTheme.spacing.inset2xl,
+        inactiveBarWidth = FinsibleTheme.spacing.insetMd,
+        barHeight = FinsibleTheme.spacing.insetXs,
+        barSpacing = FinsibleTheme.spacing.inlineMd,
+        cornerRadius = FinsibleTheme.radius.xs,
+        minTouchTargetHeight = FinsibleTheme.spacing.inset2xl,
     )
 }
-

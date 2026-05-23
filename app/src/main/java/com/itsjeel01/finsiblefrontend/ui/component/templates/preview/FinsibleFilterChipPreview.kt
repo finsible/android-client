@@ -20,8 +20,9 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleIconPo
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleFilterChipVariant
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
+import com.itsjeel01.finsiblefrontend.ui.theme.semiBold
+import com.itsjeel01.finsiblefrontend.ui.theme.bold
 
 private val SupportedFilterChipSizes = listOf(FinsibleSize.Small, FinsibleSize.Medium, FinsibleSize.Large)
 
@@ -37,23 +38,23 @@ fun FinsibleFilterChipPreview() {
     }
 
     FinsibleComponentPreviewScaffold {
-        val dimes = FinsibleTheme.dimes
-        val colors = FinsibleTheme.colors
+        val sp = FinsibleTheme.spacing
+        val s = FinsibleTheme.colors
 
         Column {
             FinsibleText(
                 text = "Finsible Filter Chips",
-                variant = FinsibleTextVariant.SmallHeadingBold,
-                color = colors.brandAccent
+                textStyle = FinsibleTheme.typography.displaySm.bold(),
+                color = s.brandInteractive
             )
             FinsibleText(
                 text = "Visual Component Guide",
-                variant = FinsibleTextVariant.BodyRegular,
-                color = colors.secondaryContent
+                textStyle = FinsibleTheme.typography.bodyLg,
+                color = s.contentSecondary
             )
         }
 
-        HorizontalDivider(color = colors.divider)
+        HorizontalDivider(color = s.borderSubtle)
 
         FinsiblePreviewSection("Label Variations") {
             var labelOnlySelected by remember { mutableStateOf(true) }
@@ -61,7 +62,7 @@ fun FinsibleFilterChipPreview() {
             var iconTrailingSelected by remember { mutableStateOf(true) }
 
             Row(
-                horizontalArrangement = Arrangement.spacedBy(dimes.d10),
+                horizontalArrangement = Arrangement.spacedBy(sp.gapSm),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 FinsibleFilterChip(
@@ -87,7 +88,7 @@ fun FinsibleFilterChipPreview() {
 
         FinsiblePreviewSection("Sizes") {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(dimes.d10),
+                horizontalArrangement = Arrangement.spacedBy(sp.gapSm),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 SupportedFilterChipSizes.forEach { chipSize ->
@@ -104,7 +105,7 @@ fun FinsibleFilterChipPreview() {
 
         FinsiblePreviewSection("Shapes") {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(dimes.d10),
+                horizontalArrangement = Arrangement.spacedBy(sp.gapSm),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 ShapeSample(shapeVariant = FinsibleShape.Pill, label = "Pill")
@@ -115,7 +116,7 @@ fun FinsibleFilterChipPreview() {
 
         FinsiblePreviewSection("States") {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(dimes.d10),
+                horizontalArrangement = Arrangement.spacedBy(sp.gapSm),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 FinsibleFilterChip(selected = true, onSelectedChange = {}, label = "Selected")
@@ -127,7 +128,7 @@ fun FinsibleFilterChipPreview() {
 
         FinsiblePreviewSection("Variants") {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(dimes.d10),
+                horizontalArrangement = Arrangement.spacedBy(sp.gapSm),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 FinsibleFilterChip(
@@ -161,12 +162,12 @@ fun FinsibleFilterChipPreview() {
             SupportedFilterChipSizes.forEach { chipSize ->
                 FinsibleText(
                     text = chipSize.name,
-                    variant = FinsibleTextVariant.SmallBodySemiBold,
-                    color = colors.brandAccent
+                    textStyle = FinsibleTheme.typography.bodyMd.semiBold(),
+                    color = s.brandInteractive
                 )
 
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(dimes.d8),
+                    horizontalArrangement = Arrangement.spacedBy(sp.inlineMd),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     FinsibleFilterChip(selected = false, onSelectedChange = {}, label = "Label", size = chipSize)
@@ -184,7 +185,7 @@ fun FinsibleFilterChipPreview() {
                     FinsibleFilterChip(selected = false, onSelectedChange = {}, label = "Disabled Off", size = chipSize, enabled = false)
                 }
 
-                HorizontalDivider(color = colors.divider)
+                HorizontalDivider(color = s.borderSubtle)
             }
         }
     }

@@ -16,32 +16,32 @@ object FinsibleNotificationDefaults {
         subtitleColor: Color = Color.Unspecified,
         progressTrackColor: Color = Color.Unspecified,
     ): FinsibleNotificationColors {
-        val theme = FinsibleTheme.colors
+        val s = FinsibleTheme.colors
 
-        val variantColor = when (variant) {
-            FinsibleNotificationVariant.Success -> theme.success
-            FinsibleNotificationVariant.Error -> theme.error
-            FinsibleNotificationVariant.Warning -> theme.warning
-            FinsibleNotificationVariant.Info -> theme.info
+        val (variantColor, variantSurface) = when (variant) {
+            FinsibleNotificationVariant.Success -> s.feedbackSuccess to s.feedbackSuccessSurface
+            FinsibleNotificationVariant.Error   -> s.feedbackError to s.feedbackErrorSurface
+            FinsibleNotificationVariant.Warning -> s.feedbackWarning to s.feedbackWarningSurface
+            FinsibleNotificationVariant.Info    -> s.feedbackInfo to s.feedbackInfoSurface
         }
 
         return FinsibleNotificationColors(
-            containerColor = if (containerColor != Color.Unspecified) containerColor else theme.surfaceContainerLow,
-            titleColor = if (titleColor != Color.Unspecified) titleColor else theme.primaryContent,
-            subtitleColor = if (subtitleColor != Color.Unspecified) subtitleColor else theme.secondaryContent,
+            containerColor = if (containerColor != Color.Unspecified) containerColor else variantSurface.copy(alpha = 0.2f),
+            titleColor = if (titleColor != Color.Unspecified) titleColor else s.contentPrimary,
+            subtitleColor = if (subtitleColor != Color.Unspecified) subtitleColor else s.contentSecondary,
             iconContainerColor = variantColor.copy(alpha = 0.2f),
             iconTintColor = variantColor,
             progressIndicatorColor = variantColor.copy(alpha = 0.8f),
-            progressTrackColor = if (progressTrackColor != Color.Unspecified) progressTrackColor else theme.border.copy(alpha = 0.4f)
+            progressTrackColor = if (progressTrackColor != Color.Unspecified) progressTrackColor else s.borderSubtle.copy(alpha = 0.4f)
         )
     }
 
     fun iconFor(variant: FinsibleNotificationVariant): Int {
         return when (variant) {
             FinsibleNotificationVariant.Success -> com.composables.icons.tabler.filled.R.drawable.tabler_ic_circle_check_filled
-            FinsibleNotificationVariant.Error -> com.composables.icons.tabler.filled.R.drawable.tabler_ic_circle_x_filled
+            FinsibleNotificationVariant.Error   -> com.composables.icons.tabler.filled.R.drawable.tabler_ic_circle_x_filled
             FinsibleNotificationVariant.Warning -> com.composables.icons.tabler.filled.R.drawable.tabler_ic_alert_triangle_filled
-            FinsibleNotificationVariant.Info -> com.composables.icons.tabler.filled.R.drawable.tabler_ic_alert_circle_filled
+            FinsibleNotificationVariant.Info    -> com.composables.icons.tabler.filled.R.drawable.tabler_ic_alert_circle_filled
         }
     }
 }

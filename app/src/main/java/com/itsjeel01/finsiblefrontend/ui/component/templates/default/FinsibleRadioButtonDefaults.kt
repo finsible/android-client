@@ -6,7 +6,6 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleRadioButtonColors
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleRadioButtonSizes
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
-import com.itsjeel01.finsiblefrontend.ui.theme.medium
 
 /** Defaults for the templatised radio button component. */
 object FinsibleRadioButtonDefaults {
@@ -25,50 +24,48 @@ object FinsibleRadioButtonDefaults {
         disabledUnselectedLabelColor: Color = Color.Unspecified,
         rippleColor: Color = Color.Unspecified
     ): FinsibleRadioButtonColors {
-        val theme = FinsibleTheme.colors
+        val s = FinsibleTheme.colors
 
         return FinsibleRadioButtonColors(
-            selectedRingColor = if (selectedRingColor != Color.Unspecified) selectedRingColor else theme.primaryContent,
-            unselectedRingColor = if (unselectedRingColor != Color.Unspecified) unselectedRingColor else theme.outlineVariant,
-            selectedDotColor = if (selectedDotColor != Color.Unspecified) selectedDotColor else theme.primaryContent,
-            selectedLabelColor = if (selectedLabelColor != Color.Unspecified) selectedLabelColor else theme.primaryContent,
-            unselectedLabelColor = if (unselectedLabelColor != Color.Unspecified) unselectedLabelColor else theme.secondaryContent,
-            disabledSelectedRingColor = if (disabledSelectedRingColor != Color.Unspecified) disabledSelectedRingColor else theme.disabledContent,
-            disabledUnselectedRingColor = if (disabledUnselectedRingColor != Color.Unspecified) disabledUnselectedRingColor else theme.disabledContent,
-            disabledSelectedDotColor = if (disabledSelectedDotColor != Color.Unspecified) disabledSelectedDotColor else theme.disabledContent,
-            disabledSelectedLabelColor = if (disabledSelectedLabelColor != Color.Unspecified) disabledSelectedLabelColor else theme.disabledContent,
-            disabledUnselectedLabelColor = if (disabledUnselectedLabelColor != Color.Unspecified) disabledUnselectedLabelColor else theme.disabledContent,
-            rippleColor = if (rippleColor != Color.Unspecified) rippleColor else theme.primaryContent.copy(alpha = 0.12f)
+            selectedRingColor = if (selectedRingColor != Color.Unspecified) selectedRingColor else s.contentPrimary,
+            unselectedRingColor = if (unselectedRingColor != Color.Unspecified) unselectedRingColor else s.borderDefault,
+            selectedDotColor = if (selectedDotColor != Color.Unspecified) selectedDotColor else s.contentPrimary,
+            selectedLabelColor = if (selectedLabelColor != Color.Unspecified) selectedLabelColor else s.contentPrimary,
+            unselectedLabelColor = if (unselectedLabelColor != Color.Unspecified) unselectedLabelColor else s.contentSecondary,
+            disabledSelectedRingColor = if (disabledSelectedRingColor != Color.Unspecified) disabledSelectedRingColor else s.contentDisabled,
+            disabledUnselectedRingColor = if (disabledUnselectedRingColor != Color.Unspecified) disabledUnselectedRingColor else s.contentDisabled,
+            disabledSelectedDotColor = if (disabledSelectedDotColor != Color.Unspecified) disabledSelectedDotColor else s.contentDisabled,
+            disabledSelectedLabelColor = if (disabledSelectedLabelColor != Color.Unspecified) disabledSelectedLabelColor else s.contentDisabled,
+            disabledUnselectedLabelColor = if (disabledUnselectedLabelColor != Color.Unspecified) disabledUnselectedLabelColor else s.contentDisabled,
+            rippleColor = if (rippleColor != Color.Unspecified) rippleColor else s.contentPrimary.copy(alpha = 0.12f)
         )
     }
 
     @Composable
     fun sizes(size: FinsibleSize): FinsibleRadioButtonSizes {
-        val d = FinsibleTheme.dimes
+        val sp = FinsibleTheme.spacing
         val t = FinsibleTheme.typography
 
         return when (size) {
             FinsibleSize.Small -> FinsibleRadioButtonSizes(
-                outerDiameter = d.d18,
-                ringWidth = d.d2,
-                dotDiameter = d.d8,
-                iconSize = d.d14,
-                spacing = d.d8,
-                labelStyle = t.t14
+                outerDiameter = FinsibleTheme.sizes.icon.md,
+                ringWidth = FinsibleTheme.stroke.bold,
+                dotDiameter = sp.inlineMd,
+                iconSize = FinsibleTheme.sizes.icon.sm,
+                spacing = sp.inlineMd,
+                labelStyle = t.bodyMd
             )
 
             FinsibleSize.Medium -> FinsibleRadioButtonSizes(
-                outerDiameter = d.d20,
-                ringWidth = d.d2,
-                dotDiameter = d.d10,
-                iconSize = d.d16,
-                spacing = d.d8,
-                labelStyle = t.t16.medium()
+                outerDiameter = FinsibleTheme.sizes.icon.lg - sp.insetXs,
+                ringWidth = FinsibleTheme.stroke.bold,
+                dotDiameter = sp.inlineMd + sp.insetXs / 2,
+                iconSize = FinsibleTheme.sizes.icon.md,
+                spacing = sp.inlineMd,
+                labelStyle = t.labelLg
             )
 
             else -> error("Invalid radio button size: $size. Supported sizes are: Small and Medium.")
         }
     }
 }
-
-

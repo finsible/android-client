@@ -32,7 +32,7 @@ fun FinsibleChipsRowPreview() {
     FinsibleComponentPreviewScaffold {
         Column(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d16)
+            verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackLg)
         ) {
             FinsibleChipsRow(chips = chips, chipKeys = labels, wrap = true)
             FinsibleChipsRow(chips = chips, chipKeys = labels, wrap = false)

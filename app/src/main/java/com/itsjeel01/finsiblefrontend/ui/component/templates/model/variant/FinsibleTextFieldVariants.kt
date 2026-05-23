@@ -1,8 +1,11 @@
-package com.itsjeel01.finsiblefrontend.ui.component.templates.component
+package com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleTextField
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleTextFieldDefaults
@@ -35,8 +38,8 @@ fun FinsibleAmountTextField(
     sizes: FinsibleTextFieldSizes = FinsibleTextFieldDefaults.sizes(size, shapeVariant)
 ) {
     val amountKeyboard = FinsibleTextFieldDefaults.inputConfig(
-        keyboardType = androidx.compose.ui.text.input.KeyboardType.Number,
-        imeAction = androidx.compose.ui.text.input.ImeAction.Done
+        keyboardType = KeyboardType.Number,
+        imeAction = ImeAction.Done
     )
 
     FinsibleTextField(
@@ -54,7 +57,7 @@ fun FinsibleAmountTextField(
         singleLine = true,
         inputFilter = { new ->
             new.all { it.isDigit() || it == '.' || it == ',' } &&
-                new.count { it == '.' || it == ',' } <= 1
+                    new.count { it == '.' || it == ',' } <= 1
         }
     )
 }

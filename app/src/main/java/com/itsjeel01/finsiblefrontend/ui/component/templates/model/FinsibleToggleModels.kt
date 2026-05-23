@@ -11,11 +11,14 @@ data class FinsibleToggleColors(
     val trackOnColor: Color,
     val thumbOnColor: Color,
     val trackOffColor: Color,
+    val trackOffBorderColor: Color,
     val thumbOffColor: Color,
     val disabledTrackColor: Color,
     val disabledThumbColor: Color,
     val labelColor: Color,
     val disabledLabelColor: Color,
+    val hintColor: Color,
+    val disabledHintColor: Color,
 )
 
 /** Immutable holder for toggle sizing. */
@@ -26,6 +29,7 @@ data class FinsibleToggleSizes(
     val thumbDiameter: Dp,
     val padding: Dp,
     val labelStyle: TextStyle,
+    val hintStyle: TextStyle,
     val iconSize: Dp,
     val spacing: Dp
 )
@@ -43,4 +47,3 @@ enum class FinsibleToggleArrangement {
     Attached,
     SpaceBetween
 }
-

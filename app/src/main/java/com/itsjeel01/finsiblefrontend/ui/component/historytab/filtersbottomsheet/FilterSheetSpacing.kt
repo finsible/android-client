@@ -7,15 +7,15 @@ import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 /** Shared spacing contract for filter-sheet section rhythm. */
 object FilterSheetSpacing {
     val sectionHeaderGap: Dp
-        @Composable get() = FinsibleTheme.dimes.d8
+        @Composable get() = FinsibleTheme.spacing.inlineMd
 
     val sectionDividerPadding: Dp
-        @Composable get() = FinsibleTheme.dimes.d12
+        @Composable get() = FinsibleTheme.spacing.gapMd
 
     val headerToFirstSection: Dp
-        @Composable get() = FinsibleTheme.dimes.d20
+        @Composable get() = FinsibleTheme.spacing.insetXl
 
     val lastSectionToApplyButton: Dp
-        @Composable get() = FinsibleTheme.dimes.d20
+        @Composable get() = FinsibleTheme.spacing.insetXl
 }
 

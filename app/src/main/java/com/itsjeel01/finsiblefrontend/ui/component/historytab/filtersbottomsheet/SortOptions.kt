@@ -13,9 +13,9 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleT
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleRadioButtonDefaults
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.model.SortOption
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
+import com.itsjeel01.finsiblefrontend.ui.theme.semiBold
 
 @Composable
 fun SortOptions(
@@ -25,15 +25,15 @@ fun SortOptions(
     Column(verticalArrangement = Arrangement.spacedBy(FilterSheetSpacing.sectionHeaderGap)) {
         FinsibleText(
             text = stringResource(R.string.sort_by),
-            variant = FinsibleTextVariant.MicroLabelSemiBold,
+            textStyle = FinsibleTheme.typography.labelSm.semiBold(),
             colorVariant = FinsibleTextColorVariant.Secondary,
             uppercase = true
         )
 
-        Column(verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d8)) {
+        Column(verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.inlineMd)) {
             SortOption.entries.chunked(2).forEach { row ->
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d8),
+                    horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.inlineMd),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     row.forEach { option ->

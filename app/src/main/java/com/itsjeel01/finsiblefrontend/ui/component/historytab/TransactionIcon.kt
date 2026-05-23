@@ -28,9 +28,9 @@ fun TransactionIcon(
     }
 
     val tint = when (type) {
-        TransactionType.INCOME -> FinsibleTheme.colors.income
-        TransactionType.EXPENSE -> FinsibleTheme.colors.expense
-        TransactionType.TRANSFER -> FinsibleTheme.colors.transfer
+        TransactionType.INCOME -> FinsibleTheme.colors.transactionIncome
+        TransactionType.EXPENSE -> FinsibleTheme.colors.transactionExpense
+        TransactionType.TRANSFER -> FinsibleTheme.colors.transactionTransfer
     }
 
     FinsibleIconBadge(

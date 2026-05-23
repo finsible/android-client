@@ -1,5 +1,6 @@
 package com.itsjeel01.finsiblefrontend.ui.component.historytab.filtersbottomsheet
 
+
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
@@ -11,6 +12,6 @@ import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 fun SheetDivider() =
     HorizontalDivider(
         modifier = Modifier.padding(vertical = FilterSheetSpacing.sectionDividerPadding),
-        color = FinsibleTheme.colors.divider,
-        thickness = FinsibleTheme.dimes.d0dot5
+        color = FinsibleTheme.colors.borderSubtle,
+        thickness = FinsibleTheme.stroke.hairline
     )

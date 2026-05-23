@@ -18,14 +18,14 @@ import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 @Composable
 fun SheetDragHandle() {
     Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-        Spacer(Modifier.height(FinsibleTheme.dimes.d12))
+        Spacer(Modifier.height(FinsibleTheme.spacing.gapMd))
         Box(
             Modifier
-                .width(FinsibleTheme.dimes.d36)
-                .height(FinsibleTheme.dimes.d4)
-                .clip(RoundedCornerShape(FinsibleTheme.dimes.d2))
-                .background(FinsibleTheme.colors.outlineVariant)
+                .width(FinsibleTheme.spacing.stack2xl)
+                .height(FinsibleTheme.spacing.insetXs)
+                .clip(RoundedCornerShape(FinsibleTheme.stroke.bold))
+                .background(FinsibleTheme.colors.borderDefault)
         )
-        Spacer(Modifier.height(FinsibleTheme.dimes.d12))
+        Spacer(Modifier.height(FinsibleTheme.spacing.gapMd))
     }
 }

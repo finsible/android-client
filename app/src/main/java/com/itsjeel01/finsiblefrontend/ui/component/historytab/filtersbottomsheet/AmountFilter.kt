@@ -23,7 +23,6 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleT
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleTextFieldDefaults
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
@@ -40,7 +39,7 @@ fun AmountFilter(
     Column {
         FinsibleText(
             text = stringResource(R.string.amount_range),
-            variant = FinsibleTextVariant.MicroLabelSemiBold,
+            textStyle = FinsibleTheme.typography.labelSm,
             colorVariant = FinsibleTextColorVariant.Secondary,
             uppercase = true
         )
@@ -48,7 +47,7 @@ fun AmountFilter(
         Spacer(Modifier.height(FilterSheetSpacing.sectionHeaderGap))
 
         Row(
-            horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d10),
+            horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.gapSm),
             verticalAlignment = Alignment.CenterVertically
         ) {
             FinsibleTextField(
@@ -65,8 +64,8 @@ fun AmountFilter(
             )
             FinsibleText(
                 text = stringResource(R.string.amount_range_dash),
-                variant = FinsibleTextVariant.BodyMedium,
-                color = FinsibleTheme.colors.tertiaryContent
+                textStyle = FinsibleTheme.typography.bodyMd,
+                colorVariant = FinsibleTextColorVariant.Tertiary
             )
             FinsibleTextField(
                 value = maxAmount,
@@ -88,7 +87,7 @@ fun AmountFilter(
         ) {
             FinsibleText(
                 text = stringResource(R.string.min_exceeds_max_error),
-                variant = FinsibleTextVariant.SmallLabelMedium,
+                textStyle = FinsibleTheme.typography.labelSm,
                 colorVariant = FinsibleTextColorVariant.Error
             )
         }

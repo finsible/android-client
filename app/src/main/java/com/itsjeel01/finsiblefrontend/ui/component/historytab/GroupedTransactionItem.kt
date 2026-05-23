@@ -22,7 +22,7 @@ fun GroupedTransactionItem(
     isFirst: Boolean,
     isLast: Boolean
 ) {
-    val cornerRadius = FinsibleTheme.dimes.d16
+    val cornerRadius = FinsibleTheme.spacing.insetLg
     val shape = when {
         isFirst && isLast -> RoundedCornerShape(cornerRadius)
         isFirst -> RoundedCornerShape(topStart = cornerRadius, topEnd = cornerRadius)
@@ -34,19 +34,19 @@ fun GroupedTransactionItem(
         modifier = Modifier
             .fillMaxWidth()
             .clip(shape)
-            .background(FinsibleTheme.colors.surfaceContainerLow)
-            .border(width = FinsibleTheme.dimes.d1, color = FinsibleTheme.colors.divider, shape = shape)
+            .background(FinsibleTheme.colors.surfaceDefault)
+            .border(width = FinsibleTheme.stroke.thin, color = FinsibleTheme.colors.borderSubtle, shape = shape)
     ) {
         Column {
             TransactionListItem(
                 transaction = transaction,
-                modifier = Modifier.padding(horizontal = FinsibleTheme.dimes.d16)
+                modifier = Modifier.padding(horizontal = FinsibleTheme.spacing.insetLg)
             )
             if (!isLast) {
                 HorizontalDivider(
-                    color = FinsibleTheme.colors.divider,
-                    thickness = FinsibleTheme.dimes.d1,
-                    modifier = Modifier.padding(horizontal = FinsibleTheme.dimes.d16)
+                    color = FinsibleTheme.colors.borderSubtle,
+                    thickness = FinsibleTheme.stroke.thin,
+                    modifier = Modifier.padding(horizontal = FinsibleTheme.spacing.insetLg)
                 )
             }
         }

@@ -1,4 +1,9 @@
+
 package com.itsjeel01.finsiblefrontend.ui.component.historytab.filtersbottomsheet
+import com.itsjeel01.finsiblefrontend.ui.theme.bold
+
+import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
+
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -12,7 +17,6 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleB
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleButtonVariant
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 
 @Composable
 fun SheetHeader(hasAnyActive: Boolean, onClearAll: () -> Unit) {
@@ -23,7 +27,7 @@ fun SheetHeader(hasAnyActive: Boolean, onClearAll: () -> Unit) {
     ) {
         FinsibleText(
             text = stringResource(R.string.filters_and_sort),
-            variant = FinsibleTextVariant.SmallTitleBold
+            textStyle = FinsibleTheme.typography.bodyLg.bold()
         )
 
         FinsibleButton(

@@ -12,9 +12,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import com.itsjeel01.finsiblefrontend.common.TransactionType
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.model.uimodel.TransactionUIModel
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
+import com.itsjeel01.finsiblefrontend.ui.theme.medium
 import com.itsjeel01.finsiblefrontend.ui.theme.bold
 import com.itsjeel01.finsiblefrontend.ui.theme.relaxed
 
@@ -27,27 +27,27 @@ fun TransactionListItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = FinsibleTheme.dimes.d16),
-        horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d12),
+            .padding(vertical = FinsibleTheme.spacing.insetLg),
+        horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.gapMd),
         verticalAlignment = Alignment.CenterVertically
     ) {
         TransactionIcon(type = transaction.type, categoryIcon = transaction.categoryIcon)
 
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d2)
+            verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackMicro)
         ) {
             FinsibleText(
                 text = transaction.title,
-                variant = FinsibleTextVariant.BodyMedium,
+                textStyle = FinsibleTheme.typography.bodyLg.medium(),
                 colorVariant = FinsibleTextColorVariant.Primary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
             FinsibleText(
                 text = transaction.subtitle,
-                variant = FinsibleTextVariant.SmallLabelRegular,
-                color = FinsibleTheme.colors.tertiaryContent,
+                textStyle = FinsibleTheme.typography.bodySm,
+                color = FinsibleTheme.colors.contentTertiary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -55,12 +55,11 @@ fun TransactionListItem(
 
         FinsibleText(
             text = transaction.formattedAmount,
-            variant = FinsibleTextVariant.BodyBold,
             color = when (transaction.type) {
-                TransactionType.INCOME -> FinsibleTheme.colors.income
-                else -> FinsibleTheme.colors.primaryContent80
+                TransactionType.INCOME -> FinsibleTheme.colors.transactionIncome
+                else -> FinsibleTheme.colors.contentSecondary
             },
-            textStyleOverride = FinsibleTheme.typography.t16.bold().relaxed()
+            textStyle = FinsibleTheme.typography.bodyLg.bold().relaxed()
         )
     }
 }

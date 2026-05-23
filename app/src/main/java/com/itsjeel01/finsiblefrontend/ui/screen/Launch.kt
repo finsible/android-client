@@ -15,29 +15,27 @@ fun Launch(
     navigateToApp: () -> Unit,
     authViewModel: AuthViewModel
 ) {
-
     val authState by authViewModel.authState.collectAsStateWithLifecycle()
     val loadingManager = LocalFinsibleLoader.current
 
     LaunchedEffect(authState) {
         when (authState) {
+            is AuthState.Loading -> {
+                Logger.UI.d("AuthState = Loading")
+                loadingManager.show()
+            }
+
             is AuthState.Negative -> {
+                loadingManager.hide()
                 Logger.UI.d("AuthState = Negative; Navigating to Onboarding")
                 navigateToOnboarding()
             }
 
             AuthState.Positive -> {
+                loadingManager.hide()
                 Logger.UI.d("AuthState = Positive; Navigating to Dashboard")
                 navigateToApp()
             }
-
-            else -> {
-                Logger.UI.d("AuthState = Loading")
-            }
         }
-    }
-
-    if (authState is AuthState.Loading) {
-        loadingManager.show()
     }
 }

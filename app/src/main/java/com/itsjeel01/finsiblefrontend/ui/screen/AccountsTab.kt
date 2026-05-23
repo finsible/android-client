@@ -32,7 +32,6 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleT
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleLoaderDefaults
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTileCardRotationVariant
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
 import com.itsjeel01.finsiblefrontend.ui.mapper.toAccountsTileCards
@@ -61,8 +60,8 @@ fun AccountsScreen(
                 FinsibleLoader(
                     size = FinsibleSize.Large,
                     colors = FinsibleLoaderDefaults.colors(
-                        ballColor = FinsibleTheme.colors.primaryContent,
-                        barColor = FinsibleTheme.colors.secondaryContent
+                        ballColor = FinsibleTheme.colors.contentPrimary,
+                        barColor = FinsibleTheme.colors.contentSecondary
                     )
                 )
             }
@@ -74,19 +73,19 @@ fun AccountsScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = FinsibleTheme.dimes.d16, vertical = FinsibleTheme.dimes.d12)
+                    .padding(horizontal = FinsibleTheme.spacing.insetLg, vertical = FinsibleTheme.spacing.stackMd)
             ) {
                 FinsibleText(
                     text = stringResource(R.string.my_accounts),
-                    variant = FinsibleTextVariant.LargeTitleExtraBold
+                    textStyle = FinsibleTheme.typography.headingLg
                 )
 
-                Spacer(Modifier.height(FinsibleTheme.dimes.d16))
+                Spacer(Modifier.height(FinsibleTheme.spacing.stackLg))
 
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d8),
-                    contentPadding = PaddingValues(bottom = FinsibleTheme.dimes.d16)
+                    verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackSm),
+                    contentPadding = PaddingValues(bottom = FinsibleTheme.spacing.stackLg)
                 ) {
                     item(key = "accounts_card") {
                         FinsibleTileCards(
@@ -94,7 +93,7 @@ fun AccountsScreen(
                             modifier = Modifier
                                 .animateItem()
                                 .fillMaxWidth()
-                                .padding(horizontal = FinsibleTheme.dimes.d4, vertical = FinsibleTheme.dimes.d8),
+                                .padding(horizontal = FinsibleTheme.spacing.insetXs, vertical = FinsibleTheme.spacing.stackSm),
                             size = FinsibleSize.Medium,
                             rotationVariant = FinsibleTileCardRotationVariant.Sequential,
                         )
@@ -108,8 +107,8 @@ fun AccountsScreen(
                             modifier = Modifier
                                 .animateItem()
                                 .fillMaxWidth()
-                                .background(FinsibleTheme.colors.primaryBackground)
-                                .padding(vertical = FinsibleTheme.dimes.d8)
+                                .background(FinsibleTheme.colors.surfaceBase)
+                                .padding(vertical = FinsibleTheme.spacing.stackSm)
                         )
                     }
 
@@ -126,14 +125,14 @@ fun AccountsScreen(
                             is AccountListItem.Header -> {
                                 FinsibleText(
                                     text = item.groupName.uppercase(),
-                                    variant = FinsibleTextVariant.SmallLabelSemiBold,
+                                    textStyle = FinsibleTheme.typography.labelSm,
                                     colorVariant = FinsibleTextColorVariant.Secondary,
                                     modifier = Modifier
                                         .animateItem()
                                         .padding(
-                                            start = FinsibleTheme.dimes.d8,
-                                            top = FinsibleTheme.dimes.d8,
-                                            bottom = FinsibleTheme.dimes.d4
+                                            start = FinsibleTheme.spacing.stackSm,
+                                            top = FinsibleTheme.spacing.stackSm,
+                                            bottom = FinsibleTheme.spacing.insetXs
                                         )
                                 )
                             }
@@ -144,7 +143,7 @@ fun AccountsScreen(
                                     modifier = Modifier
                                         .animateItem()
                                         .fillMaxWidth()
-                                        .padding(bottom = FinsibleTheme.dimes.d8)
+                                        .padding(bottom = FinsibleTheme.spacing.stackSm)
                                 )
                             }
                         }

@@ -4,23 +4,25 @@ import android.content.Context
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.CurrencyFormatter
 import com.itsjeel01.finsiblefrontend.common.TransactionType
-import com.itsjeel01.finsiblefrontend.common.centisToFormattedAmount
 import com.itsjeel01.finsiblefrontend.data.local.entity.TransactionEntity
+import com.itsjeel01.finsiblefrontend.data.repository.CurrencyRepository
 import com.itsjeel01.finsiblefrontend.ui.model.uimodel.TransactionUIModel
-import com.itsjeel01.finsiblefrontend.ui.util.DateUtils
 
-fun TransactionEntity.toUiModel(currencyFormatter: CurrencyFormatter, context: Context): TransactionUIModel {
+fun TransactionEntity.toUiModel(
+    currencyFormatter: CurrencyFormatter,
+    currencyRepository: CurrencyRepository,
+    context: Context
+): TransactionUIModel {
     return TransactionUIModel(
         id = this.id,
         type = this.type,
         title = this.description.takeUnless { it.isNullOrBlank() } ?: this.categoryName,
         subtitle = formatAccountLabel(this, context),
-        formattedAmount = formatAmount(this, currencyFormatter),
+        formattedAmount = formatAmount(this, currencyFormatter, currencyRepository),
         categoryIcon = this.categoryIcon,
-        currency = this.currency,
+        currencyCode = this.currencyCode,
         transactionDate = this.transactionDate,
         rawAmountCentis = this.totalAmount,
-        formattedDate = DateUtils.readableDate(this.transactionDate)
     )
 }
 
@@ -34,12 +36,25 @@ private fun formatAccountLabel(transaction: TransactionEntity, context: Context)
     }
 }
 
-private fun formatAmount(transaction: TransactionEntity, currencyFormatter: CurrencyFormatter): String {
+private fun formatAmount(
+    transaction: TransactionEntity,
+    currencyFormatter: CurrencyFormatter,
+    currencyRepository: CurrencyRepository
+): String {
     val sign = when (transaction.type) {
         TransactionType.INCOME -> "+"
         TransactionType.EXPENSE -> "-"
         TransactionType.TRANSFER -> ""
     }
-    val amountStr = transaction.totalAmount.centisToFormattedAmount(currencyFormatter)
-    return "$sign ${transaction.currency.getSymbol()}$amountStr"
+    val currencyCode = transaction.currencyCode
+    val amountStr = currencyFormatter.format(
+        centis = transaction.totalAmount,
+        currencyCode = currencyCode,
+        options = CurrencyFormatter.CurrencyFormatOptions(
+            includeCurrencySymbol = false,
+            includeSign = false
+        )
+    )
+    val symbol = currencyRepository.getByIsoCode(currencyCode)?.symbol ?: currencyCode
+    return "$sign $symbol$amountStr"
 }

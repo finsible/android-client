@@ -8,5 +8,8 @@ fun CategoryEntity.toUiModel(): CategoryUIModel = CategoryUIModel(
     id = id,
     name = name,
     icon = icon,
+    isParent = parentCategoryId == 0L,
+    usageCount = usageCount,
+    lastUsedAt = lastUsedAt,
 )
 

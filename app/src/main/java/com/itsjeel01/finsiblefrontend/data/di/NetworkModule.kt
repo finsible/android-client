@@ -6,6 +6,7 @@ import com.itsjeel01.finsiblefrontend.data.remote.api.AccountApiService
 import com.itsjeel01.finsiblefrontend.data.remote.api.AccountGroupApiService
 import com.itsjeel01.finsiblefrontend.data.remote.api.AuthApiService
 import com.itsjeel01.finsiblefrontend.data.remote.api.CategoryApiService
+import com.itsjeel01.finsiblefrontend.data.remote.api.ExchangeRateApiService
 import com.itsjeel01.finsiblefrontend.data.remote.api.SyncApiService
 import com.itsjeel01.finsiblefrontend.data.remote.api.TransactionApiService
 import com.itsjeel01.finsiblefrontend.data.remote.converter.ResponseHandler
@@ -46,6 +47,10 @@ object NetworkModule {
     @Provides
     fun transactionApiService(retrofit: Retrofit): TransactionApiService =
         retrofit.create(TransactionApiService::class.java)
+
+    @Provides
+    fun exchangeRateApiService(retrofit: Retrofit): ExchangeRateApiService =
+        retrofit.create(ExchangeRateApiService::class.java)
 
     @Provides
     fun provideSyncApiService(retrofit: Retrofit): SyncApiService {

@@ -2,6 +2,7 @@ package com.itsjeel01.finsiblefrontend.data.remote.interceptor
 
 import com.itsjeel01.finsiblefrontend.common.PreferenceManager
 import com.itsjeel01.finsiblefrontend.common.logging.Logger
+import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
 
@@ -11,7 +12,9 @@ class AuthInterceptor(private val preferenceManager: PreferenceManager) : Interc
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
         val path = request.url.encodedPath
-        val token = preferenceManager.getJwt()
+
+        // Safely bridge the suspend function in this background network thread
+        val token = runBlocking { preferenceManager.getJwt() }
 
         if (path.contains("auth")) {
             Logger.Network.d("Auth request, skipping token: $path")

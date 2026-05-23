@@ -24,9 +24,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
+import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleDurations
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
+import com.itsjeel01.finsiblefrontend.ui.theme.bold
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.OnboardingViewModel
 
 @Composable
@@ -45,25 +46,25 @@ fun OnboardingTextContent(
             transitionSpec = {
                 fadeIn(
                     animationSpec = tween(
-                        durationMillis = Duration.MS_250.toInt(),
-                        delayMillis = Duration.MS_100.toInt(),
+                        durationMillis = FinsibleDurations.values.expandMs,
+                        delayMillis = FinsibleDurations.values.focusMs,
                         easing = LinearOutSlowInEasing
                     )
                 ) + slideInVertically(
                     animationSpec = tween(
-                        durationMillis = Duration.MS_250.toInt(),
-                        delayMillis = Duration.MS_100.toInt(),
+                        durationMillis = FinsibleDurations.values.expandMs,
+                        delayMillis = FinsibleDurations.values.focusMs,
                         easing = LinearOutSlowInEasing
                     ),
                     initialOffsetY = { it / 3 }
                 ) togetherWith fadeOut(
                     animationSpec = tween(
-                        durationMillis = Duration.MS_150.toInt(),
+                        durationMillis = FinsibleDurations.values.fadeMs,
                         easing = FastOutLinearInEasing
                     )
                 ) + slideOutVertically(
                     animationSpec = tween(
-                        durationMillis = Duration.MS_150.toInt(),
+                        durationMillis = FinsibleDurations.values.fadeMs,
                         easing = FastOutLinearInEasing
                     ),
                     targetOffsetY = { -it / 4 }
@@ -72,26 +73,26 @@ fun OnboardingTextContent(
         ) { index ->
             FinsibleText(
                 text = stringResource(carouselItems[index].headline),
-                variant = FinsibleTextVariant.XLargeHeadingBold,
+                textStyle = FinsibleTheme.typography.displayXl.bold(),
                 textAlign = TextAlign.Start
             )
         }
 
-        Spacer(Modifier.height(FinsibleTheme.dimes.d12))
+        Spacer(Modifier.height(FinsibleTheme.spacing.gapMd))
 
         AnimatedContent(
             targetState = currentItem,
             transitionSpec = {
                 fadeIn(
                     animationSpec = tween(
-                        durationMillis = Duration.MS_200.toInt(),
-                        delayMillis = Duration.MS_200.toInt(),
+                        durationMillis = FinsibleDurations.values.slideMs,
+                        delayMillis = FinsibleDurations.values.slideMs,
                         easing = LinearOutSlowInEasing
                     )
                 ) + slideInVertically(
                     animationSpec = tween(
-                        durationMillis = Duration.MS_200.toInt(),
-                        delayMillis = Duration.MS_200.toInt(),
+                        durationMillis = FinsibleDurations.values.slideMs,
+                        delayMillis = FinsibleDurations.values.slideMs,
                         easing = LinearOutSlowInEasing
                     ),
                     initialOffsetY = { it / 4 }
@@ -103,15 +104,15 @@ fun OnboardingTextContent(
                 )
             }
         ) { index ->
-            val textStyle = FinsibleTheme.typography.t16
+            val textStyle = FinsibleTheme.typography.bodyLg
 
             FinsibleText(
                 text = stringResource(carouselItems[index].description),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = FinsibleTheme.dimes.d2)
+                    .padding(start = FinsibleTheme.spacing.insetMicro)
                     .height((textStyle.lineHeight.value.times(3)).dp),
-                variant = FinsibleTextVariant.BodyRegular,
+                textStyle = FinsibleTheme.typography.bodyLg,
                 colorVariant = FinsibleTextColorVariant.Secondary,
                 textAlign = TextAlign.Start,
                 maxLines = Int.MAX_VALUE

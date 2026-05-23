@@ -35,19 +35,19 @@ fun OnboardingContent(
             .fillMaxSize()
             .systemBarsPadding()
             .padding(
-                horizontal = FinsibleTheme.dimes.d24,
-                vertical = FinsibleTheme.dimes.d12
+                horizontal = FinsibleTheme.spacing.inset2xl,
+                vertical = FinsibleTheme.spacing.gapMd
             ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         OnboardingHeader(onSkip, isLastItem())
 
-        Spacer(Modifier.height(FinsibleTheme.dimes.d32))
+        Spacer(Modifier.height(FinsibleTheme.spacing.inset3xl))
 
         OnboardingIllustration(
             modifier = Modifier
                 .weight(ILLUSTRATION_WEIGHT)
-                .padding(horizontal = FinsibleTheme.dimes.d8),
+                .padding(horizontal = FinsibleTheme.spacing.inlineMd),
             currentItem = currentItem,
             carouselItems = carouselItems
         )
@@ -59,7 +59,7 @@ fun OnboardingContent(
             carouselItems = carouselItems
         )
 
-        Spacer(Modifier.height(FinsibleTheme.dimes.d32))
+        Spacer(Modifier.height(FinsibleTheme.spacing.inset3xl))
 
         FinsibleScrubber(
             currentIndex = currentItem,
@@ -69,18 +69,18 @@ fun OnboardingContent(
             variant = FinsibleScrubberVariant.Separate,
             enabled = false,
             sizes = FinsibleScrubberSizes(
-                activeBarWidth = FinsibleTheme.dimes.d48,
-                inactiveBarWidth = FinsibleTheme.dimes.d12,
-                barHeight = FinsibleTheme.dimes.d4,
-                barSpacing = FinsibleTheme.dimes.d8,
-                cornerRadius = FinsibleTheme.dimes.d2,
-                minTouchTargetHeight = FinsibleTheme.dimes.d4
+                activeBarWidth = FinsibleTheme.sizes.touch.md,
+                inactiveBarWidth = FinsibleTheme.spacing.gapMd,
+                barHeight = FinsibleTheme.spacing.insetXs,
+                barSpacing = FinsibleTheme.spacing.inlineMd,
+                cornerRadius = FinsibleTheme.radius.xs,
+                minTouchTargetHeight = FinsibleTheme.spacing.insetXs
             ),
             colors = FinsibleScrubberDefaults.colors(
-                currentColor = FinsibleTheme.colors.brandAccent,
-                restColor = FinsibleTheme.colors.primaryContent40,
-                disabledCurrentColor = FinsibleTheme.colors.brandAccent,
-                disabledRestColor = FinsibleTheme.colors.primaryContent40
+                currentColor = FinsibleTheme.colors.brandInteractive,
+                restColor = FinsibleTheme.colors.contentPlaceholder,
+                disabledCurrentColor = FinsibleTheme.colors.brandInteractive,
+                disabledRestColor = FinsibleTheme.colors.contentPlaceholder
             )
         )
 

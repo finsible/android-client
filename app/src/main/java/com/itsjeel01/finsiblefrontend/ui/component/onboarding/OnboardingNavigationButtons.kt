@@ -27,6 +27,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleButtonDefaults
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleButtonVariant
+import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleDurations
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
 @Composable
@@ -39,14 +40,14 @@ fun OnboardingNavigationButtons(
     AnimatedContent(
         targetState = isLastItem(),
         transitionSpec = {
-            fadeIn(animationSpec = tween(180)) togetherWith
-                    fadeOut(animationSpec = tween(120))
+            fadeIn(animationSpec = tween(FinsibleDurations.values.fadeMs)) togetherWith
+                    fadeOut(animationSpec = tween(FinsibleDurations.values.focusMs))
         },
         label = "onboarding_nav_buttons"
     ) { targetIsLastItem ->
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d24)
+            horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.gapLg)
         ) {
             if (currentItem > 0 && !targetIsLastItem) {
                 FinsibleButton(
@@ -54,7 +55,7 @@ fun OnboardingNavigationButtons(
                     onClick = onSecondaryButtonClick,
                     modifier = Modifier
                         .weight(1f)
-                        .height(FinsibleTheme.dimes.d48),
+                        .height(FinsibleTheme.sizes.touch.md),
                     fullWidth = true,
                     variant = FinsibleButtonVariant.Outlined,
                     size = FinsibleSize.Medium,
@@ -80,8 +81,8 @@ fun OnboardingNavigationButtons(
             val primaryColors = if (isFirstItem) {
                 FinsibleButtonDefaults.colors(
                     variant = FinsibleButtonVariant.Filled,
-                    containerColor = FinsibleTheme.colors.brandAccent,
-                    contentColor = FinsibleTheme.colors.primaryBackground
+                    containerColor = FinsibleTheme.colors.brandInteractive,
+                    contentColor = FinsibleTheme.colors.surfaceBase
                 )
             } else {
                 FinsibleButtonDefaults.colors(variant = FinsibleButtonVariant.Filled)
@@ -106,7 +107,7 @@ fun OnboardingNavigationButtons(
                 FinsibleButton(
                     text = label,
                     onClick = onPrimaryButtonClick,
-                    modifier = Modifier.height(FinsibleTheme.dimes.d48),
+                    modifier = Modifier.height(FinsibleTheme.sizes.touch.md),
                     fullWidth = true,
                     variant = FinsibleButtonVariant.Filled,
                     size = FinsibleSize.Medium,
@@ -115,7 +116,7 @@ fun OnboardingNavigationButtons(
                     icon = primaryIcon,
                     iconPosition = iconPosition
                 )
-                Spacer(Modifier.height(FinsibleTheme.dimes.d8))
+                Spacer(Modifier.height(FinsibleTheme.spacing.inlineMd))
 
                 if (targetIsLastItem) {
                     FinsibleButton(
@@ -126,11 +127,11 @@ fun OnboardingNavigationButtons(
                         shapeVariant = FinsibleShape.Rounded,
                         colors = FinsibleButtonDefaults.colors(
                             variant = FinsibleButtonVariant.Text,
-                            contentColor = FinsibleTheme.colors.secondaryContent
+                            contentColor = FinsibleTheme.colors.contentSecondary
                         )
                     )
                 } else {
-                    Spacer(Modifier.height(FinsibleTheme.dimes.d48))
+                    Spacer(Modifier.height(FinsibleTheme.sizes.touch.md))
                 }
             }
         }

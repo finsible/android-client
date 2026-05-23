@@ -2,123 +2,168 @@ package com.itsjeel01.finsiblefrontend.common
 
 import android.icu.math.BigDecimal
 import android.icu.math.MathContext
+import android.icu.text.CompactDecimalFormat
 import android.icu.text.DecimalFormat
-import android.icu.text.DecimalFormatSymbols
+import android.icu.text.NumberFormat
+import com.itsjeel01.finsiblefrontend.data.repository.CurrencyRepository
 import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/** Centralized currency formatting utility that respects user's currency preference. */
 @Singleton
 class CurrencyFormatter @Inject constructor(
-    val preferenceManager: PreferenceManager
+    private val currencyRepository: CurrencyRepository
 ) {
-    val userCurrency = preferenceManager.getCurrency()
 
-    companion object {
-        private val CURRENCY_LOCALES = mapOf(
-            Currency.INR to Locale.forLanguageTag("en-IN")
-        )
+    private data class FormatterCacheKey(
+        val currencyCode: String,
+        val localeTag: String,
+        val compact: Boolean,
+        val useGrouping: Boolean,
+        val minFractionDigits: Int,
+        val maxFractionDigits: Int,
+    )
 
-        private val CURRENCY_PATTERNS = mapOf(
-            Currency.INR to "##,##,##0.##"
-        )
+    enum class CurrencySymbolPosition { Prefix, Suffix }
 
-        /** Data class representing a threshold for compact currency formatting. */
-        private data class Threshold(
-            val limit: Long,
-            val divisor: BigDecimal,
-            val suffix: String,
-        )
+    data class CurrencyFormatOptions(
+        val includeCurrencySymbol: Boolean = true,
+        val includeSpaceAfterCurrencySymbol: Boolean = false,
+        val includeSign: Boolean = true,
+        val includeSpaceAfterSign: Boolean = false,
+        val showPositiveSign: Boolean = false,
+        val useGrouping: Boolean = true,
+        val minFractionDigits: Int = 0,
+        val maxFractionDigits: Int = 2,
+        val symbolPosition: CurrencySymbolPosition = CurrencySymbolPosition.Prefix,
+    )
 
-        /** Compact formatting thresholds in centis (×100). */
-        private val CURRENCY_THRESHOLDS_CENTIS = mapOf(
-            Currency.INR to listOf(
-                Threshold(1_00_00_00_00_00_00_00_000L, BigDecimal(1_00_00_00_00_00_00_00_000L), "Pad"),
-                Threshold(1_00_00_00_00_00_00_000L, BigDecimal(1_00_00_00_00_00_00_000L), "Ne"),
-                Threshold(1_00_00_00_00_00_000L, BigDecimal(1_00_00_00_00_00_000L), "Khar"),
-                Threshold(1_00_00_00_00_000L, BigDecimal(1_00_00_00_00_000L), "Ar"),
-                Threshold(1_00_00_00_000L, BigDecimal(1_00_00_00_000L), "Cr"),
-                Threshold(1_00_00_000L, BigDecimal(1_00_00_000L), "L"),
-                Threshold(1_00_000L, BigDecimal(1_00_000L), "K")
-            )
+    private val threadLocalConfiguredFormatters = object : ThreadLocal<MutableMap<FormatterCacheKey, DecimalFormat>>() {
+        override fun initialValue(): MutableMap<FormatterCacheKey, DecimalFormat> = mutableMapOf()
+    }
+
+    fun format(
+        centis: Long,
+        currencyCode: String,
+        options: CurrencyFormatOptions = CurrencyFormatOptions(),
+    ): String {
+        val absCentis = if (centis < 0L) -centis else centis
+        val formatter = getConfiguredFormatter(currencyCode = currencyCode, compact = false, options = options)
+        val formattedValue = formatter.format(centisToDecimal(absCentis))
+        return composeValue(
+            formattedAmount = formattedValue,
+            isNegative = centis < 0L,
+            currencyCode = currencyCode,
+            options = options,
         )
     }
 
-    /** ThreadLocal cache for DecimalFormat instances. Prevents expensive instantiations on the hot path while maintaining thread safety. */
-    private val threadLocalFormatters = object : ThreadLocal<MutableMap<Currency, DecimalFormat>>() {
-        override fun initialValue(): MutableMap<Currency, DecimalFormat> = mutableMapOf()
+    fun formatCompact(
+        centis: Long,
+        currencyCode: String,
+        options: CurrencyFormatOptions = CurrencyFormatOptions(),
+    ): String {
+        val absCentis = if (centis < 0L) -centis else centis
+        val compactFormatter = getConfiguredFormatter(currencyCode = currencyCode, compact = true, options = options)
+
+        // ICU natively scales the number down AND appends K, M, L, Cr based on the locale!
+        val formattedAmount = compactFormatter.format(centisToDecimal(absCentis))
+
+        return composeValue(
+            formattedAmount = formattedAmount,
+            isNegative = centis < 0L,
+            currencyCode = currencyCode,
+            options = options,
+        )
     }
 
-    private fun getFormatter(currency: Currency): DecimalFormat {
-        val cache = threadLocalFormatters.get()!!
+    private fun getConfiguredFormatter(
+        currencyCode: String,
+        compact: Boolean,
+        options: CurrencyFormatOptions,
+    ): DecimalFormat {
+        val normalized = normalizeOptions(options)
+        val currency = currencyRepository.getByIsoCode(currencyCode)
 
-        return cache.getOrPut(currency) {
-            val locale = CURRENCY_LOCALES[currency] ?: UserLocaleRegistry.currentLocale()
-            val pattern = CURRENCY_PATTERNS[currency] ?: "###,###,##0.##"
+        // 1. Get the user's actual device language (e.g., "es" for Spanish)
+        val userLocale = UserLocaleRegistry.currentLocale()
 
-            DecimalFormat(pattern, DecimalFormatSymbols(locale)).apply {
-                maximumFractionDigits = 2
-                minimumFractionDigits = 0
-                isGroupingUsed = true
+        // 2. Build the Hybrid Display Locale: User's Language + Currency's Native Region
+        val resolvedLocale = currency?.localeTag?.let { tag ->
+            val currencyRegion = Locale.forLanguageTag(tag).country
+
+            Locale.Builder()
+                .setLanguage(userLocale.language) // User can read this!
+                .setRegion(currencyRegion)        // Region dictates the grouping (e.g. IN for Lakhs)
+                .build()
+        } ?: userLocale
+
+        val key = FormatterCacheKey(
+            currencyCode = currencyCode,
+            localeTag = resolvedLocale.toLanguageTag(),
+            compact = compact,
+            useGrouping = normalized.useGrouping,
+            minFractionDigits = normalized.minFractionDigits,
+            maxFractionDigits = normalized.maxFractionDigits,
+        )
+
+        val cache = threadLocalConfiguredFormatters.get()!!
+        return cache.getOrPut(key) {
+
+            val formatter = if (compact) {
+                CompactDecimalFormat.getInstance(
+                    resolvedLocale,
+                    CompactDecimalFormat.CompactStyle.SHORT
+                ) as DecimalFormat
+            } else {
+                NumberFormat.getNumberInstance(resolvedLocale) as DecimalFormat
+            }
+
+            formatter.apply {
+                isGroupingUsed = normalized.useGrouping
+                minimumFractionDigits = normalized.minFractionDigits
+                maximumFractionDigits = normalized.maxFractionDigits
+                if (compact) roundingMode = MathContext.ROUND_HALF_EVEN
             }
         }
     }
 
-    /** Format centis with currency symbol: `₹1,234` or `-₹1,234`. */
-    fun format(centis: Long, currency: Currency = userCurrency): String {
-        val absCentis = if (centis < 0L) -centis else centis
-        val sign = if (centis < 0L) "- " else ""
-
-        val formattedValue = getFormatter(currency).format(centisToDecimal(absCentis))
-        return "$sign${currency.getSymbol()}$formattedValue"
+    private fun normalizeOptions(options: CurrencyFormatOptions): CurrencyFormatOptions {
+        val minFractionDigits = options.minFractionDigits.coerceAtLeast(0)
+        val maxFractionDigits = options.maxFractionDigits.coerceAtLeast(minFractionDigits)
+        return options.copy(minFractionDigits = minFractionDigits, maxFractionDigits = maxFractionDigits)
     }
 
-    /** ThreadLocal cache for compact DecimalFormat instances (separate from regular formatters to avoid rounding-mode mutation). */
-    private val threadLocalCompactFormatters = object : ThreadLocal<MutableMap<Currency, DecimalFormat>>() {
-        override fun initialValue(): MutableMap<Currency, DecimalFormat> = mutableMapOf()
-    }
+    private fun composeValue(
+        formattedAmount: String,
+        isNegative: Boolean,
+        currencyCode: String,
+        options: CurrencyFormatOptions,
+    ): String {
+        val signPrefix = if (options.includeSign) {
+            when {
+                isNegative -> "-${if (options.includeSpaceAfterSign) " " else ""}"
+                options.showPositiveSign -> "+${if (options.includeSpaceAfterSign) " " else ""}"
+                else -> ""
+            }
+        } else {
+            ""
+        }
 
-    private fun getCompactFormatter(currency: Currency): DecimalFormat {
-        val cache = threadLocalCompactFormatters.get()!!
-
-        return cache.getOrPut(currency) {
-            val locale = CURRENCY_LOCALES[currency] ?: UserLocaleRegistry.currentLocale()
-            val pattern = CURRENCY_PATTERNS[currency] ?: "###,###,##0.##"
-
-            DecimalFormat(pattern, DecimalFormatSymbols(locale)).apply {
-                maximumFractionDigits = 2
-                minimumFractionDigits = 0
-                isGroupingUsed = true
-                roundingMode = MathContext.ROUND_HALF_EVEN
+        val symbol = currencyRepository.getByIsoCode(currencyCode)?.symbol ?: currencyCode
+        val valueWithSymbol = if (!options.includeCurrencySymbol) {
+            formattedAmount
+        } else {
+            val separator = if (options.includeSpaceAfterCurrencySymbol) " " else ""
+            when (options.symbolPosition) {
+                CurrencySymbolPosition.Prefix -> "$symbol$separator$formattedAmount"
+                CurrencySymbolPosition.Suffix -> "$formattedAmount$separator$symbol"
             }
         }
+
+        return "$signPrefix$valueWithSymbol"
     }
 
-    /** Format centis with abbreviated suffixes (K, L, Cr, etc.) for compact display. */
-    fun formatCompact(centis: Long, currency: Currency = userCurrency): String {
-        val absCentis = if (centis < 0L) -centis else centis
-
-        val (scaledDecimal, suffix) = CURRENCY_THRESHOLDS_CENTIS[currency]
-            ?.firstOrNull { absCentis >= it.limit }
-            ?.let { threshold ->
-                val scaled = BigDecimal(absCentis).divide(threshold.divisor, 4, MathContext.ROUND_HALF_EVEN)
-                scaled to threshold.suffix
-            }
-            ?: (centisToDecimal(absCentis) to "")
-
-        val sign = if (centis < 0L) "- " else ""
-
-        return "$sign${currency.getSymbol()}${getCompactFormatter(currency).format(scaledDecimal)}$suffix"
-    }
-
-    /** Format centis without sign: `1,234`. Use when caller needs to add custom signs/symbols. */
-    fun formatWithoutSign(centis: Long, currency: Currency = userCurrency): String {
-        val absCentis = if (centis < 0L) -centis else centis
-        return getFormatter(currency).format(centisToDecimal(absCentis))
-    }
-
-    /** Convert centis Long to ICU BigDecimal for DecimalFormat. E.g., 12345L → 123.45. */
     private fun centisToDecimal(centis: Long): BigDecimal =
-        BigDecimal(centis).divide(BigDecimal(100L))
+        BigDecimal(centis).movePointLeft(2)
 }

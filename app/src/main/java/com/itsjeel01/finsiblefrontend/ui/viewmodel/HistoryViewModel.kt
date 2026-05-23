@@ -5,15 +5,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.CurrencyFormatter
-import com.itsjeel01.finsiblefrontend.common.TransactionType
+import com.itsjeel01.finsiblefrontend.common.PreferenceManager
 import com.itsjeel01.finsiblefrontend.common.logging.Logger
 import com.itsjeel01.finsiblefrontend.data.local.entity.TransactionEntity
 import com.itsjeel01.finsiblefrontend.data.local.repository.TransactionLocalRepository
+import com.itsjeel01.finsiblefrontend.data.repository.CurrencyRepository
 import com.itsjeel01.finsiblefrontend.ui.mapper.toUiModel
 import com.itsjeel01.finsiblefrontend.ui.model.DateAggregates
 import com.itsjeel01.finsiblefrontend.ui.model.DateFilterMode
 import com.itsjeel01.finsiblefrontend.ui.model.FilteredTransactionSummary
-import com.itsjeel01.finsiblefrontend.ui.model.SortOption
 import com.itsjeel01.finsiblefrontend.ui.model.state.TransactionListState
 import com.itsjeel01.finsiblefrontend.ui.model.state.TransactionsFilterState
 import com.itsjeel01.finsiblefrontend.ui.model.uimodel.TransactionUIModel
@@ -29,25 +29,28 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.Calendar
 import javax.inject.Inject
+
+private const val ITEMS_PER_PAGE = 50
+private const val SEARCH_DEBOUNCE_MS = 300L
 
 @HiltViewModel
 class HistoryViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val transactionLocalRepository: TransactionLocalRepository,
-    private val currencyFormatter: CurrencyFormatter
+    private val currencyFormatter: CurrencyFormatter,
+    private val currencyRepository: CurrencyRepository,
+    preferenceManager: PreferenceManager
 ) : ViewModel() {
 
-    companion object {
-        private const val ITEMS_PER_PAGE = 50
-        private const val SEARCH_DEBOUNCE_MS = 300L
-    }
+    private val preferenceManager = preferenceManager
 
     private val _filterState = MutableStateFlow(TransactionsFilterState.DEFAULT)
     val filterState: StateFlow<TransactionsFilterState> = _filterState.asStateFlow()
@@ -58,18 +61,21 @@ class HistoryViewModel @Inject constructor(
     private val _isSearchExpanded = MutableStateFlow(false)
     val isSearchExpanded: StateFlow<Boolean> = _isSearchExpanded.asStateFlow()
 
-    private val _dateFilterModes = MutableStateFlow(persistentMapOf<String, DateFilterMode>())
-    val dateFilterModes: StateFlow<ImmutableMap<String, DateFilterMode>> = _dateFilterModes.asStateFlow()
+    private val _isFilterSheetVisible = MutableStateFlow(false)
+    val isFilterSheetVisible: StateFlow<Boolean> = _isFilterSheetVisible.asStateFlow()
 
-    private val todayHeaderLabel = context.getString(R.string.history_date_header_today)
-    private val yesterdayHeaderLabel = context.getString(R.string.history_date_header_yesterday)
+    private val _dateFilterModes = MutableStateFlow(persistentMapOf<Long, DateFilterMode>())
+    val dateFilterModes: StateFlow<ImmutableMap<Long, DateFilterMode>> = _dateFilterModes.asStateFlow()
+
+    val currencyCode: StateFlow<String> = preferenceManager.defaultCurrencyCodeFlow
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
 
     private var currentOffset: Int = 0
     private var searchDebounceJob: Job? = null
     private var loadMoreJob: Job? = null
 
     init {
-        executeQuery(resetOffset = true)
+        executeQuery()
     }
 
     /** Load more data using unified pagination. */
@@ -102,14 +108,14 @@ class HistoryViewModel @Inject constructor(
                     val loadedTransactionsGrouped = _uiState.value.groupedTransactions
 
                     val incomingTransactions = if (!shouldGroup) {
-                        result.transactions.map { it.toUiModel(currencyFormatter, context) }.toPersistentList()
+                        result.transactions.map { it.toUiModel(currencyFormatter, currencyRepository, context) }.toPersistentList()
                     } else {
                         loadedTransactions
                     }
 
                     val incomingTransactionsGrouped = if (shouldGroup) {
-                        val mapped = result.transactions.map { it.toUiModel(currencyFormatter, context) }
-                        val groupedPage = mapped.groupBy { formatDateHeader(it.transactionDate) }
+                        val mapped = result.transactions.map { it.toUiModel(currencyFormatter, currencyRepository, context) }
+                        val groupedPage = mapped.groupBy { DateUtils.getStartOfDayMs(it.transactionDate) }
                             .mapValues { (_, list) -> list.toPersistentList() }
                         mergeGroupedTransactions(loadedTransactionsGrouped, groupedPage.toPersistentMap())
                     } else {
@@ -145,7 +151,7 @@ class HistoryViewModel @Inject constructor(
         searchDebounceJob?.cancel()
         searchDebounceJob = viewModelScope.launch {
             delay(SEARCH_DEBOUNCE_MS)
-            executeQuery(resetOffset = true)
+            executeQuery()
         }
     }
 
@@ -154,76 +160,55 @@ class HistoryViewModel @Inject constructor(
         _isSearchExpanded.update { !it }
     }
 
-    /** Collapse search and clear query. */
-    fun collapseSearch() {
-        _filterState.update { it.copy(searchQuery = "") }
-        _isSearchExpanded.value = false
-        executeQuery(resetOffset = true)
+    fun toggleFilterSheet() {
+        _isFilterSheetVisible.update { !it }
     }
 
-    /** Update sort option. */
-    fun updateSortOption(option: SortOption) {
-        if (_filterState.value.sortOption == option) return
-        _filterState.update { it.copy(sortOption = option) }
-        executeQuery(resetOffset = true)
-    }
-
-    /** Update filter criteria (partial update). */
-    fun updateFilters(
-        accountIds: Set<Long>? = null,
-        dateRangeStart: Long? = null,
-        dateRangeEnd: Long? = null,
-        clearDateRange: Boolean = false,
-        amountMin: Long? = null,
-        amountMax: Long? = null,
-        clearAmountRange: Boolean = false,
-        transactionTypes: Set<TransactionType>? = null
-    ) {
-        _filterState.update { current ->
-            current.copy(
-                accountIds = accountIds ?: current.accountIds,
-                dateRangeStart = if (clearDateRange) null else (dateRangeStart ?: current.dateRangeStart),
-                dateRangeEnd = if (clearDateRange) null else (dateRangeEnd ?: current.dateRangeEnd),
-                amountMin = if (clearAmountRange) null else (amountMin ?: current.amountMin),
-                amountMax = if (clearAmountRange) null else (amountMax ?: current.amountMax),
-                transactionTypes = transactionTypes ?: current.transactionTypes
-            )
-        }
-        executeQuery(resetOffset = true)
+    fun hideFilterSheet() {
+        _isFilterSheetVisible.value = false
     }
 
     /** Clear all filters and return to idle mode. */
     fun clearAllFilters() {
         _filterState.value = TransactionsFilterState.DEFAULT
         _isSearchExpanded.value = false
-        executeQuery(resetOffset = true)
+        _isFilterSheetVisible.value = false
+        executeQuery()
     }
 
     /** Apply complete filter criteria (from filter sheet). */
     fun applyFilterCriteria(criteria: TransactionsFilterState) {
         _filterState.value = criteria.copy(searchQuery = _filterState.value.searchQuery)
-        executeQuery(resetOffset = true)
+        _isFilterSheetVisible.value = false
+        executeQuery()
     }
 
-    fun toggleDateFilter(dateHeader: String) {
+    /** Collapse search and clear query. */
+    fun collapseSearch() {
+        _filterState.update { it.copy(searchQuery = "") }
+        _isSearchExpanded.value = false
+        executeQuery()
+    }
+
+    fun toggleDateFilter(startOfDayMs: Long) {
         _dateFilterModes.update { current ->
-            val next = when (current[dateHeader] ?: DateFilterMode.NET) {
+            val next = when (current[startOfDayMs] ?: DateFilterMode.NET) {
                 DateFilterMode.NET -> DateFilterMode.INCOME
                 DateFilterMode.INCOME -> DateFilterMode.EXPENSE
                 DateFilterMode.EXPENSE -> DateFilterMode.NET
             }
-            (current + (dateHeader to next)).toPersistentMap()
+            (current + (startOfDayMs to next)).toPersistentMap()
         }
     }
 
     /** Single entry point for all data loads. Resets pagination when resetOffset is true. */
-    private fun executeQuery(resetOffset: Boolean = false) {
+    private fun executeQuery() {
         loadMoreJob?.cancel()
 
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
 
-            if (resetOffset) currentOffset = 0
+            currentOffset = 0
 
             try {
                 val criteria = _filterState.value
@@ -283,11 +268,11 @@ class HistoryViewModel @Inject constructor(
     private fun mapTransactions(
         entities: List<TransactionEntity>,
         shouldGroup: Boolean = true
-    ): Pair<ImmutableList<TransactionUIModel>, ImmutableMap<String, ImmutableList<TransactionUIModel>>> {
-        val uiModels = entities.map { it.toUiModel(currencyFormatter, context) }
+    ): Pair<ImmutableList<TransactionUIModel>, ImmutableMap<Long, ImmutableList<TransactionUIModel>>> {
+        val uiModels = entities.map { it.toUiModel(currencyFormatter, currencyRepository, context) }
 
         val grouped = if (shouldGroup) {
-            uiModels.groupBy { formatDateHeader(it.transactionDate) }
+            uiModels.groupBy { DateUtils.getStartOfDayMs(it.transactionDate) }
                 .mapValues { (_, list) -> list.toPersistentList() }
                 .toPersistentMap()
         } else {
@@ -299,9 +284,9 @@ class HistoryViewModel @Inject constructor(
 
     /** Merge two grouped transaction maps preserving order. */
     private fun mergeGroupedTransactions(
-        current: ImmutableMap<String, ImmutableList<TransactionUIModel>>,
-        new: ImmutableMap<String, ImmutableList<TransactionUIModel>>
-    ): ImmutableMap<String, ImmutableList<TransactionUIModel>> {
+        current: ImmutableMap<Long, ImmutableList<TransactionUIModel>>,
+        new: ImmutableMap<Long, ImmutableList<TransactionUIModel>>
+    ): ImmutableMap<Long, ImmutableList<TransactionUIModel>> {
         val merged = current.toMutableMap()
         new.forEach { (key, newList) ->
             merged[key] = merged[key]?.let { (it + newList).toPersistentList() } ?: newList
@@ -310,14 +295,14 @@ class HistoryViewModel @Inject constructor(
     }
 
     /** Compute date aggregates for all dates in the database. */
-    private fun computeAllDateAggregates(): Map<String, DateAggregates> {
+    private fun computeAllDateAggregates(): Map<Long, DateAggregates> {
         return transactionLocalRepository.getAllDateAggregates().map { (timestampMs, summary) ->
-            val dateHeader = formatDateHeader(timestampMs)
-            val (startMs, endMs) = getDateBounds(timestampMs)
-            dateHeader to DateAggregates(
-                dateHeader = dateHeader,
-                startOfDayMs = startMs,
-                endOfDayMs = endMs,
+            val startOfDayMs = DateUtils.getStartOfDayMs(timestampMs)
+            val endOfDayMs = startOfDayMs + (24 * 60 * 60 * 1000) - 1 // Simplified for Logic layer
+
+            startOfDayMs to DateAggregates(
+                startOfDayMs = startOfDayMs,
+                endOfDayMs = endOfDayMs,
                 incomeSumCentis = summary.incomeCentis,
                 expenseSumCentis = summary.expenseCentis,
                 netSumCentis = summary.netCentis,
@@ -325,24 +310,4 @@ class HistoryViewModel @Inject constructor(
             )
         }.toMap()
     }
-
-    /** Returns the start and end of the day for the given timestamp. */
-    private fun getDateBounds(timestamp: Long): Pair<Long, Long> {
-        val cal = Calendar.getInstance().apply {
-            timeInMillis = timestamp
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }
-        val startOfDay = cal.timeInMillis
-        cal.add(Calendar.DAY_OF_MONTH, 1)
-        return startOfDay to (cal.timeInMillis - 1)
-    }
-
-    private fun formatDateHeader(timestamp: Long): String = DateUtils.formatDateHeader(
-        timestamp = timestamp,
-        todayLabel = todayHeaderLabel,
-        yesterdayLabel = yesterdayHeaderLabel
-    )
 }

@@ -105,7 +105,6 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.kizitonwose.calendar.compose)
     implementation(libs.kizitonwose.calendar.core)
@@ -122,6 +121,8 @@ dependencies {
     implementation(libs.composables.icons.material.symbols.sharp.filled)
     implementation(libs.composables.icons.tabler.outline)
     implementation(libs.composables.icons.tabler.filled)
+    implementation(libs.androidx.datastore)
+    implementation(libs.tink.android)
 
     ksp(libs.hilt.compiler)
     ksp(libs.kotlin.metadata.jvm)

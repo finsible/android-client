@@ -62,9 +62,11 @@
     <!-- New Transaction -->
     <string name="new_transaction">New Transaction</string>
     <string name="amount_placeholder">0</string>
+    <string name="edit">Edit</string>
     <string name="enter_transaction_amount">Enter transaction amount</string>
     <string name="confirm">Confirm</string>
     <string name="cd_close">Close</string>
+    <string name="cd_reset">Reset</string>
     <string name="description_label">Description</string>
     <string name="description_placeholder">Add notes about this transaction…</string>
     <string name="step_enter_amount">Enter Amount</string>
@@ -82,11 +84,17 @@
     <string name="make_recurring">Make recurring</string>
     <string name="frequency">Frequency</string>
     <string name="failed_to_create_transaction">Failed to create transaction</string>
+    <string name="cd_currency_dropdown_icon">Currency dropdown icon</string>
+    <string name="cd_select_date_calendar_icon">Select date icon</string>
+    <string name="conversion_unavailable">Conversion unavailable</string>
+    <string name="rates_may_be_stale">Rates may be stale</string>
+    <string name="offline_using_last_known_rate">Offline - using last known rate</string>
 
     <!-- Accounts -->
     <string name="all">All</string>
     <string name="cd_account_icon">Account icon for %s</string>
     <string name="my_accounts">My Accounts</string>
+    <string name="my_accounts_subtitle">Manage your wealth</string>
     <string name="net_worth">Net Worth</string>
     <string name="total_assets">Total Assets</string>
     <string name="total_liabilities">Total Liabilities</string>
@@ -108,7 +116,7 @@
     <string name="history_date_header_yesterday">Yesterday</string>
 
     <!-- Transaction Mapper -->
-    <string name="account_unknown">?</string>
+    <string name="account_unknown">\?</string>
     <string name="transfer_label_format">%1$s → %2$s</string>
 
     <!-- Dashboard -->
@@ -128,8 +136,11 @@
     <!-- Recurring Frequency -->
     <string name="frequency_daily">Daily</string>
     <string name="frequency_weekly">Weekly</string>
+    <string name="frequency_biweekly">Biweekly</string>
     <string name="frequency_monthly">Monthly</string>
-    <string name="frequency_yearly">Yearly</string>
+    <string name="frequency_quarterly">Quarterly</string>
+    <string name="frequency_semi_annually">Semi-annually</string>
+    <string name="frequency_annually">Annually</string>
 
     <!-- Time Filter Modes -->
     <string name="filter_all_time">All Time</string>
@@ -475,6 +486,9 @@
     <string name="finsible_filter_chip_variant_outlined_tonal">Outlined tonal</string>
     <string name="finsible_segmented_button_variant_filled">Filled</string>
     <string name="finsible_segmented_button_variant_tonal">Tonal</string>
+    <string name="component_playground_segmentedbuttons_arrangement">Arrangement</string>
+    <string name="finsible_segmented_button_arrangement_clubbed">Clubbed</string>
+    <string name="finsible_segmented_button_arrangement_separated">Separated</string>
     <string name="component_playground_text_variant_selector">Variant</string>
     <string name="component_playground_text_variant_xlarge_heading_bold">XL Heading Bold</string>
     <string name="component_playground_text_variant_large_heading_bold">Large Heading Bold</string>

@@ -36,9 +36,7 @@ class AuthRepository @Inject constructor(
         }
     }
 
-    fun logout(): Result<Unit> {
-        // Cancel all ongoing sync operations and cleanup resources before logout
-        // Order matters: cancel coroutines first, then cleanup network callback
+    suspend fun logout(): Result<Unit> {
         scopeManager.reset()
         networkMonitor.cleanup()
         // TODO: Inform backend about logout if necessary
@@ -47,5 +45,5 @@ class AuthRepository @Inject constructor(
         return Result.success(Unit)
     }
 
-    fun isAuthenticated(): Boolean = prefsManager.isLoggedIn()
+    suspend fun isAuthenticated(): Boolean = prefsManager.isLoggedIn()
 }

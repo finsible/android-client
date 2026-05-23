@@ -27,6 +27,10 @@ data class AccountEntity(
 
     var isSystemDefault: Boolean = false,
 
+    var usageCount: Long = 0,
+
+    var lastUsedAt: Long? = null,
+
     @Convert(converter = StatusConverter::class, dbType = Int::class)
     override var syncStatus: Status = Status.COMPLETED,
 
@@ -48,5 +52,7 @@ fun AccountEntity.toDTO(): Account {
         icon = icon,
         isActive = isActive,
         isSystemDefault = isSystemDefault,
+        usageCount = usageCount,
+        lastUsedAt = lastUsedAt,
     )
 }

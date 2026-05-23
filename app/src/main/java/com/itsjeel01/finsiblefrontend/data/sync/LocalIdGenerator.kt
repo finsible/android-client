@@ -10,13 +10,15 @@ import javax.inject.Singleton
 class LocalIdGenerator @Inject constructor(
     private val preferenceManager: PreferenceManager
 ) {
+    private var isInitialized = false
     private val idCounter = AtomicLong(0)
 
-    init {
-        idCounter.set(preferenceManager.getLocalIdCounter())
-    }
+    suspend fun nextLocalId(): Long {
+        if (!isInitialized) {
+            idCounter.set(preferenceManager.getLocalIdCounter())
+            isInitialized = true
+        }
 
-    fun nextLocalId(): Long {
         val next = idCounter.decrementAndGet()
         preferenceManager.saveLocalIdCounter(next)
         return next  // Returns -1, -2, -3, ...

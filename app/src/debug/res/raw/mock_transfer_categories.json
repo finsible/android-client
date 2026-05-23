@@ -12,7 +12,9 @@
         "icon": "bank_to_bank",
         "parentCategory": null,
         "readOnly": true,
-        "subCategory": false
+        "subCategory": false,
+        "usageCount": 5,
+        "lastUsedAt": 1726050000000
       },
       {
         "id": 3002,
@@ -20,7 +22,9 @@
         "icon": "bank_wallet",
         "parentCategory": null,
         "readOnly": true,
-        "subCategory": false
+        "subCategory": false,
+        "usageCount": 8,
+        "lastUsedAt": 1726062000000
       },
       {
         "id": 3003,
@@ -28,7 +32,9 @@
         "icon": "credit_card_payment",
         "parentCategory": null,
         "readOnly": true,
-        "subCategory": false
+        "subCategory": false,
+        "usageCount": 2,
+        "lastUsedAt": 1726000000000
       },
       {
         "id": 3004,
@@ -36,7 +42,9 @@
         "icon": "loan_payment",
         "parentCategory": null,
         "readOnly": true,
-        "subCategory": false
+        "subCategory": false,
+        "usageCount": 0,
+        "lastUsedAt": null
       },
       {
         "id": 3005,
@@ -44,7 +52,9 @@
         "icon": "savings_deposit",
         "parentCategory": null,
         "readOnly": true,
-        "subCategory": false
+        "subCategory": false,
+        "usageCount": 3,
+        "lastUsedAt": 1725970000000
       },
       {
         "id": 3006,
@@ -52,7 +62,9 @@
         "icon": "fd",
         "parentCategory": null,
         "readOnly": true,
-        "subCategory": false
+        "subCategory": false,
+        "usageCount": 0,
+        "lastUsedAt": null
       },
       {
         "id": 3007,
@@ -60,7 +72,9 @@
         "icon": "atm",
         "parentCategory": null,
         "readOnly": true,
-        "subCategory": false
+        "subCategory": false,
+        "usageCount": 12,
+        "lastUsedAt": 1726065000000
       },
       {
         "id": 3008,
@@ -68,7 +82,9 @@
         "icon": "wallet_topup",
         "parentCategory": null,
         "readOnly": true,
-        "subCategory": false
+        "subCategory": false,
+        "usageCount": 4,
+        "lastUsedAt": 1726048000000
       },
       {
         "id": 3009,
@@ -76,7 +92,9 @@
         "icon": "investment_transfer",
         "parentCategory": null,
         "readOnly": true,
-        "subCategory": false
+        "subCategory": false,
+        "usageCount": 0,
+        "lastUsedAt": null
       }
     ]
   }

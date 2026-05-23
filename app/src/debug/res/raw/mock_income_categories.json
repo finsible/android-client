@@ -12,7 +12,9 @@
         "icon": "job_group",
         "parentCategory": null,
         "readOnly": true,
-        "subCategory": false
+        "subCategory": false,
+        "usageCount": 12,
+        "lastUsedAt": 1726068000000
       },
       {
         "id": 1001,
@@ -20,7 +22,9 @@
         "icon": "salary",
         "parentCategory": 1000,
         "readOnly": true,
-        "subCategory": true
+        "subCategory": true,
+        "usageCount": 12,
+        "lastUsedAt": 1726068000000
       },
       {
         "id": 1002,
@@ -28,7 +32,9 @@
         "icon": "bonus",
         "parentCategory": 1000,
         "readOnly": true,
-        "subCategory": true
+        "subCategory": true,
+        "usageCount": 0,
+        "lastUsedAt": null
       },
       {
         "id": 1010,
@@ -36,7 +42,9 @@
         "icon": "business_group",
         "parentCategory": null,
         "readOnly": true,
-        "subCategory": false
+        "subCategory": false,
+        "usageCount": 3,
+        "lastUsedAt": 1726020000000
       },
       {
         "id": 1011,
@@ -44,7 +52,9 @@
         "icon": "freelance",
         "parentCategory": 1010,
         "readOnly": true,
-        "subCategory": true
+        "subCategory": true,
+        "usageCount": 3,
+        "lastUsedAt": 1726020000000
       },
       {
         "id": 1012,
@@ -52,7 +62,9 @@
         "icon": "business",
         "parentCategory": 1010,
         "readOnly": true,
-        "subCategory": true
+        "subCategory": true,
+        "usageCount": 0,
+        "lastUsedAt": null
       },
       {
         "id": 1020,
@@ -60,7 +72,9 @@
         "icon": "investment_group",
         "parentCategory": null,
         "readOnly": true,
-        "subCategory": false
+        "subCategory": false,
+        "usageCount": 0,
+        "lastUsedAt": null
       },
       {
         "id": 1021,
@@ -68,7 +82,9 @@
         "icon": "dividend",
         "parentCategory": 1020,
         "readOnly": true,
-        "subCategory": true
+        "subCategory": true,
+        "usageCount": 0,
+        "lastUsedAt": null
       },
       {
         "id": 1022,
@@ -76,7 +92,9 @@
         "icon": "capital_gain",
         "parentCategory": 1020,
         "readOnly": true,
-        "subCategory": true
+        "subCategory": true,
+        "usageCount": 0,
+        "lastUsedAt": null
       },
       {
         "id": 1030,
@@ -84,7 +102,9 @@
         "icon": "property_group",
         "parentCategory": null,
         "readOnly": true,
-        "subCategory": false
+        "subCategory": false,
+        "usageCount": 0,
+        "lastUsedAt": null
       },
       {
         "id": 1031,
@@ -92,7 +112,9 @@
         "icon": "rent",
         "parentCategory": 1030,
         "readOnly": true,
-        "subCategory": true
+        "subCategory": true,
+        "usageCount": 0,
+        "lastUsedAt": null
       },
       {
         "id": 1040,
@@ -100,7 +122,9 @@
         "icon": "other_income",
         "parentCategory": null,
         "readOnly": true,
-        "subCategory": false
+        "subCategory": false,
+        "usageCount": 1,
+        "lastUsedAt": 1725900000000
       },
       {
         "id": 1041,
@@ -108,7 +132,9 @@
         "icon": "gift_cashback_refund",
         "parentCategory": 1040,
         "readOnly": true,
-        "subCategory": true
+        "subCategory": true,
+        "usageCount": 1,
+        "lastUsedAt": 1725900000000
       }
     ]
   }

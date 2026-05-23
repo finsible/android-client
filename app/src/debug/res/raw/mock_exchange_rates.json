@@ -1,0 +1,15 @@
+[
+  {"baseCurrencyCode":"INR","targetCurrencyCode":"USD","rate":0.01198},
+  {"baseCurrencyCode":"INR","targetCurrencyCode":"EUR","rate":0.01048},
+  {"baseCurrencyCode":"INR","targetCurrencyCode":"GBP","rate":0.00895},
+  {"baseCurrencyCode":"INR","targetCurrencyCode":"AED","rate":0.04397},
+  {"baseCurrencyCode":"INR","targetCurrencyCode":"JPY","rate":1.7678},
+  {"baseCurrencyCode":"INR","targetCurrencyCode":"SGD","rate":0.01605},
+  {"baseCurrencyCode":"USD","targetCurrencyCode":"EUR","rate":0.8751},
+  {"baseCurrencyCode":"USD","targetCurrencyCode":"GBP","rate":0.7475},
+  {"baseCurrencyCode":"USD","targetCurrencyCode":"AED","rate":3.6725},
+  {"baseCurrencyCode":"USD","targetCurrencyCode":"JPY","rate":147.92},
+  {"baseCurrencyCode":"EUR","targetCurrencyCode":"GBP","rate":0.8542},
+  {"baseCurrencyCode":"EUR","targetCurrencyCode":"AED","rate":4.1948}
+]
+

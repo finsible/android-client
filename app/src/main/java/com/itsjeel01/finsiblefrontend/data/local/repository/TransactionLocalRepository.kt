@@ -1,11 +1,10 @@
 package com.itsjeel01.finsiblefrontend.data.local.repository
 
-import com.itsjeel01.finsiblefrontend.common.Currency
 import com.itsjeel01.finsiblefrontend.common.EntityType
 import com.itsjeel01.finsiblefrontend.common.Status
 import com.itsjeel01.finsiblefrontend.common.TransactionType
+import com.itsjeel01.finsiblefrontend.common.asCentisAmount
 import com.itsjeel01.finsiblefrontend.common.logging.Logger
-import com.itsjeel01.finsiblefrontend.common.toAmountCentisOrZero
 import com.itsjeel01.finsiblefrontend.data.local.TransactionTypeConverter
 import com.itsjeel01.finsiblefrontend.data.local.entity.PendingOperationEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.TransactionEntity
@@ -30,7 +29,8 @@ class TransactionLocalRepository @Inject constructor(
     override val box: Box<TransactionEntity>,
     pendingOperationBox: Box<PendingOperationEntity>,
     localIdGenerator: LocalIdGenerator,
-    private val categoryLocalRepository: CategoryLocalRepository
+    private val categoryLocalRepository: CategoryLocalRepository,
+    private val accountLocalRepository: AccountLocalRepository
 ) : SyncableLocalRepository<Transaction, TransactionEntity>(
     box,
     pendingOperationBox,
@@ -46,7 +46,7 @@ class TransactionLocalRepository @Inject constructor(
         transactionDate = entity.transactionDate,
         categoryId = entity.categoryId,
         description = entity.description,
-        currency = entity.currency,
+        currencyCode = entity.currencyCode,
         fromAccountId = entity.fromAccountId,
         toAccountId = entity.toAccountId
     )
@@ -57,7 +57,7 @@ class TransactionLocalRepository @Inject constructor(
         transactionDate = entity.transactionDate,
         categoryId = entity.categoryId,
         description = entity.description,
-        currency = entity.currency,
+        currencyCode = entity.currencyCode,
         fromAccountId = entity.fromAccountId,
         toAccountId = entity.toAccountId
     )
@@ -128,7 +128,7 @@ class TransactionLocalRepository @Inject constructor(
         }
     }
 
-    fun createTransaction(
+    suspend fun createTransaction(
         type: TransactionType,
         totalAmount: Long,
         transactionDate: Long,
@@ -137,9 +137,9 @@ class TransactionLocalRepository @Inject constructor(
         fromAccountId: Long?,
         toAccountId: Long?,
         description: String?,
-        currency: Currency = Currency.INR
+        currencyCode: String
     ): TransactionEntity {
-        return queueCreateEntity { localId ->
+        val entity = queueCreateEntity { localId ->
             TransactionEntity(
                 id = localId,
                 type = type,
@@ -156,10 +156,25 @@ class TransactionLocalRepository @Inject constructor(
                 fromAccountId = fromAccountId,
                 toAccountId = toAccountId,
                 description = description,
-                currency = currency,
+                currencyCode = currencyCode,
                 syncStatus = Status.PENDING
             )
         }
+
+        // Update category usage when transaction is associated with a category
+        if (categoryId > 0) {
+            categoryLocalRepository.updateCategoryUsage(categoryId)
+        }
+
+        // Track usage for accounts used by this transaction.
+        if (fromAccountId != null && fromAccountId > 0) {
+            accountLocalRepository.updateAccountUsage(fromAccountId)
+        }
+        if (toAccountId != null && toAccountId > 0) {
+            accountLocalRepository.updateAccountUsage(toAccountId)
+        }
+
+        return entity
     }
 
     fun updateTransaction(
@@ -172,10 +187,13 @@ class TransactionLocalRepository @Inject constructor(
         fromAccountId: Long? = null,
         toAccountId: Long? = null,
         description: String? = null,
-        currency: Currency? = null
+        currencyCode: String? = null
     ): TransactionEntity? {
         val entity = box.get(id) ?: return null
 
+        val oldCategoryId = entity.categoryId
+        val oldFromAccountId = entity.fromAccountId
+        val oldToAccountId = entity.toAccountId
         type?.let { entity.type = it }
         totalAmount?.let { entity.totalAmount = it }
         transactionDate?.let { entity.transactionDate = it }
@@ -191,11 +209,24 @@ class TransactionLocalRepository @Inject constructor(
         fromAccountId?.let { entity.fromAccountId = it }
         toAccountId?.let { entity.toAccountId = it }
         description?.let { entity.description = it }
-        currency?.let { entity.currency = it }
+        currencyCode?.let { entity.currencyCode = it }
 
         // Update searchableText if description or categoryName changed
         if (description != null || categoryName != null) {
             entity.searchableText = buildSearchableText(entity.description, entity.categoryName)
+        }
+
+        // Update category usage if category is changed
+        if (categoryId != null && categoryId > 0 && categoryId != oldCategoryId) {
+            categoryLocalRepository.updateCategoryUsage(categoryId)
+        }
+
+        // Update account usage only when account selection changed.
+        if (fromAccountId != null && fromAccountId > 0 && fromAccountId != oldFromAccountId) {
+            accountLocalRepository.updateAccountUsage(fromAccountId)
+        }
+        if (toAccountId != null && toAccountId > 0 && toAccountId != oldToAccountId) {
+            accountLocalRepository.updateAccountUsage(toAccountId)
         }
 
         return queueUpdateEntity(entity)
@@ -343,7 +374,7 @@ class TransactionLocalRepository @Inject constructor(
         val trimmed = searchQuery.trim().lowercase(Locale.ROOT)
         if (trimmed.isBlank()) return
 
-        val amountCentis = trimmed.toAmountCentisOrZero().takeIf { it > 0L }
+        val amountCentis = trimmed.asCentisAmount().takeIf { it > 0L }
 
         val searchCondition = if (amountCentis != null)
             TransactionEntity_.searchableText.contains(trimmed)

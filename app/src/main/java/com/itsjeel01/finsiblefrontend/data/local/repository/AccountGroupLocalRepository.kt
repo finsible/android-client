@@ -67,7 +67,7 @@ class AccountGroupLocalRepository @Inject constructor(
         Logger.Database.d("Added ${entities.size} account groups to local DB")
     }
 
-    fun createAccountGroup(
+    suspend fun createAccountGroup(
         name: String,
         description: String,
         icon: String,

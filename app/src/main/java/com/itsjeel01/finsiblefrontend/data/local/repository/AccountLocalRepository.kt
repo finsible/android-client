@@ -18,6 +18,8 @@ import io.objectbox.Property
 import io.objectbox.kotlin.flow
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class AccountLocalRepository @Inject constructor(
@@ -92,7 +94,7 @@ class AccountLocalRepository @Inject constructor(
             .also { Logger.Database.d("Fetched ${it.size} active accounts") }
     }
 
-    fun createAccount(
+    suspend fun createAccount(
         name: String,
         description: String,
         balance: String,
@@ -142,4 +144,49 @@ class AccountLocalRepository @Inject constructor(
     }
 
     fun deleteAccount(id: Long): Boolean = queueDeleteEntity(id)
+
+    /** Reactively emits the top [limit] active accounts sorted purely by usage frequency. */
+    fun getFrequentAccountsFlow(limit: Int): Flow<List<AccountEntity>> {
+        return box.query()
+            .equal(AccountEntity_.isActive, true)
+            .orderDesc(AccountEntity_.usageCount)
+            .build()
+            .flow()
+            .map { it.take(limit) }
+    }
+
+    /** Reactively emits the top [limit] active accounts sorted purely by recency. */
+    fun getRecentAccountsFlow(limit: Int): Flow<List<AccountEntity>> {
+        return box.query()
+            .equal(AccountEntity_.isActive, true)
+            .orderDesc(AccountEntity_.lastUsedAt)
+            .build()
+            .flow()
+            .map { it.take(limit) }
+    }
+
+    /**
+     * Reactive top-K by usage frequency, driven by a Flow<Int> for K so the limit can change reactively.
+     * Only returns active accounts. Local ObjectBox only — no remote fetch.
+     */
+    fun getTopK(kFlow: Flow<Int>): Flow<List<AccountEntity>> {
+        val baseFlow = box.query()
+            .equal(AccountEntity_.isActive, true)
+            .orderDesc(AccountEntity_.usageCount)
+            .build()
+            .flow()
+
+        return combine(baseFlow, kFlow) { entities, k -> entities.take(k) }
+    }
+
+    fun updateAccountUsage(id: Long): AccountEntity? {
+        val entity = box.get(id) ?: return null
+
+        entity.usageCount += 1
+        entity.lastUsedAt = System.currentTimeMillis()
+
+        box.put(entity)
+        Logger.Database.d("Updated account usage: id=$id, count=${entity.usageCount}")
+        return entity
+    }
 }

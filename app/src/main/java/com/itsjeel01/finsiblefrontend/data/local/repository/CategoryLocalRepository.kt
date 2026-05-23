@@ -16,6 +16,10 @@ import com.itsjeel01.finsiblefrontend.data.sync.LocalIdGenerator
 import io.objectbox.Box
 import io.objectbox.Property
 import io.objectbox.kotlin.equal
+import io.objectbox.kotlin.flow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class CategoryLocalRepository @Inject constructor(
@@ -100,7 +104,7 @@ class CategoryLocalRepository @Inject constructor(
             .associateBy { it.id }
     }
 
-    fun createCategory(
+    suspend fun createCategory(
         type: TransactionType,
         name: String,
         icon: String,
@@ -151,5 +155,59 @@ class CategoryLocalRepository @Inject constructor(
         }
 
         return queueDeleteEntity(id)
+    }
+
+    /** Reactively emits the top [limit] categories sorted purely by recency. */
+    fun getRecentCategoriesFlow(
+        type: TransactionType,
+        limit: Int
+    ): Flow<List<CategoryEntity>> {
+        val typeInt = TransactionTypeConverter().convertToDatabaseValue(type)!!
+        return box.query()
+            .equal(CategoryEntity_.type, typeInt)
+            .orderDesc(CategoryEntity_.lastUsedAt)
+            .build()
+            .flow()
+            .map { it.take(limit) }
+    }
+
+    /** Reactively emits the top [limit] categories sorted purely by usage frequency. */
+    fun getFrequentCategoriesFlow(
+        type: TransactionType,
+        limit: Int
+    ): Flow<List<CategoryEntity>> {
+        val typeInt = TransactionTypeConverter().convertToDatabaseValue(type)!!
+        return box.query()
+            .equal(CategoryEntity_.type, typeInt)
+            .orderDesc(CategoryEntity_.usageCount)
+            .build()
+            .flow()
+            .map { it.take(limit) }
+    }
+
+    /**
+     * Reactive top-K by usage frequency, driven by a Flow<Int> for K so the limit can change reactively.
+     * Local ObjectBox only — no remote fetch.
+     */
+    fun getTopK(type: TransactionType, kFlow: Flow<Int>): Flow<List<CategoryEntity>> {
+        val typeInt = TransactionTypeConverter().convertToDatabaseValue(type)!!
+        val baseFlow = box.query()
+            .equal(CategoryEntity_.type, typeInt)
+            .orderDesc(CategoryEntity_.usageCount)
+            .build()
+            .flow()
+
+        return combine(baseFlow, kFlow) { entities, k -> entities.take(k) }
+    }
+
+    fun updateCategoryUsage(id: Long): CategoryEntity? {
+        val entity = box.get(id) ?: return null
+
+        entity.usageCount = (entity.usageCount) + 1
+        entity.lastUsedAt = System.currentTimeMillis()
+
+        box.put(entity)
+        Logger.Database.d("Updated category usage: id=$id, count=${entity.usageCount}")
+        return entity
     }
 }

@@ -28,6 +28,10 @@ data class CategoryEntity(
 
     var parentCategoryId: Long = 0L,
 
+    var usageCount: Long = 0,
+
+    var lastUsedAt: Long? = null,
+
     @Convert(converter = StatusConverter::class, dbType = Int::class)
     override var syncStatus: Status = Status.COMPLETED,
 
@@ -53,6 +57,8 @@ fun CategoryEntity.toDTO(): Category {
         icon = icon,
         readOnly = readOnly,
         parentCategory = if (parentCategoryId != 0L) parentCategoryId else null,
-        subCategory = parentCategoryId != 0L
+        subCategory = parentCategoryId != 0L,
+        usageCount = usageCount,
+        lastUsedAt = lastUsedAt
     )
 }

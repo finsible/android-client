@@ -24,7 +24,6 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleTex
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleButtonVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
-/** A search bar for filtering transactions in the history tab. */
 @Composable
 fun TransactionSearchBar(
     value: String,

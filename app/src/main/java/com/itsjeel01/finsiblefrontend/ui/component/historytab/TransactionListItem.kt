@@ -18,7 +18,6 @@ import com.itsjeel01.finsiblefrontend.ui.theme.medium
 import com.itsjeel01.finsiblefrontend.ui.theme.bold
 import com.itsjeel01.finsiblefrontend.ui.theme.relaxed
 
-/** Transaction row for grouped mode — icon aligned to title row, no date line. */
 @Composable
 fun TransactionListItem(
     transaction: TransactionUIModel,

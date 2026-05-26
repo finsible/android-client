@@ -29,7 +29,6 @@ import com.itsjeel01.finsiblefrontend.ui.viewmodel.TransactionsFilterViewModel
 import java.text.DecimalFormatSymbols
 import java.util.Calendar
 
-/** Bottom sheet for transaction filters and sort options. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionFilterSheet(

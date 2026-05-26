@@ -39,7 +39,6 @@ class AuthRepository @Inject constructor(
     suspend fun logout(): Result<Unit> {
         scopeManager.reset()
         networkMonitor.cleanup()
-        // TODO: Inform backend about logout if necessary
         prefsManager.clearAuthData()
         Logger.Auth.i("User logged out successfully")
         return Result.success(Unit)

@@ -111,7 +111,6 @@ fun TimeBasedFilter(
     }
 }
 
-/** Dropdown that shows month name + year dropdowns side-by-side. */
 @Composable
 private fun MonthYearRow(
     selectedMonth: Int,

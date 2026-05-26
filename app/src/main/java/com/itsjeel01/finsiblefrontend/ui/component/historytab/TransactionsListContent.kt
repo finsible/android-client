@@ -130,7 +130,6 @@ fun TransactionListContent(
     }
 }
 
-/** Compute income/expense/net aggregates from a list of transaction UI models. */
 private fun computeGroupAggregates(transactions: List<TransactionUIModel>): GroupAggregates {
     var income = 0L
     var expense = 0L
@@ -145,6 +144,5 @@ private fun computeGroupAggregates(transactions: List<TransactionUIModel>): Grou
     return GroupAggregates(incomeSumCentis = income, expenseSumCentis = expense, netSumCentis = income - expense)
 }
 
-/** Resolve the DateFilterMode for a timestamp key, defaulting to NET. */
 private fun Map<Long, DateFilterMode>.filterModeFor(timestamp: Long): DateFilterMode =
     this[timestamp] ?: DateFilterMode.NET

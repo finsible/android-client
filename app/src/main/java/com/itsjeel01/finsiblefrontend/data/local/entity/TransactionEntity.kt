@@ -57,7 +57,6 @@ data class TransactionEntity(
     var paidByUserName: String? = null,
 ) : BaseEntity(), SyncableEntity
 
-/** Multiplier for centis conversion (2 decimal places). E.g., 123.45 → 12345. */
 const val AMOUNT_MULTIPLIER = 100L
 
 /** Convert centis (Long) to decimal String with exactly 2dp. E.g., 12345 → "123.45", -12345 → "-123.45". */

@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
-/** Composable function to draw a drag handle for the filters bottom sheet. */
 @Composable
 fun SheetDragHandle() {
     Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {

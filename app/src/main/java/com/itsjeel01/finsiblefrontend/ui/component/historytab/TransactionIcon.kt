@@ -13,7 +13,6 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleIco
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.util.resolveIcon
 
-/** Icon representing transaction type/category. */
 @Composable
 fun TransactionIcon(
     type: TransactionType,

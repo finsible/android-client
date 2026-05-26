@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
-/** Divider between sections. */
 @Composable
 fun SheetDivider() =
     HorizontalDivider(

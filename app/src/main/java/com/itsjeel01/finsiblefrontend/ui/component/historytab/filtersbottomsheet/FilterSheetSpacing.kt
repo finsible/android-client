@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
-/** Shared spacing contract for filter-sheet section rhythm. */
 object FilterSheetSpacing {
     val sectionHeaderGap: Dp
         @Composable get() = FinsibleTheme.spacing.inlineMd

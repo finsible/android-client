@@ -15,7 +15,6 @@ import androidx.compose.ui.graphics.RectangleShape
 import com.itsjeel01.finsiblefrontend.ui.model.uimodel.TransactionUIModel
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
-/** Card for grouped mode — no date line. */
 @Composable
 fun GroupedTransactionItem(
     transaction: TransactionUIModel,

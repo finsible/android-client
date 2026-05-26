@@ -24,7 +24,6 @@ import com.itsjeel01.finsiblefrontend.ui.theme.bold
 import com.itsjeel01.finsiblefrontend.ui.theme.relaxed
 import com.itsjeel01.finsiblefrontend.ui.util.DateUtils
 
-/** Standalone card for flat mode — always full radius, shows date. */
 @Composable
 fun FlatModeTransactionItem(transaction: TransactionUIModel) {
     val shape = RoundedCornerShape(FinsibleTheme.spacing.insetLg)

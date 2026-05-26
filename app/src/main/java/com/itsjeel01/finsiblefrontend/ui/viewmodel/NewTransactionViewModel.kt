@@ -280,7 +280,6 @@ class NewTransactionViewModel @Inject constructor(
         }
 
         // Perform exact financial math using BigDecimal.
-        // Note: Converting rate to String first prevents Double-to-BigDecimal precision loss.
         val rate = BigDecimal(rateEntity.rate.toString())
         val convertedAmount = amount.multiply(rate)
 
@@ -618,7 +617,7 @@ class NewTransactionViewModel @Inject constructor(
 
     private fun getCategoryFromCache(id: Long?): CategoryUIModel? {
         if (id == null) return null
-        val currentMap = categoriesMap.value // Fixed: Pointing to categoriesMap
+        val currentMap = categoriesMap.value
         for (subList in currentMap.values) {
             val found = subList.find { it.id == id }
             if (found != null) return found

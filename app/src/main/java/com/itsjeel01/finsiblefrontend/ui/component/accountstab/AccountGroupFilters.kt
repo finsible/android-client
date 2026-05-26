@@ -7,7 +7,6 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleF
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.model.uimodel.AccountGroupUIModel
 
-/** Horizontal scrollable row of account-group filter chips. */
 @Composable
 fun AccountGroupFilters(
     groups: List<AccountGroupUIModel>,

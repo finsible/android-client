@@ -28,7 +28,7 @@ class ExchangeRateLocalRepository @Inject constructor(
         val direct = box.query()
             .apply(ExchangeRateEntity_.pairCode.equal(directPair))
             .build()
-            .findFirst()
+            .use { query -> query.findFirst() }
 
         if (direct != null) return direct
 
@@ -37,9 +37,9 @@ class ExchangeRateLocalRepository @Inject constructor(
         val inverse = box.query()
             .apply(ExchangeRateEntity_.pairCode.equal(inversePair))
             .build()
-            .findFirst()
+            .use { query -> query.findFirst() }
 
-        if (inverse != null) {
+        if (inverse != null && inverse.rate != 0.0) {
             return ExchangeRateEntity().apply {
                 this.pairCode = directPair
                 this.baseCurrencyCode = baseCode

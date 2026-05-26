@@ -7,6 +7,7 @@ import androidx.datastore.dataStoreFile
 import androidx.datastore.migrations.SharedPreferencesMigration
 import com.google.crypto.tink.Aead
 import com.google.crypto.tink.KeyTemplates
+import com.google.crypto.tink.RegistryConfiguration
 import com.google.crypto.tink.aead.AeadConfig
 import com.google.crypto.tink.integration.android.AndroidKeysetManager
 import com.itsjeel01.finsiblefrontend.common.datastore.EncryptedPreferenceSerializer
@@ -41,7 +42,7 @@ object DataStoreModule {
             .withMasterKeyUri("android-keystore://tink_master_key")
             .build()
             .keysetHandle
-            .let { return it.getPrimitive(Aead::class.java) }
+            .let { return it.getPrimitive(RegistryConfiguration.get(), Aead::class.java) }
     }
 
     @Provides

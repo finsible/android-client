@@ -1,5 +1,4 @@
 package com.itsjeel01.finsiblefrontend.ui.component.templates.component
-import androidx.compose.ui.unit.dp
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutLinearInEasing
@@ -35,6 +34,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleIconPosition
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
@@ -42,9 +42,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleFilterChipDefaults
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleFilterChipColors
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleFilterChipVariant
-import com.itsjeel01.finsiblefrontend.ui.constants.Duration
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleDurations
-import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
 /** A stateless selectable chip with optional icon support.
  *
@@ -138,7 +136,7 @@ fun FinsibleFilterChip(
         targetValue = if (selected) FontWeight.SemiBold.weight else FontWeight.Normal.weight,
         label = "labelFontWeight"
     )
-    val labelTextStyle = chipSizes.textStyle.copy(fontWeight = FontWeight(labelFontWeight.toInt()))
+    val labelTextStyle = chipSizes.textStyle.copy(fontWeight = FontWeight(labelFontWeight))
 
     val iconTint = when {
         enabled && selected -> resolvedColors.selectedIconTint

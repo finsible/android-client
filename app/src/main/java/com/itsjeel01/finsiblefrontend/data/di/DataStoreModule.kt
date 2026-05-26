@@ -19,6 +19,7 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.serialization.json.Json
 import javax.inject.Singleton
 
 @Module
@@ -48,10 +49,11 @@ object DataStoreModule {
     fun provideDataStore(
         @ApplicationContext context: Context,
         aead: Aead,
+        json: Json,
         @IoDispatcher ioDispatcher: CoroutineDispatcher
     ): DataStore<UserPreferences> {
         return DataStoreFactory.create(
-            serializer = EncryptedPreferenceSerializer(aead),
+            serializer = EncryptedPreferenceSerializer(aead, json),
             scope = CoroutineScope(ioDispatcher + SupervisorJob()),
             migrations = listOf(
                 SharedPreferencesMigration(

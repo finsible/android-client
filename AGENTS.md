@@ -56,7 +56,7 @@ util/                               Host/Manager pairs, runtime-only utilities
 
 ### Composable Rules
 
-- `Modifier` is always the last non-lambda parameter
+- `Modifier` follows required params — before optional params. If all params have defaults, modifier may be first.
 - State is hoisted — no `remember {}` for state that callers need to own
 - No hardcoded colors, sizes, or spacing — always `FinsibleTheme.*`
 

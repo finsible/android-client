@@ -1,0 +1,3404 @@
+{
+  "_schema": {
+    "version": "2.0",
+    "purpose": "Pi agent context graph — full parity with old AGENTS.md checklists, anti-patterns, triage, execution sequence, conventions. O(1) lookup, minimal token injection.",
+    "generated": "2026-05-12T17:15:34Z",
+    "themeVersion": "2.0 — FinsibleSemanticColors + FinsibleSpacing/Stroke/Elevation/Types (no L1 FinsibleColors/FinsibleDimes)",
+    "rootPackage": "com.itsjeel01.finsiblefrontend",
+    "instructions": [
+      "Keep arrays empty [] if no entries exist — never omit keys",
+      "status values: complete | in-progress | planned | deprecated",
+      "All paths relative to app/src/main/java/com/itsjeel01/finsiblefrontend/ unless noted",
+      "rules[*] = architectural invariants enforced during code gen",
+      "triageMatrix[*] = quick request triage scenarios with start points",
+      "workflows = build commands and developer workflow guidance",
+      "developer = quick reference pointers for sync/cache/UI/startup"
+    ]
+  },
+  "gradle": {
+    "_purpose": "Answered once here — agent never reads build files again",
+    "compileSdk": 36,
+    "minSdk": 26,
+    "targetSdk": 36,
+    "namespace": "com.itsjeel01.finsiblefrontend",
+    "kotlinVersion": "2.3.0",
+    "agpVersion": "8.13.2",
+    "kspVersion": "2.3.3",
+    "jvmTarget": "JVM_17",
+    "buildFeatures": [
+      "buildConfig",
+      "compose"
+    ],
+    "buildConfigFields": {
+      "DATABASE_SCHEMA_VERSION": "int:1"
+    },
+    "plugins": [
+      "com.android.application",
+      "org.jetbrains.kotlin.android",
+      "org.jetbrains.kotlin.plugin.serialization",
+      "org.jetbrains.kotlin.plugin.compose",
+      "com.google.devtools.ksp",
+      "com.google.dagger.hilt.android",
+      "kotlin-parcelize",
+      "com.google.android.libraries.mapsplatform.secrets-gradle-plugin",
+      "io.objectbox"
+    ],
+    "buildTypes": {
+      "debug": {
+        "minifyEnabled": false,
+        "extras": [
+          "objectbox-android-objectbrowser debug dep",
+          "okhttp-logging-interceptor debug dep",
+          "ui-tooling + ui-test-manifest debug only",
+          "MockInterceptor in debug source set"
+        ]
+      },
+      "release": {
+        "minifyEnabled": false,
+        "extras": []
+      }
+    },
+    "sourceSets": {
+      "main": "app/src/main",
+      "debug": "app/src/debug — playground screens, mock data, debug DI modules",
+      "release": "app/src/release — release DI modules, navigation resolvers",
+      "test": "app/src/test — unit tests",
+      "androidTest": "app/src/androidTest — instrumented tests"
+    }
+  },
+  "dependencies": {
+    "_purpose": "Canonical dep registry — agent resolves versions and import patterns here, not from memory",
+    "di": {
+      "hilt": {
+        "version": "2.57.2",
+        "artifacts": [
+          "hilt-android",
+          "hilt-compiler (ksp)"
+        ],
+        "scope": "SingletonComponent unless noted",
+        "annotation": "@HiltViewModel for VMs, @Inject constructor for repos, @Module @InstallIn for modules"
+      }
+    },
+    "db": {
+      "objectbox": {
+        "version": "5.0.1",
+        "debugArtifact": "objectbox-android-objectbrowser",
+        "releaseArtifact": "objectbox-android",
+        "plugin": "io.objectbox (applied at bottom of build.gradle.kts)",
+        "pattern": "BoxStore → Box<EntityClass> provided via @Module, consumed in LocalRepository constructors"
+      }
+    },
+    "network": {
+      "retrofit": {
+        "version": "3.0.0",
+        "converter": "converter-kotlinx-serialization",
+        "authInterceptor": "data/remote/interceptor/AuthInterceptor.kt",
+        "debugInterceptor": "data/di/NetworkDebugInterceptors.kt (debug only)"
+      },
+      "okhttp": {
+        "loggingInterceptor": "5.3.2 (debug only)"
+      }
+    },
+    "compose": {
+      "bom": "2025.12.01",
+      "material3": "1.4.0",
+      "nav3": {
+        "version": "1.0.0",
+        "artifacts": [
+          "navigation3-runtime",
+          "navigation3-ui",
+          "lifecycle-viewmodel-navigation3",
+          "adaptive-navigation3"
+        ]
+      },
+      "icons": {
+        "lib": "com.composables",
+        "version": "2.2.1",
+        "availableSets": [
+          "material-icons-filled",
+          "material-icons-outlined",
+          "material-icons-rounded",
+          "material-icons-sharp",
+          "lucide",
+          "material-symbols-outlined",
+          "material-symbols-rounded",
+          "material-symbols-sharp",
+          "material-symbols-outlined-filled",
+          "material-symbols-rounded-filled",
+          "material-symbols-sharp-filled",
+          "tabler-outline",
+          "tabler-filled"
+        ],
+        "importPattern": "import com.composables.icons.{set}.{IconName}",
+        "painterPattern": "import com.composables.icons.lucide.R as LucideR → painterResource(LucideR.drawable.lucide_ic_{name})",
+        "_note": "Always check availableSets before suggesting an icon — do not invent set names"
+      },
+      "calendar": {
+        "lib": "kizitonwose.calendar",
+        "version": "2.10.0",
+        "artifacts": [
+          "compose",
+          "core"
+        ]
+      }
+    },
+    "async": {
+      "coroutines": {
+        "version": "1.10.2",
+        "pattern": "viewModelScope.launch → withContext(Dispatchers.IO) for DB/network → withContext(Dispatchers.Main) for state"
+      },
+      "kotlinxCollectionsImmutable": {
+        "version": "0.3.7",
+        "types": [
+          "ImmutableList",
+          "ImmutableMap",
+          "persistentListOf",
+          "persistentMapOf",
+          "toPersistentList",
+          "toPersistentMap"
+        ],
+        "_note": "Mandatory for all UI state collections — never use plain List/Map in StateFlow"
+      }
+    },
+    "storage": {
+      "datastore": {
+        "version": "1.1.1",
+        "encrypted": true
+      },
+      "tink": {
+        "version": "1.11.0",
+        "purpose": "encryption for datastore"
+      },
+      "securityCrypto": {
+        "version": "1.1.0"
+      }
+    },
+    "serialization": {
+      "json": "1.9.0",
+      "core": "1.9.0",
+      "annotation": "@Serializable on all remote DTOs"
+    },
+    "auth": {
+      "credentials": "1.5.0",
+      "googleId": "1.1.1",
+      "manager": "ui/util/GoogleAuthManager.kt"
+    },
+    "logging": {
+      "timber": {
+        "version": "5.0.1",
+        "wrapper": "common/logging/Logger.kt",
+        "domains": "common/logging/LogDomain.kt"
+      }
+    },
+    "testing": {
+      "unit": {
+        "junit": "4.13.2",
+        "mockk": "1.14.7",
+        "coroutinesTest": "1.10.2",
+        "archCoreTesting": "2.2.0"
+      },
+      "android": {
+        "mockkAndroid": "1.14.7",
+        "espresso": "3.7.0"
+      }
+    }
+  },
+  "theme": {
+    "_purpose": "Complete token surface — agent resolves all theme access here",
+    "entryPoint": "ui/theme/FinsibleTheme.kt",
+    "rule": "NEVER extend MaterialTheme. FinsibleTheme wraps it. Tokens via FinsibleTheme.{semantic|spacing|stroke|elevation|typography} CompositionLocal only.",
+    "tokenLayer": {
+      "layer1": "FinsiblePrimitives — raw color ramp (Green, Neutral, Red, Amber, Teal, Blue). Never referenced by components.",
+      "layer2": "FinsibleSemanticColors, FinsibleSpacing, FinsibleStroke, FinsibleElevation, FinsibleTypes — semantic design tokens. Accessed via FinsibleTheme.{semantic|spacing|stroke|elevation|typography}.",
+      "layer3": "Component-specific token classes (e.g. FinsibleButtonColors) — resolved in Defaults files from Layer 2."
+    },
+    "compositionLocals": {
+      "_note": "All private — only accessed via FinsibleTheme object properties below",
+      "LocalFinsibleSemanticColors": "→ FinsibleTheme.semantic — Layer 2 semantic color tokens",
+      "LocalFinsibleSpacing": "→ FinsibleTheme.spacing — inset/stack/gap/inline tokens",
+      "LocalFinsibleStroke": "→ FinsibleTheme.stroke — hairline/thin/semiBold/bold/heavy",
+      "LocalFinsibleElevation": "→ FinsibleTheme.elevation — flat/raised/floating/modal shadows",
+      "LocalDeviceInfo": "→ FinsibleTheme.deviceInfo / .screenWidth / .screenHeight",
+      "LocalFinsibleTypes": "→ FinsibleTheme.typography — semantic text styles (display/heading/body/label/caption/numeral)"
+    },
+    "accessPoints": {
+      "FinsibleTheme.semantic": {
+        "type": "FinsibleSemanticColors",
+        "file": "ui/theme/FinsibleSemanticColors.kt",
+        "note": "Layer 2 semantic color tokens — surfaces, content, brand, borders, feedback, transaction"
+      },
+      "FinsibleTheme.typography": {
+        "type": "FinsibleTypes",
+        "file": "ui/theme/FinsibleTypes.kt",
+        "scaled": true,
+        "note": "Semantic roles: display*/heading*/body*/label*/caption/numeral*"
+      },
+      "FinsibleTheme.spacing": {
+        "type": "FinsibleSpacing",
+        "file": "ui/theme/FinsibleSpacing.kt",
+        "scaled": true,
+        "note": "Roles: inset*/stack*/gap*/inline* — scaled by FinsibleUiScaler"
+      },
+      "FinsibleTheme.stroke": {
+        "type": "FinsibleStroke",
+        "file": "ui/theme/FinsibleStroke.kt",
+        "scaled": true,
+        "note": "Width: hairline(0.5), thin(1), semiBold(1.5), bold(2), heavy(3)"
+      },
+      "FinsibleTheme.elevation": {
+        "type": "FinsibleElevation",
+        "file": "ui/theme/FinsibleElevation.kt",
+        "note": "Light: shadows; Dark: surface tints. flat/raised/floating/modal/focus"
+      },
+      "FinsibleTheme.deviceInfo": {
+        "type": "DeviceInfo",
+        "file": "ui/theme/DeviceInfo.kt"
+      },
+      "FinsibleTheme.screenWidth": {
+        "type": "Dp"
+      },
+      "FinsibleTheme.screenHeight": {
+        "type": "Dp"
+      },
+      "FinsibleTheme.materialTypography": {
+        "type": "Typography",
+        "note": "passthrough — use sparingly"
+      },
+      "FinsibleTheme.resolveColor": {
+        "sig": "(token: String, fallback: Color?) → Color",
+        "note": "string-keyed dynamic lookup — accepts semantic names + legacy aliases + hex"
+      },
+      "FinsibleTheme.Dp.adaptedDp()": {
+        "note": "scales arbitrary Dp value to current device via FinsibleUiScaler"
+      },
+      "FinsibleTheme.isDarkTheme()": {
+        "type": "Boolean"
+      },
+      "FinsibleTheme.sizes": {
+        "type": "FinsibleSizes",
+        "file": "ui/theme/FinsibleSizes.kt",
+        "scaled": true,
+        "note": "touch.{size}, icon.{size}, avatar.{size} — scaled by FinsibleUiScaler"
+      }
+    },
+    "colorTokens": {
+      "_note": "Layer 2 — FinsibleSemanticColors. Access via FinsibleTheme.semantic.{name}. Legacy aliases (e.g. 'primaryBackground'→surfaceBase) exist in FinsibleColorResolver for backward compat.",
+      "--- Surfaces ---": "",
+      "surfaceBase": "bottom-most app background — FinsiblePrimitives.Neutral.n200 light / Color(0xFF101013) dark",
+      "surfaceDefault": "default surface — n300 light / 0xFF18181C dark",
+      "surfaceRaised": "raised card/sheet surface — n0 light / 0xFF232328 dark",
+      "surfaceOverlay": "modal overlay surface — n0 light / 0xFF1C1C20 dark",
+      "surfaceSunken": "sunken/input surface — 0xFFF2F2F5 light / 0xFF151518 dark",
+      "surfaceBrandSubtle": "brand-tinted subtle surface — Green.g50 light / 0xFF0E2318 dark",
+      "surfaceBrandTint": "brand-tinted surface — Green.g100 light / 0xFF142E22 dark",
+      "inputSurface": "pre-split input background — surfaceSunken, may diverge",
+      "cardSurface": "pre-split card background — surfaceRaised, may diverge",
+      "--- Content ---": "",
+      "contentPrimary": "primary text/icons — n700 light / 0xFFEAEAED dark",
+      "contentSecondary": "secondary text/icons — n600 light / 0xFFA4A4AE dark",
+      "contentTertiary": "tertiary text/icons — n500 light / 0xFF78788A dark",
+      "contentPlaceholder": "placeholder text — n400 light / 0xFF585864 dark",
+      "contentDisabled": "disabled text/icons — n400 light / 0xFF585864 dark",
+      "contentOnBrand": "text/icons on brand backgrounds — n0 light / 0xFF101013 dark",
+      "contentLink": "hyperlink text — 0xFF236BAF light / 0xFF62C0E1 dark",
+      "contentInverse": "inverse content — 0xFFFAFAEB light / 0xFF1A1A20 dark",
+      "iconPrimary": "primary icon tint — n700 light / 0xFFEAEAED dark",
+      "iconSecondary": "secondary icon tint — n600 light / 0xFFA4A4AE dark",
+      "iconTertiary": "tertiary icon tint — n500 light / 0xFF78788A dark",
+      "iconDisabled": "disabled icon tint — n400 light / 0xFF585864 dark",
+      "iconOnBrand": "icon on brand — n0 light / 0xFF101013 dark",
+      "iconLink": "link icon tint — 0xFF236BAF light / 0xFF62C0E1 dark",
+      "--- Brand ---": "",
+      "brandInteractive": "primary interactive brand — Green.g600 light / 0xFF34A064 dark",
+      "brandInteractiveHovered": "hovered interactive brand — Green.g700 light / 0xFF3DB870 dark",
+      "brandInteractivePressed": "pressed interactive brand — Green.g800 light / 0xFF50CC88 dark",
+      "brandAccent": "brand accent — Green.g400 light / 0xFF2A7A50 dark",
+      "brandTint": "brand tint fill — Green.g100 light / 0xFF142E22 dark",
+      "brandSubtle": "brand subtle fill — Green.g50 light / 0xFF0E2318 dark",
+      "--- Borders ---": "",
+      "borderSubtle": "hairline/subtle divider — 0xFFE4E4E8 light / 0xFF262630 dark",
+      "borderDefault": "standard border/outline — 0xFFDCDCE1 light / 0xFF2E2E36 dark",
+      "borderStrong": "strong/emphasized border — 0xFFCCCCDD light / 0xFF3C3C46 dark",
+      "borderBrand": "brand-colored border — Green.g600 light / 0xFF34A064 dark",
+      "borderError": "error border — 0xFFCC4444 light / 0xFFDA9090 dark",
+      "inputBorder": "pre-split input border — borderDefault, may diverge",
+      "cardBorder": "pre-split card border — borderDefault, may diverge",
+      "--- Scrim/Overlay ---": "",
+      "scrim": "full-screen backdrop scrim — 0xA61A1A20 light / 0xD9101013 dark",
+      "overlay": "modal overlay — 0x7A1A1A20 light / 0xBF101013 dark",
+      "--- Feedback ---": "",
+      "feedbackError": "destructive foreground — 0xFFCC4444 light / 0xFFDA9090 dark",
+      "feedbackErrorSurface": "error container background — 0xFFF5E0E0 light / 0xFF3A1A1A dark",
+      "feedbackSuccess": "success foreground — 0xFF28855E light / 0xFF5CC08E dark",
+      "feedbackSuccessSurface": "success container — 0xFFDAE7E2 light / 0xFF142E22 dark",
+      "feedbackWarning": "warning foreground — 0xFFC27A1A light / 0xFFD9B060 dark",
+      "feedbackWarningSurface": "warning container — 0xFFF5EDD8 light / 0xFF332610 dark",
+      "feedbackInfo": "info foreground — 0xFF3574C4 light / 0xFF82B4DA dark",
+      "feedbackInfoSurface": "info container — 0xFFE4EEF8 light / 0xFF1A2D3E dark",
+      "--- Transaction ---": "",
+      "transactionIncome": "income transactions — 0xFF27846A light / 0xFF5EC49E dark",
+      "transactionExpense": "expense transactions — 0xFFB45A5A light / 0xFFD09090 dark",
+      "transactionTransfer": "transfer transactions — 0xFF6B7B8D light / 0xFF909CAC dark",
+      "transactionIncomeSurface": "income container — 0xFFDAE7E2 light / 0xFF142E22 dark",
+      "transactionExpenseSurface": "expense container — 0xFFF5E0E0 light / 0xFF3A1A1A dark",
+      "transactionTransferSurface": "transfer container — 0xFFEAEAED light / 0xFF232328 dark",
+      "--- Legacy aliases (resolved via FinsibleColorResolver) ---": "",
+      "primaryBackground": "→ surfaceBase",
+      "secondaryBackground": "→ surfaceDefault",
+      "surface": "→ surfaceRaised",
+      "surfaceContainer": "→ surfaceSunken",
+      "input": "→ inputSurface",
+      "card": "→ cardSurface",
+      "primaryContent": "→ contentPrimary",
+      "secondaryContent": "→ contentSecondary",
+      "tertiaryContent": "→ contentTertiary",
+      "onsurfacevariant": "→ contentSecondary",
+      "placeholder": "→ contentPlaceholder",
+      "disabledcontent": "→ contentDisabled",
+      "primarybutton": "→ brandInteractive",
+      "label": "→ contentPrimary",
+      "link": "→ contentLink",
+      "selection": "→ surfaceBrandTint",
+      "hover": "→ surfaceDefault",
+      "pressed": "→ surfaceSunken",
+      "focused": "→ surfaceBrandSubtle",
+      "disabled": "→ surfaceSunken",
+      "border": "→ borderDefault",
+      "outline": "→ borderStrong",
+      "outlinevariant": "→ borderDefault",
+      "divider": "→ borderSubtle",
+      "ripple": "→ brandInteractive at 0.16 alpha",
+      "shadow": "→ Black at 0.12 alpha",
+      "error": "→ feedbackError",
+      "success": "→ feedbackSuccess",
+      "warning": "→ feedbackWarning",
+      "info": "→ feedbackInfo",
+      "errorcontainer": "→ feedbackErrorSurface",
+      "successcontainer": "→ feedbackSuccessSurface",
+      "warningcontainer": "→ feedbackWarningSurface",
+      "infocontainer": "→ feedbackInfoSurface",
+      "brandaccent": "→ brandAccent",
+      "income": "→ transactionIncome",
+      "expense": "→ transactionExpense",
+      "transfer": "→ transactionTransfer"
+    },
+    "typographyTokens": {
+      "_note": "Semantic role-based typography from FinsibleTypes. Scaled per device via FinsibleUiScaler. Access via FinsibleTheme.typography.{role}.",
+      "--- Display (Oswald, Normal) ---": "",
+      "displayXl": "48sp/54sp — hero net-worth totals",
+      "displayLg": "36sp/42sp — feature totals",
+      "displayMd": "28sp/34sp — section hero numbers",
+      "displaySm": "22sp/28sp — card hero numbers",
+      "--- Heading (Manrope, SemiBold) ---": "",
+      "headingLg": "22sp/30sp — screen titles",
+      "headingMd": "18sp/26sp — card/dialog headings",
+      "headingSm": "16sp/22sp — subsection headings",
+      "--- Body (Manrope, Normal) ---": "",
+      "bodyLg": "16sp/24sp — primary body text, transaction items",
+      "bodyMd": "14sp/20sp — secondary body, descriptions",
+      "bodySm": "12sp/16sp — fine print, timestamps",
+      "--- Label (Manrope, Medium) ---": "",
+      "labelLg": "14sp/20sp — button labels, large tags",
+      "labelMd": "12sp/16sp — chip labels, small tags",
+      "labelSm": "10sp/14sp — micro labels, badges",
+      "--- Caption ---": "",
+      "caption": "11sp/15sp — timestamps, helper text",
+      "--- Numeral (Manrope, tabular-nums) ---": "",
+      "numeralXl": "40sp/48sp — large monetary amounts",
+      "numeralLg": "32sp/40sp — card amounts",
+      "numeralMd": "20sp/28sp — list/row amounts",
+      "numeralSm": "14sp/20sp — compact amounts",
+      "numeralXs": "12sp/16sp — micro amounts"
+    },
+    "spacingTokens": {
+      "_note": "Layer 2 — FinsibleSpacing. Access via FinsibleTheme.spacing.{role}. Scaled per device via FinsibleUiScaler.",
+      "--- Inset (internal padding) ---": "",
+      "insetNone": "0dp — removes padding",
+      "insetMicro": "2dp — tight badge/chip inner padding",
+      "insetXs": "4dp — dense chip/badge padding",
+      "insetSm": "8dp — compact chip padding",
+      "insetMd": "12dp — compact list row padding",
+      "insetLg": "16dp — standard card / section padding",
+      "insetXl": "20dp — generous card padding",
+      "inset2xl": "24dp — screen-level edge padding",
+      "inset3xl": "32dp — header / hero padding",
+      "--- Stack (vertical rhythm) ---": "",
+      "stackMicro": "2dp — tight label-to-value gap",
+      "stackXs": "4dp — icon-label vertical gap",
+      "stackSm": "8dp — related items, tight groups",
+      "stackMd": "12dp — standard vertical rhythm",
+      "stackLg": "16dp — section content groups",
+      "stackXl": "24dp — between sections",
+      "stack2xl": "32dp — screen-level sections",
+      "--- Gap (horizontal rhythm) ---": "",
+      "gapMicro": "2dp — tight icon-to-label inline gap",
+      "gapXs": "4dp — icon-text inline gap",
+      "gapSm": "8dp — chips in a row",
+      "gapMd": "12dp — standard row gaps",
+      "gapLg": "16dp — card grid gap",
+      "--- Inline (icon-to-label spacing) ---": "",
+      "inlineXs": "4dp — tight icon-text",
+      "inlineSm": "6dp — standard icon-text",
+      "inlineMd": "8dp — generous icon-text"
+    },
+    "strokeTokens": {
+      "_note": "Layer 2 — FinsibleStroke. Access via FinsibleTheme.stroke.{name}. Scaled per device via FinsibleUiScaler.",
+      "hairline": "0.5dp — hairline borders, thin dividers (unscaled)",
+      "thin": "1dp — standard border, divider",
+      "semiBold": "1.5dp — emphasized border",
+      "bold": "2dp — strong border, progress indicators",
+      "heavy": "3dp — checkbox check mark"
+    },
+    "elevationTokens": {
+      "_note": "Layer 2 — FinsibleElevation + FinsibleShadowSpec. Access via FinsibleTheme.elevation.{name}. Light: shadows via Modifier.finsibleShadow(); Dark: surface tints only (shadow specs→None).",
+      "flatShadow": "FinsibleShadowSpec.None — flat surfaces (both themes)",
+      "raisedShadow": "FinsibleShadowSpec(color=0x12000000, offsetY=FinsibleSpacing.stackMicro, blur=FinsibleRadius.xs) — raised cards (light) / None (dark)",
+      "floatingShadow": "FinsibleShadowSpec(color=0x1A000000, offsetY=FinsibleSpacing.stackXs, blur=FinsibleRadius.md) — floating elements (light) / None (dark)",
+      "modalShadow": "FinsibleShadowSpec(color=0x24000000, offsetY=FinsibleSpacing.stackSm, blur=FinsibleSizes.Icon.lg) — modals/sheets (light) / None (dark)",
+      "focusShadow": "FinsibleShadowSpec(color=brand green with alpha, offset/blur=0dp) — focus ring (both themes)",
+      "flatSurface": "surfaceBase tint (light) / 0xFF101013 (dark)",
+      "raisedSurface": "surfaceRaised tint (light) / 0xFF232328 (dark)",
+      "floatingSurface": "surfaceRaised tint (light) / 0xFF2E2E34 (dark)",
+      "modalSurface": "surfaceOverlay tint (light) / 0xFF343440 (dark)"
+    },
+    "radiusTokens": {
+      "_note": "FinsibleRadius — component-level radius assignments. Access via FinsibleRadius.{name} or FinsibleRadius.Component.{name}.",
+      "none": "0dp",
+      "xs": "4dp — chips, tags, badges, status pills",
+      "sm": "8dp — buttons, inputs, small cards",
+      "md": "12dp — standard cards, list containers",
+      "lg": "16dp — financial cards, modals, sheets",
+      "xl": "20dp — hero cards, prominent bottom sheets",
+      "pill": "999dp — FAB, pill-shaped buttons",
+      "component.button": "sm (8dp)",
+      "component.input": "sm (8dp)",
+      "component.card": "md (12dp)",
+      "component.cardFinance": "lg (16dp)",
+      "component.sheet": "xl (20dp)",
+      "component.chip": "xs (4dp)",
+      "component.chipPill": "pill (999dp)",
+      "component.fab": "pill (999dp)",
+      "component.badge": "pill (999dp)",
+      "component.snackbar": "sm (8dp)",
+      "component.dialog": "lg (16dp)"
+    },
+    "sizeTokens": {
+      "_note": "FinsibleSizes — touch targets, icons, avatars. Access via FinsibleSizes.{category}.{name}.",
+      "touch.xs": "28dp — inline icon buttons",
+      "touch.sm": "36dp — compact icon buttons",
+      "touch.md": "44dp — standard button/input height",
+      "touch.lg": "52dp — primary CTA",
+      "touch.xl": "56dp — hero action buttons",
+      "icon.xs": "12dp — inline status icons",
+      "icon.sm": "16dp — label-adjacent icons",
+      "icon.md": "20dp — standard UI icons",
+      "icon.lg": "24dp — navigation icons",
+      "icon.xl": "32dp — empty states",
+      "avatar.sm": "32dp — compact lists",
+      "avatar.md": "40dp — standard list rows",
+      "avatar.lg": "48dp — profile headers"
+    },
+    "fonts": {
+      "file": "ui/theme/FinsibleFontFamily.kt",
+      "families": [
+        "displayFont — Google Font 'Oswald'",
+        "interfaceFont — Google Font 'Manrope'"
+      ],
+      "weights": [
+        "ExtraLight",
+        "Light",
+        "Normal",
+        "Medium",
+        "SemiBold",
+        "Bold",
+        "ExtraBold"
+      ],
+      "note": "PreloadFonts() called inside FinsibleTheme — never call manually"
+    },
+    "gradients": {
+      "file": "ui/theme/FinsibleGradients.kt"
+    },
+    "uiScaler": {
+      "file": "ui/theme/FinsibleUiScaler.kt",
+      "note": "auto-applied in FinsibleTheme — never instantiate manually"
+    },
+    "colorResolver": {
+      "file": "ui/theme/FinsibleColorResolver.kt"
+    }
+  },
+  "templateLibrary": {
+    "_purpose": "Finsible UI component library — all under ui/component/templates/",
+    "_templateRoot": "ui/component/templates/",
+    "packageRules": {
+      "component": "Stateful @Composable entry points. Consume FinsibleTheme via CompositionLocal. No hardcoded values.",
+      "core": "Zero-state, zero-side-effect primitives. DrawScope extensions with named constants. Shared enums.",
+      "default": "Finsible{Name}Defaults objects — @Composable fns resolving colors/sizes from FinsibleTheme.",
+      "model": "@Immutable data classes, enums, sealed classes. Variants live in model/variant/ subfolder.",
+      "preview": "@Preview composables ONLY — never shipped. Use FinsibleComponentPreviewScaffold from FinsiblePreviewComponents.kt.",
+      "util": "Runtime-only utilities — Host/Manager pairs, custom indication, position providers."
+    },
+    "namingConventions": {
+      "component": "Finsible{Name}.kt",
+      "defaults": "Finsible{Name}Defaults.kt",
+      "models": "Finsible{Name}Models.kt",
+      "variant": "Finsible{Name}Variant.kt — inside model/variant/",
+      "preview": "Finsible{Name}Preview.kt",
+      "playground": "{Name}Playground.kt — debug source set ONLY, never main"
+    },
+    "coreSharedTypes": {
+      "FinsibleSize": {
+        "values": [
+          "ExtraSmall",
+          "Small",
+          "Medium",
+          "Large",
+          "ExtraLarge"
+        ],
+        "file": "core/FinsibleSize.kt"
+      },
+      "FinsibleShape": {
+        "values": [
+          "Pill",
+          "Rounded",
+          "Sharp",
+          "Circle"
+        ],
+        "file": "core/FinsibleShape.kt"
+      },
+      "FinsibleIconPosition": {
+        "values": [
+          "Leading",
+          "Trailing"
+        ],
+        "file": "core/FinsibleIconPosition.kt"
+      },
+      "FinsibleBadgeType": {
+        "values": [
+          "None",
+          "Dot",
+          "Count"
+        ],
+        "file": "model/FinsibleBadgeType.kt"
+      }
+    },
+    "defaultsPattern": {
+      "_note": "All Defaults objects follow this shape — FILL per component",
+      "colors()": "@Composable — accepts variant enum + optional color overrides, returns XxxColors",
+      "sizes()": "@Composable — accepts FinsibleSize, returns XxxSizes with contentPadding/textStyle/iconSize",
+      "shape()": "@Composable — accepts FinsibleShape + FinsibleSize, returns Shape",
+      "badgeSpec()": "@Composable — accepts FinsibleSize, returns XxxBadgeSpec (if component has badges)"
+    },
+    "components": {
+      "_schemaNote": "One entry per component. All fields filled from actual source.",
+      "FinsibleAccordion": {
+        "status": "complete",
+        "files": {
+          "component": "component/FinsibleAccordion.kt",
+          "defaults": "default/FinsibleAccordionDefaults.kt",
+          "models": "model/FinsibleAccordionModels.kt",
+          "variant": "model/variant/FinsibleAccordionIconVariant.kt",
+          "preview": "preview/FinsibleAccordionPreview.kt",
+          "util": [],
+          "related": []
+        },
+        "playground": null,
+        "params": {
+          "title": "String — header title (must be non-blank)",
+          "content": "@Composable () -> Unit — expandable content body",
+          "modifier": "Modifier = Modifier",
+          "subtitle": "String? = null",
+          "expanded": "Boolean? = null — must pair with onExpandedChange",
+          "onExpandedChange": "((Boolean) -> Unit)? = null",
+          "enabled": "Boolean = true",
+          "size": "FinsibleSize = Medium — only Small, Medium, Large",
+          "shapeVariant": "FinsibleShape = Rounded — only Rounded or Sharp",
+          "iconVariant": "FinsibleAccordionIconVariant = Chevron — Chevron or PlusMinus",
+          "colors": "FinsibleAccordionColors = FinsibleAccordionDefaults.colors()",
+          "sizes": "FinsibleAccordionSizes = FinsibleAccordionDefaults.sizes(size, shapeVariant)",
+          "leadingIcon": "(@Composable () -> Unit)? = null"
+        },
+        "variants": [
+          "Chevron",
+          "PlusMinus"
+        ],
+        "modelTypes": [
+          "FinsibleAccordionColors",
+          "FinsibleAccordionSizes"
+        ],
+        "tokenUsage": {
+          "colors": [
+            "semantic.borderSubtle",
+            "semantic.contentPrimary",
+            "semantic.contentSecondary"
+          ],
+          "typography": [
+            "typography.bodyLg",
+            "typography.bodyMd"
+          ],
+          "spacing": [
+            "spacing.insetLg",
+            "spacing.stackXs",
+            "spacing.gapSm"
+          ],
+          "stroke": [
+            "stroke.thin"
+          ]
+        },
+        "constraints": [
+          "size must be Small, Medium, or Large",
+          "title must be non-blank",
+          "shapeVariant must be Rounded or Sharp",
+          "expanded and onExpandedChange must be set together"
+        ]
+      },
+      "FinsibleBottomSheet": {
+        "status": "complete",
+        "files": {
+          "component": "component/FinsibleBottomSheet.kt",
+          "defaults": "default/FinsibleBottomSheetDefaults.kt",
+          "models": "model/FinsibleBottomSheetModels.kt",
+          "preview": null,
+          "util": [],
+          "related": []
+        },
+        "playground": null,
+        "params": {
+          "onDismissRequest": "() -> Unit",
+          "modifier": "Modifier = Modifier",
+          "sheetState": "SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)",
+          "title": "String? = null",
+          "subtitle": "String? = null",
+          "trailingIcon": "(@Composable () -> Unit)? = null",
+          "actions": "List<FinsibleBottomSheetAction> = emptyList()",
+          "colors": "FinsibleBottomSheetColors = FinsibleBottomSheetDefaults.colors()",
+          "windowInsets": "WindowInsets = safeDrawing",
+          "maxHeightPercent": "Float? = null",
+          "fixedHeightPercent": "Float? = null",
+          "scrollContent": "Boolean = true",
+          "content": "@Composable ColumnScope.() -> Unit"
+        },
+        "variants": [],
+        "modelTypes": [
+          "FinsibleBottomSheetColors",
+          "FinsibleBottomSheetAction"
+        ],
+        "tokenUsage": {
+          "colors": [
+            "semantic.contentSecondary",
+            "semantic.contentPrimary"
+          ],
+          "typography": [
+            "typography.bodyLg"
+          ],
+          "spacing": [
+            "spacing.insetXl",
+            "spacing.inset2xl",
+            "spacing.insetXs",
+            "spacing.insetLg",
+            "spacing.gapMd",
+            "spacing.inlineMd"
+          ]
+        },
+        "constraints": []
+      },
+      "FinsibleButton": {
+        "status": "complete",
+        "files": {
+          "component": "component/FinsibleButton.kt",
+          "defaults": "default/FinsibleButtonDefaults.kt",
+          "models": "model/FinsibleButtonModels.kt",
+          "variant": "model/variant/FinsibleButtonVariant.kt",
+          "preview": "preview/FinsibleButtonPreview.kt",
+          "util": [],
+          "related": [
+            "component/FinsibleButtonBadge.kt"
+          ]
+        },
+        "playground": null,
+        "params": {
+          "onClick": "() -> Unit",
+          "modifier": "Modifier = Modifier",
+          "text": "String? = null",
+          "enabled": "Boolean = true",
+          "loading": "Boolean = false",
+          "iconOnly": "Boolean = false",
+          "fullWidth": "Boolean = false",
+          "variant": "FinsibleButtonVariant = Filled",
+          "size": "FinsibleSize = Medium",
+          "shapeVariant": "FinsibleShape = Pill",
+          "colors": "FinsibleButtonColors = FinsibleButtonDefaults.colors(variant)",
+          "contentPadding": "PaddingValues? = null",
+          "badgeType": "FinsibleBadgeType = None",
+          "badgeCount": "Int = 0",
+          "icon": "(@Composable () -> Unit)? = null",
+          "iconPosition": "FinsibleIconPosition = Leading",
+          "sizes": "FinsibleButtonSizes = FinsibleButtonDefaults.sizes(size)"
+        },
+        "variants": [
+          "Filled",
+          "FilledTonal",
+          "Outlined",
+          "Text",
+          "Link"
+        ],
+        "modelTypes": [
+          "FinsibleButtonColors",
+          "FinsibleButtonSizes",
+          "FinsibleButtonBadgeSpec"
+        ],
+        "tokenUsage": {
+          "colors": [
+            "semantic.contentPrimary",
+            "semantic.contentOnBrand",
+            "semantic.brandInteractive",
+            "semantic.contentLink",
+            "semantic.contentDisabled"
+          ],
+          "typography": [
+            "typography.labelLg",
+            "typography.labelMd",
+            "typography.labelSm"
+          ],
+          "spacing": [
+            "spacing.insetSm",
+            "spacing.insetMd",
+            "spacing.insetLg"
+          ],
+          "stroke": [
+            "stroke.thin",
+            "stroke.bold"
+          ]
+        },
+        "constraints": [
+          "iconOnly requires non-null icon",
+          "iconOnly and fullWidth cannot be used together",
+          "Badges only on iconOnly buttons",
+          "Count badge not on ExtraSmall",
+          "badgeCount cannot be negative",
+          "Disabled button should not be loading",
+          "Text variant does not support badges",
+          "Link variant does not support badges",
+          "Circle shape only for iconOnly"
+        ]
+      },
+      "FinsibleCheckbox": {
+        "status": "complete",
+        "files": {
+          "component": "component/FinsibleCheckbox.kt",
+          "defaults": "default/FinsibleCheckboxDefaults.kt",
+          "models": "model/FinsibleCheckboxModels.kt",
+          "variant": "model/variant/FinsibleCheckboxVariant.kt",
+          "preview": "preview/FinsibleCheckboxPreview.kt",
+          "util": [],
+          "related": []
+        },
+        "playground": null,
+        "params": {
+          "checked": "Boolean",
+          "onCheckedChange": "(Boolean) -> Unit",
+          "modifier": "Modifier = Modifier",
+          "enabled": "Boolean = true",
+          "variant": "FinsibleCheckboxVariant = Default",
+          "size": "FinsibleSize = Medium",
+          "colors": "FinsibleCheckboxColors = FinsibleCheckboxDefaults.colors(variant)"
+        },
+        "variants": [
+          "Default",
+          "Bordered"
+        ],
+        "modelTypes": [
+          "FinsibleCheckboxColors",
+          "FinsibleCheckboxSizes"
+        ],
+        "tokenUsage": {
+          "colors": [
+            "semantic.brandInteractive",
+            "semantic.surfaceBase",
+            "semantic.contentPrimary",
+            "semantic.contentSecondary",
+            "semantic.contentDisabled"
+          ],
+          "typography": [
+            "typography.labelMd"
+          ],
+          "spacing": [],
+          "stroke": [
+            "stroke.thin"
+          ]
+        },
+        "constraints": [
+          "size must be Small, Medium, or Large",
+          "shapeVariant must be Rounded or Sharp",
+          "label must be null or non-blank"
+        ]
+      },
+      "FinsibleChipsRow": {
+        "status": "complete",
+        "files": {
+          "component": "component/FinsibleChipsRow.kt",
+          "defaults": "default/FinsibleChipsRowDefaults.kt",
+          "models": "model/FinsibleChipsRowModels.kt",
+          "preview": "preview/FinsibleChipsRowPreview.kt",
+          "util": [],
+          "related": []
+        },
+        "playground": null,
+        "params": {
+          "items": "List<T>",
+          "itemLabel": "(T) -> String",
+          "selectedItems": "Set<T>",
+          "onSelectionChange": "(Set<T>) -> Unit",
+          "modifier": "Modifier = Modifier",
+          "multiSelect": "Boolean = true",
+          "size": "FinsibleSize = Medium"
+        },
+        "variants": [],
+        "modelTypes": [
+          "FinsibleChipsRowSizes"
+        ],
+        "tokenUsage": {
+          "colors": [
+            "semantic.contentPrimary",
+            "semantic.surfaceBase",
+            "semantic.surfaceDefault",
+            "semantic.brandInteractive",
+            "semantic.borderDefault"
+          ],
+          "typography": [
+            "typography.labelLg",
+            "typography.labelMd",
+            "typography.labelSm"
+          ],
+          "spacing": [
+            "spacing.insetSm",
+            "spacing.insetMd"
+          ]
+        },
+        "constraints": [
+          "label must be non-blank",
+          "size must be Small, Medium, or Large",
+          "shapeVariant must be Pill, Rounded, or Sharp",
+          "chipSizes.iconSize must be > 0",
+          "chipSizes.horizontalPadding must be >= 0",
+          "chipSizes.verticalPadding must be >= 0"
+        ]
+      },
+      "FinsibleDatePicker": {
+        "status": "complete",
+        "files": {
+          "component": "component/FinsibleDatePicker.kt",
+          "defaults": "default/FinsibleDatePickerDefaults.kt",
+          "models": "model/FinsibleDatePickerModels.kt",
+          "preview": "preview/FinsibleDatePickerPreview.kt",
+          "util": [],
+          "related": [
+            "component/FinsibleDatePickerShared.kt",
+            "component/FinsibleDateRangePicker.kt",
+            "component/FinsibleMonthYearPicker.kt"
+          ]
+        },
+        "playground": null,
+        "params": {
+          "onDateSelected": "(LocalDate) -> Unit",
+          "modifier": "Modifier = Modifier",
+          "selectedDate": "LocalDate? = null",
+          "constraints": "CalendarConstraints = CalendarConstraints()",
+          "colors": "FinsibleDatePickerColors = FinsibleDatePickerDefaults.colors()",
+          "sizes": "FinsibleDatePickerSizes = FinsibleDatePickerDefaults.sizes()",
+          "typography": "FinsibleDatePickerTypography = FinsibleDatePickerDefaults.typography()",
+          "shapes": "FinsibleDatePickerShapes = FinsibleDatePickerDefaults.shapes()"
+        },
+        "variants": [],
+        "modelTypes": [
+          "FinsibleDatePickerColors",
+          "FinsibleDatePickerSizes"
+        ],
+        "tokenUsage": {
+          "colors": [
+            "primaryContent",
+            "primaryBackground",
+            "secondaryBackground",
+            "brandAccent",
+            "border",
+            "surface"
+          ],
+          "typography": [
+            "t12",
+            "t14",
+            "t16",
+            "t18"
+          ],
+          "spacing": [
+            "d4",
+            "d8",
+            "d12",
+            "d16",
+            "d24",
+            "d32",
+            "d40"
+          ]
+        },
+        "constraints": []
+      },
+      "FinsibleDropdown": {
+        "status": "complete",
+        "files": {
+          "component": "component/FinsibleDropdown.kt",
+          "defaults": "default/FinsibleDropdownDefaults.kt",
+          "models": "model/FinsibleDropdownModels.kt",
+          "preview": "preview/FinsibleDropdownPreview.kt",
+          "util": [
+            "util/FlushDropdownPositionProvider.kt"
+          ],
+          "related": []
+        },
+        "playground": null,
+        "params": {
+          "items": "List<T>",
+          "selectedItem": "T?",
+          "onItemSelected": "(T) -> Unit",
+          "itemLabel": "(T) -> String",
+          "modifier": "Modifier = Modifier",
+          "placeholder": "String? = null",
+          "enabled": "Boolean = true",
+          "size": "FinsibleSize = Medium",
+          "maxVisibleItems": "Int = 5"
+        },
+        "variants": [],
+        "modelTypes": [
+          "FinsibleDropdownSizes"
+        ],
+        "tokenUsage": {
+          "colors": [
+            "semantic.contentPrimary",
+            "semantic.surfaceRaised",
+            "semantic.surfaceDefault",
+            "semantic.borderDefault",
+            "semantic.surfaceSunken",
+            "semantic.contentSecondary",
+            "semantic.contentPlaceholder"
+          ],
+          "typography": [
+            "typography.bodyMd",
+            "typography.labelMd"
+          ],
+          "spacing": [
+            "spacing.insetSm",
+            "spacing.insetMd"
+          ],
+          "stroke": [
+            "stroke.thin"
+          ]
+        },
+        "constraints": [
+          "options must not be empty",
+          "placeholder must be non-blank",
+          "sizes.iconSize must be > 0",
+          "sizes.horizontalPadding must be >= 0",
+          "sizes.verticalPadding must be >= 0"
+        ]
+      },
+      "FinsibleFilterChip": {
+        "status": "complete",
+        "files": {
+          "component": "component/FinsibleFilterChip.kt",
+          "defaults": "default/FinsibleFilterChipDefaults.kt",
+          "models": "model/FinsibleFilterChipModels.kt",
+          "variant": "model/variant/FinsibleFilterChipVariant.kt",
+          "preview": "preview/FinsibleFilterChipPreview.kt",
+          "util": [],
+          "related": []
+        },
+        "playground": null,
+        "params": {
+          "selected": "Boolean",
+          "onSelectedChange": "(Boolean) -> Unit",
+          "label": "String — must be non-blank",
+          "modifier": "Modifier = Modifier",
+          "enabled": "Boolean = true",
+          "size": "FinsibleSize = Medium — only Small, Medium, Large",
+          "shapeVariant": "FinsibleShape = Pill — Pill, Rounded, or Sharp",
+          "variant": "FinsibleFilterChipVariant = Tonal",
+          "colors": "FinsibleFilterChipColors = FinsibleFilterChipDefaults.colors(variant)",
+          "icon": "(@Composable () -> Unit)? = null",
+          "iconPosition": "FinsibleIconPosition = Leading",
+          "chipContentDescription": "String? = null",
+          "selectedTint": "Color = Color.Unspecified",
+          "inverted": "Boolean = false",
+          "enforceMinTouchTarget": "Boolean = true"
+        },
+        "variants": [
+          "Default",
+          "Input"
+        ],
+        "modelTypes": [
+          "FinsibleFilterChipColors",
+          "FinsibleFilterChipSizes"
+        ],
+        "tokenUsage": {
+          "colors": [
+            "primaryContent",
+            "primaryBackground",
+            "secondaryBackground",
+            "border"
+          ],
+          "typography": [
+            "t12",
+            "t14",
+            "t16"
+          ],
+          "spacing": [
+            "d6",
+            "d8",
+            "d10",
+            "d12",
+            "d16",
+            "d20"
+          ]
+        },
+        "constraints": []
+      },
+      "FinsibleIconBadge": {
+        "status": "complete",
+        "files": {
+          "component": "component/FinsibleIconBadge.kt",
+          "defaults": "default/FinsibleIconBadgeDefaults.kt",
+          "models": "model/FinsibleIconBadgeModels.kt",
+          "preview": "preview/FinsibleIconBadgePreview.kt",
+          "util": [],
+          "related": []
+        },
+        "playground": null,
+        "params": {
+          "icon": "@Composable () -> Unit",
+          "modifier": "Modifier = Modifier",
+          "size": "FinsibleSize = Medium",
+          "badgeType": "FinsibleBadgeType = None",
+          "badgeCount": "Int = 0"
+        },
+        "variants": [],
+        "modelTypes": [
+          "FinsibleIconBadgeSizes"
+        ],
+        "tokenUsage": {
+          "colors": [
+            "semantic.surfaceSunken",
+            "semantic.contentSecondary"
+          ],
+          "typography": [],
+          "spacing": []
+        },
+        "constraints": [
+          "size must be Small, Medium, or Large",
+          "shapeVariant must not be Pill",
+          "backgroundAlpha must be in [0, 1]",
+          "backgroundAlpha can be customized only when showBackground is true"
+        ]
+      },
+      "FinsibleLoader": {
+        "status": "complete",
+        "files": {
+          "component": "component/FinsibleLoader.kt",
+          "defaults": "default/FinsibleLoaderDefaults.kt",
+          "models": "model/FinsibleLoaderModels.kt",
+          "preview": null,
+          "util": [
+            "util/FinsibleLoaderHost.kt",
+            "util/FinsibleLoaderManager.kt"
+          ],
+          "related": []
+        },
+        "playground": null,
+        "params": {
+          "modifier": "Modifier = Modifier",
+          "size": "FinsibleSize = Medium",
+          "colors": "FinsibleLoaderColors = FinsibleLoaderDefaults.colors()"
+        },
+        "variants": [],
+        "modelTypes": [
+          "FinsibleLoaderColors",
+          "FinsibleLoaderSizes"
+        ],
+        "tokenUsage": {
+          "colors": [
+            "semantic.contentSecondary",
+            "semantic.surfaceDefault"
+          ],
+          "typography": [],
+          "spacing": []
+        },
+        "constraints": []
+      },
+      "FinsibleNotification": {
+        "status": "complete",
+        "files": {
+          "component": "component/FinsibleNotification.kt",
+          "defaults": "default/FinsibleNotificationDefaults.kt",
+          "models": "model/FinsibleNotificationModels.kt",
+          "variant": "model/variant/FinsibleNotificationVariant.kt",
+          "preview": null,
+          "util": [
+            "util/FinsibleNotificationHost.kt",
+            "util/FinsibleNotificationManager.kt"
+          ],
+          "related": []
+        },
+        "playground": null,
+        "params": {
+          "message": "String",
+          "modifier": "Modifier = Modifier",
+          "variant": "FinsibleNotificationVariant = Info",
+          "icon": "(@Composable () -> Unit)? = null",
+          "action": "@Composable (() -> Unit)? = null",
+          "onDismiss": "(() -> Unit)? = null",
+          "durationMs": "Long = 3000"
+        },
+        "variants": [
+          "Info",
+          "Success",
+          "Warning",
+          "Error"
+        ],
+        "modelTypes": [
+          "FinsibleNotificationColors"
+        ],
+        "tokenUsage": {
+          "colors": [
+            "semantic.feedbackInfo",
+            "semantic.feedbackSuccess",
+            "semantic.feedbackWarning",
+            "semantic.feedbackError",
+            "semantic.contentSecondary",
+            "semantic.surfaceRaised"
+          ],
+          "typography": [
+            "typography.bodyMd",
+            "typography.labelSm"
+          ],
+          "spacing": [
+            "spacing.insetXs",
+            "spacing.insetMicro",
+            "spacing.gapMd",
+            "spacing.inlineMd",
+            "spacing.stackMicro"
+          ]
+        },
+        "constraints": []
+      },
+      "FinsibleRadioButton": {
+        "status": "complete",
+        "files": {
+          "component": "component/FinsibleRadioButton.kt",
+          "defaults": "default/FinsibleRadioButtonDefaults.kt",
+          "models": "model/FinsibleRadioButtonModels.kt",
+          "preview": "preview/FinsibleRadioButtonPreview.kt",
+          "util": [],
+          "related": []
+        },
+        "playground": null,
+        "params": {
+          "selected": "Boolean",
+          "onClick": "() -> Unit",
+          "modifier": "Modifier = Modifier",
+          "enabled": "Boolean = true",
+          "size": "FinsibleSize = Medium",
+          "label": "String? = null"
+        },
+        "variants": [],
+        "modelTypes": [
+          "FinsibleRadioButtonSizes"
+        ],
+        "tokenUsage": {
+          "colors": [
+            "semantic.brandInteractive",
+            "semantic.contentPrimary",
+            "semantic.contentSecondary",
+            "semantic.contentDisabled"
+          ],
+          "typography": [
+            "typography.labelMd"
+          ],
+          "spacing": []
+        },
+        "constraints": [
+          "label must be non-blank",
+          "size must be Small or Medium"
+        ]
+      },
+      "FinsibleScrubber": {
+        "status": "complete",
+        "files": {
+          "component": "component/FinsibleScrubber.kt",
+          "defaults": "default/FinsibleScrubberDefaults.kt",
+          "models": "model/FinsibleScrubberModels.kt",
+          "variant": "model/variant/FinsibleScrubberVariant.kt",
+          "preview": "preview/FinsibleScrubberPreview.kt",
+          "util": [],
+          "related": []
+        },
+        "playground": null,
+        "params": {
+          "value": "Float",
+          "onValueChange": "(Float) -> Unit",
+          "modifier": "Modifier = Modifier",
+          "enabled": "Boolean = true",
+          "variant": "FinsibleScrubberVariant = Continuous",
+          "valueRange": "ClosedFloatingPointRange<Float> = 0f..1f",
+          "steps": "Int = 0"
+        },
+        "variants": [
+          "Continuous",
+          "Discrete"
+        ],
+        "modelTypes": [
+          "FinsibleScrubberColors"
+        ],
+        "tokenUsage": {
+          "colors": [
+            "semantic.brandInteractive",
+            "semantic.surfaceDefault",
+            "semantic.contentDisabled"
+          ],
+          "typography": [],
+          "spacing": [],
+          "stroke": [
+            "stroke.thin"
+          ]
+        },
+        "constraints": [
+          "totalCount must be > 0",
+          "currentIndex must be in [0, totalCount)",
+          "activeBarWidth must be > 0.dp",
+          "inactiveBarWidth must be > 0.dp",
+          "barHeight must be > 0.dp",
+          "barSpacing must be >= 0",
+          "cornerRadius must be >= 0"
+        ]
+      },
+      "FinsibleSegmentedButtonRow": {
+        "status": "complete",
+        "files": {
+          "component": "component/FinsibleSegmentedButtonRow.kt",
+          "defaults": "default/FinsibleSegmentedButtonDefaults.kt",
+          "models": "model/FinsibleSegmentedButtonModels.kt",
+          "variant": "model/variant/FinsibleSegmentedButtonVariant.kt",
+          "arrangement": "model/variant/FinsibleSegmentedButtonArrangement.kt",
+          "preview": "preview/FinsibleSegmentedButtonPreview.kt",
+          "util": [],
+          "related": []
+        },
+        "playground": null,
+        "params": {
+          "options": "List<FinsibleSegmentedButtonOption>",
+          "selectedValue": "String? — single-select overload",
+          "onSelectedValueChange": "(String?) -> Unit — single-select",
+          "selectedValues": "Set<String> — multi-select overload",
+          "onSelectedValuesChange": "(Set<String>) -> Unit — multi-select",
+          "modifier": "Modifier = Modifier",
+          "enabled": "Boolean = true",
+          "size": "FinsibleSize = Medium",
+          "shapeVariant": "FinsibleShape = Rounded",
+          "variant": "FinsibleSegmentedButtonVariant = Filled",
+          "arrangement": "FinsibleSegmentedButtonArrangement = Clubbed",
+          "colors": "FinsibleSegmentedButtonColors = ...",
+          "selectedTint": "Color = Unspecified",
+          "inverted": "Boolean = false",
+          "sizes": "FinsibleSegmentedButtonSizes = ..."
+        },
+        "variants": [
+          "Default",
+          "Tonal"
+        ],
+        "modelTypes": [
+          "FinsibleSegmentedButtonColors",
+          "FinsibleSegmentedButtonSizes"
+        ],
+        "tokenUsage": {
+          "colors": [
+            "semantic.brandInteractive",
+            "semantic.surfaceBase",
+            "semantic.surfaceDefault",
+            "semantic.borderDefault",
+            "semantic.contentPrimary",
+            "semantic.contentSecondary"
+          ],
+          "typography": [
+            "typography.labelLg",
+            "typography.labelMd"
+          ],
+          "spacing": [
+            "spacing.inlineMd"
+          ],
+          "stroke": [
+            "stroke.thin"
+          ]
+        },
+        "constraints": []
+      },
+      "FinsibleText": {
+        "status": "complete",
+        "files": {
+          "component": "component/FinsibleText.kt",
+          "defaults": "default/FinsibleTextDefaults.kt",
+          "models": "model/FinsibleTextModels.kt",
+          "variant": "model/variant/FinsibleTextVariants.kt",
+          "preview": "preview/FinsibleTextPreview.kt",
+          "util": [],
+          "related": []
+        },
+        "playground": null,
+        "params": {
+          "text": "String",
+          "modifier": "Modifier = Modifier",
+          "variant": "FinsibleTextVariant = BodyRegular",
+          "color": "Color = Color.Unspecified",
+          "colorVariant": "FinsibleTextColorVariant = Primary",
+          "onTextLayout": "(TextLayoutResult) -> Unit = {}",
+          "textStyleOverride": "TextStyle? = null",
+          "textAlign": "TextAlign? = null",
+          "maxLines": "Int = Int.MAX_VALUE",
+          "overflow": "TextOverflow = Ellipsis",
+          "uppercase": "Boolean = false",
+          "underline": "Boolean = false",
+          "strikethrough": "Boolean = false",
+          "softWrap": "Boolean = true",
+          "minLines": "Int = 1",
+          "isDisplayFont": "Boolean? = null"
+        },
+        "variants": [
+          "Hero — FinsibleTextVariant",
+          "DisplayLarge",
+          "DisplayMedium",
+          "DisplaySmall",
+          "HeadlineLarge",
+          "HeadlineMedium",
+          "HeadlineSmall",
+          "TitleLarge",
+          "TitleMedium",
+          "TitleSmall",
+          "BodyLarge",
+          "BodyMedium",
+          "BodySmall",
+          "BodyRegular",
+          "LabelLarge",
+          "LabelMedium",
+          "LabelSmall"
+        ],
+        "modelTypes": [
+          "FinsibleTextSpec"
+        ],
+        "tokenUsage": {
+          "colors": [
+            "semantic.contentPrimary",
+            "semantic.contentSecondary",
+            "semantic.brandInteractive",
+            "semantic.contentLink",
+            "semantic.feedbackError"
+          ],
+          "typography": [
+            "typography.bodyLg",
+            "typography.bodyMd",
+            "typography.bodySm",
+            "typography.headingLg",
+            "typography.headingMd",
+            "typography.headingSm",
+            "typography.labelLg",
+            "typography.labelMd",
+            "typography.labelSm",
+            "typography.caption",
+            "typography.displayXl",
+            "typography.displayLg",
+            "typography.displayMd",
+            "typography.displaySm",
+            "typography.numeralXl",
+            "typography.numeralLg",
+            "typography.numeralMd",
+            "typography.numeralSm",
+            "typography.numeralXs"
+          ],
+          "spacing": []
+        },
+        "constraints": []
+      },
+      "FinsibleTextField": {
+        "status": "complete",
+        "files": {
+          "component": "component/FinsibleTextField.kt",
+          "defaults": "default/FinsibleTextFieldDefaults.kt",
+          "models": "model/FinsibleTextFieldModels.kt",
+          "variant": "model/variant/FinsibleTextFieldVariants.kt",
+          "preview": "preview/FinsibleTextFieldPreview.kt",
+          "util": [],
+          "related": []
+        },
+        "playground": null,
+        "params": {
+          "value": "String",
+          "onValueChange": "(String) -> Unit",
+          "modifier": "Modifier = Modifier",
+          "placeholder": "String? = null",
+          "enabled": "Boolean = true",
+          "readOnly": "Boolean = false",
+          "singleLine": "Boolean = true",
+          "variant": "FinsibleTextFieldVariant = Outlined",
+          "size": "FinsibleSize = Medium",
+          "leadingIcon": "(@Composable () -> Unit)? = null",
+          "trailingIcon": "(@Composable () -> Unit)? = null",
+          "keyboardOptions": "KeyboardOptions = KeyboardOptions.Default",
+          "keyboardActions": "KeyboardActions = KeyboardActions.Default",
+          "visualTransformation": "VisualTransformation = VisualTransformation.None",
+          "maxLines": "Int = if (singleLine) 1 else Int.MAX_VALUE",
+          "isError": "Boolean = false",
+          "helperText": "String? = null"
+        },
+        "variants": [
+          "Outlined",
+          "Filled",
+          "Underlined"
+        ],
+        "modelTypes": [
+          "FinsibleTextFieldColors",
+          "FinsibleTextFieldSizes"
+        ],
+        "tokenUsage": {
+          "colors": [
+            "semantic.contentPrimary",
+            "semantic.contentSecondary",
+            "semantic.surfaceBase",
+            "semantic.surfaceDefault",
+            "semantic.inputSurface",
+            "semantic.borderDefault",
+            "semantic.brandInteractive",
+            "semantic.feedbackError",
+            "semantic.contentDisabled"
+          ],
+          "typography": [
+            "typography.bodyMd",
+            "typography.labelLg",
+            "typography.labelMd"
+          ],
+          "spacing": [
+            "spacing.inlineMd",
+            "spacing.stackXs",
+            "spacing.insetSm"
+          ],
+          "stroke": [
+            "stroke.thin"
+          ]
+        },
+        "constraints": []
+      },
+      "FinsibleTileCards": {
+        "status": "complete",
+        "files": {
+          "component": "component/FinsibleTileCards.kt",
+          "defaults": "default/FinsibleTileCardDefaults.kt",
+          "models": "model/FinsibleTileCardModels.kt",
+          "variant": "model/variant/FinsibleTileCardVariants.kt",
+          "preview": "preview/FinsibleTileCardsPreview.kt",
+          "util": [],
+          "related": [
+            "component/FinsibleTileCardsContent.kt",
+            "component/FinsibleTileCardsSlots.kt"
+          ]
+        },
+        "playground": null,
+        "params": {
+          "cards": "ImmutableList<FinsibleTileCardData>",
+          "modifier": "Modifier = Modifier",
+          "size": "FinsibleSize = Medium",
+          "rotationVariant": "FinsibleTileCardRotationVariant = TopCardOnly",
+          "colors": "FinsibleTileCardColors = FinsibleTileCardDefaults.colors()",
+          "showContentBelow": "Boolean = true"
+        },
+        "variants": [
+          "TopCardOnly",
+          "AllCards — FinsibleTileCardRotationVariant"
+        ],
+        "modelTypes": [
+          "FinsibleTileCardData",
+          "FinsibleTileCardColors",
+          "FinsibleTileCardSizes"
+        ],
+        "tokenUsage": {
+          "colors": [
+            "semantic.contentPrimary",
+            "semantic.surfaceBase",
+            "semantic.surfaceDefault",
+            "semantic.borderDefault",
+            "semantic.scrim"
+          ],
+          "typography": [
+            "typography.bodyLg",
+            "typography.bodyMd",
+            "typography.headingSm",
+            "typography.numeralMd",
+            "typography.numeralSm"
+          ],
+          "spacing": [
+            "spacing.insetLg",
+            "spacing.stackMd",
+            "spacing.stackLg"
+          ]
+        },
+        "constraints": [
+          "cards must not be empty",
+          "statistics per card must not exceed allowed by size",
+          "carouselCardFraction must be in (0, 1]"
+        ]
+      },
+      "FinsibleToggle": {
+        "status": "complete",
+        "files": {
+          "component": "component/FinsibleToggle.kt",
+          "defaults": "default/FinsibleToggleDefaults.kt",
+          "models": "model/FinsibleToggleModels.kt",
+          "preview": "preview/FinsibleTogglePreview.kt",
+          "util": [],
+          "related": []
+        },
+        "playground": null,
+        "params": {
+          "checked": "Boolean",
+          "onCheckedChange": "(Boolean) -> Unit",
+          "modifier": "Modifier = Modifier",
+          "enabled": "Boolean = true",
+          "size": "FinsibleSize = Medium"
+        },
+        "variants": [],
+        "modelTypes": [
+          "FinsibleToggleSizes"
+        ],
+        "tokenUsage": {
+          "colors": [
+            "semantic.brandInteractive",
+            "semantic.contentDisabled",
+            "semantic.contentPrimary"
+          ],
+          "typography": [
+            "typography.labelMd"
+          ],
+          "spacing": [
+            "spacing.gapSm"
+          ]
+        },
+        "constraints": []
+      },
+      "FinsibleTopNavigationBar": {
+        "status": "complete",
+        "files": {
+          "component": "component/FinsibleTopNavigationBar.kt",
+          "defaults": "default/FinsibleTopNavigationBarDefaults.kt",
+          "models": "model/FinsibleTopNavigationBarState.kt",
+          "preview": null,
+          "util": [],
+          "related": []
+        },
+        "playground": null,
+        "params": {
+          "state": "FinsibleTopNavigationBarState",
+          "modifier": "Modifier = Modifier",
+          "colors": "FinsibleTopNavigationBarColors = ..."
+        },
+        "variants": [],
+        "modelTypes": [
+          "FinsibleTopNavigationBarState",
+          "FinsibleTopNavigationBarColors"
+        ],
+        "tokenUsage": {
+          "colors": [
+            "semantic.contentPrimary",
+            "semantic.contentSecondary",
+            "semantic.surfaceBase",
+            "semantic.surfaceRaised",
+            "semantic.surfaceDefault",
+            "semantic.contentInverse"
+          ],
+          "typography": [
+            "typography.bodyLg",
+            "typography.bodySm"
+          ],
+          "spacing": [
+            "spacing.insetXs",
+            "spacing.inlineMd",
+            "spacing.gapMd"
+          ]
+        },
+        "constraints": []
+      }
+    },
+    "utilComponents": {
+      "_note": "Host/Manager pairs and other runtime-only utils — FILL by scanning util/",
+      "FinsibleLoaderHostManager": {
+        "files": [
+          "util/FinsibleLoaderHost.kt",
+          "util/FinsibleLoaderManager.kt"
+        ],
+        "purpose": "Global loading overlay — FinsibleLoaderHost wraps content, FinsibleLoaderManager controls visibility"
+      },
+      "FinsibleNotificationHostManager": {
+        "files": [
+          "util/FinsibleNotificationHost.kt",
+          "util/FinsibleNotificationManager.kt"
+        ],
+        "purpose": "Global notification/snackbar overlay — FinsibleNotificationHost wraps content, FinsibleNotificationManager shows/dismisses"
+      },
+      "FinsibleBounceIndication": {
+        "files": [
+          "util/FinsibleBounceIndication.kt"
+        ],
+        "purpose": "Custom press indication with bounce animation for interactive components"
+      },
+      "FlushDropdownPositionProvider": {
+        "files": [
+          "util/FlushDropdownPositionProvider.kt"
+        ],
+        "purpose": "Custom dropdown position provider that aligns the dropdown flush with the anchor"
+      }
+    }
+  },
+  "data": {
+    "_purpose": "Data layer topology — agent resolves entity→repo→remote chains here without file searching",
+    "db": {
+      "engine": "ObjectBox",
+      "boxStoreProvider": "data/di/ObjectBoxModule.kt (main) | data/di/DebugObjectBoxModule.kt (debug) | data/di/ReleaseObjectBoxModule.kt (release)",
+      "adminBrowser": "data/di/ObjectBoxAdminStarter.kt (interface) | debug/DebugObjectBoxAdminStarter.kt | release/ReleaseObjectBoxAdminStarter.kt",
+      "schemaVersion": 1,
+      "modelFile": "app/objectbox-models/default.json"
+    },
+    "entities": {
+      "_note": "One entry per @Entity class. BaseEntity and SyncableEntity are base classes.",
+      "BaseEntity": {
+        "file": "data/local/entity/BaseEntity.kt",
+        "extends": null,
+        "fields": [
+          "id: Long = 0"
+        ],
+        "relations": [],
+        "box": "N/A — abstract base class"
+      },
+      "SyncableEntity": {
+        "file": "data/local/entity/SyncableEntity.kt",
+        "extends": null,
+        "fields": [
+          "syncStatus: Status",
+          "lastSyncAttempt: Long?",
+          "syncError: String?"
+        ],
+        "relations": [],
+        "box": "N/A — interface"
+      },
+      "AccountEntity": {
+        "file": "data/local/entity/AccountEntity.kt",
+        "extends": "BaseEntity, SyncableEntity",
+        "fields": [
+          "id: Long = 0 (@Id assignable)",
+          "name: String",
+          "description: String",
+          "balanceCentis: Long (@Index)",
+          "currencyCode: String",
+          "icon: String",
+          "isActive: Boolean",
+          "isSystemDefault: Boolean",
+          "usageCount: Long",
+          "lastUsedAt: Long?",
+          "syncStatus: Status",
+          "lastSyncAttempt: Long?",
+          "syncError: String?"
+        ],
+        "relations": [
+          "ToOne<AccountGroupEntity> accountGroup"
+        ],
+        "box": "Box<AccountEntity> — provided by AccountModule"
+      },
+      "AccountGroupEntity": {
+        "file": "data/local/entity/AccountGroupEntity.kt",
+        "extends": "BaseEntity, SyncableEntity",
+        "fields": [
+          "id: Long = 0 (@Id assignable)",
+          "name: String",
+          "description: String",
+          "icon: String",
+          "color: String",
+          "isSystemDefault: Boolean",
+          "syncStatus: Status",
+          "lastSyncAttempt: Long?",
+          "syncError: String?"
+        ],
+        "relations": [
+          "@Backlink ToMany<AccountEntity> accounts"
+        ],
+        "box": "Box<AccountGroupEntity> — provided by AccountModule"
+      },
+      "CategoryEntity": {
+        "file": "data/local/entity/CategoryEntity.kt",
+        "extends": "BaseEntity, SyncableEntity",
+        "fields": [
+          "id: Long = 0 (@Id assignable)",
+          "type: TransactionType",
+          "name: String",
+          "icon: String",
+          "readOnly: Boolean",
+          "parentCategoryId: Long",
+          "usageCount: Long",
+          "lastUsedAt: Long?",
+          "syncStatus: Status",
+          "lastSyncAttempt: Long?",
+          "syncError: String?"
+        ],
+        "relations": [
+          "ToOne<CategoryEntity> parentCategory",
+          "@Backlink ToMany<CategoryEntity> subCategories"
+        ],
+        "box": "Box<CategoryEntity> — provided by CategoryModule"
+      },
+      "TransactionEntity": {
+        "file": "data/local/entity/TransactionEntity.kt",
+        "extends": "BaseEntity, SyncableEntity",
+        "fields": [
+          "id: Long = 0 (@Id assignable)",
+          "type: TransactionType",
+          "totalAmount: Long (@Index — centis ×100)",
+          "searchableText: String",
+          "transactionDate: Long (@Index)",
+          "categoryId: Long",
+          "categoryName: String",
+          "categoryIcon: String",
+          "description: String?",
+          "currencyCode: String",
+          "conversionBaseCurrency: String?",
+          "conversionRate: Double?",
+          "conversionBaseAmountCentis: Long?",
+          "isRateEstimated: Boolean",
+          "fromAccountId: Long? (@Index)",
+          "fromAccountName: String?",
+          "toAccountId: Long? (@Index)",
+          "toAccountName: String?",
+          "syncStatus: Status",
+          "lastSyncAttempt: Long?",
+          "syncError: String?",
+          "spaceId: Long?",
+          "userShare: String?",
+          "isSplit: Boolean",
+          "paidByUserId: Long?",
+          "paidByUserName: String?"
+        ],
+        "relations": [],
+        "box": "Box<TransactionEntity> — provided by TransactionModule"
+      },
+      "ExchangeRateEntity": {
+        "file": "data/local/entity/ExchangeRateEntity.kt",
+        "extends": "BaseEntity",
+        "fields": [
+          "id: Long = 0 (@Id assignable)",
+          "pairCode: String (@Unique)",
+          "baseCurrencyCode: String",
+          "targetCurrencyCode: String",
+          "rate: Double",
+          "lastSyncedAt: Long"
+        ],
+        "relations": [],
+        "box": "Box<ExchangeRateEntity> — provided by ExchangeRateModule"
+      },
+      "PendingOperationEntity": {
+        "file": "data/local/entity/PendingOperationEntity.kt",
+        "extends": null,
+        "fields": [
+          "localId: Long = 0 (@Id)",
+          "entityType: EntityType? (@Index)",
+          "operationType: OperationType?",
+          "entityId: Long (server ID, 0 for CREATE)",
+          "localEntityId: Long (local temp ID for CREATE)",
+          "payload: String (JSON serialized)",
+          "createdAt: Long (@Index)",
+          "retryCount: Int",
+          "lastError: String?",
+          "status: Status (@Index)"
+        ],
+        "relations": [],
+        "box": "Box<PendingOperationEntity> — provided by SyncModule"
+      }
+    },
+    "localRepositories": {
+      "_note": "One entry per class in data/local/repository/",
+      "BaseLocalRepository": {
+        "file": "data/local/repository/BaseLocalRepository.kt",
+        "extends": null,
+        "entity": "generic <DTO, Entity: BaseEntity>",
+        "injectedBoxes": [
+          "Box<Entity>"
+        ],
+        "keyMethods": [
+          "fun get(id: Long): Entity",
+          "fun add(entity: Entity)",
+          "fun remove(entity: Entity)",
+          "fun addAll(data: List<DTO>, additionalInfo: Any?)",
+          "fun getAll(): List<Entity>"
+        ]
+      },
+      "SyncableLocalRepository": {
+        "file": "data/local/repository/SyncableLocalRepository.kt",
+        "extends": "BaseLocalRepository",
+        "entity": "generic <DTO, Entity: BaseEntity & SyncableEntity>",
+        "injectedBoxes": [
+          "Box<Entity>",
+          "Box<PendingOperationEntity>",
+          "LocalIdGenerator"
+        ],
+        "keyMethods": [
+          "suspend fun queueCreateEntity(entityFactory: (localId: Long) -> Entity): Entity",
+          "fun queueUpdateEntity(entity: Entity): Entity",
+          "fun queueDeleteEntity(id: Long): Boolean",
+          "fun updateSyncStatus(id: Long, status: Status, error: String?)",
+          "fun remapId(oldId: Long, newId: Long, updatedEntity: Entity)",
+          "fun upsert(entity: Entity)",
+          "fun removeById(id: Long)",
+          "fun clearAll()"
+        ]
+      },
+      "AccountLocalRepository": {
+        "file": "data/local/repository/AccountLocalRepository.kt",
+        "extends": "SyncableLocalRepository<Account, AccountEntity>",
+        "entity": "AccountEntity",
+        "injectedBoxes": [
+          "Box<AccountEntity>",
+          "Box<PendingOperationEntity>",
+          "LocalIdGenerator"
+        ],
+        "keyMethods": [
+          "fun getAccountsFlow(): Flow<List<AccountEntity>>",
+          "suspend fun createAccount(...): AccountEntity",
+          "fun updateAccount(...): AccountEntity?",
+          "fun deleteAccount(id: Long): Boolean",
+          "fun getAccountsForGroup(groupId: Long): List<AccountEntity>",
+          "fun getActiveAccounts(): List<AccountEntity>",
+          "fun getFrequentAccountsFlow(limit: Int): Flow<List<AccountEntity>>",
+          "fun getRecentAccountsFlow(limit: Int): Flow<List<AccountEntity>>",
+          "fun updateAccountUsage(id: Long): AccountEntity?",
+          "override fun addAll(data: List<Account>, additionalInfo: Any?)"
+        ]
+      },
+      "AccountGroupLocalRepository": {
+        "file": "data/local/repository/AccountGroupLocalRepository.kt",
+        "extends": "SyncableLocalRepository<AccountGroup, AccountGroupEntity>",
+        "entity": "AccountGroupEntity",
+        "injectedBoxes": [
+          "Box<AccountGroupEntity>",
+          "Box<PendingOperationEntity>",
+          "LocalIdGenerator"
+        ],
+        "keyMethods": [
+          "fun getAccountGroupsFlow(): Flow<List<AccountGroupEntity>>",
+          "suspend fun createAccountGroup(...): AccountGroupEntity",
+          "fun updateAccountGroup(...): AccountGroupEntity?",
+          "fun deleteAccountGroup(id: Long): Boolean",
+          "override fun addAll(data: List<AccountGroup>, additionalInfo: Any?)"
+        ]
+      },
+      "CategoryLocalRepository": {
+        "file": "data/local/repository/CategoryLocalRepository.kt",
+        "extends": "SyncableLocalRepository<Category, CategoryEntity>",
+        "entity": "CategoryEntity",
+        "injectedBoxes": [
+          "Box<CategoryEntity>",
+          "Box<PendingOperationEntity>",
+          "LocalIdGenerator"
+        ],
+        "keyMethods": [
+          "fun getCategories(type: TransactionType): HashMap<CategoryEntity, List<CategoryEntity>>",
+          "fun getCategories(ids: List<Long>): Map<Long, CategoryEntity>",
+          "suspend fun createCategory(...): CategoryEntity",
+          "fun updateCategory(id: Long, name: String?, icon: String?): CategoryEntity?",
+          "fun deleteCategory(id: Long): Boolean",
+          "fun getRecentCategoriesFlow(type: TransactionType, limit: Int): Flow<List<CategoryEntity>>",
+          "fun getFrequentCategoriesFlow(type: TransactionType, limit: Int): Flow<List<CategoryEntity>>",
+          "fun updateCategoryUsage(id: Long): CategoryEntity?",
+          "override fun addAll(data: List<Category>, additionalInfo: Any?)"
+        ]
+      },
+      "TransactionLocalRepository": {
+        "file": "data/local/repository/TransactionLocalRepository.kt",
+        "extends": "SyncableLocalRepository<Transaction, TransactionEntity>",
+        "entity": "TransactionEntity",
+        "injectedBoxes": [
+          "Box<TransactionEntity>",
+          "Box<PendingOperationEntity>",
+          "LocalIdGenerator",
+          "CategoryLocalRepository",
+          "AccountLocalRepository"
+        ],
+        "keyMethods": [
+          "fun getTotalTransactionCount(): Long",
+          "fun getAllDateAggregates(): Map<Long, TransactionDailySummary>",
+          "suspend fun createTransaction(...): TransactionEntity",
+          "fun updateTransaction(...): TransactionEntity?",
+          "fun deleteTransaction(id: Long): Boolean",
+          "fun queryTransactions(...): PaginatedResult",
+          "override fun addAll(data: List<Transaction>, additionalInfo: Any?)"
+        ]
+      },
+      "ExchangeRateLocalRepository": {
+        "file": "data/local/repository/ExchangeRateLocalRepository.kt",
+        "extends": null,
+        "entity": "ExchangeRateEntity",
+        "injectedBoxes": [
+          "Box<ExchangeRateEntity>"
+        ],
+        "keyMethods": [
+          "fun getRateEntity(baseCode: String, targetCode: String): ExchangeRateEntity?",
+          "fun saveRates(rates: List<ExchangeRateEntity>)"
+        ]
+      },
+      "PendingOperationRepository": {
+        "file": "data/local/repository/PendingOperationRepository.kt",
+        "extends": null,
+        "entity": "PendingOperationEntity",
+        "injectedBoxes": [
+          "Box<PendingOperationEntity>"
+        ],
+        "keyMethods": [
+          "fun add(operation: PendingOperationEntity)",
+          "fun getPending(): List<PendingOperationEntity>",
+          "fun getFailed(): List<PendingOperationEntity>",
+          "fun getPendingCount(): Long",
+          "fun getForEntity(entityType: EntityType, entityId: Long): PendingOperationEntity?",
+          "fun removeByLocalEntityId(localEntityId: Long)",
+          "fun update(operation: PendingOperationEntity)",
+          "fun removeCompleted()"
+        ]
+      }
+    },
+    "remoteModels": {
+      "_note": "One entry per file in data/remote/model/ — all @Serializable",
+      "BaseResponse": {
+        "file": "data/remote/model/BaseResponse.kt",
+        "kind": "response",
+        "usedBy": "all ApiServices"
+      },
+      "AuthLoginRequest": {
+        "file": "data/remote/model/AuthLoginRequest.kt",
+        "kind": "request",
+        "usedBy": "AuthApiService"
+      },
+      "AuthData": {
+        "file": "data/remote/model/AuthData.kt",
+        "kind": "data",
+        "usedBy": "AuthApiService, AuthRepository"
+      },
+      "AccountCreateRequest": {
+        "file": "data/remote/model/AccountCreateRequest.kt",
+        "kind": "request",
+        "usedBy": "AccountApiService, AccountSyncHandler"
+      },
+      "AccountUpdateRequest": {
+        "file": "data/remote/model/AccountUpdateRequest.kt",
+        "kind": "request",
+        "usedBy": "AccountApiService, AccountSyncHandler"
+      },
+      "AccountGroupCreateRequest": {
+        "file": "data/remote/model/AccountGroupCreateRequest.kt",
+        "kind": "request",
+        "usedBy": "AccountGroupApiService, AccountGroupSyncHandler"
+      },
+      "AccountGroupUpdateRequest": {
+        "file": "data/remote/model/AccountGroupUpdateRequest.kt",
+        "kind": "request",
+        "usedBy": "AccountGroupApiService, AccountGroupSyncHandler"
+      },
+      "CategoriesData": {
+        "file": "data/remote/model/CategoriesData.kt",
+        "kind": "data",
+        "usedBy": "CategoryApiService"
+      },
+      "CategoryCreateRequest": {
+        "file": "data/remote/model/CategoryCreateRequest.kt",
+        "kind": "request",
+        "usedBy": "CategoryApiService, CategorySyncHandler"
+      },
+      "CategoryUpdateRequest": {
+        "file": "data/remote/model/CategoryUpdateRequest.kt",
+        "kind": "request",
+        "usedBy": "CategoryApiService, CategorySyncHandler"
+      },
+      "CategoryAddRequest": {
+        "file": "data/remote/model/CategoryAddRequest.kt",
+        "kind": "request",
+        "usedBy": "CategoryApiService"
+      },
+      "CategoryRenameRequest": {
+        "file": "data/remote/model/CategoryRenameRequest.kt",
+        "kind": "request",
+        "usedBy": "CategoryApiService"
+      },
+      "TransactionCreateRequest": {
+        "file": "data/remote/model/TransactionCreateRequest.kt",
+        "kind": "request",
+        "usedBy": "TransactionApiService, TransactionSyncHandler"
+      },
+      "TransactionUpdateRequest": {
+        "file": "data/remote/model/TransactionUpdateRequest.kt",
+        "kind": "request",
+        "usedBy": "TransactionApiService, TransactionSyncHandler"
+      },
+      "TransactionsData": {
+        "file": "data/remote/model/TransactionsData.kt",
+        "kind": "data",
+        "usedBy": "TransactionApiService"
+      },
+      "EntitySnapshot": {
+        "file": "data/remote/model/EntitySnapshot.kt",
+        "kind": "data",
+        "usedBy": "SyncApiService"
+      },
+      "ExchangeRatesData": {
+        "file": "data/remote/model/ExchangeRateData.kt",
+        "kind": "data",
+        "usedBy": "ExchangeRateApiService"
+      }
+    },
+    "apiServices": {
+      "_note": "One entry per Retrofit interface in data/remote/api/",
+      "AuthApiService": {
+        "file": "data/remote/api/AuthApiService.kt",
+        "endpoints": [
+          "POST auth/googleSignIn → BaseResponse<AuthData>"
+        ]
+      },
+      "AccountApiService": {
+        "file": "data/remote/api/AccountApiService.kt",
+        "endpoints": [
+          "GET accounts/all → BaseResponse<List<Account>>",
+          "GET accounts/{id} → BaseResponse<Account>",
+          "POST accounts/ → BaseResponse<Account>",
+          "PUT accounts/{id} → BaseResponse<Account>",
+          "DELETE accounts/{id} → BaseResponse<Unit>"
+        ]
+      },
+      "AccountGroupApiService": {
+        "file": "data/remote/api/AccountGroupApiService.kt",
+        "endpoints": [
+          "GET account-groups/all → BaseResponse<List<AccountGroup>>",
+          "GET account-groups/{id} → BaseResponse<AccountGroup>",
+          "POST account-groups/ → BaseResponse<AccountGroup>",
+          "PUT account-groups/{id} → BaseResponse<AccountGroup>",
+          "DELETE account-groups/{id} → BaseResponse<Unit>"
+        ]
+      },
+      "CategoryApiService": {
+        "file": "data/remote/api/CategoryApiService.kt",
+        "endpoints": [
+          "GET categories?type={type} → BaseResponse<CategoriesData>",
+          "GET categories/{id} → BaseResponse<Category>",
+          "POST categories/ → BaseResponse<Category>",
+          "PUT categories/{id} → BaseResponse<Category>",
+          "DELETE categories/{id} → BaseResponse<Unit>"
+        ]
+      },
+      "TransactionApiService": {
+        "file": "data/remote/api/TransactionApiService.kt",
+        "endpoints": [
+          "GET transaction/all?startDate&endDate&accountId&categoryId&type&page&size → BaseResponse<TransactionsData>",
+          "GET transaction/{id} → BaseResponse<Transaction>",
+          "POST transaction/ → BaseResponse<Transaction>",
+          "PUT transaction/{id} → BaseResponse<Transaction>",
+          "DELETE transaction/{id} → BaseResponse<Unit>"
+        ]
+      },
+      "ExchangeRateApiService": {
+        "file": "data/remote/api/ExchangeRateApiService.kt",
+        "endpoints": [
+          "GET currency/rates?base={base} → BaseResponse<ExchangeRatesData>"
+        ]
+      },
+      "SyncApiService": {
+        "file": "data/remote/api/SyncApiService.kt",
+        "endpoints": [
+          "GET sync/snapshot → EntitySnapshot"
+        ]
+      }
+    },
+    "repositories": {
+      "_note": "One entry per class in data/repository/",
+      "AuthRepository": {
+        "file": "data/repository/AuthRepository.kt",
+        "localRepo": null,
+        "apiService": "AuthApiService",
+        "keyMethods": [
+          "suspend fun authenticate(clientId: String, idToken: String): Result<AuthData>",
+          "suspend fun logout(): Result<Unit>",
+          "suspend fun isAuthenticated(): Boolean"
+        ]
+      },
+      "AccountRepository": {
+        "file": "data/repository/AccountRepository.kt",
+        "localRepo": "AccountLocalRepository",
+        "apiService": "AccountApiService",
+        "keyMethods": [
+          "suspend fun getAccounts(): BaseResponse<List<Account>>",
+          "suspend fun getAccount(id: Long): BaseResponse<Account>",
+          "suspend fun createAccount(request): BaseResponse<Account>",
+          "suspend fun updateAccount(id, request): BaseResponse<Account>",
+          "suspend fun deleteAccount(id): BaseResponse<Unit>"
+        ]
+      },
+      "AccountGroupRepository": {
+        "file": "data/repository/AccountGroupRepository.kt",
+        "localRepo": null,
+        "apiService": "AccountGroupApiService",
+        "keyMethods": [
+          "suspend fun getAccountGroups(): BaseResponse<List<AccountGroup>>",
+          "suspend fun getAccountGroup(id: Long): BaseResponse<AccountGroup>",
+          "suspend fun createAccountGroup(request): BaseResponse<AccountGroup>",
+          "suspend fun updateAccountGroup(id, request): BaseResponse<AccountGroup>",
+          "suspend fun deleteAccountGroup(id): BaseResponse<Unit>"
+        ]
+      },
+      "CategoryRepository": {
+        "file": "data/repository/CategoryRepository.kt",
+        "localRepo": null,
+        "apiService": "CategoryApiService",
+        "keyMethods": [
+          "suspend fun getCategories(type: String): BaseResponse<CategoriesData>",
+          "suspend fun getCategory(id: Long): BaseResponse<Category>",
+          "suspend fun createCategory(request): BaseResponse<Category>",
+          "suspend fun updateCategory(id, request): BaseResponse<Category>",
+          "suspend fun deleteCategory(id): BaseResponse<Unit>"
+        ]
+      },
+      "TransactionRepository": {
+        "file": "data/repository/TransactionRepository.kt",
+        "localRepo": null,
+        "apiService": "TransactionApiService",
+        "keyMethods": [
+          "suspend fun getTransactions(...): BaseResponse<TransactionsData>",
+          "suspend fun fetchAllTransactions(...): BaseResponse<TransactionsData>",
+          "suspend fun getTransaction(id: Long): BaseResponse<Transaction>",
+          "suspend fun createTransaction(request): BaseResponse<Transaction>",
+          "suspend fun updateTransaction(id, request): BaseResponse<Transaction>",
+          "suspend fun deleteTransaction(id): BaseResponse<Unit>"
+        ]
+      },
+      "CurrencyRepository": {
+        "file": "data/repository/CurrencyRepository.kt",
+        "localRepo": null,
+        "apiService": null,
+        "keyMethods": [
+          "fun getAll(preferredCurrencyCode: String?): List<Currency>",
+          "fun getByIsoCode(code: String): Currency?",
+          "fun getFlagEmojiByIsoCode(code: String): String?",
+          "fun initialize()"
+        ]
+      },
+      "ExchangeRateRepository": {
+        "file": "data/repository/ExchangeRateRepository.kt",
+        "localRepo": "ExchangeRateLocalRepository",
+        "apiService": "ExchangeRateApiService",
+        "keyMethods": [
+          "suspend fun fetchRates(baseCurrencyCode: String): BaseResponse<ExchangeRatesData>",
+          "suspend fun refreshRatesAndCache(baseCurrencyCode: String): Boolean"
+        ]
+      }
+    },
+    "sync": {
+      "_note": "High-level sync topology",
+      "manager": "data/sync/SyncManager.kt",
+      "handlers": [
+        "data/sync/TransactionSyncHandler.kt",
+        "data/sync/AccountGroupSyncHandler.kt",
+        "data/sync/AccountSyncHandler.kt",
+        "data/sync/CategorySyncHandler.kt"
+      ],
+      "support": {
+        "CacheManager": "data/sync/CacheManager.kt",
+        "DataFetcher": "data/sync/DataFetcher.kt",
+        "IntegrityChecker": "data/sync/IntegrityChecker.kt",
+        "IntegrityResolver": "data/sync/IntegrityResolverService.kt",
+        "LocalIdGenerator": "data/sync/LocalIdGenerator.kt",
+        "NetworkMonitor": "data/sync/NetworkMonitor.kt",
+        "PostAuthInitializer": "data/sync/PostAuthInitializer.kt",
+        "ScopeManager": "data/sync/ScopeManager.kt",
+        "SyncException": "data/sync/SyncException.kt"
+      }
+    },
+    "di": {
+      "_note": "One entry per @Module",
+      "AppModule": {
+        "file": "data/di/AppModule.kt",
+        "installIn": "SingletonComponent",
+        "provides": [
+          "Context — application context",
+          "LocaleProvider — DeviceLocaleProvider"
+        ]
+      },
+      "ObjectBoxModule": {
+        "file": "data/di/ObjectBoxModule.kt",
+        "installIn": "SingletonComponent",
+        "provides": [
+          "BoxStore — singleton ObjectBox instance with schema recovery"
+        ]
+      },
+      "AccountModule": {
+        "file": "data/di/AccountModule.kt",
+        "installIn": "SingletonComponent",
+        "provides": [
+          "Box<AccountEntity> — ObjectBox box",
+          "Box<AccountGroupEntity> — ObjectBox box",
+          "AccountLocalRepository — injected with box + pending ops + LocalIdGenerator",
+          "AccountGroupLocalRepository — injected with box + pending ops + LocalIdGenerator"
+        ]
+      },
+      "TransactionModule": {
+        "file": "data/di/TransactionModule.kt",
+        "installIn": "SingletonComponent",
+        "provides": [
+          "Box<TransactionEntity> — ObjectBox box",
+          "TransactionLocalRepository — injected with box + pending ops + LocalIdGenerator + CategoryLocalRepository + AccountLocalRepository"
+        ]
+      },
+      "CategoryModule": {
+        "file": "data/di/CategoryModule.kt",
+        "installIn": "SingletonComponent",
+        "provides": [
+          "Box<CategoryEntity> — ObjectBox box",
+          "CategoryLocalRepository — injected with box + pending ops + LocalIdGenerator"
+        ]
+      },
+      "ExchangeRateModule": {
+        "file": "data/di/ExchangeRateModule.kt",
+        "installIn": "SingletonComponent",
+        "provides": [
+          "Box<ExchangeRateEntity> — ObjectBox box"
+        ]
+      },
+      "SyncModule": {
+        "file": "data/di/SyncModule.kt",
+        "installIn": "SingletonComponent",
+        "provides": [
+          "Box<PendingOperationEntity> — ObjectBox box",
+          "CoroutineScope — from ScopeManager",
+          "Map<EntityType, EntitySyncHandler> — handler registry",
+          "Json — kotlinx.serialization config"
+        ]
+      },
+      "NetworkModule": {
+        "file": "data/di/NetworkModule.kt",
+        "installIn": "SingletonComponent",
+        "provides": [
+          "CategoryApiService, AuthApiService, AccountGroupApiService, AccountApiService, TransactionApiService, ExchangeRateApiService, SyncApiService — Retrofit proxies",
+          "OkHttpClient — with AuthInterceptor + debug interceptors",
+          "Retrofit — with ResponseHandlingConverterFactory + CacheManager"
+        ]
+      },
+      "DispatchersModule": {
+        "file": "data/di/DispatchersModule.kt",
+        "installIn": "SingletonComponent",
+        "provides": [
+          "@IoDispatcher CoroutineDispatcher — Dispatchers.IO",
+          "@DefaultDispatcher CoroutineDispatcher — Dispatchers.Default",
+          "@MainDispatcher CoroutineDispatcher — Dispatchers.Main"
+        ]
+      },
+      "DataStoreModule": {
+        "file": "data/di/DataStoreModule.kt",
+        "installIn": "SingletonComponent",
+        "provides": [
+          "Aead — Tink AES256_GCM encryption",
+          "DataStore<UserPreferences> — encrypted with migration from SharedPreferences"
+        ]
+      },
+      "LocaleModule": {
+        "file": "data/di/LocaleModule.kt",
+        "installIn": "SingletonComponent",
+        "provides": [
+          "hiltUserLocale() — @Composable Locale accessor",
+          "LocaleEntryPoint — Hilt entry point for LocaleProvider"
+        ]
+      },
+      "CurrencyFormatterModule": {
+        "file": "data/di/CurrencyFormatterModule.kt",
+        "installIn": "SingletonComponent",
+        "provides": [
+          "hiltCurrencyFormatter() — @Composable CurrencyFormatter accessor",
+          "CurrencyFormatterEntryPoint — Hilt entry point"
+        ]
+      },
+      "CurrencyRepositoryModule": {
+        "file": "data/di/CurrencyRepositoryModule.kt",
+        "installIn": "SingletonComponent",
+        "provides": [
+          "hiltCurrencyRepository() — @Composable CurrencyRepository accessor",
+          "CurrencyRepositoryEntryPoint — Hilt entry point"
+        ]
+      }
+    },
+    "typeConverters": {
+      "file": "data/local/TypeConverters.kt",
+      "purpose": "ObjectBox PropertyConverter implementations for: TransactionType, EntityType, OperationType, Status (via generic EnumPropertyConverter base)"
+    },
+    "common": {
+      "_note": "Key utilities consumed across layers",
+      "CurrencyFormatter": {
+        "file": "common/CurrencyFormatter.kt",
+        "injected": true
+      },
+      "PreferenceManager": {
+        "file": "common/PreferenceManager.kt",
+        "injected": true,
+        "exposes": [
+          "defaultCurrencyCodeFlow: Flow<String>",
+          "suspend fun saveAuthData(AuthData)",
+          "suspend fun clearAuthData()",
+          "suspend fun saveLocalIdCounter(Long)",
+          "suspend fun setSyncEnabled(Boolean)",
+          "suspend fun setCurrency(Currency)",
+          "suspend fun clearPreferredCurrencyCode()",
+          "suspend fun getJwt(): String?",
+          "suspend fun getLocalIdCounter(): Long",
+          "suspend fun isSyncEnabled(): Boolean",
+          "suspend fun isBackupEnabled(): Boolean",
+          "suspend fun isWifiOnlySyncEnabled(): Boolean",
+          "suspend fun isLoggedIn(): Boolean",
+          "suspend fun getDefaultCurrencyCode(): String",
+          "suspend fun getCurrency(): Currency"
+        ]
+      },
+      "UserLocaleRegistry": {
+        "file": "common/UserLocaleRegistry.kt"
+      },
+      "LocaleProvider": {
+        "file": "common/LocaleProvider.kt"
+      },
+      "Extensions": {
+        "file": "common/Extensions.kt",
+        "note": "Long.toReadableDate(), String.asCentisAmount()"
+      },
+      "Enums": {
+        "file": "common/Enums.kt",
+        "note": "TransactionType, TransactionRecurringFrequency, SyncState, EntityType, OperationType, Status"
+      },
+      "FinsibleConstants": {
+        "file": "common/FinsibleConstants.kt"
+      },
+      "datastore": {
+        "EncryptedPreferenceSerializer": "common/datastore/EncryptedPreferenceSerializer.kt",
+        "UserPreferences": "common/datastore/UserPreferences.kt"
+      },
+      "logging": {
+        "Logger": "common/logging/Logger.kt — usage: Logger.{Domain}.d/e/w(msg)",
+        "LogDomain": "common/logging/LogDomain.kt — domains: NETWORK, DATABASE, AUTH, SYNC, CACHE, UI, APP",
+        "DebugLogTree": "common/logging/DebugLogTree.kt",
+        "ReleaseLogTree": "common/logging/ReleaseLogTree.kt"
+      }
+    }
+  },
+  "ui": {
+    "_purpose": "UI layer topology — screens, VMs, navigation, mappers, ui models",
+    "viewModels": {
+      "_note": "One entry per ViewModel. Pattern: @HiltViewModel + @Inject constructor",
+      "_pattern": {
+        "stateFlow": "MutableStateFlow → exposed as StateFlow via .asStateFlow() or .stateIn()",
+        "io": "viewModelScope.launch → withContext(Dispatchers.IO) → withContext(Dispatchers.Main)",
+        "immutable": "All UI state collections use ImmutableList/ImmutableMap"
+      },
+      "AccountsViewModel": {
+        "file": "ui/viewmodel/AccountsViewModel.kt",
+        "injected": [
+          "Context — @ApplicationContext for string resources",
+          "AccountLocalRepository — local account writes/queries",
+          "AccountGroupLocalRepository — local group writes/queries",
+          "CurrencyFormatter — amount formatting",
+          "PreferenceManager — default currency code"
+        ],
+        "stateFlows": [
+          "val uiState: StateFlow<AccountsUIState> — combines account flow + group flow + selectedGroupId + currencyCode"
+        ],
+        "publicMethods": [
+          "fun selectGroupFilter(groupId: Long?) — filter accounts by group"
+        ]
+      },
+      "AuthViewModel": {
+        "file": "ui/viewmodel/AuthViewModel.kt",
+        "injected": [
+          "Context — @ApplicationContext for string resources",
+          "AuthRepository — authentication backend",
+          "GoogleAuthManager — Google Sign-In token fetch",
+          "PostAuthInitializer — post-login data sync init"
+        ],
+        "stateFlows": [
+          "val authState: StateFlow<AuthState> — Loading | Negative | Positive"
+        ],
+        "publicMethods": [
+          "fun signInWithGoogle(context: Context) — start Google Sign-In flow",
+          "fun logout() — clear auth and reset state"
+        ]
+      },
+      "NewTransactionViewModel": {
+        "file": "ui/viewmodel/NewTransactionViewModel.kt",
+        "injected": [
+          "Context — @ApplicationContext",
+          "CategoryLocalRepository — category cache",
+          "AccountLocalRepository — account cache/flow",
+          "TransactionLocalRepository — transaction creation",
+          "CategoryRepository — remote category fetch",
+          "AccountRepository — remote account fetch",
+          "DataFetcher — ensure data loaded",
+          "IntegrityChecker — integrity verification",
+          "CurrencyFormatter — amount display",
+          "PreferenceManager — default currency",
+          "ExchangeRateLocalRepository — cached rates",
+          "ExchangeRateRepository — rate refresh",
+          "NetworkMonitor — connectivity observer"
+        ],
+        "stateFlows": [
+          "val state: StateFlow<NewTransactionFormState> — consolidated form state",
+          "val topKLimit: StateFlow<Int> — configurable limit",
+          "val categoriesMap: StateFlow<Map<CategoryUIModel, List<CategoryUIModel>>>",
+          "val topKCategories: StateFlow<List<CategoryUIModel>>",
+          "val topKFromAccounts: StateFlow<List<AccountUIModel>>",
+          "val topKToAccounts: StateFlow<List<AccountUIModel>>"
+        ],
+        "publicMethods": [
+          "fun validateAmount(input: String): String",
+          "fun onEvent(event: NewTransactionUiEvent) — event reducer",
+          "fun setTransactionAmountString(amountStr: String)",
+          "fun setIsRecurring(recurring: Boolean)",
+          "fun setRecurringFrequency(frequency: TransactionRecurringFrequency)",
+          "fun setTransactionType(type: TransactionType)",
+          "fun setTransactionCategoryId(id: Long)",
+          "fun setTransactionFromAccountId(id: Long)",
+          "fun setTransactionToAccountId(id: Long)",
+          "fun setTransactionDescription(description: String)",
+          "fun reset()",
+          "fun submit(addMore: Boolean, onSuccess: () -> Unit, onError: (String) -> Unit)"
+        ]
+      },
+      "HistoryViewModel": {
+        "file": "ui/viewmodel/HistoryViewModel.kt",
+        "injected": [
+          "Context — @ApplicationContext",
+          "TransactionLocalRepository — DB queries with pagination",
+          "CurrencyFormatter — amount formatting",
+          "CurrencyRepository — currency metadata",
+          "PreferenceManager — default currency code flow"
+        ],
+        "stateFlows": [
+          "val filterState: StateFlow<TransactionsFilterState>",
+          "val uiState: StateFlow<TransactionListState>",
+          "val isSearchExpanded: StateFlow<Boolean>",
+          "val isFilterSheetVisible: StateFlow<Boolean>",
+          "val dateFilterModes: StateFlow<ImmutableMap<Long, DateFilterMode>>",
+          "val currencyCode: StateFlow<String>"
+        ],
+        "publicMethods": [
+          "fun loadMore()",
+          "fun updateSearchQuery(query: String)",
+          "fun toggleSearchExpanded()",
+          "fun toggleFilterSheet()",
+          "fun hideFilterSheet()",
+          "fun clearAllFilters()",
+          "fun applyFilterCriteria(criteria: TransactionsFilterState)",
+          "fun collapseSearch()",
+          "fun toggleDateFilter(startOfDayMs: Long)"
+        ]
+      },
+      "TransactionsFilterViewModel": {
+        "file": "ui/viewmodel/TransactionsFilterViewModel.kt",
+        "injected": [
+          "CurrencyFormatter — amount parsing/display in filter amounts"
+        ],
+        "stateFlows": [
+          "val filterState: StateFlow<TransactionsFilterState> — sheet editing state"
+        ],
+        "publicMethods": [
+          "fun initFromFilterState(source, calendar, currencyCode)",
+          "fun reset(calendar: Calendar)",
+          "fun updateSortOption(option: SortOption)",
+          "fun toggleType(type: TransactionType)",
+          "fun updateTimeMode(mode: TimeFilterMode)",
+          "fun updateSelectedMonth(month: Int)",
+          "fun updateSelectedYear(year: Int)",
+          "fun updateAmountMin(text: String)",
+          "fun updateAmountMax(text: String)",
+          "fun setShowDateRangePicker(show: Boolean)",
+          "fun confirmCustomDateRange(start, end)",
+          "fun markAmountRangeError()",
+          "fun buildAppliedState(existingSearchQuery: String): TransactionsFilterState"
+        ]
+      },
+      "OnboardingViewModel": {
+        "file": "ui/viewmodel/OnboardingViewModel.kt",
+        "injected": [],
+        "stateFlows": [
+          "val currentCarouselItem: StateFlow<Int>"
+        ],
+        "publicMethods": [
+          "fun nextCarouselItem()",
+          "fun previousCarouselItem()",
+          "fun skipToLastCarouselItem()",
+          "fun isLastCarouselItem(): Boolean"
+        ]
+      }
+    },
+    "screens": {
+      "_note": "One entry per top-level screen composable",
+      "AccountsScreen": {
+        "file": "ui/screen/AccountsTab.kt",
+        "route": "Route.Home.Accounts",
+        "vm": "AccountsViewModel",
+        "isTab": true
+      },
+      "DashboardTab": {
+        "file": "ui/screen/DashboardTab.kt",
+        "route": "Route.Home.Dashboard",
+        "vm": null,
+        "isTab": true
+      },
+      "HistoryScreen": {
+        "file": "ui/screen/HistoryTab.kt",
+        "route": "Route.Home.Transactions",
+        "vm": "HistoryViewModel, TransactionsFilterViewModel",
+        "isTab": true
+      },
+      "NewTransactionScreen": {
+        "file": "ui/screen/NewTransaction.kt",
+        "route": "Route.Home.NewTransaction",
+        "vm": "NewTransactionViewModel",
+        "isTab": true
+      },
+      "SettingsTab": {
+        "file": "ui/screen/SettingsTab.kt",
+        "route": "Route.Home.Settings",
+        "vm": null,
+        "isTab": true
+      },
+      "LaunchScreen": {
+        "file": "ui/screen/Launch.kt",
+        "route": "Route.Launch",
+        "vm": null,
+        "isTab": false
+      },
+      "OnboardingScreen": {
+        "file": "ui/screen/Onboarding.kt",
+        "route": "Route.Onboarding",
+        "vm": "OnboardingViewModel",
+        "isTab": false
+      }
+    },
+    "navigation": {
+      "routes": "ui/navigation/Route.kt",
+      "bottomNav": {
+        "items": "ui/navigation/BottomNavItem.kt",
+        "state": "ui/navigation/BottomNavState.kt",
+        "bar": "ui/component/bottomnav/BottomNavigationBar.kt"
+      },
+      "graphs": {
+        "home": "ui/navigation/NavigationHome.kt",
+        "newTransaction": "ui/navigation/NavigationNewTransaction.kt",
+        "root": {
+          "main": "ui/navigation/NavigationRoot.kt",
+          "debug": "debug/ui/navigation/NavigationRoot.kt",
+          "release": "release/ui/navigation/NavigationRoot.kt"
+        }
+      },
+      "transitions": "ui/navigation/NavigationTransitions.kt",
+      "tabNavigator": "ui/navigation/BottomTabNavigator.kt",
+      "debugContracts": "ui/navigation/DebugNavigationContracts.kt",
+      "debug": {
+        "module": "debug/ui/navigation/DebugNavigationModule.kt",
+        "resolver": "debug/ui/navigation/DebugNavigationResolver.kt"
+      },
+      "release": {
+        "module": "release/ui/navigation/ReleaseNavigationModule.kt",
+        "resolver": "release/ui/navigation/ReleaseStartDestinationResolver.kt"
+      }
+    },
+    "uiModels": {
+      "_note": "One entry per file in ui/model/uimodel/",
+      "AccountUIModel": {
+        "file": "ui/model/uimodel/AccountUIModel.kt",
+        "fields": [
+          "id: Long",
+          "name: String",
+          "description: String",
+          "icon: String",
+          "formattedBalance: String",
+          "groupColor: String?",
+          "groupName: String?",
+          "isPositiveBalance: Boolean",
+          "usageCount: Long = 0",
+          "lastUsedAt: Long? = null"
+        ]
+      },
+      "AccountGroupUIModel": {
+        "file": "ui/model/uimodel/AccountGroupUIModel.kt",
+        "fields": [
+          "id: Long",
+          "name: String",
+          "color: String?"
+        ]
+      },
+      "CategoryUIModel": {
+        "file": "ui/model/uimodel/CategoryUIModel.kt",
+        "fields": [
+          "id: Long",
+          "name: String",
+          "icon: String",
+          "usageCount: Long = 0",
+          "lastUsedAt: Long? = null"
+        ]
+      },
+      "TransactionUIModel": {
+        "file": "ui/model/uimodel/TransactionUIModel.kt",
+        "fields": [
+          "id: Long",
+          "type: TransactionType",
+          "title: String",
+          "subtitle: String",
+          "formattedAmount: String",
+          "categoryIcon: String",
+          "currencyCode: String",
+          "transactionDate: Long",
+          "rawAmountCentis: Long = 0"
+        ]
+      },
+      "StatEntryUIModel": {
+        "file": "ui/model/uimodel/StatEntryUIModel.kt",
+        "fields": [
+          "title: String",
+          "value: String"
+        ]
+      }
+    },
+    "uiState": {
+      "_note": "One entry per file in ui/model/state/",
+      "AccountsUIState": {
+        "file": "ui/model/state/AccountsUIState.kt",
+        "fields": [
+          "tileCards: ImmutableList<FinsibleTileCardData> = persistentListOf()",
+          "listItems: ImmutableList<AccountListItem> = persistentListOf()",
+          "accountGroups: ImmutableList<AccountGroupUIModel> = persistentListOf()",
+          "selectedGroupId: Long? = null",
+          "isLoading: Boolean = false"
+        ],
+        "usedBy": "AccountsViewModel"
+      },
+      "AuthState": {
+        "file": "ui/model/state/AuthState.kt",
+        "fields": [
+          "Loading — data object",
+          "Negative — message: String, isFailed: Boolean",
+          "Positive — data object"
+        ],
+        "usedBy": "AuthViewModel"
+      },
+      "NewTransactionFormState": {
+        "file": "ui/model/state/NewTransactionFormState.kt",
+        "fields": [
+          "amountString: String = \"\"",
+          "dateMillis: Long? = null",
+          "dateSelection: NewTransactionDateSelection = TODAY",
+          "currencyCode: String = \"\"",
+          "isRecurring: Boolean = false",
+          "recurringFrequency: TransactionRecurringFrequency = DAILY",
+          "transactionType: TransactionType = EXPENSE",
+          "categoryId: Long? = null",
+          "fromAccountId: Long? = null",
+          "toAccountId: Long? = null",
+          "description: String = \"\"",
+          "sheetMode: NewTransactionSheetMode? = null",
+          "validationErrors: Set<NewTransactionValidationError> = emptySet()",
+          "isSaving: Boolean = false",
+          "convertedAmountDisplay: String? = null",
+          "exchangeRateFreshness: ExchangeRateFreshness = AVAILABLE",
+          "isOnline: Boolean = true"
+        ],
+        "usedBy": "NewTransactionViewModel"
+      },
+      "TransactionListState": {
+        "file": "ui/model/state/TransactionListState.kt",
+        "fields": [
+          "transactions: ImmutableList<TransactionUIModel> = persistentListOf()",
+          "groupedTransactions: ImmutableMap<Long, ImmutableList<TransactionUIModel>> = persistentMapOf()",
+          "dateAggregates: ImmutableMap<Long, DateAggregates> = persistentMapOf()",
+          "isLoading: Boolean = false",
+          "hasMoreData: Boolean = true",
+          "error: String? = null",
+          "filteredSummary: FilteredTransactionSummary? = null"
+        ],
+        "usedBy": "HistoryViewModel"
+      },
+      "TransactionsFilterState": {
+        "file": "ui/model/state/TransactionsFilterState.kt",
+        "fields": [
+          "searchQuery: String = \"\"",
+          "sortOption: SortOption = NEWEST_FIRST",
+          "accountIds: Set<Long> = emptySet()",
+          "timeFilterMode: TimeFilterMode = ALL",
+          "selectedMonth: Int = -1",
+          "selectedYear: Int = -1",
+          "dateRangeStart: Long? = null",
+          "dateRangeEnd: Long? = null",
+          "amountMin: Long? = null",
+          "amountMax: Long? = null",
+          "transactionTypes: Set<TransactionType> = emptySet()",
+          "amountMinText: String = \"\"",
+          "amountMaxText: String = \"\"",
+          "showDateRangePicker: Boolean = false",
+          "amountRangeError: Boolean = false"
+        ],
+        "usedBy": "HistoryViewModel, TransactionsFilterViewModel"
+      }
+    },
+    "uiEvents": {
+      "_note": "One entry per file in ui/model/event/",
+      "NewTransactionUiEvent": {
+        "file": "ui/model/event/NewTransactionUiEvent.kt",
+        "cases": [
+          "ResetClicked",
+          "TransactionTypeChanged(type: TransactionType)",
+          "AmountChanged(value: String)",
+          "CurrencySelected(currencyCode: String)",
+          "DateQuickSelectionChanged(selection: NewTransactionDateSelection)",
+          "CustomDateSelected(dateMillis: Long)",
+          "ClearCustomDate",
+          "RecurringChanged(isRecurring: Boolean)",
+          "RecurringFrequencyChanged(frequency: TransactionRecurringFrequency)",
+          "CategorySelected(categoryId: Long)",
+          "FromAccountSelected(accountId: Long)",
+          "ToAccountSelected(accountId: Long)",
+          "SwapAccounts",
+          "NotesChanged(value: String)",
+          "SheetModeChanged(mode: NewTransactionSheetMode?)"
+        ]
+      }
+    },
+    "mappers": {
+      "_note": "One entry per mapper file",
+      "AccountMapper": {
+        "file": "ui/mapper/AccountMapper.kt",
+        "maps": "AccountEntity → AccountUIModel, AccountGroupEntity → AccountGroupUIModel",
+        "sig": "fun AccountEntity.toUiModel(currencyFormatter, currencyCode): AccountUIModel"
+      },
+      "CategoryMapper": {
+        "file": "ui/mapper/CategoryMapper.kt",
+        "maps": "CategoryEntity → CategoryUIModel",
+        "sig": "fun CategoryEntity.toUiModel(): CategoryUIModel"
+      },
+      "TransactionMapper": {
+        "file": "ui/mapper/TransactionMapper.kt",
+        "maps": "TransactionEntity → TransactionUIModel",
+        "sig": "fun TransactionEntity.toUiModel(currencyFormatter, currencyRepository, context): TransactionUIModel"
+      },
+      "AccountTileCardMapper": {
+        "file": "ui/mapper/AccountTileCardMapper.kt",
+        "maps": "ImmutableList<FinsibleTileCardData>.toAccountsTileCards() — adds gradient brushes",
+        "sig": "@Composable fun ImmutableList<FinsibleTileCardData>.toAccountsTileCards(): ImmutableList<FinsibleTileCardData>"
+      }
+    },
+    "util": {
+      "DateUtils": {
+        "file": "ui/util/DateUtils.kt",
+        "keyFns": [
+          "getStartOfDayMs(Long): Long",
+          "getEndOfDayMs(Long): Long",
+          "formatDateHeader(timestampMs, todayLabel, yesterdayLabel): String",
+          "readableDate(timestampMs: Long): String",
+          "formatTime(timestampMs: Long): String"
+        ]
+      },
+      "GoogleAuthManager": {
+        "file": "ui/util/GoogleAuthManager.kt"
+      },
+      "IconResolver": {
+        "file": "ui/util/IconResolver.kt"
+      },
+      "NavigationAnimations": {
+        "file": "ui/util/NavigationAnimations.kt"
+      }
+    },
+    "constants": {
+      "Duration": "ui/constants/Duration.kt — constants: MS_16 through MS_5000, MINUTE_AS_SECONDS=60, DEFAULT_TTL_MINUTES=1440, SECOND_AS_MILLISECONDS=1000"
+    },
+    "featureComponents": {
+      "_note": "App-specific (non-template) composables consumed by screens.",
+      "accountstab": {
+        "files": [
+          "ui/component/accountstab/AccountGroupFilters.kt — group chip filter row",
+          "ui/component/accountstab/AccountListItem.kt — single account list row"
+        ]
+      },
+      "bottomnav": {
+        "files": [
+          "ui/component/bottomnav/BottomNavigationBar.kt — bottom nav bar composable"
+        ]
+      },
+      "historytab": {
+        "files": [
+          "ui/component/historytab/DailySummaryHeader.kt — date header with aggregates",
+          "ui/component/historytab/FilteredResultsSummary.kt — filtered results count/net summary",
+          "ui/component/historytab/FlatModeTransactionItem.kt — flat list item",
+          "ui/component/historytab/GroupedTransactionItem.kt — grouped list item",
+          "ui/component/historytab/TransactionEmptyContent.kt — empty state",
+          "ui/component/historytab/TransactionIcon.kt — category icon",
+          "ui/component/historytab/TransactionListItem.kt — list item wrapper",
+          "ui/component/historytab/TransactionSearchHeader.kt — search bar",
+          "ui/component/historytab/TransactionsListContent.kt — main list content",
+          "ui/component/historytab/filtersbottomsheet/TransactionFilterSheet.kt — filter bottom sheet",
+          "ui/component/historytab/filtersbottomsheet/AmountFilter.kt",
+          "ui/component/historytab/filtersbottomsheet/DateRangePickerDialog.kt",
+          "ui/component/historytab/filtersbottomsheet/SortOptions.kt",
+          "ui/component/historytab/filtersbottomsheet/TimeBasedFilter.kt",
+          "ui/component/historytab/filtersbottomsheet/TransactionTypeFilter.kt",
+          "ui/component/historytab/filtersbottomsheet/SheetHeader.kt",
+          "ui/component/historytab/filtersbottomsheet/SheetDragHandle.kt",
+          "ui/component/historytab/filtersbottomsheet/Divider.kt",
+          "ui/component/historytab/filtersbottomsheet/FilterSheetSpacing.kt"
+        ]
+      },
+      "newtransaction": {
+        "files": [
+          "ui/component/newtransaction/AccountSelectorSheetContent.kt",
+          "ui/component/newtransaction/CategoryExplorerSheetContent.kt",
+          "ui/component/newtransaction/ContextAwareExpandableChipRow.kt",
+          "ui/component/newtransaction/CurrencySheetContent.kt",
+          "ui/component/newtransaction/DatePickerSheetContent.kt",
+          "ui/component/newtransaction/NewTransactionAccountSection.kt",
+          "ui/component/newtransaction/NewTransactionAmountCard.kt",
+          "ui/component/newtransaction/NewTransactionBottomSheetHost.kt",
+          "ui/component/newtransaction/NewTransactionCategorySection.kt",
+          "ui/component/newtransaction/NewTransactionCtaSection.kt",
+          "ui/component/newtransaction/NewTransactionDateSection.kt",
+          "ui/component/newtransaction/NewTransactionHeaderSection.kt",
+          "ui/component/newtransaction/NewTransactionHeaderTopRow.kt",
+          "ui/component/newtransaction/NewTransactionInputSection.kt",
+          "ui/component/newtransaction/NewTransactionNotesSection.kt",
+          "ui/component/newtransaction/NewTransactionSectionPrimitives.kt",
+          "ui/component/newtransaction/NewTransactionSingleScreenHost.kt"
+        ]
+      },
+      "onboarding": {
+        "files": [
+          "ui/component/onboarding/OnboardingBackground.kt",
+          "ui/component/onboarding/OnboardingContent.kt",
+          "ui/component/onboarding/OnboardingHeader.kt",
+          "ui/component/onboarding/OnboardingIllustration.kt",
+          "ui/component/onboarding/OnboardingNavigationButtons.kt",
+          "ui/component/onboarding/OnboardingTextContent.kt"
+        ]
+      }
+    }
+  },
+  "debug": {
+    "_purpose": "Debug source set — never present in release builds",
+    "playground": {
+      "screen": "debug/ui/screen/playground/ComponentPlaygroundScreen.kt",
+      "components": "debug/ui/screen/playground/component/{Name}Playground.kt — one per template component",
+      "helpers": {
+        "PlaygroundControls": "debug/ui/screen/playground/helper/PlaygroundControls.kt — OptionDropdown, OptionToggle, OptionSlider",
+        "PlaygroundEntries": "debug/ui/screen/playground/helper/PlaygroundEntries.kt",
+        "PlaygroundLabels": "debug/ui/screen/playground/helper/PlaygroundLabels.kt",
+        "DatePlaygroundSavers": "debug/ui/screen/playground/helper/DatePlaygroundSavers.kt"
+      }
+    },
+    "mockData": {
+      "interceptor": "debug/data/remote/interceptor/MockInterceptor.kt",
+      "files": "debug/res/raw/mock_*.json",
+      "module": "debug/data/di/MockNetworkModule.kt"
+    },
+    "testScreen": "debug/ui/screen/TestScreen.kt",
+    "testViewModel": "debug/ui/viewmodel/TestViewModel.kt",
+    "testPreferenceManager": "debug/common/TestPreferenceManager.kt"
+  },
+  "tests": {
+    "_note": "Key test classes",
+    "unitTestRoot": "test/java/com/itsjeel01/finsiblefrontend/",
+    "coverage": {
+      "common": [
+        "ExtensionsTest",
+        "PreferenceManagerTest"
+      ],
+      "data": [
+        "BaseEntityTest",
+        "PendingOperationEntityTest",
+        "TransactionEntityTest",
+        "PendingOperationRepositoryTest",
+        "TransactionLocalRepositoryTest",
+        "TransactionTest",
+        "DataFetcherTest",
+        "IntegrityCheckerTest",
+        "IntegrityCheckerPendingOpsTest",
+        "LocalIdGeneratorTest",
+        "NetworkMonitorTest",
+        "ScopeManagerTest",
+        "SyncExceptionTest",
+        "SyncManagerTest",
+        "TransactionSyncHandlerTest"
+      ],
+      "ui": []
+    }
+  },
+  "symbols": {
+    "_purpose": "O(1) symbol → file lookup. Every public class, object, top-level function the agent might reference.",
+    "_note": "Extend this map aggressively — it's the primary token-saver. Format: SymbolName → relative path",
+    "FinsibleTheme": "ui/theme/FinsibleTheme.kt",
+    "FinsibleSemanticColors": "ui/theme/FinsibleSemanticColors.kt",
+    "FinsibleSpacing": "ui/theme/FinsibleSpacing.kt",
+    "FinsibleStroke": "ui/theme/FinsibleStroke.kt",
+    "FinsibleElevation": "ui/theme/FinsibleElevation.kt",
+    "FinsiblePrimitives": "ui/theme/FinsiblePrimitives.kt",
+    "FinsibleRadius": "ui/theme/FinsibleRadius.kt",
+    "FinsibleSizes": "ui/theme/FinsibleSizes.kt",
+    "FinsibleTypes": "ui/theme/FinsibleTypes.kt",
+    "FinsibleFontFamily": "ui/theme/FinsibleFontFamily.kt",
+    "FinsibleGradients": "ui/theme/FinsibleGradients.kt",
+    "FinsibleColorResolver": "ui/theme/FinsibleColorResolver.kt",
+    "FinsibleUiScaler": "ui/theme/FinsibleUiScaler.kt",
+    "DeviceInfo": "ui/theme/DeviceInfo.kt",
+    "GradientType": "ui/theme/FinsibleGradients.kt",
+    "FinsibleSize": "ui/component/templates/core/FinsibleSize.kt",
+    "FinsibleShape": "ui/component/templates/core/FinsibleShape.kt",
+    "FinsibleIconPosition": "ui/component/templates/core/FinsibleIconPosition.kt",
+    "FinsibleBadgeType": "ui/component/templates/model/FinsibleBadgeType.kt",
+    "BaseEntity": "data/local/entity/BaseEntity.kt",
+    "SyncableEntity": "data/local/entity/SyncableEntity.kt",
+    "AccountEntity": "data/local/entity/AccountEntity.kt",
+    "AccountGroupEntity": "data/local/entity/AccountGroupEntity.kt",
+    "CategoryEntity": "data/local/entity/CategoryEntity.kt",
+    "TransactionEntity": "data/local/entity/TransactionEntity.kt",
+    "ExchangeRateEntity": "data/local/entity/ExchangeRateEntity.kt",
+    "PendingOperationEntity": "data/local/entity/PendingOperationEntity.kt",
+    "AMOUNT_MULTIPLIER": "data/local/entity/TransactionEntity.kt",
+    "BaseLocalRepository": "data/local/repository/BaseLocalRepository.kt",
+    "SyncableLocalRepository": "data/local/repository/SyncableLocalRepository.kt",
+    "AccountLocalRepository": "data/local/repository/AccountLocalRepository.kt",
+    "AccountGroupLocalRepository": "data/local/repository/AccountGroupLocalRepository.kt",
+    "CategoryLocalRepository": "data/local/repository/CategoryLocalRepository.kt",
+    "TransactionLocalRepository": "data/local/repository/TransactionLocalRepository.kt",
+    "ExchangeRateLocalRepository": "data/local/repository/ExchangeRateLocalRepository.kt",
+    "PendingOperationRepository": "data/local/repository/PendingOperationRepository.kt",
+    "PaginatedResult": "data/local/repository/TransactionLocalRepository.kt",
+    "FilteredSummary": "data/local/repository/TransactionLocalRepository.kt",
+    "TransactionTypeConverter": "data/local/TypeConverters.kt",
+    "EntityTypeConverter": "data/local/TypeConverters.kt",
+    "OperationTypeConverter": "data/local/TypeConverters.kt",
+    "StatusConverter": "data/local/TypeConverters.kt",
+    "EnumPropertyConverter": "data/local/TypeConverters.kt",
+    "BaseResponse": "data/remote/model/BaseResponse.kt",
+    "AccountCreateRequest": "data/remote/model/AccountCreateRequest.kt",
+    "AccountUpdateRequest": "data/remote/model/AccountUpdateRequest.kt",
+    "AccountGroupCreateRequest": "data/remote/model/AccountGroupCreateRequest.kt",
+    "AccountGroupUpdateRequest": "data/remote/model/AccountGroupUpdateRequest.kt",
+    "AuthData": "data/remote/model/AuthData.kt",
+    "AuthLoginRequest": "data/remote/model/AuthLoginRequest.kt",
+    "CategoriesData": "data/remote/model/CategoriesData.kt",
+    "CategoryCreateRequest": "data/remote/model/CategoryCreateRequest.kt",
+    "CategoryUpdateRequest": "data/remote/model/CategoryUpdateRequest.kt",
+    "CategoryAddRequest": "data/remote/model/CategoryAddRequest.kt",
+    "CategoryRenameRequest": "data/remote/model/CategoryRenameRequest.kt",
+    "TransactionCreateRequest": "data/remote/model/TransactionCreateRequest.kt",
+    "TransactionUpdateRequest": "data/remote/model/TransactionUpdateRequest.kt",
+    "TransactionsData": "data/remote/model/TransactionsData.kt",
+    "EntitySnapshot": "data/remote/model/EntitySnapshot.kt",
+    "ExchangeRatesData": "data/remote/model/ExchangeRateData.kt",
+    "AuthApiService": "data/remote/api/AuthApiService.kt",
+    "AccountApiService": "data/remote/api/AccountApiService.kt",
+    "AccountGroupApiService": "data/remote/api/AccountGroupApiService.kt",
+    "CategoryApiService": "data/remote/api/CategoryApiService.kt",
+    "TransactionApiService": "data/remote/api/TransactionApiService.kt",
+    "ExchangeRateApiService": "data/remote/api/ExchangeRateApiService.kt",
+    "SyncApiService": "data/remote/api/SyncApiService.kt",
+    "AuthInterceptor": "data/remote/interceptor/AuthInterceptor.kt",
+    "ResponseHandler": "data/remote/converter/ResponseHandler.kt",
+    "ResponseHandlingConverterFactory": "data/remote/converter/ResponseHandlingConverterFactory.kt",
+    "ResponseConverter": "data/remote/converter/ResponseConverter.kt",
+    "AuthRepository": "data/repository/AuthRepository.kt",
+    "AccountRepository": "data/repository/AccountRepository.kt",
+    "AccountGroupRepository": "data/repository/AccountGroupRepository.kt",
+    "CategoryRepository": "data/repository/CategoryRepository.kt",
+    "TransactionRepository": "data/repository/TransactionRepository.kt",
+    "CurrencyRepository": "data/repository/CurrencyRepository.kt",
+    "ExchangeRateRepository": "data/repository/ExchangeRateRepository.kt",
+    "SyncManager": "data/sync/SyncManager.kt",
+    "EntitySyncHandler": "data/sync/EntitySyncHandler.kt",
+    "TransactionSyncHandler": "data/sync/TransactionSyncHandler.kt",
+    "AccountSyncHandler": "data/sync/AccountSyncHandler.kt",
+    "AccountGroupSyncHandler": "data/sync/AccountGroupSyncHandler.kt",
+    "CategorySyncHandler": "data/sync/CategorySyncHandler.kt",
+    "CacheManager": "data/sync/CacheManager.kt",
+    "DataFetcher": "data/sync/DataFetcher.kt",
+    "IntegrityChecker": "data/sync/IntegrityChecker.kt",
+    "IntegrityResolverService": "data/sync/IntegrityResolverService.kt",
+    "LocalIdGenerator": "data/sync/LocalIdGenerator.kt",
+    "NetworkMonitor": "data/sync/NetworkMonitor.kt",
+    "PostAuthInitializer": "data/sync/PostAuthInitializer.kt",
+    "ScopeManager": "data/sync/ScopeManager.kt",
+    "SyncException": "data/sync/SyncException.kt",
+    "AppModule": "data/di/AppModule.kt",
+    "ObjectBoxModule": "data/di/ObjectBoxModule.kt",
+    "AccountModule": "data/di/AccountModule.kt",
+    "TransactionModule": "data/di/TransactionModule.kt",
+    "CategoryModule": "data/di/CategoryModule.kt",
+    "ExchangeRateModule": "data/di/ExchangeRateModule.kt",
+    "SyncModule": "data/di/SyncModule.kt",
+    "NetworkModule": "data/di/NetworkModule.kt",
+    "DispatchersModule": "data/di/DispatchersModule.kt",
+    "DataStoreModule": "data/di/DataStoreModule.kt",
+    "ObjectBoxAdminStarter": "data/di/ObjectBoxAdminStarter.kt",
+    "IoDispatcher": "data/di/DispatchersModule.kt",
+    "DefaultDispatcher": "data/di/DispatchersModule.kt",
+    "MainDispatcher": "data/di/DispatchersModule.kt",
+    "NetworkInterceptorsProvider": "data/di/NetworkDebugInterceptors.kt",
+    "CurrencyFormatter": "common/CurrencyFormatter.kt",
+    "PreferenceManager": "common/PreferenceManager.kt",
+    "UserLocaleRegistry": "common/UserLocaleRegistry.kt",
+    "LocaleProvider": "common/LocaleProvider.kt",
+    "DeviceLocaleProvider": "common/LocaleProvider.kt",
+    "FinsibleConstants": "common/FinsibleConstants.kt",
+    "UserPreferences": "common/datastore/UserPreferences.kt",
+    "EncryptedPreferenceSerializer": "common/datastore/EncryptedPreferenceSerializer.kt",
+    "Logger": "common/logging/Logger.kt",
+    "LogDomain": "common/logging/LogDomain.kt",
+    "DebugLogTree": "common/logging/DebugLogTree.kt",
+    "ReleaseLogTree": "common/logging/ReleaseLogTree.kt",
+    "TransactionType": "common/Enums.kt",
+    "TransactionRecurringFrequency": "common/Enums.kt",
+    "SyncState": "common/Enums.kt",
+    "EntityType": "common/Enums.kt",
+    "OperationType": "common/Enums.kt",
+    "Status": "common/Enums.kt",
+    "Account": "data/model/Account.kt",
+    "AccountGroup": "data/model/AccountGroup.kt",
+    "Category": "data/model/Category.kt",
+    "Transaction": "data/model/Transaction.kt",
+    "CurrencyConversion": "data/model/Transaction.kt",
+    "Currency": "data/model/Currency.kt",
+    "CompactSystem": "data/model/Currency.kt",
+    "Route": "ui/navigation/Route.kt",
+    "BottomNavItem": "ui/navigation/BottomNavItem.kt",
+    "BottomNavState": "ui/navigation/BottomNavState.kt",
+    "BottomTabNavigator": "ui/navigation/BottomTabNavigator.kt",
+    "NavigationHome": "ui/navigation/NavigationHome.kt",
+    "NavigationNewTransaction": "ui/navigation/NavigationNewTransaction.kt",
+    "NavigationRoot": "ui/navigation/NavigationRoot.kt",
+    "NavigationTransitions": "ui/navigation/NavigationTransitions.kt",
+    "DebugNavigationContracts": "ui/navigation/DebugNavigationContracts.kt",
+    "AccountsScreen": "ui/screen/AccountsTab.kt",
+    "DashboardTab": "ui/screen/DashboardTab.kt",
+    "HistoryScreen": "ui/screen/HistoryTab.kt",
+    "NewTransactionScreen": "ui/screen/NewTransaction.kt",
+    "SettingsTab": "ui/screen/SettingsTab.kt",
+    "LaunchScreen": "ui/screen/Launch.kt",
+    "OnboardingScreen": "ui/screen/Onboarding.kt",
+    "AccountsViewModel": "ui/viewmodel/AccountsViewModel.kt",
+    "AuthViewModel": "ui/viewmodel/AuthViewModel.kt",
+    "NewTransactionViewModel": "ui/viewmodel/NewTransactionViewModel.kt",
+    "HistoryViewModel": "ui/viewmodel/HistoryViewModel.kt",
+    "TransactionsFilterViewModel": "ui/viewmodel/TransactionsFilterViewModel.kt",
+    "OnboardingViewModel": "ui/viewmodel/OnboardingViewModel.kt",
+    "AccountsUIState": "ui/model/state/AccountsUIState.kt",
+    "AccountListItem": "ui/model/state/AccountsUIState.kt",
+    "AuthState": "ui/model/state/AuthState.kt",
+    "NewTransactionFormState": "ui/model/state/NewTransactionFormState.kt",
+    "NewTransactionDateSelection": "ui/model/state/NewTransactionFormState.kt",
+    "NewTransactionSheetMode": "ui/model/state/NewTransactionFormState.kt",
+    "NewTransactionValidationError": "ui/model/state/NewTransactionFormState.kt",
+    "ExchangeRateFreshness": "ui/model/state/NewTransactionFormState.kt",
+    "TransactionListState": "ui/model/state/TransactionListState.kt",
+    "TransactionsFilterState": "ui/model/state/TransactionsFilterState.kt",
+    "NewTransactionUiEvent": "ui/model/event/NewTransactionUiEvent.kt",
+    "AccountUIModel": "ui/model/uimodel/AccountUIModel.kt",
+    "AccountGroupUIModel": "ui/model/uimodel/AccountGroupUIModel.kt",
+    "CategoryUIModel": "ui/model/uimodel/CategoryUIModel.kt",
+    "TransactionUIModel": "ui/model/uimodel/TransactionUIModel.kt",
+    "StatEntryUIModel": "ui/model/uimodel/StatEntryUIModel.kt",
+    "TimeFilterMode": "ui/model/TransactionHistoryEnums.kt",
+    "SortOption": "ui/model/TransactionHistoryEnums.kt",
+    "DateFilterMode": "ui/model/TransactionHistoryEnums.kt",
+    "FilteredTransactionSummary": "ui/model/TransactionAggregates.kt",
+    "TransactionDailySummary": "ui/model/TransactionAggregates.kt",
+    "DateAggregates": "ui/model/TransactionAggregates.kt",
+    "GroupAggregates": "ui/model/TransactionAggregates.kt",
+    "Duration": "ui/constants/Duration.kt",
+    "DateUtils": "ui/util/DateUtils.kt",
+    "GoogleAuthManager": "ui/util/GoogleAuthManager.kt",
+    "IconResolver": "ui/util/IconResolver.kt",
+    "NavigationAnimations": "ui/util/NavigationAnimations.kt",
+    "hiltUserLocale": "data/di/LocaleModule.kt",
+    "hiltCurrencyFormatter": "data/di/CurrencyFormatterModule.kt",
+    "hiltCurrencyRepository": "data/di/CurrencyRepositoryModule.kt",
+    "LocaleEntryPoint": "data/di/LocaleModule.kt",
+    "CurrencyFormatterEntryPoint": "data/di/CurrencyFormatterModule.kt",
+    "CurrencyRepositoryEntryPoint": "data/di/CurrencyRepositoryModule.kt",
+    "buildSearchableText": "data/model/Transaction.kt",
+    "finsibleShadow": "ui/theme/FinsibleShadowSpec.kt",
+    "FinsibleButton": "ui/component/templates/component/FinsibleButton.kt",
+    "FinsibleButtonBadge": "ui/component/templates/component/FinsibleButtonBadge.kt",
+    "FinsibleText": "ui/component/templates/component/FinsibleText.kt",
+    "FinsibleTextField": "ui/component/templates/component/FinsibleTextField.kt",
+    "FinsibleCheckbox": "ui/component/templates/component/FinsibleCheckbox.kt",
+    "FinsibleChipsRow": "ui/component/templates/component/FinsibleChipsRow.kt",
+    "FinsibleDropdown": "ui/component/templates/component/FinsibleDropdown.kt",
+    "FinsibleFilterChip": "ui/component/templates/component/FinsibleFilterChip.kt",
+    "FinsibleLoader": "ui/component/templates/component/FinsibleLoader.kt",
+    "FinsibleNotification": "ui/component/templates/component/FinsibleNotification.kt",
+    "FinsibleRadioButton": "ui/component/templates/component/FinsibleRadioButton.kt",
+    "FinsibleScrubber": "ui/component/templates/component/FinsibleScrubber.kt",
+    "FinsibleSegmentedButtonRow": "ui/component/templates/component/FinsibleSegmentedButtonRow.kt",
+    "FinsibleShadowSpec": "ui/theme/FinsibleShadowSpec.kt",
+    "FinsibleToggle": "ui/component/templates/component/FinsibleToggle.kt",
+    "FinsibleTileCards": "ui/component/templates/component/FinsibleTileCards.kt",
+    "FinsibleTileCardsContent": "ui/component/templates/component/FinsibleTileCardsContent.kt",
+    "FinsibleTileCardsSlots": "ui/component/templates/component/FinsibleTileCardsSlots.kt",
+    "FinsibleAccordion": "ui/component/templates/component/FinsibleAccordion.kt",
+    "FinsibleDatePicker": "ui/component/templates/component/FinsibleDatePicker.kt",
+    "FinsibleDatePickerShared": "ui/component/templates/component/FinsibleDatePickerShared.kt",
+    "FinsibleDateRangePicker": "ui/component/templates/component/FinsibleDateRangePicker.kt",
+    "FinsibleMonthYearPicker": "ui/component/templates/component/FinsibleMonthYearPicker.kt",
+    "FinsibleIconBadge": "ui/component/templates/component/FinsibleIconBadge.kt",
+    "FinsibleTopNavigationBar": "ui/component/templates/component/FinsibleTopNavigationBar.kt",
+    "FinsibleBottomSheet": "ui/component/templates/component/FinsibleBottomSheet.kt",
+    "FinsibleButtonDefaults": "ui/component/templates/default/FinsibleButtonDefaults.kt",
+    "FinsibleTextDefaults": "ui/component/templates/default/FinsibleTextDefaults.kt",
+    "FinsibleButtonColors": "ui/component/templates/model/FinsibleButtonModels.kt",
+    "FinsibleButtonSizes": "ui/component/templates/model/FinsibleButtonModels.kt",
+    "FinsibleButtonBadgeSpec": "ui/component/templates/model/FinsibleButtonModels.kt",
+    "FinsibleButtonVariant": "ui/component/templates/model/variant/FinsibleButtonVariant.kt",
+    "FinsibleTextVariant": "ui/component/templates/model/variant/FinsibleTextVariants.kt",
+    "FinsibleTextColorVariant": "ui/component/templates/model/variant/FinsibleTextVariants.kt",
+    "FinsibleTileCardData": "ui/component/templates/model/FinsibleTileCardModels.kt",
+    "FinsibleTileCardColors": "ui/component/templates/model/FinsibleTileCardModels.kt",
+    "FinsibleTileCardSizes": "ui/component/templates/model/FinsibleTileCardModels.kt",
+    "FinsibleTileCardRotationVariant": "ui/component/templates/model/variant/FinsibleTileCardVariants.kt",
+    "FinsibleLoaderHost": "ui/component/templates/util/FinsibleLoaderHost.kt",
+    "FinsibleLoaderManager": "ui/component/templates/util/FinsibleLoaderManager.kt",
+    "FinsibleNotificationHost": "ui/component/templates/util/FinsibleNotificationHost.kt",
+    "FinsibleNotificationManager": "ui/component/templates/util/FinsibleNotificationManager.kt",
+    "FinsibleBounceIndication": "ui/component/templates/util/FinsibleBounceIndication.kt",
+    "FlushDropdownPositionProvider": "ui/component/templates/util/FlushDropdownPositionProvider.kt",
+    "FinsibleComponentPreviewScaffold": "ui/component/templates/preview/FinsiblePreviewComponents.kt",
+    "toAccountsTileCards": "ui/mapper/AccountTileCardMapper.kt"
+  },
+  "rules": {
+    "_purpose": "Architectural invariants the agent must enforce — checked before any code generation",
+    "no-material-theme-extension": {
+      "scope": "**/*.kt",
+      "rule": "Never extend MaterialTheme. FinsibleTheme wraps it."
+    },
+    "composition-local-only": {
+      "scope": "ui/component/templates/**",
+      "rule": "Tokens via CompositionLocal / FinsibleTheme object only — never pass tokens as params."
+    },
+    "flat-template-packages": {
+      "scope": "ui/component/templates/**",
+      "rule": "No per-component subfolders. Flat 6-package layout: component/core/default/model/preview/util."
+    },
+    "no-preview-in-main": {
+      "scope": "ui/component/templates/**",
+      "rule": "@Preview only in preview/ package — never in component/ or default/."
+    },
+    "playground-debug-only": {
+      "scope": "ui/screen/playground/**",
+      "rule": "Playground files live in debug source set only — never main."
+    },
+    "immutable-collections-in-state": {
+      "scope": "ui/viewmodel/**",
+      "rule": "All StateFlow<T> where T contains collections must use ImmutableList/ImmutableMap."
+    },
+    "io-dispatcher-for-db": {
+      "scope": "ui/viewmodel/**",
+      "rule": "DB/network calls inside withContext(Dispatchers.IO). State updates on Main."
+    },
+    "gate-before-write": {
+      "scope": "**",
+      "rule": "No file writes without /approve. All writes staged via gate extension."
+    },
+    "architecture-data-flow": {
+      "scope": "**",
+      "rule": "Offline-first: ViewModel → LocalRepository (ObjectBox) → pending ops queue → SyncManager/EntitySyncHandler → Retrofit ApiService. Reads flow through Repository + CacheManager auto-cache. ViewModels only write through LocalRepositories; Repository layer is read-only for GET/caching. Local creates use negative IDs from LocalIdGenerator; handlers remap IDs after server create. ResponseHandlingConverterFactory + CacheManager must route BaseResponse.cache payloads into LocalRepository.addAll. Startup: FinsibleApp → IntegrityResolverService + ScopeManager → PostAuthInitializer + DataFetcher/IntegrityChecker."
+    },
+    "source-set-boundaries": {
+      "scope": "**/*.kt",
+      "rule": "Shared impl in main/. Debug-only in debug/. Release-only in release/. Mirror package/class paths across variants. Keep variant code thin; push reusable logic into main. No shared production logic in variant source sets."
+    },
+    "ownership-map": {
+      "scope": "**/*.kt",
+      "rule": "ui/navigation/** → route graph + transitions | ui/screen/** → composable rendering + intent forwarding | ui/viewmodel/** → state mgmt + intent handling + data flow | data/local/entity/** → ObjectBox entities | data/local/repository/** → local writes/queries/pending ops | data/repository/** → read-side remote fetch/caching only | data/sync/** → pending op execution/retries/remote write sync | data/di/** → Hilt bindings/providers (incl handler maps)"
+    },
+    "placement-decision-rules": {
+      "scope": "**/*.kt",
+      "rule": "ViewModel = transform domain data → UI state. LocalRepository = mutate local storage or enqueue pending ops. SyncHandlers/SyncManager = network writes + ID remapping. Repository = GET/read concerns + cache hydration. Keep debug diagnostics/mocks in src/debug only."
+    },
+    "screen-viewmodel-data-flow-contract": {
+      "scope": "ui/**",
+      "rule": "Screens: render state + emit UI events only — no business/sync/persistence rules. ViewModels: own state models + event reducers; write via LocalRepositories only; no direct API invocations. Repositories: provide read models from network/cache/local pathways; mutation-free. Sync: executes queued ops, retries failures (max 3), reconciles IDs/state; exclusive network-write path."
+    },
+    "repository-sync-structuring-rules": {
+      "scope": "data/**",
+      "rule": "Read concerns in repositories. Write concerns in LocalRepository + SyncHandler flows. New entity support must include: local entity + repo wiring, sync handler registration in SyncModule.kt, API mapping (toCreateRequest/toUpdateRequest), integrity/fetch coverage. Never bypass pending ops for write paths. PendingOperationEntity stores payload JSON for handlers. SyncManager listens to NetworkMonitor, retries failed ops (max 3). SyncableLocalRepository provides toCreateRequest/toUpdateRequest."
+    },
+    "anti-patterns": {
+      "scope": "**/*.kt",
+      "rule": "HARD NO: 1) Direct server writes from ViewModel or Repository. 2) Hardcoded UI values for colors/spacing/typography/shapes/timings. 3) Ad-hoc Log.* when common.logging.Logger domains available. 4) Unrelated icon libs when existing packs provide equivalents. 5) Business logic in navigation files or @Preview composables. 6) Shared production logic in variant-specific source sets."
+    },
+    "conventions-patterns": {
+      "scope": "**/*.kt",
+      "rule": "DI via Hilt modules in data/di; SyncHandler map by EntityType in SyncModule.kt; shared coroutine scope from ScopeManager. OkHttp: MockInterceptor (debug) → HttpLogging (debug) → AuthInterceptor; Retrofit base URL from BuildConfig.BASE_URL. Logging: common.logging.Logger domains (Logger.Sync, Logger.Database, Logger.App). Theming: FinsibleTheme values only. Durations: ui.constants.Duration constants. Icons: composables icon packs + route mapping via ui/util/IconResolver.kt. Navigation entry in ui/navigation/NavigationRoot.kt. Screens in ui/screen. State/events in ui/viewmodel. Component creation: 3-layer templates in ui/component/templates/; modifier first; @Preview; stateless by default. data integrity: DataFetcher.ensureDataFetched + IntegrityChecker."
+    },
+    "delivery-checklist-new-component": {
+      "scope": "ui/component/templates/**",
+      "rule": "1) modifier: Modifier = Modifier first param. 2) stateless API first, stateful wrapper only if necessary. 3) @Preview variants for key states (default/loading/empty/error). 4) FinsibleTheme tokens only for colors/spacing/typography/shapes/timings. 5) Duration constants for timings. 6) Existing composables icon packs + resolver mapping. 7) Flat 6-package layout: component/core/default/model/preview/util."
+    },
+    "delivery-checklist-new-screen": {
+      "scope": "ui/screen/**",
+      "rule": "1) Add routes/wiring in ui/navigation/NavigationRoot.kt. 2) Split render (ui/screen/) from orchestration (ui/viewmodel/). 3) Read data via Repository-backed flows. 4) Writes through LocalRepository paths that enqueue pending ops. 5) loading/empty/error UX states represented. 6) FinsibleTheme tokens only. 7) Duration constants for animations."
+    },
+    "delivery-checklist-new-entity": {
+      "scope": "data/**",
+      "rule": "1) Add entity + LocalRepository ops. 2) Creates use negative IDs + pending op serialization. 3) Add/update SyncHandler + bind in SyncModule.kt. 4) Implement toCreateRequest + toUpdateRequest mapping. 5) Cache routing + integrity checks/fetches. 6) ObjectBox schema: edit entity, commit objectbox-models/default.json, bump DATABASE_SCHEMA_VERSION if breaking."
+    },
+    "quality-gate-pre-pr": {
+      "scope": "**",
+      "rule": "Pre-PR self-check: 1) architecture chain preserved. 2) source-set boundaries respected. 3) UI template/theming/duration/icon rules followed. 4) integrity/cache/sync wiring updated. 5) docs tree updated if structure changed. 6) No anti-patterns violated."
+    },
+    "quality-gate-build-commands": {
+      "scope": "**",
+      "rule": "Focused diagnostics (IDE/static) for small/localized changes. Full checks for cross-layer: ./gradlew assembleDebug, ./gradlew testDebugUnitTest, ./gradlew installDebug (when device behavior involved)."
+    },
+    "execution-sequence": {
+      "scope": "**",
+      "rule": "1) Classify request type + blast radius. 2) Choose owner layer (UI/VM/LocalRepo/Repo/Sync) using placement rules. 3) Implement minimal primary-file changes first, then wire dependent layers. 4) Focused diagnostics for localized edits. 5) Gradle checks only for broad/cross-layer/architecture-risky changes. 6) Re-check anti-pattern rules + update project structure tree."
+    },
+    "exploration-pointers": {
+      "scope": "**",
+      "rule": "Sync layer: data/sync/*, data/local/repository/SyncableLocalRepository.kt, data/local/entity/PendingOperationEntity.kt. Caching: data/remote/converter/ResponseHandlingConverterFactory.kt, data/sync/CacheManager.kt, data/repository/*. UI: ui/component/templates/**, ui/theme/** Startup: FinsibleApp.kt, data/sync/PostAuthInitializer.kt, data/sync/IntegrityResolverService.kt, ui/screen/Launch.kt, ui/screen/Onboarding.kt"
+    },
+    "modifier-position": {
+      "scope": "ui/component/templates/**/*.kt",
+      "rule": "Modifier follows required params, before optional params. When all params have defaults, modifier may be first."
+    }
+  },
+  "triageMatrix": {
+    "_purpose": "Quick request triage — entry point for every request type",
+    "scenarios": [
+      {
+        "request": "New screen or flow",
+        "start": "ui/navigation/NavigationRoot.kt, ui/screen/**/, ui/viewmodel/**/",
+        "rules": [
+          "Reads: repository-backed flows",
+          "Writes: LocalRepository-backed pending ops",
+          "Validate: focused diagnostics on touched files",
+          "Components: templatized from ui/component/templates/**"
+        ]
+      },
+      {
+        "request": "New reusable component",
+        "start": "ui/component/templates/**/ then ui/component/**/",
+        "rules": [
+          "Stateless API first, modifier first, @Preview included",
+          "FinsibleTheme + Duration tokens only",
+          "Validate: component + preview files"
+        ]
+      },
+      {
+        "request": "New entity support",
+        "start": "data/local/entity/**, data/local/repository/**, data/sync/**, data/di/SyncModule.kt",
+        "rules": [
+          "Negative IDs, pending op enqueue, handler binding, cache + integrity",
+          "Targeted checks first, full Gradle for cross-layer"
+        ]
+      },
+      {
+        "request": "Sync failures (retry/remap/order)",
+        "start": "data/sync/** and entity-specific handler",
+        "rules": [
+          "Verify ordering, max retry (3), local ID remap after create",
+          "Escalate to broader checks when multiple handlers/entities"
+        ]
+      },
+      {
+        "request": "Cache/GET hydration issues",
+        "start": "data/remote/converter/ResponseHandlingConverterFactory.kt, data/sync/CacheManager.kt, data/repository/**",
+        "rules": [
+          "Preserve BaseResponse.cache routing into local repos",
+          "Validate affected repositories + consumers"
+        ]
+      },
+      {
+        "request": "Startup/auth/integrity regression",
+        "start": "FinsibleApp.kt, data/sync/PostAuthInitializer.kt, data/sync/IntegrityResolverService.kt, launch/onboarding screens",
+        "rules": [
+          "Preserve startup check-and-resolve + post-auth fetch/check",
+          "Full checks only if flow changed across layers"
+        ]
+      },
+      {
+        "request": "Debug diagnostics/mock behavior",
+        "start": "app/src/debug/** only",
+        "rules": [
+          "Keep variant paths mirrored, avoid release/main coupling",
+          "Validate debug-source files directly"
+        ]
+      },
+      {
+        "request": "Release-only implementation",
+        "start": "app/src/release/** with mirrored package/class path",
+        "rules": [
+          "No refs to debug-only classes",
+          "Broaden checks if shared startup/navigation affected"
+        ]
+      },
+      {
+        "request": "UI polish/theming/animation",
+        "start": "ui/screen/** or ui/component/**, ui/theme/** tokens, ui/constants/Duration",
+        "rules": [
+          "No hardcoded design values",
+          "Validate touched files with focused checks"
+        ]
+      },
+      {
+        "request": "Logging consistency",
+        "start": "Replace ad-hoc logs with common.logging.Logger domain loggers",
+        "rules": [
+          "Domain fit: Logger.Sync, Logger.Database, Logger.App",
+          "Validate touched files only"
+        ]
+      }
+    ]
+  },
+  "workflows": {
+    "_purpose": "Developer workflow guidance",
+    "diagnostics": "Focused diagnostics (IDE/static) for small/localized changes first",
+    "fullBuild": [
+      "./gradlew assembleDebug (comprehensive changes)",
+      "./gradlew testDebugUnitTest (broad test coverage)",
+      "./gradlew installDebug (device behavior involved)"
+    ],
+    "objectboxSchema": "Edit entities → commit objectbox-models/default.json → bump DATABASE_SCHEMA_VERSION in build.gradle.kts when breaking"
+  },
+  "developer": {
+    "_purpose": "Developer reference — pointers, conventions, and patterns",
+    "quickReference": {
+      "syncLayer": [
+        "data/sync/*",
+        "data/local/repository/SyncableLocalRepository.kt",
+        "data/local/entity/PendingOperationEntity.kt"
+      ],
+      "caching": [
+        "data/remote/converter/ResponseHandlingConverterFactory.kt",
+        "data/sync/CacheManager.kt",
+        "data/repository/*"
+      ],
+      "uiSystem": [
+        "ui/component/templates/**",
+        "ui/theme/**"
+      ],
+      "startupAuth": [
+        "FinsibleApp.kt",
+        "data/sync/PostAuthInitializer.kt",
+        "data/sync/IntegrityResolverService.kt",
+        "ui/screen/Launch.kt",
+        "ui/screen/Onboarding.kt"
+      ]
+    }
+  }
+}

@@ -44,6 +44,8 @@ FinsibleApp (Application)
 
 ## Compose Rules
 
+- Modifier position: follows required params, before optional params. If all params have defaults,
+  modifier may be first.
 - State hoisting: lift state to the **lowest common ancestor** that needs it. Local `remember`/
   `mutableStateOf` for ephemeral UI-only state (bottom sheet visibility, scroll position).
 - Every composable receives only what it uses — no passing entire `ViewModel` references beyond

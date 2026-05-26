@@ -9,7 +9,9 @@
       "Remove _example keys before committing — they are schema hints only",
       "Keep arrays empty [] if no entries exist — never omit keys",
       "status values: complete | in-progress | planned | deprecated",
-      "All paths relative to app/src/main/java/com/itsjeel01/finsiblefrontend/ unless noted"
+      "All paths relative to app/src/main/java/com/itsjeel01/finsiblefrontend/ unless noted",
+      "Theme: use spacingTokens/sizeTokens/strokeTokens/elevationTokens — NOT dimesTokens (removed in v2)",
+      "rules: 24+ invariants covering architecture, anti-patterns, checklists, triage, and execution sequence"
     ]
   },
   "gradle": {
@@ -279,28 +281,6 @@
       },
       "FILL_TOKEN": "FILL: sp value"
     },
-    "dimesTokens": {
-      "_note": "FILL all scale steps by reading FinsibleDimes.kt. Scaled per device.",
-      "_example": {
-        "d0": "0dp",
-        "d1": "1dp",
-        "d2": "2dp",
-        "d4": "4dp",
-        "d6": "6dp",
-        "d8": "8dp",
-        "d10": "10dp",
-        "d12": "12dp",
-        "d16": "16dp",
-        "d20": "20dp",
-        "d24": "24dp",
-        "d28": "28dp",
-        "d32": "32dp",
-        "d40": "40dp",
-        "d48": "48dp",
-        "d56": "56dp"
-      },
-      "FILL_TOKEN": "FILL: dp value"
-    },
     "fonts": {
       "file": "ui/theme/FinsibleFontFamily.kt",
       "families": [
@@ -327,6 +307,60 @@
     },
     "colorResolver": {
       "file": "ui/theme/FinsibleColorResolver.kt"
+    },
+    "spacingTokens": {
+      "_note": "FILL all spacing roles by reading FinsibleSpacing.kt. Scaled per device via FinsibleUiScaler.",
+      "_example": {
+        "insetNone": "0dp",
+        "insetXs": "4dp",
+        "insetSm": "8dp",
+        "insetMd": "12dp",
+        "insetLg": "16dp",
+        "stackSm": "4dp",
+        "stackMd": "8dp",
+        "stackLg": "12dp",
+        "gapSm": "4dp",
+        "gapMd": "8dp",
+        "gapLg": "12dp",
+        "inlineSm": "4dp",
+        "inlineMd": "8dp",
+        "inlineLg": "12dp"
+      },
+      "FILL_TOKEN": "FILL: dp value — role-based token"
+    },
+    "sizeTokens": {
+      "_note": "FILL all sizes by reading FinsibleSizes.kt. Accessed via FinsibleTheme.sizes.{category}.{name}.",
+      "_example": {
+        "touch.xs": "28dp — inline icon buttons",
+        "touch.sm": "36dp — compact icon buttons",
+        "touch.md": "44dp — standard button/input height",
+        "icon.xs": "12dp — inline status icons",
+        "icon.sm": "16dp — label-adjacent icons",
+        "icon.md": "24dp — standard icons",
+        "avatar.sm": "24dp — small avatars",
+        "avatar.md": "40dp — standard avatars"
+      },
+      "FILL_TOKEN": "FILL: dp value — category.name descriptor"
+    },
+    "strokeTokens": {
+      "_note": "FILL all stroke widths by reading FinsibleStroke.kt.",
+      "_example": {
+        "hairline": "0.5dp — hairline borders",
+        "thin": "1dp — standard border",
+        "semiBold": "1.5dp — emphasized border",
+        "bold": "2dp — strong border",
+        "heavy": "3dp — checkbox check mark"
+      },
+      "FILL_TOKEN": "FILL: dp value"
+    },
+    "elevationTokens": {
+      "_note": "FILL all elevation specs by reading FinsibleElevation.kt.",
+      "_example": {
+        "flatSurface": "base tint (light) / surface tint (dark)",
+        "raisedSurface": "surfaceRaised tint (light) / surface tint (dark)",
+        "raisedShadow": "FinsibleShadowSpec(color=0x12..., offsetY=..., blurRadius=...)"
+      },
+      "FILL_TOKEN": "FILL: FinsibleShadowSpec or surface tint"
     }
   },
   "templateLibrary": {
@@ -427,8 +461,17 @@
           "typography": [
             "FILL: FinsibleTheme.typography token names actually used"
           ],
-          "dimes": [
-            "FILL: FinsibleTheme.dimes token names actually used"
+          "spacing": [
+            "FILL: FinsibleTheme.spacing token names used"
+          ],
+          "sizes": [
+            "FILL: FinsibleTheme.sizes token names used"
+          ],
+          "stroke": [
+            "FILL: FinsibleTheme.stroke token names used"
+          ],
+          "elevation": [
+            "FILL: FinsibleTheme.elevation token names used"
           ]
         },
         "constraints": [

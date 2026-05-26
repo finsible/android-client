@@ -3,6 +3,7 @@ package com.itsjeel01.finsiblefrontend.data.di
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
+import androidx.datastore.core.Serializer
 import androidx.datastore.dataStoreFile
 import androidx.datastore.migrations.SharedPreferencesMigration
 import com.google.crypto.tink.Aead
@@ -12,7 +13,7 @@ import com.google.crypto.tink.aead.AeadConfig
 import com.google.crypto.tink.integration.android.AndroidKeysetManager
 import com.itsjeel01.finsiblefrontend.common.datastore.EncryptedPreferenceSerializer
 import com.itsjeel01.finsiblefrontend.common.datastore.UserPreferences
-import kotlinx.serialization.json.Json
+import com.itsjeel01.finsiblefrontend.common.logging.Logger
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,6 +22,9 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.serialization.json.Json
+import java.io.InputStream
+import java.io.OutputStream
 import javax.inject.Singleton
 
 @Module
@@ -32,29 +36,49 @@ object DataStoreModule {
 
     @Provides
     @Singleton
-    fun provideTinkAead(@ApplicationContext context: Context): Aead {
-        AeadConfig.register()
-
-        // Initializes Google Tink, backed by the Android Keystore
-        AndroidKeysetManager.Builder()
-            .withSharedPref(context, "tink_keyset", "secure_tink_prefs")
-            .withKeyTemplate(KeyTemplates.get("AES256_GCM"))
-            .withMasterKeyUri("android-keystore://tink_master_key")
-            .build()
-            .keysetHandle
-            .let { return it.getPrimitive(RegistryConfiguration.get(), Aead::class.java) }
+    fun provideTinkAead(@ApplicationContext context: Context): Aead? {
+        return runCatching {
+            AeadConfig.register()
+            AndroidKeysetManager.Builder()
+                .withSharedPref(context, "tink_keyset", "secure_tink_prefs")
+                .withKeyTemplate(KeyTemplates.get("AES256_GCM"))
+                .withMasterKeyUri("android-keystore://tink_master_key")
+                .build()
+                .keysetHandle
+                .getPrimitive(RegistryConfiguration.get(), Aead::class.java)
+        }.onFailure { e ->
+            Logger.App.e("Tink AEAD init failed — falling back to unencrypted DataStore", e)
+        }.getOrNull()
     }
 
     @Provides
     @Singleton
     fun provideDataStore(
         @ApplicationContext context: Context,
-        aead: Aead,
+        aead: Aead?,
         json: Json,
         @IoDispatcher ioDispatcher: CoroutineDispatcher
     ): DataStore<UserPreferences> {
+        val serializer = if (aead != null) {
+            EncryptedPreferenceSerializer(aead, json)
+        } else {
+            object : Serializer<UserPreferences> {
+                override val defaultValue = UserPreferences()
+                override suspend fun readFrom(input: InputStream): UserPreferences = runCatching {
+                    val bytes = input.readBytes()
+                    if (bytes.isEmpty()) defaultValue
+                    else json.decodeFromString(UserPreferences.serializer(), bytes.decodeToString())
+                }.getOrDefault(defaultValue)
+
+                override suspend fun writeTo(t: UserPreferences, output: OutputStream) {
+                    val bytes = json.encodeToString(UserPreferences.serializer(), t).encodeToByteArray()
+                    output.write(bytes)
+                }
+            }
+        }
+
         return DataStoreFactory.create(
-            serializer = EncryptedPreferenceSerializer(aead, json),
+            serializer = serializer,
             scope = CoroutineScope(ioDispatcher + SupervisorJob()),
             migrations = listOf(
                 SharedPreferencesMigration(

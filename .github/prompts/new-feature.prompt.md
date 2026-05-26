@@ -68,7 +68,7 @@ all required files in order.
 
 ## Constraints
 
-- No hardcoded `dp`/`sp` — use `FinsibleTheme.dimes.*`.
+- No hardcoded `dp`/`sp` — use `FinsibleTheme.spacing.*` / `FinsibleTheme.sizes.*` / `FinsibleTheme.stroke.*`.
 - No `LiveData`, no `GlobalScope`, no `Thread.sleep()`.
 - Logging via `Logger.Database.d`, `Logger.UI.e`, etc.
 - KDoc only on non-obvious public API.

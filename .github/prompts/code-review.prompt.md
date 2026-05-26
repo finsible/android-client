@@ -27,7 +27,7 @@ and call out violations concisely.
 - Is `derivedStateOf` used for computed display booleans?
 - Are `LaunchedEffect` keys minimal and single-concern?
 - Are ViewModel references passed below screen level?
-- Are any `dp`/`sp` values hardcoded instead of `FinsibleTheme.dimes.*`?
+- Are any `dp`/`sp` values hardcoded instead of `FinsibleTheme.spacing.*` / `FinsibleTheme.sizes.*` / `FinsibleTheme.stroke.*`?
 
 ## Coroutines
 

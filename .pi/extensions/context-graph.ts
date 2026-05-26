@@ -156,7 +156,10 @@ function lookupGraph(graph: any, query: string): string {
     if (comp.tokenUsage) {
       lines.push(`  Token colors: ${(comp.tokenUsage.colors ?? []).join(", ") || "none"}`);
       lines.push(`  Token typography: ${(comp.tokenUsage.typography ?? []).join(", ") || "none"}`);
-      lines.push(`  Token dimes: ${(comp.tokenUsage.dimes ?? []).join(", ") || "none"}`);
+      lines.push(`  Token spacing: ${(comp.tokenUsage.spacing ?? []).join(", ") || "none"}`);
+      lines.push(`  Token sizes: ${(comp.tokenUsage.sizes ?? []).join(", ") || "none"}`);
+      lines.push(`  Token stroke: ${(comp.tokenUsage.stroke ?? []).join(", ") || "none"}`);
+      lines.push(`  Token elevation: ${(comp.tokenUsage.elevation ?? []).join(", ") || "none"}`);
     }
     if (comp.variants?.length) {
       lines.push(`  Variants: ${comp.variants.join(", ")}`);
@@ -177,13 +180,22 @@ function lookupGraph(graph: any, query: string): string {
 
   // 4. Try theme token lookups
   if (graph.theme?.colorTokens?.[q]) {
-    return `Color token: ${q} → ${graph.theme.colorTokens[q]} (use FinsibleTheme.colors.${q})`;
+    return `Color token: ${q} → ${graph.theme.colorTokens[q]} (use FinsibleTheme.semantic.${q})`;
   }
   if (graph.theme?.typographyTokens?.[q]) {
     return `Typography token: ${q} → ${graph.theme.typographyTokens[q]} (use FinsibleTheme.typography.${q})`;
   }
-  if (graph.theme?.dimesTokens?.[q]) {
-    return `Dimes token: ${q} → ${graph.theme.dimesTokens[q]} (use FinsibleTheme.dimes.${q})`;
+  if (graph.theme?.spacingTokens?.[q]) {
+    return `Spacing token: ${q} → ${graph.theme.spacingTokens[q]} (use FinsibleTheme.spacing.${q})`;
+  }
+  if (graph.theme?.sizeTokens?.[q]) {
+    return `Size token: ${q} → ${graph.theme.sizeTokens[q]} (use FinsibleTheme.sizes.${q})`;
+  }
+  if (graph.theme?.strokeTokens?.[q]) {
+    return `Stroke token: ${q} → ${graph.theme.strokeTokens[q]} (use FinsibleTheme.stroke.${q})`;
+  }
+  if (graph.theme?.elevationTokens?.[q]) {
+    return `Elevation token: ${q} → ${graph.theme.elevationTokens[q]} (use FinsibleTheme.elevation.${q})`;
   }
 
   // 5. Fuzzy suggestions
@@ -214,7 +226,7 @@ You are filling the Finsible context graph. Follow these steps exactly:
 Scanning order (do not skip sections):
   a. gradle        → read app/build.gradle.kts + gradle/libs.versions.toml
   b. dependencies  → read libs.versions.toml for all versions; verify icon sets in build.gradle.kts
-  c. theme         → read ui/theme/*.kt — fill ALL color/typography/dimes tokens
+  c. theme         → read ui/theme/*.kt — fill ALL color/typography/spacing/sizes/stroke/elevation tokens
   d. templateLibrary.components → for each Finsible* in ui/component/templates/:
        read component, defaults, models, variant, preview files
        fill: status, files, params (every param), variants, modelTypes, tokenUsage, constraints
@@ -238,7 +250,7 @@ Quality checks before writing:
   - Zero "FILL:" strings remaining in output
   - Zero "FILL_" keys remaining in output
   - symbols map has at least one entry per source file
-  - Every templateLibrary.component entry has non-empty tokenUsage.colors
+  - Every templateLibrary.component entry has non-empty tokenUsage.colors and layout tokens
 
 Write to .pi/context-graph.json when complete. Do NOT write until all sections are done.`;
 
@@ -262,7 +274,7 @@ Steps:
      - params (every public parameter with type, default, constraints)
      - variants (enum values if any)
      - modelTypes (data class names from models file)
-     - tokenUsage.colors / typography / dimes (actual tokens used)
+     - tokenUsage.colors / typography / spacing / sizes / stroke / elevation (actual tokens used)
      - constraints (all require() guards)
 4. Add any new symbols from these files to graph.symbols
 5. Write the patched graph back to .pi/context-graph.json

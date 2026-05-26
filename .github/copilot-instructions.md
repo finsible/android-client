@@ -143,3 +143,9 @@ Logger.App.d("…")
   new tokens for specific use cases instead.
 - No imperative state usages, always ensure reactive flow-based patterns. No mutable state exposed
   to UI.
+- **Anti-Patterns (Hard No):**
+  - No direct server writes from ViewModel or Repository — always go through LocalRepository pending ops.
+  - No ad-hoc `Log.*` — use `Logger.{Domain}.d/e/w` (`Logger.Sync`, `Logger.Database`, `Logger.UI`, `Logger.App`).
+  - No unrelated icon libraries when project icon packs already provide equivalents.
+  - No business logic in navigation files or `@Preview` composables.
+  - No shared production logic in variant-specific (`debug`/`release`) source sets.

@@ -59,6 +59,8 @@ util/                               Host/Manager pairs, runtime-only utilities
 - `Modifier` follows required params — before optional params. If all params have defaults, modifier may be first.
 - State is hoisted — no `remember {}` for state that callers need to own
 - No hardcoded colors, sizes, or spacing — always `FinsibleTheme.*`
+- Animation durations from `ui/constants/Duration.kt` (`Duration.MS_150`, `Duration.MS_200`)
+- Anti-patterns (Hard No — enforced): direct server writes from VM/Repo, ad-hoc `Log.*` when `Logger` domains available, unrelated icon libs when existing packs suffice, business logic in nav files or `@Preview`, shared production logic in variant source sets
 
 ### ViewModel Pattern
 

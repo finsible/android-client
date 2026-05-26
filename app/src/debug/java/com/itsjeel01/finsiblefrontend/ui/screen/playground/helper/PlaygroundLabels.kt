@@ -12,6 +12,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleToggl
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleButtonVariant
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleCheckboxVariant
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleFilterChipVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleSegmentedButtonArrangement
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleSegmentedButtonVariant
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
 
@@ -70,10 +71,10 @@ fun segmentedButtonVariantLabel(variant: FinsibleSegmentedButtonVariant): String
 }
 
 @Composable
-fun segmentedButtonArrangementLabel(arrangement: com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleSegmentedButtonArrangement): String =
+fun segmentedButtonArrangementLabel(arrangement: FinsibleSegmentedButtonArrangement): String =
     when (arrangement) {
-        com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleSegmentedButtonArrangement.Clubbed -> stringResource(R.string.finsible_segmented_button_arrangement_clubbed)
-        com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleSegmentedButtonArrangement.Separated -> stringResource(R.string.finsible_segmented_button_arrangement_separated)
+        FinsibleSegmentedButtonArrangement.Clubbed -> stringResource(R.string.finsible_segmented_button_arrangement_clubbed)
+        FinsibleSegmentedButtonArrangement.Separated -> stringResource(R.string.finsible_segmented_button_arrangement_separated)
     }
 
 @Composable
@@ -102,7 +103,7 @@ fun buttonVariantLabel(variant: FinsibleButtonVariant): String = when (variant) 
 fun textColorVariantLabel(variant: FinsibleTextColorVariant): String = when (variant) {
     FinsibleTextColorVariant.Primary -> stringResource(R.string.component_playground_text_color_primary)
     FinsibleTextColorVariant.Secondary -> stringResource(R.string.component_playground_text_color_secondary)
-    FinsibleTextColorVariant.Tertiary -> "Tertiary"
+    FinsibleTextColorVariant.Tertiary -> stringResource(R.string.component_playground_text_color_tertiary)
     FinsibleTextColorVariant.Accent -> stringResource(R.string.component_playground_text_color_accent)
     FinsibleTextColorVariant.Link -> stringResource(R.string.component_playground_text_color_link)
     FinsibleTextColorVariant.Error -> stringResource(R.string.component_playground_text_color_error)

@@ -11,6 +11,7 @@ import com.google.crypto.tink.aead.AeadConfig
 import com.google.crypto.tink.integration.android.AndroidKeysetManager
 import com.itsjeel01.finsiblefrontend.common.datastore.EncryptedPreferenceSerializer
 import com.itsjeel01.finsiblefrontend.common.datastore.UserPreferences
+import kotlinx.serialization.json.Json
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -48,10 +49,11 @@ object DataStoreModule {
     fun provideDataStore(
         @ApplicationContext context: Context,
         aead: Aead,
+        json: Json,
         @IoDispatcher ioDispatcher: CoroutineDispatcher
     ): DataStore<UserPreferences> {
         return DataStoreFactory.create(
-            serializer = EncryptedPreferenceSerializer(aead),
+            serializer = EncryptedPreferenceSerializer(aead, json),
             scope = CoroutineScope(ioDispatcher + SupervisorJob()),
             migrations = listOf(
                 SharedPreferencesMigration(

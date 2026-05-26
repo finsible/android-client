@@ -10,15 +10,6 @@ import com.itsjeel01.finsiblefrontend.ui.model.uimodel.CategoryUIModel
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.medium
 
-/** Category section for the new transaction form.
- *
- * Uses [CategorySectionLabelRow] for the header and [CategoryExpandableRow]
- * for the context-aware expandable chip list.
- *
- * @param categories Top-K leaf categories shown in the chip row (shortlist).
- * @param allCategories All leaf categories from the map, used to resolve [selectedCategoryId]
- *   when the selected item falls outside the shortlist.
- */
 @Composable
 fun NewTransactionCategorySection(
     categories: List<CategoryUIModel>,

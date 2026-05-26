@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.ui.component.newtransaction
+package com.itsjeel01.finsiblefrontend.ui.component.newtransaction.section
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,10 +13,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.TransactionRecurringFrequency
+import com.itsjeel01.finsiblefrontend.ui.component.newtransaction.NewTransactionSectionDefaults
+import com.itsjeel01.finsiblefrontend.ui.component.newtransaction.NewTransactionSectionLabel
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleChipsRow
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleFilterChip
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
@@ -43,13 +46,12 @@ import java.time.ZoneId
 fun NewTransactionDateSection(
     state: NewTransactionFormState,
     onEvent: (NewTransactionUiEvent) -> Unit,
-    accentColor: androidx.compose.ui.graphics.Color,
+    accentColor: Color,
     modifier: Modifier = Modifier
 ) {
     val hasError = state.validationErrors.contains(NewTransactionValidationError.DATE)
     val recurringFrequencies = remember { TransactionRecurringFrequency.toOrderedList() }
 
-    // Date Calculation Logic to handle Date Picker selections matching Today/Yesterday
     val zoneId = remember { ZoneId.systemDefault() }
     val today = remember(zoneId) { LocalDate.now(zoneId) }
     val yesterday = remember(today) { today.minusDays(1) }
@@ -58,15 +60,12 @@ fun NewTransactionDateSection(
         state.dateMillis?.let { Instant.ofEpochMilli(it).atZone(zoneId).toLocalDate() }
     }
 
-    // FIX: Only check selectedLocalDate if the selection mode is actually CUSTOM.
-    // This prevents timezone double-offsets from accidentally highlighting the wrong chip.
     val isTodaySelected = state.dateSelection == NewTransactionDateSelection.TODAY ||
             (state.dateSelection == NewTransactionDateSelection.CUSTOM && selectedLocalDate == today)
 
     val isYesterdaySelected = state.dateSelection == NewTransactionDateSelection.YESTERDAY ||
             (state.dateSelection == NewTransactionDateSelection.CUSTOM && selectedLocalDate == yesterday)
 
-    // It's a custom date only if the picked date is neither today nor yesterday
     val isCustomDateSelected = state.dateSelection == NewTransactionDateSelection.CUSTOM &&
             state.dateMillis != null &&
             !isTodaySelected &&
@@ -179,7 +178,7 @@ private fun DateQuickChip(
     label: String,
     selected: Boolean,
     onClick: () -> Unit,
-    selectedTint: androidx.compose.ui.graphics.Color,
+    selectedTint: Color,
     modifier: Modifier = Modifier,
     icon: @Composable (() -> Unit)? = null,
     iconPosition: FinsibleIconPosition = FinsibleIconPosition.Leading
@@ -193,6 +192,7 @@ private fun DateQuickChip(
         shapeVariant = FinsibleShape.Rounded,
         selectedTint = selectedTint,
         icon = icon,
-        iconPosition = iconPosition // Using the existing FinsibleIconPosition parameter!
+        iconPosition = iconPosition
     )
 }
+

@@ -9,28 +9,7 @@ import androidx.compose.ui.graphics.Color
 import com.itsjeel01.finsiblefrontend.ui.model.uimodel.AccountUIModel
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
-/** Transfer account row with two equal-width cards (FROM / TO), swap button, and mutual exclusion.
- *
- * - Renders [fromAccounts] in a "FROM" card and [toAccounts] in a "TO" card.
- * - The currently selected account in one card is excluded from the other card's list.
- * - A swap button (animated) sits between the two cards.
- *
- * @param fromAccounts Accounts for the FROM section.
- * @param toAccounts Accounts for the TO section (FROM accounts auto-excluded).
- * @param selectedFromId Currently selected FROM account ID.
- * @param selectedToId Currently selected TO account ID.
- * @param onFromSelected Callback when a FROM account is selected.
- * @param onToSelected Callback when a TO account is selected.
- * @param onSwap Callback when swap button is clicked.
- * @param accentColor Accent colour for selected states and the swap button.
- * @param fromExpanded Whether FROM row is expanded.
- * @param toExpanded Whether TO row is expanded.
- * @param onFromExpandedChange FROM row expand toggle.
- * @param onToExpandedChange TO row expand toggle.
- * @param onOpenFromAll Open FROM bottom sheet.
- * @param onOpenToAll Open TO bottom sheet.
- * @param modifier Optional modifier.
- */
+/** Transfer account row with two equal-width FROM/TO cards, swap button, and mutual exclusion. */
 @Composable
 fun TransferAccountRow(
     fromAccounts: List<AccountUIModel>,

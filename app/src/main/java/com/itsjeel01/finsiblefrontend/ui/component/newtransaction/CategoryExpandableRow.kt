@@ -105,7 +105,6 @@ fun CategoryExpandableRow(
     }
 }
 
-/** Chip representing a leaf category in the new-transaction flow. */
 @Composable
 fun CategoryChip(
     model: CategoryUIModel,

@@ -109,7 +109,6 @@ fun ExpenseIncomeAccountRow(
     }
 }
 
-/** Chip representing an account in the new-transaction flow. */
 @Composable
 fun AccountChip(
     model: AccountUIModel,

@@ -1,4 +1,4 @@
-package com.itsjeel01.finsiblefrontend.ui.component.newtransaction
+package com.itsjeel01.finsiblefrontend.ui.component.newtransaction.sheet
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -108,7 +108,6 @@ internal fun CategorySelectionSheetContent(
         ) {
             filteredGroups.forEach { group ->
                 stickyHeader {
-                    // Parent row — clickable/selectable, icon NOT accented
                     CategorySelectionParentRow(
                         category = group.parent,
                         isSelected = group.parent.id == selectedCategoryId,
@@ -119,7 +118,6 @@ internal fun CategorySelectionSheetContent(
                 }
 
                 if (group.children.isNotEmpty()) {
-                    // Children rendered as a wrapping row of filter chips
                     item(key = "children_${group.parent.id}") {
                         CategoryChildrenChipRow(
                             children = group.children,
@@ -240,3 +238,4 @@ private fun List<CategoryUIModel>.sortedSelectionOrder(): List<CategoryUIModel> 
             .thenBy { it.name.lowercase() }
     )
 }
+

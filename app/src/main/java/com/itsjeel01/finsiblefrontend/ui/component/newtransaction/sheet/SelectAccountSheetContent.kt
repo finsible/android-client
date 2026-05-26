@@ -1,7 +1,4 @@
-package com.itsjeel01.finsiblefrontend.ui.component.newtransaction
-import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
-import com.itsjeel01.finsiblefrontend.ui.theme.semiBold
-
+package com.itsjeel01.finsiblefrontend.ui.component.newtransaction.sheet
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -36,9 +33,10 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleT
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleTextField
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
 import com.itsjeel01.finsiblefrontend.ui.model.uimodel.AccountUIModel
+import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
+import com.itsjeel01.finsiblefrontend.ui.theme.semiBold
 import com.itsjeel01.finsiblefrontend.ui.util.resolveIcon
 
-/** Displays accounts grouped by group name with search bar and sticky headers. */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SelectAccountBottomSheetContent(
@@ -185,3 +183,4 @@ private fun SelectAccountBottomSheetItem(
         }
     }
 }
+

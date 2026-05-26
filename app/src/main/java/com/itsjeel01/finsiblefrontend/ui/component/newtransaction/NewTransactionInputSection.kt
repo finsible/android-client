@@ -12,6 +12,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import com.itsjeel01.finsiblefrontend.ui.component.newtransaction.section.NewTransactionHeaderSection
+import com.itsjeel01.finsiblefrontend.ui.component.newtransaction.section.NewTransactionAmountCard
+import com.itsjeel01.finsiblefrontend.ui.component.newtransaction.section.NewTransactionDateSection
+import com.itsjeel01.finsiblefrontend.ui.component.newtransaction.section.NewTransactionCategorySection
+import com.itsjeel01.finsiblefrontend.ui.component.newtransaction.section.NewTransactionAccountSection
+import com.itsjeel01.finsiblefrontend.ui.component.newtransaction.section.NewTransactionNotesSection
 import com.itsjeel01.finsiblefrontend.ui.model.event.NewTransactionUiEvent
 import com.itsjeel01.finsiblefrontend.ui.model.state.NewTransactionFormState
 import com.itsjeel01.finsiblefrontend.ui.model.state.NewTransactionSheetMode

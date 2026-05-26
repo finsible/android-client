@@ -5,7 +5,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.itsjeel01.finsiblefrontend.data.di.hiltCurrencyRepository
 import com.itsjeel01.finsiblefrontend.ui.component.newtransaction.NewTransactionBottomSheetHost
-import com.itsjeel01.finsiblefrontend.ui.component.newtransaction.NewTransactionCtaSection
+import com.itsjeel01.finsiblefrontend.ui.component.newtransaction.section.NewTransactionCtaSection
 import com.itsjeel01.finsiblefrontend.ui.component.newtransaction.NewTransactionInputSection
 import com.itsjeel01.finsiblefrontend.ui.component.newtransaction.NewTransactionSingleScreenHost
 import com.itsjeel01.finsiblefrontend.ui.model.event.NewTransactionUiEvent

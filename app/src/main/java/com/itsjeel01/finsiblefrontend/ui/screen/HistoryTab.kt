@@ -31,7 +31,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.itsjeel01.finsiblefrontend.R
-import com.itsjeel01.finsiblefrontend.data.di.hiltCurrencyFormatter
+import com.itsjeel01.finsiblefrontend.ui.di.hiltCurrencyFormatter
 import com.itsjeel01.finsiblefrontend.ui.component.historytab.FilteredResultsSummary
 import com.itsjeel01.finsiblefrontend.ui.component.historytab.TransactionEmptyContent
 import com.itsjeel01.finsiblefrontend.ui.component.historytab.TransactionListContent

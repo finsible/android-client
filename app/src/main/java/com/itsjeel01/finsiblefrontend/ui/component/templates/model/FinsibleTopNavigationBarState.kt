@@ -17,7 +17,7 @@ data class FinsibleHeaderButton(
     val enabled: Boolean = true,
     val loading: Boolean = false,
     val iconOnly: Boolean = false,
-    val variant: FinsibleButtonVariant = FinsibleButtonVariant.Text, // Default to Text for headers[cite: 32]
+    val variant: FinsibleButtonVariant = FinsibleButtonVariant.Text,
     val size: FinsibleSize = FinsibleSize.Medium,
     val shapeVariant: FinsibleShape = FinsibleShape.Pill,
     val badgeType: FinsibleBadgeType = FinsibleBadgeType.None,

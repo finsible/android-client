@@ -9,16 +9,17 @@ plugins {
     alias(libs.plugins.hiltAndroid)
     id("kotlin-parcelize") // needed only for non-primitive classes
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+    id("io.objectbox")
 }
 
 android {
     namespace = "com.itsjeel01.finsiblefrontend"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.itsjeel01.finsiblefrontend"
         minSdk = 26
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 1
         versionName = "1.0"
 
@@ -47,11 +48,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlin {
-        compilerOptions {
-            jvmTarget = JvmTarget.JVM_17
-        }
-    }
     buildFeatures {
         buildConfig = true
         compose = true
@@ -64,10 +60,17 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-    tasks.withType<KotlinCompile> {
-        compilerOptions {
-            freeCompilerArgs.add("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
-        }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_17
+    }
+}
+
+tasks.withType<KotlinCompile> {
+    compilerOptions {
+        freeCompilerArgs.add("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
     }
 }
 
@@ -144,5 +147,3 @@ dependencies {
 
     releaseImplementation(libs.objectbox.android)
 }
-
-apply(plugin = "io.objectbox")

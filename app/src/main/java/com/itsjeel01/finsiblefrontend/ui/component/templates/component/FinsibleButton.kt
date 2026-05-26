@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -45,6 +47,8 @@ import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
  * @param loading Whether to show a loading indicator and suppress clicks.
  * @param iconOnly Whether to render only the icon without text.
  * @param fullWidth Whether the button should expand to the parent width.
+ * @param enforceMinTouchTargetSize Whether to enforce Material3 minimum touch target
+ *   dimensions. Set to `false` to allow micro-sized buttons (e.g. ExtraSmall iconOnly).
  * @param variant Visual variant used to style the button.
  * @param size Size token used to resolve button dimensions and typography.
  * @param shapeVariant Shape token used to resolve the button shape.
@@ -64,11 +68,11 @@ fun FinsibleButton(
     loading: Boolean = false,
     iconOnly: Boolean = false,
     fullWidth: Boolean = false,
+    enforceMinTouchTargetSize: Boolean = true,
     variant: FinsibleButtonVariant = FinsibleButtonVariant.Filled,
     size: FinsibleSize = FinsibleSize.Medium,
     shapeVariant: FinsibleShape = FinsibleShape.Pill,
-    colors: FinsibleButtonColors = FinsibleButtonDefaults.colors(variant),
-    contentPadding: PaddingValues? = null,
+    colors: FinsibleButtonColors = FinsibleButtonDefaults.colors(variant), contentPadding: PaddingValues? = null,
     badgeType: FinsibleBadgeType = FinsibleBadgeType.None,
     badgeCount: Int = 0,
     icon: (@Composable () -> Unit)? = null,
@@ -108,34 +112,66 @@ fun FinsibleButton(
     val borderColor = if (enabled) colors.borderColor else colors.disabledBorderColor
 
     val interactionSource = remember { MutableInteractionSource() }
-    val borderStroke = borderColor?.let { BorderStroke(FinsibleTheme.dimes.d1, it) }
+    val borderStroke = borderColor?.let { BorderStroke(FinsibleTheme.stroke.thin, it) }
     val rippleIndication = ripple(color = colors.rippleColor)
 
-    val circleSide = sizes.iconSize + FinsibleTheme.dimes.d16
+    val iconOnlySide = FinsibleButtonDefaults.iconOnlySize(size)
     val containerModifier = when {
-        shapeVariant == FinsibleShape.Circle && iconOnly -> modifier.size(circleSide)
+        shapeVariant == FinsibleShape.Circle -> modifier.size(iconOnlySide)
         fullWidth -> modifier.fillMaxWidth()
         else -> modifier
     }
 
     val baseButtonModifier = Modifier.defaultMinSize(minWidth = 0.dp, minHeight = 0.dp)
 
-    val buttonModifier = when {
-        shapeVariant == FinsibleShape.Circle && iconOnly -> baseButtonModifier.size(circleSide)
-        iconOnly -> baseButtonModifier
-        fullWidth -> baseButtonModifier.fillMaxWidth()
-        else -> baseButtonModifier
+    val buttonModifier = if (enforceMinTouchTargetSize) {
+        when {
+            shapeVariant == FinsibleShape.Circle -> baseButtonModifier.size(iconOnlySide)
+            iconOnly -> baseButtonModifier.defaultMinSize(minWidth = iconOnlySide, minHeight = iconOnlySide)
+            fullWidth -> baseButtonModifier.fillMaxWidth()
+            else -> baseButtonModifier
+        }
+    } else {
+        // Override M3's internal min touch target by capping max dimensions.
+        // M3 Button internally applies defaultMinSize(minWidth = 40, minHeight = 40).
+        // By setting maxWidth and maxHeight to iconOnlySide, the constraint system
+        // caps the actual rendered size regardless of M3's minimum.
+        val modifier1 = when {
+            shapeVariant == FinsibleShape.Circle -> baseButtonModifier.size(iconOnlySide)
+            iconOnly -> baseButtonModifier
+                .defaultMinSize(minWidth = iconOnlySide, minHeight = iconOnlySide)
+                .widthIn(max = iconOnlySide)
+                .heightIn(max = iconOnlySide)
+
+            fullWidth -> baseButtonModifier
+                .fillMaxWidth()
+                .heightIn(max = iconOnlySide)
+
+            else -> baseButtonModifier.heightIn(max = iconOnlySide)
+        }
+        modifier1
     }
 
     val padding = contentPadding ?: when {
-        iconOnly -> PaddingValues(FinsibleTheme.dimes.d0)
+        iconOnly -> PaddingValues(0.dp)
 
-        else -> sizes.contentPadding
+        else -> {
+            val base = sizes.contentPadding
+            if (enforceMinTouchTargetSize) base
+            else {
+                PaddingValues(
+                    start = 0.dp,
+                    top = base.calculateTopPadding(),
+                    end = 0.dp,
+                    bottom = base.calculateBottomPadding()
+                )
+            }
+        }
     }
 
     val showBadge = badgeType != FinsibleBadgeType.None && !loading
 
-    val badgeDiameter = if (badgeType == FinsibleBadgeType.Count) badgeMetrics.diameter + FinsibleTheme.dimes.d2 else badgeMetrics.diameter
+    val badgeDiameter = if (badgeType == FinsibleBadgeType.Count) badgeMetrics.diameter + FinsibleTheme.stroke.bold else badgeMetrics.diameter
     val badgeRadius = badgeDiameter / 2
     val cornerRadius = FinsibleButtonDefaults.cornerRadius(shapeVariant, size)
 
@@ -173,7 +209,7 @@ fun FinsibleButton(
                     CircularProgressIndicator(
                         modifier = Modifier.size(sizes.iconSize),
                         color = contentColor,
-                        strokeWidth = FinsibleTheme.dimes.d2
+                        strokeWidth = FinsibleTheme.stroke.bold
                     )
                 } else if (iconOnly) {
                     Box(modifier = Modifier.size(sizes.iconSize), contentAlignment = Alignment.Center) {
@@ -190,7 +226,7 @@ fun FinsibleButton(
 
                         FinsibleText(
                             text = text!!,
-                            textStyleOverride = textStyle,
+                            textStyle = textStyle,
                             color = contentColor
                         )
 

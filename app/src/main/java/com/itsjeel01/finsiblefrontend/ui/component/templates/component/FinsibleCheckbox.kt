@@ -39,6 +39,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleCheck
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleCheckboxVariant
 import com.itsjeel01.finsiblefrontend.ui.component.templates.util.finsibleBounceIndication
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
+import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleDurations
 
 /** Stateless checkbox component.
  *
@@ -83,11 +84,11 @@ fun FinsibleCheckbox(
     val checkboxShape = FinsibleCheckboxDefaults.shape(shapeVariant, size)
 
     val dynamicFloatSpec = if (animateChecking) {
-        tween<Float>(durationMillis = Duration.MS_200.toInt())
+        tween<Float>(durationMillis = FinsibleDurations.values.slideMs)
     } else snap()
 
     val dynamicColorSpec = if (animateChecking) {
-        tween<Color>(durationMillis = Duration.MS_200.toInt())
+        tween<Color>(durationMillis = FinsibleDurations.values.slideMs)
     } else snap()
 
     val containerColor by animateColorAsState(
@@ -172,7 +173,7 @@ fun FinsibleCheckbox(
             FinsibleText(
                 text = label,
                 color = resolvedLabelColor,
-                textStyleOverride = checkboxSizes.labelTextStyle
+                textStyle = checkboxSizes.labelTextStyle
             )
         }
     }

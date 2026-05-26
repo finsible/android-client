@@ -6,14 +6,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleFilterChipColors
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleFilterChipSizes
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleFilterChipVariant
+import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleRadius
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
+import com.itsjeel01.finsiblefrontend.ui.theme.medium
 
 /** Defaults for `FinsibleFilterChip`. */
 object FinsibleFilterChipDefaults {
@@ -39,56 +40,42 @@ object FinsibleFilterChipDefaults {
         rippleColor: Color = Color.Unspecified,
         variant: FinsibleFilterChipVariant = FinsibleFilterChipVariant.Tonal
     ): FinsibleFilterChipColors {
-        val theme = FinsibleTheme.colors
+        val s = FinsibleTheme.colors
 
         val baseSelectedContainer = when (variant) {
-            FinsibleFilterChipVariant.Filled -> theme.brandAccent
-            FinsibleFilterChipVariant.Tonal -> theme.selection
-            FinsibleFilterChipVariant.Outlined -> theme.transparent
-            FinsibleFilterChipVariant.OutlinedTonal -> theme.selection
+            FinsibleFilterChipVariant.Filled -> s.brandInteractive
+            FinsibleFilterChipVariant.Tonal -> s.surfaceBrandTint
+            FinsibleFilterChipVariant.Outlined -> Color.Transparent
+            FinsibleFilterChipVariant.OutlinedTonal -> s.surfaceBrandTint
         }
-        val baseSelectedLabel = theme.primaryContent
-        val baseSelectedIcon = theme.primaryContent
+        val baseSelectedLabel = s.contentPrimary
+        val baseSelectedIcon = s.contentPrimary
         val baseSelectedBorder = when (variant) {
             FinsibleFilterChipVariant.Outlined,
-            FinsibleFilterChipVariant.OutlinedTonal -> theme.brandAccent
-
+            FinsibleFilterChipVariant.OutlinedTonal -> s.brandInteractive
             FinsibleFilterChipVariant.Filled,
             FinsibleFilterChipVariant.Tonal -> Color.Transparent
         }
 
-        val baseUnselectedContainer = theme.transparent
-        val baseUnselectedLabel = theme.primaryContent
-        val baseUnselectedIcon = theme.secondaryContent
-        val baseUnselectedBorder = when (variant) {
-            FinsibleFilterChipVariant.Outlined,
-            FinsibleFilterChipVariant.OutlinedTonal -> theme.border
+        val baseUnselectedContainer = Color.Transparent
+        val baseUnselectedLabel = s.contentPrimary
+        val baseUnselectedIcon = s.contentSecondary
+        val baseUnselectedBorder = s.borderDefault
 
-            FinsibleFilterChipVariant.Filled,
-            FinsibleFilterChipVariant.Tonal -> theme.border
-        }
-
-        val baseDisabledSelectedContainer = theme.disabled
-        val baseDisabledSelectedLabel = theme.disabledContent
-        val baseDisabledSelectedIcon = theme.disabledContent
+        val baseDisabledSelectedContainer = s.surfaceSunken
+        val baseDisabledSelectedLabel = s.contentDisabled
+        val baseDisabledSelectedIcon = s.contentDisabled
         val baseDisabledSelectedBorder = when (variant) {
             FinsibleFilterChipVariant.Outlined,
-            FinsibleFilterChipVariant.OutlinedTonal -> theme.disabled
-
+            FinsibleFilterChipVariant.OutlinedTonal -> s.surfaceSunken
             FinsibleFilterChipVariant.Filled,
             FinsibleFilterChipVariant.Tonal -> Color.Transparent
         }
 
-        val baseDisabledUnselectedContainer = theme.transparent
-        val baseDisabledUnselectedLabel = theme.disabledContent
-        val baseDisabledUnselectedIcon = theme.disabledContent
-        val baseDisabledUnselectedBorder = when (variant) {
-            FinsibleFilterChipVariant.Outlined,
-            FinsibleFilterChipVariant.OutlinedTonal -> theme.disabled
-
-            FinsibleFilterChipVariant.Filled,
-            FinsibleFilterChipVariant.Tonal -> theme.disabled
-        }
+        val baseDisabledUnselectedContainer = Color.Transparent
+        val baseDisabledUnselectedLabel = s.contentDisabled
+        val baseDisabledUnselectedIcon = s.contentDisabled
+        val baseDisabledUnselectedBorder = s.surfaceSunken
 
         return FinsibleFilterChipColors(
             selectedContainerColor = if (selectedContainerColor != Color.Unspecified) selectedContainerColor else baseSelectedContainer,
@@ -107,14 +94,14 @@ object FinsibleFilterChipDefaults {
             disabledUnselectedLabelColor = if (disabledUnselectedLabelColor != Color.Unspecified) disabledUnselectedLabelColor else baseDisabledUnselectedLabel,
             disabledUnselectedIconTint = if (disabledUnselectedIconTint != Color.Unspecified) disabledUnselectedIconTint else baseDisabledUnselectedIcon,
             disabledUnselectedBorderColor = if (disabledUnselectedBorderColor != Color.Unspecified) disabledUnselectedBorderColor else baseDisabledUnselectedBorder,
-            rippleColor = if (rippleColor != Color.Unspecified) rippleColor else theme.primaryContent.copy(alpha = 0.12f)
+            rippleColor = if (rippleColor != Color.Unspecified) rippleColor else s.contentPrimary.copy(alpha = 0.12f)
         )
     }
 
     @Composable
     fun selectedTintContentColor(inverted: Boolean): Color {
-        val theme = FinsibleTheme.colors
-        return if (inverted) theme.primaryBackground else theme.primaryContent
+        val s = FinsibleTheme.colors
+        return if (inverted) s.surfaceBase else s.contentPrimary
     }
 
     fun applySelectedTint(
@@ -149,38 +136,38 @@ object FinsibleFilterChipDefaults {
 
     @Composable
     fun sizes(size: FinsibleSize): FinsibleFilterChipSizes {
-        val d = FinsibleTheme.dimes
-        val type = FinsibleTheme.typography
+        val sp = FinsibleTheme.spacing
+        val t = FinsibleTheme.typography
 
         return when (size) {
             FinsibleSize.Small -> FinsibleFilterChipSizes(
-                horizontalPadding = d.d10,
-                verticalPadding = d.d6,
-                textStyle = type.t14.copy(fontWeight = FontWeight.Medium),
-                iconSize = d.d14,
-                iconSpacing = d.d6,
-                borderWidth = d.d1,
-                cornerRadius = d.d8
+                horizontalPadding = sp.gapSm + sp.insetXs / 2,
+                verticalPadding = sp.insetSm - sp.insetXs / 2,
+                textStyle = t.bodyMd.medium(),
+                iconSize = FinsibleTheme.sizes.icon.sm,
+                iconSpacing = sp.insetSm - sp.insetXs / 2,
+                borderWidth = FinsibleTheme.stroke.thin,
+                cornerRadius = FinsibleTheme.radius.sm
             )
 
             FinsibleSize.Medium -> FinsibleFilterChipSizes(
-                horizontalPadding = d.d12,
-                verticalPadding = d.d8,
-                textStyle = type.t16.copy(fontWeight = FontWeight.Medium),
-                iconSize = d.d16,
-                iconSpacing = d.d8,
-                borderWidth = d.d1,
-                cornerRadius = d.d10
+                horizontalPadding = sp.gapMd,
+                verticalPadding = sp.inlineMd,
+                textStyle = t.bodyLg.medium(),
+                iconSize = FinsibleTheme.sizes.icon.md,
+                iconSpacing = sp.inlineMd,
+                borderWidth = FinsibleTheme.stroke.thin,
+                cornerRadius = FinsibleTheme.radius.md
             )
 
             FinsibleSize.Large -> FinsibleFilterChipSizes(
-                horizontalPadding = d.d16,
-                verticalPadding = d.d10,
-                textStyle = type.t18.copy(fontWeight = FontWeight.Medium),
-                iconSize = d.d18,
-                iconSpacing = d.d8,
-                borderWidth = d.d1dot5,
-                cornerRadius = d.d12
+                horizontalPadding = sp.insetLg,
+                verticalPadding = sp.gapSm + sp.insetXs / 2,
+                textStyle = t.bodyLg.medium(),
+                iconSize = FinsibleTheme.sizes.icon.md,
+                iconSpacing = sp.inlineMd,
+                borderWidth = FinsibleTheme.stroke.semiBold,
+                cornerRadius = FinsibleRadius.md
             )
 
             FinsibleSize.ExtraSmall,
@@ -190,10 +177,8 @@ object FinsibleFilterChipDefaults {
 
     @Composable
     fun cornerRadius(shapeVariant: FinsibleShape, chipSizes: FinsibleFilterChipSizes): Dp {
-        val d = FinsibleTheme.dimes
-
         return when (shapeVariant) {
-            FinsibleShape.Sharp -> d.d0
+            FinsibleShape.Sharp -> FinsibleTheme.radius.none
             FinsibleShape.Rounded -> chipSizes.cornerRadius
             FinsibleShape.Pill -> (chipSizes.iconSize / 2) + chipSizes.verticalPadding
             FinsibleShape.Circle -> error("FinsibleFilterChip does not support Circle shape.")
@@ -220,4 +205,3 @@ object FinsibleFilterChipDefaults {
         return shape(shapeVariant = shapeVariant, chipSizes = sizes(size))
     }
 }
-

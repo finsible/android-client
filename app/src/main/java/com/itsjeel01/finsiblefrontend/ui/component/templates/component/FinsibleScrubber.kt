@@ -43,6 +43,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleScrub
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleScrubberSizes
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleScrubberVariant
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
+import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleDurations
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import kotlin.math.max
 import kotlin.math.min
@@ -217,7 +218,7 @@ private fun SeparateScrubber(
     val inactiveBarWidth = sizes.inactiveBarWidth * scaleFactor
     val spacing = sizes.barSpacing * scaleFactor
     val shape = RoundedCornerShape(sizes.cornerRadius)
-    val minVisibleBarWidth = FinsibleTheme.dimes.d1
+    val minVisibleBarWidth = FinsibleTheme.stroke.thin
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -233,13 +234,13 @@ private fun SeparateScrubber(
             }
             val barColor by animateColorAsState(
                 targetValue = targetColor,
-                animationSpec = tween(Duration.MS_300.toInt()),
+                animationSpec = tween(FinsibleDurations.values.revealMs),
                 label = "scrubber_separate_color"
             )
             val targetWidth = if (isCurrent) activeBarWidth else inactiveBarWidth
             val animatedWidth by animateDpAsState(
                 targetValue = if (targetWidth < minVisibleBarWidth) minVisibleBarWidth else targetWidth,
-                animationSpec = tween(Duration.MS_300.toInt()),
+                animationSpec = tween(FinsibleDurations.values.revealMs),
                 label = "scrubber_separate_width"
             )
 

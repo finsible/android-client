@@ -61,7 +61,7 @@ private fun FullScreenLoaderOverlay(
     message: String?,
     opacity: FinsibleOverlayOpacity
 ) {
-    val scrimColor = FinsibleTheme.colors.primaryBackground.copy(alpha = opacity.alpha)
+    val scrimColor = FinsibleTheme.colors.surfaceBase.copy(alpha = opacity.alpha)
 
     Box(
         modifier = modifier.background(scrimColor),
@@ -69,7 +69,7 @@ private fun FullScreenLoaderOverlay(
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d20)
+            verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackXl)
         ) {
             FinsibleLoader(
                 size = FinsibleSize.Large,
@@ -79,8 +79,8 @@ private fun FullScreenLoaderOverlay(
             message?.let { msg ->
                 Text(
                     text = msg,
-                    style = FinsibleTheme.typography.t20,
-                    color = FinsibleTheme.colors.secondaryContent,
+                    style = FinsibleTheme.typography.headingSm,
+                    color = FinsibleTheme.colors.contentSecondary,
                     textAlign = TextAlign.Center
                 )
             }

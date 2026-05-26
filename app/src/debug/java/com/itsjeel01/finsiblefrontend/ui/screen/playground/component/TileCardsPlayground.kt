@@ -86,8 +86,8 @@ fun TileCardsPlayground() {
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = FinsibleTheme.dimes.d16, vertical = FinsibleTheme.dimes.d12),
-        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d12)
+            .padding(horizontal = FinsibleTheme.spacing.insetLg, vertical = FinsibleTheme.spacing.gapMd),
+        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackMd)
     ) {
         if (validationError == null) {
             FinsibleTileCards(
@@ -106,8 +106,8 @@ fun TileCardsPlayground() {
         } else {
             Text(
                 text = "Invalid tile cards config: $validationError",
-                color = FinsibleTheme.colors.error,
-                style = FinsibleTheme.typography.t14
+                color = FinsibleTheme.colors.feedbackError,
+                style = FinsibleTheme.typography.bodyMd
             )
         }
 

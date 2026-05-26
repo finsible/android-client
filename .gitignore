@@ -42,3 +42,6 @@ google-services.json
 /scratch
 
 META-INF/
+
+# Pi context graph
+.pi/context-graph.json

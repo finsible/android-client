@@ -19,88 +19,131 @@ class FinsibleUiScaler(private val deviceInfo: DeviceInfo) {
         )
     }
 
-    fun scaleDimes(dimes: FinsibleDimes): FinsibleDimes {
-        return FinsibleDimes(
-            d0 = dimes.d0,
-            d0dot5 = dimes.d0dot5,
-            d1 = dimes.d1,
-            d1dot5 = dimes.d1dot5,
-            d2 = dimes.d2,
-            d3 = dimes.d3,
-            d4 = dimes.d4,
-            d5 = dimes.d5,
-            d6 = scaleDime(dimes.d6),
-            d7 = scaleDime(dimes.d7),
-            d8 = scaleDime(dimes.d8),
-            d9 = scaleDime(dimes.d9),
-            d10 = scaleDime(dimes.d10),
-            d12 = scaleDime(dimes.d12),
-            d14 = scaleDime(dimes.d14),
-            d16 = scaleDime(dimes.d16),
-            d18 = scaleDime(dimes.d18),
-            d20 = scaleDime(dimes.d20),
-            d22 = scaleDime(dimes.d22),
-            d24 = scaleDime(dimes.d24),
-            d26 = scaleDime(dimes.d26),
-            d28 = scaleDime(dimes.d28),
-            d30 = scaleDime(dimes.d30),
-            d32 = scaleDime(dimes.d32),
-            d36 = scaleDime(dimes.d36),
-            d40 = scaleDime(dimes.d40),
-            d44 = scaleDime(dimes.d44),
-            d48 = scaleDime(dimes.d48),
-            d52 = scaleDime(dimes.d52),
-            d56 = scaleDime(dimes.d56),
-            d60 = scaleDime(dimes.d60),
-            d64 = scaleDime(dimes.d64),
-            d68 = scaleDime(dimes.d68),
-            d72 = scaleDime(dimes.d72),
-            d80 = scaleDime(dimes.d80),
-            d88 = scaleDime(dimes.d88),
-            d96 = scaleDime(dimes.d96),
-            d100 = scaleDime(dimes.d100),
-            d112 = scaleDime(dimes.d112),
-            d124 = scaleDime(dimes.d124),
-            d136 = scaleDime(dimes.d136),
-            d148 = scaleDime(dimes.d148),
-            d160 = scaleDime(dimes.d160),
-            d180 = scaleDime(dimes.d180),
-            d200 = scaleDime(dimes.d200),
-            d220 = scaleDime(dimes.d220),
-            d240 = scaleDime(dimes.d240),
-            d260 = scaleDime(dimes.d260),
-            d280 = scaleDime(dimes.d280),
-            d300 = scaleDime(dimes.d300),
-            d800 = scaleDime(dimes.d800),
-            d360 = scaleDime(dimes.d360),
-            d400 = scaleDime(dimes.d400),
-            d480 = scaleDime(dimes.d480)
-        )
-    }
-
     fun scaleTypes(types: FinsibleTypes): FinsibleTypes {
         return FinsibleTypes(
-            t72 = scaleText(types.t72),
-            t64 = scaleText(types.t64),
-            t56 = scaleText(types.t56),
-            t48 = scaleText(types.t48),
-            t44 = scaleText(types.t44),
-            t40 = scaleText(types.t40),
-            t36 = scaleText(types.t36),
-            t32 = scaleText(types.t32),
-            t28 = scaleText(types.t28),
-            t24 = scaleText(types.t24),
-            t20 = scaleText(types.t20),
-            t18 = scaleText(types.t18),
-            t16 = scaleText(types.t16),
-            t14 = scaleText(types.t14),
-            t12 = scaleText(types.t12),
-            t10 = scaleText(types.t10),
-            t8 = scaleText(types.t8)
+            displayXl = scaleText(types.displayXl),
+            displayLg = scaleText(types.displayLg),
+            displayMd = scaleText(types.displayMd),
+            displaySm = scaleText(types.displaySm),
+
+            headingLg = scaleText(types.headingLg),
+            headingMd = scaleText(types.headingMd),
+            headingSm = scaleText(types.headingSm),
+
+            bodyLg = scaleText(types.bodyLg),
+            bodyMd = scaleText(types.bodyMd),
+            bodySm = scaleText(types.bodySm),
+
+            labelLg = scaleText(types.labelLg),
+            labelMd = scaleText(types.labelMd),
+            labelSm = scaleText(types.labelSm),
+
+            caption = scaleText(types.caption),
+
+            numeralXl = scaleText(types.numeralXl),
+            numeralLg = scaleText(types.numeralLg),
+            numeralMd = scaleText(types.numeralMd),
+            numeralSm = scaleText(types.numeralSm),
+            numeralXs = scaleText(types.numeralXs),
         )
     }
 
-    fun scaleCustomDime(dp: Dp): Dp {
-        return scaleDime(dp)
+    fun scaleSpacing(spacing: FinsibleSpacing): FinsibleSpacing {
+        return FinsibleSpacing(
+            insetNone = spacing.insetNone,  // unscaled — zero
+            insetMicro = scaleDime(spacing.insetMicro),
+            insetXs  = scaleDime(spacing.insetXs),
+            insetSm  = scaleDime(spacing.insetSm),
+            insetMd  = scaleDime(spacing.insetMd),
+            insetLg  = scaleDime(spacing.insetLg),
+            insetXl  = scaleDime(spacing.insetXl),
+            inset2xl = scaleDime(spacing.inset2xl),
+            inset3xl = scaleDime(spacing.inset3xl),
+
+            stackMicro = scaleDime(spacing.stackMicro),
+            stackXs  = scaleDime(spacing.stackXs),
+            stackSm  = scaleDime(spacing.stackSm),
+            stackMd  = scaleDime(spacing.stackMd),
+            stackLg  = scaleDime(spacing.stackLg),
+            stackXl  = scaleDime(spacing.stackXl),
+            stack2xl = scaleDime(spacing.stack2xl),
+
+            gapMicro = scaleDime(spacing.gapMicro),
+            gapXs = scaleDime(spacing.gapXs),
+            gapSm = scaleDime(spacing.gapSm),
+            gapMd = scaleDime(spacing.gapMd),
+            gapLg = scaleDime(spacing.gapLg),
+
+            inlineXs = scaleDime(spacing.inlineXs),
+            inlineSm = scaleDime(spacing.inlineSm),
+            inlineMd = scaleDime(spacing.inlineMd),
+        )
+    }
+
+    fun scaleStroke(stroke: FinsibleStroke): FinsibleStroke {
+        return FinsibleStroke(
+            hairline = stroke.hairline,  // unscaled — sub-pixel
+            thin     = scaleDime(stroke.thin),
+            semiBold = scaleDime(stroke.semiBold),
+            bold     = scaleDime(stroke.bold),
+            heavy    = scaleDime(stroke.heavy),
+        )
+    }
+
+    fun scaleRadius(radius: FinsibleRadius): FinsibleRadius {
+        return FinsibleRadius(
+            none = 0.dp,
+            xs = scaleDime(radius.xs),
+            sm = scaleDime(radius.sm),
+            md = scaleDime(radius.md),
+            lg = scaleDime(radius.lg),
+            xl = scaleDime(radius.xl),
+            pill = 999.dp,  // unscaled — pill is always fully rounded
+            component = FinsibleComponentRadii(
+                button = scaleDime(radius.component.button),
+                input = scaleDime(radius.component.input),
+                card = scaleDime(radius.component.card),
+                cardFinance = scaleDime(radius.component.cardFinance),
+                sheet = scaleDime(radius.component.sheet),
+                chip = scaleDime(radius.component.chip),
+                chipPill = 999.dp,
+                fab = 999.dp,
+                badge = 999.dp,
+                snackbar = scaleDime(radius.component.snackbar),
+                dialog = scaleDime(radius.component.dialog),
+            ),
+        )
+    }
+
+    fun scaleCustomDime(dp: Dp): Dp = scaleDime(dp)
+
+    fun scaleSizes(sizes: FinsibleSizeTokens): FinsibleSizeTokens {
+        return FinsibleSizeTokens(
+            touch = TouchSizes(
+                xs = scaleDime(sizes.touch.xs),
+                sm = scaleDime(sizes.touch.sm),
+                md = scaleDime(sizes.touch.md),
+                lg = scaleDime(sizes.touch.lg),
+                xl = scaleDime(sizes.touch.xl)
+            ),
+            icon = IconSizes(
+                xs = scaleDime(sizes.icon.xs),
+                sm = scaleDime(sizes.icon.sm),
+                md = scaleDime(sizes.icon.md),
+                lg = scaleDime(sizes.icon.lg),
+                xl = scaleDime(sizes.icon.xl)
+            ),
+            avatar = AvatarSizes(
+                sm = scaleDime(sizes.avatar.sm),
+                md = scaleDime(sizes.avatar.md),
+                lg = scaleDime(sizes.avatar.lg)
+            ),
+            shadow = ShadowSizes(
+                raised = scaleDime(sizes.shadow.raised),
+                floating = scaleDime(sizes.shadow.floating),
+                modal = scaleDime(sizes.shadow.modal),
+                focus = scaleDime(sizes.shadow.focus)
+            )
+        )
     }
 }

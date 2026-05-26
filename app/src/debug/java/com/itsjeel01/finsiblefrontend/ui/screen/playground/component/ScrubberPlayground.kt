@@ -18,7 +18,6 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleS
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleScrubberDefaults
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleScrubberVariant
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.*
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import kotlin.math.max
@@ -54,18 +53,18 @@ fun ScrubberPlayground() {
     val colors = when (colorPreset) {
         ScrubberColorPreset.Default -> FinsibleScrubberDefaults.colors()
         ScrubberColorPreset.Info -> FinsibleScrubberDefaults.colors(
-            currentColor = FinsibleTheme.colors.info,
-            restColor = FinsibleTheme.colors.infoContainer
+            currentColor = FinsibleTheme.colors.feedbackInfo,
+            restColor = FinsibleTheme.colors.feedbackInfoSurface
         )
 
         ScrubberColorPreset.Warning -> FinsibleScrubberDefaults.colors(
-            currentColor = FinsibleTheme.colors.warning,
-            restColor = FinsibleTheme.colors.warningContainer
+            currentColor = FinsibleTheme.colors.feedbackWarning,
+            restColor = FinsibleTheme.colors.feedbackWarningSurface
         )
 
         ScrubberColorPreset.Success -> FinsibleScrubberDefaults.colors(
-            currentColor = FinsibleTheme.colors.success,
-            restColor = FinsibleTheme.colors.successContainer
+            currentColor = FinsibleTheme.colors.feedbackSuccess,
+            restColor = FinsibleTheme.colors.feedbackSuccessSurface
         )
     }
 
@@ -85,8 +84,8 @@ fun ScrubberPlayground() {
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = FinsibleTheme.dimes.d16, vertical = FinsibleTheme.dimes.d12),
-        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d12)
+            .padding(horizontal = FinsibleTheme.spacing.insetLg, vertical = FinsibleTheme.spacing.gapMd),
+        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackMd)
     ) {
         FinsibleText(
             text = stringResource(
@@ -95,8 +94,8 @@ fun ScrubberPlayground() {
                 totalCount,
                 scrubEndCount
             ),
-            variant = FinsibleTextVariant.SmallBodyRegular,
-            color = FinsibleTheme.colors.secondaryContent
+            textStyle = FinsibleTheme.typography.bodyMd,
+            color = FinsibleTheme.colors.contentSecondary
         )
 
         FinsibleScrubber(

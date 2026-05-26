@@ -1,50 +1,85 @@
 package com.itsjeel01.finsiblefrontend.ui.util
 
 import com.itsjeel01.finsiblefrontend.common.UserLocaleRegistry
-import java.text.SimpleDateFormat
-import java.util.Date
+import java.time.Instant
+import java.time.LocalTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 object DateUtils {
-    private val headerDateFormatter = object : ThreadLocal<SimpleDateFormat>() {
-        override fun initialValue() = SimpleDateFormat("dd MMM yyyy", UserLocaleRegistry.currentLocale())
-    }
 
-    private val yyyyMMddFormatter = object : ThreadLocal<SimpleDateFormat>() {
-        override fun initialValue() = SimpleDateFormat("yyyyMMdd", UserLocaleRegistry.currentLocale())
-    }
+    private data class FormatterCacheEntry(
+        val localeTag: String,
+        val zoneId: String,
+        val formatter: DateTimeFormatter
+    )
 
-    private val timeFormatter = object : ThreadLocal<SimpleDateFormat>() {
-        override fun initialValue() = SimpleDateFormat("h:mm a", UserLocaleRegistry.currentLocale())
-    }
+    private val formatterCache = mutableMapOf<String, FormatterCacheEntry>()
 
-    fun formatDateHeader(
-        timestamp: Long,
-        todayLabel: String,
-        yesterdayLabel: String
-    ): String {
-        val date = Date(timestamp)
-        val today = Date()
-        val yesterday = Date(today.time - 24 * 60 * 60 * 1000)
+    private fun getFormatter(cacheKey: String): DateTimeFormatter {
+        val locale = UserLocaleRegistry.currentLocale()
+        val zoneId = ZoneId.systemDefault()
+        val localeTag = locale.toLanguageTag()
+        val zoneKey = zoneId.id
 
-        val formatter = yyyyMMddFormatter.get() ?: SimpleDateFormat("yyyyMMdd", UserLocaleRegistry.currentLocale())
+        synchronized(this) {
+            val cached = formatterCache[cacheKey]
+            if (cached != null && cached.localeTag == localeTag && cached.zoneId == zoneKey) {
+                return cached.formatter
+            }
 
-        val transactionDay = formatter.format(date)
-        val todayDay = formatter.format(today)
-        val yesterdayDay = formatter.format(yesterday)
-
-        return when (transactionDay) {
-            todayDay -> todayLabel
-            yesterdayDay -> yesterdayLabel
-            else -> (headerDateFormatter.get() ?: SimpleDateFormat("dd MMM yyyy", UserLocaleRegistry.currentLocale())).format(date)
+            return DateTimeFormatter.ofPattern(cacheKey, locale)
+                .withZone(zoneId)
+                .also {
+                    formatterCache[cacheKey] = FormatterCacheEntry(
+                        localeTag = localeTag,
+                        zoneId = zoneKey,
+                        formatter = it
+                    )
+                }
         }
     }
 
-    fun readableDate(timestamp: Long): String {
-        return (headerDateFormatter.get() ?: SimpleDateFormat("dd MMM yyyy", UserLocaleRegistry.currentLocale())).format(Date(timestamp))
+    fun formatDateHeader(
+        timestampMs: Long,
+        todayLabel: String,
+        yesterdayLabel: String
+    ): String {
+        val targetDate = Instant.ofEpochMilli(timestampMs).atZone(ZoneId.systemDefault()).toLocalDate()
+        val today = Instant.now().atZone(ZoneId.systemDefault()).toLocalDate()
+
+        return when (targetDate) {
+            today -> todayLabel
+            today.minusDays(1) -> yesterdayLabel
+            else -> getFormatter("dd MMM yyyy").format(targetDate)
+        }
     }
 
-    fun formatTime(timestamp: Long): String {
-        return (timeFormatter.get() ?: SimpleDateFormat("h:mm a", UserLocaleRegistry.currentLocale())).format(Date(timestamp))
+    fun readableDate(timestampMs: Long): String {
+        return getFormatter("dd MMM yyyy").format(Instant.ofEpochMilli(timestampMs))
+    }
+
+    fun formatTime(timestampMs: Long): String {
+        return getFormatter("h:mm a").format(Instant.ofEpochMilli(timestampMs))
+    }
+
+    fun getStartOfDayMs(timestampMs: Long): Long {
+        return Instant.ofEpochMilli(timestampMs)
+            .atZone(ZoneId.systemDefault())
+            .toLocalDate()
+            .atStartOfDay(ZoneId.systemDefault())
+            .toInstant()
+            .toEpochMilli()
+    }
+
+    fun getEndOfDayMs(startOfDayMs: Long): Long {
+        return Instant.ofEpochMilli(startOfDayMs)
+            .atZone(ZoneId.systemDefault())
+            .toLocalDate()
+            .atTime(LocalTime.MAX)
+            .atZone(ZoneId.systemDefault())
+            .toInstant()
+            .toEpochMilli()
     }
 }
 

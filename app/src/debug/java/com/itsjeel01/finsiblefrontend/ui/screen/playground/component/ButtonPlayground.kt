@@ -37,6 +37,7 @@ fun ButtonPlayground() {
     var iconPosition by rememberSaveable { mutableStateOf(FinsibleIconPosition.Leading) }
     var badgeType by rememberSaveable { mutableStateOf(FinsibleBadgeType.None) }
     var badgeCount by rememberSaveable { mutableStateOf(3) }
+    var enforceMinTouchTargetSize by rememberSaveable { mutableStateOf(true) }
     var loading by rememberSaveable { mutableStateOf(false) }
     var enabled by rememberSaveable { mutableStateOf(true) }
 
@@ -60,8 +61,8 @@ fun ButtonPlayground() {
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = FinsibleTheme.dimes.d16, vertical = FinsibleTheme.dimes.d12),
-        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d12)
+            .padding(horizontal = FinsibleTheme.spacing.insetLg, vertical = FinsibleTheme.spacing.gapMd),
+        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackMd)
     ) {
         FinsibleButton(
             onClick = {},
@@ -70,6 +71,7 @@ fun ButtonPlayground() {
             shapeVariant = shape,
             iconOnly = effectiveIconOnly,
             fullWidth = effectiveFullWidth,
+            enforceMinTouchTargetSize = enforceMinTouchTargetSize,
             badgeType = resolvedBadgeType,
             badgeCount = badgeCount,
             loading = loading,
@@ -167,6 +169,13 @@ fun ButtonPlayground() {
                 onValueChange = { badgeCount = it.toInt() }
             )
         }
+
+        OptionToggle(
+            label = "Enforce Min Touch Target",
+            checked = enforceMinTouchTargetSize,
+            helperText = if (!enforceMinTouchTargetSize) "Disables M3\'s 40dp minimum — allows micro-sized buttons" else null,
+            onCheckedChange = { enforceMinTouchTargetSize = it }
+        )
 
         OptionToggle(
             label = stringResource(R.string.component_playground_button_option_loading),

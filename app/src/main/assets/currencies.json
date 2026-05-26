@@ -1,0 +1,355 @@
+{
+  "currencies_version": "04-2026",
+  "currencies": [
+    {
+      "code": "AED",
+      "symbol": "د.إ",
+      "name": "United Arab Emirates Dirham",
+      "flagEmoji": "🇦🇪",
+      "localeTag": "ar-AE"
+    },
+    {
+      "code": "ARS",
+      "symbol": "$",
+      "name": "Argentine Peso",
+      "flagEmoji": "🇦🇷",
+      "localeTag": "es-AR"
+    },
+    {
+      "code": "AUD",
+      "symbol": "$",
+      "name": "Australian Dollar",
+      "flagEmoji": "🇦🇺",
+      "localeTag": "en-AU"
+    },
+    {
+      "code": "BDT",
+      "symbol": "৳",
+      "name": "Bangladeshi Taka",
+      "flagEmoji": "🇧🇩",
+      "localeTag": "bn-BD"
+    },
+    {
+      "code": "BHD",
+      "symbol": ".د.ب",
+      "name": "Bahraini Dinar",
+      "flagEmoji": "🇧🇭",
+      "localeTag": "ar-BH"
+    },
+    {
+      "code": "BRL",
+      "symbol": "R$",
+      "name": "Brazilian Real",
+      "flagEmoji": "🇧🇷",
+      "localeTag": "pt-BR"
+    },
+    {
+      "code": "CAD",
+      "symbol": "$",
+      "name": "Canadian Dollar",
+      "flagEmoji": "🇨🇦",
+      "localeTag": "en-CA"
+    },
+    {
+      "code": "CHF",
+      "symbol": "CHF",
+      "name": "Swiss Franc",
+      "flagEmoji": "🇨🇭",
+      "localeTag": "de-CH"
+    },
+    {
+      "code": "CLP",
+      "symbol": "$",
+      "name": "Chilean Peso",
+      "flagEmoji": "🇨🇱",
+      "localeTag": "es-CL"
+    },
+    {
+      "code": "CNY",
+      "symbol": "¥",
+      "name": "Chinese Yuan",
+      "flagEmoji": "🇨🇳",
+      "localeTag": "zh-CN"
+    },
+    {
+      "code": "COP",
+      "symbol": "$",
+      "name": "Colombian Peso",
+      "flagEmoji": "🇨🇴",
+      "localeTag": "es-CO"
+    },
+    {
+      "code": "CZK",
+      "symbol": "Kč",
+      "name": "Czech Koruna",
+      "flagEmoji": "🇨🇿",
+      "localeTag": "cs-CZ"
+    },
+    {
+      "code": "DKK",
+      "symbol": "kr",
+      "name": "Danish Krone",
+      "flagEmoji": "🇩🇰",
+      "localeTag": "da-DK"
+    },
+    {
+      "code": "EGP",
+      "symbol": "£",
+      "name": "Egyptian Pound",
+      "flagEmoji": "🇪🇬",
+      "localeTag": "ar-EG"
+    },
+    {
+      "code": "EUR",
+      "symbol": "€",
+      "name": "Euro",
+      "flagEmoji": "🇪🇺",
+      "localeTag": "de-DE"
+    },
+    {
+      "code": "GBP",
+      "symbol": "£",
+      "name": "British Pound Sterling",
+      "flagEmoji": "🇬🇧",
+      "localeTag": "en-GB"
+    },
+    {
+      "code": "GHS",
+      "symbol": "₵",
+      "name": "Ghanaian Cedi",
+      "flagEmoji": "🇬🇭",
+      "localeTag": "en-GH"
+    },
+    {
+      "code": "HKD",
+      "symbol": "$",
+      "name": "Hong Kong Dollar",
+      "flagEmoji": "🇭🇰",
+      "localeTag": "zh-HK"
+    },
+    {
+      "code": "HUF",
+      "symbol": "Ft",
+      "name": "Hungarian Forint",
+      "flagEmoji": "🇭🇺",
+      "localeTag": "hu-HU"
+    },
+    {
+      "code": "IDR",
+      "symbol": "Rp",
+      "name": "Indonesian Rupiah",
+      "flagEmoji": "🇮🇩",
+      "localeTag": "id-ID"
+    },
+    {
+      "code": "ILS",
+      "symbol": "₪",
+      "name": "Israeli New Shekel",
+      "flagEmoji": "🇮🇱",
+      "localeTag": "he-IL"
+    },
+    {
+      "code": "INR",
+      "symbol": "₹",
+      "name": "Indian Rupee",
+      "flagEmoji": "🇮🇳",
+      "localeTag": "en-IN"
+    },
+    {
+      "code": "JPY",
+      "symbol": "¥",
+      "name": "Japanese Yen",
+      "flagEmoji": "🇯🇵",
+      "localeTag": "ja-JP"
+    },
+    {
+      "code": "KES",
+      "symbol": "KSh",
+      "name": "Kenyan Shilling",
+      "flagEmoji": "🇰🇪",
+      "localeTag": "en-KE"
+    },
+    {
+      "code": "KRW",
+      "symbol": "₩",
+      "name": "South Korean Won",
+      "flagEmoji": "🇰🇷",
+      "localeTag": "ko-KR"
+    },
+    {
+      "code": "KWD",
+      "symbol": "د.ك",
+      "name": "Kuwaiti Dinar",
+      "flagEmoji": "🇰🇼",
+      "localeTag": "ar-KW"
+    },
+    {
+      "code": "LKR",
+      "symbol": "Rs",
+      "name": "Sri Lankan Rupee",
+      "flagEmoji": "🇱🇰",
+      "localeTag": "si-LK"
+    },
+    {
+      "code": "MAD",
+      "symbol": "د.م.",
+      "name": "Moroccan Dirham",
+      "flagEmoji": "🇲🇦",
+      "localeTag": "ar-MA"
+    },
+    {
+      "code": "MXN",
+      "symbol": "$",
+      "name": "Mexican Peso",
+      "flagEmoji": "🇲🇽",
+      "localeTag": "es-MX"
+    },
+    {
+      "code": "MYR",
+      "symbol": "RM",
+      "name": "Malaysian Ringgit",
+      "flagEmoji": "🇲🇾",
+      "localeTag": "ms-MY"
+    },
+    {
+      "code": "NGN",
+      "symbol": "₦",
+      "name": "Nigerian Naira",
+      "flagEmoji": "🇳🇬",
+      "localeTag": "en-NG"
+    },
+    {
+      "code": "NOK",
+      "symbol": "kr",
+      "name": "Norwegian Krone",
+      "flagEmoji": "🇳🇴",
+      "localeTag": "nb-NO"
+    },
+    {
+      "code": "NZD",
+      "symbol": "$",
+      "name": "New Zealand Dollar",
+      "flagEmoji": "🇳🇿",
+      "localeTag": "en-NZ"
+    },
+    {
+      "code": "OMR",
+      "symbol": "ر.ع.",
+      "name": "Omani Rial",
+      "flagEmoji": "🇴🇲",
+      "localeTag": "ar-OM"
+    },
+    {
+      "code": "PEN",
+      "symbol": "S/",
+      "name": "Peruvian Sol",
+      "flagEmoji": "🇵🇪",
+      "localeTag": "es-PE"
+    },
+    {
+      "code": "PHP",
+      "symbol": "₱",
+      "name": "Philippine Peso",
+      "flagEmoji": "🇵🇭",
+      "localeTag": "en-PH"
+    },
+    {
+      "code": "PKR",
+      "symbol": "₨",
+      "name": "Pakistani Rupee",
+      "flagEmoji": "🇵🇰",
+      "localeTag": "ur-PK"
+    },
+    {
+      "code": "PLN",
+      "symbol": "zł",
+      "name": "Polish Zloty",
+      "flagEmoji": "🇵🇱",
+      "localeTag": "pl-PL"
+    },
+    {
+      "code": "QAR",
+      "symbol": "ر.ق",
+      "name": "Qatari Riyal",
+      "flagEmoji": "🇶🇦",
+      "localeTag": "ar-QA"
+    },
+    {
+      "code": "RON",
+      "symbol": "lei",
+      "name": "Romanian Leu",
+      "flagEmoji": "🇷🇴",
+      "localeTag": "ro-RO"
+    },
+    {
+      "code": "RUB",
+      "symbol": "₽",
+      "name": "Russian Ruble",
+      "flagEmoji": "🇷🇺",
+      "localeTag": "ru-RU"
+    },
+    {
+      "code": "SAR",
+      "symbol": "ر.س",
+      "name": "Saudi Riyal",
+      "flagEmoji": "🇸🇦",
+      "localeTag": "ar-SA"
+    },
+    {
+      "code": "SEK",
+      "symbol": "kr",
+      "name": "Swedish Krona",
+      "flagEmoji": "🇸🇪",
+      "localeTag": "sv-SE"
+    },
+    {
+      "code": "SGD",
+      "symbol": "$",
+      "name": "Singapore Dollar",
+      "flagEmoji": "🇸🇬",
+      "localeTag": "en-SG"
+    },
+    {
+      "code": "THB",
+      "symbol": "฿",
+      "name": "Thai Baht",
+      "flagEmoji": "🇹🇭",
+      "localeTag": "th-TH"
+    },
+    {
+      "code": "TRY",
+      "symbol": "₺",
+      "name": "Turkish Lira",
+      "flagEmoji": "🇹🇷",
+      "localeTag": "tr-TR"
+    },
+    {
+      "code": "TWD",
+      "symbol": "NT$",
+      "name": "New Taiwan Dollar",
+      "flagEmoji": "🇹🇼",
+      "localeTag": "zh-TW"
+    },
+    {
+      "code": "USD",
+      "symbol": "$",
+      "name": "United States Dollar",
+      "flagEmoji": "🇺🇸",
+      "localeTag": "en-US"
+    },
+    {
+      "code": "VND",
+      "symbol": "₫",
+      "name": "Vietnamese Dong",
+      "flagEmoji": "🇻🇳",
+      "localeTag": "vi-VN"
+    },
+    {
+      "code": "ZAR",
+      "symbol": "R",
+      "name": "South African Rand",
+      "flagEmoji": "🇿🇦",
+      "localeTag": "en-ZA"
+    }
+  ]
+}

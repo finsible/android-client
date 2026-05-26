@@ -12,9 +12,9 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleToggl
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleButtonVariant
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleCheckboxVariant
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleFilterChipVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleSegmentedButtonArrangement
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleSegmentedButtonVariant
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 
 enum class FilterChipTintOption {
     BrandAccent,
@@ -39,43 +39,6 @@ fun shapeLabel(shape: FinsibleShape): String = when (shape) {
     FinsibleShape.Pill -> stringResource(R.string.finsible_shape_pill)
     FinsibleShape.Rounded -> stringResource(R.string.finsible_shape_rounded)
     FinsibleShape.Sharp -> stringResource(R.string.finsible_shape_sharp)
-}
-
-@Composable
-fun textVariantLabel(variant: FinsibleTextVariant): String = when (variant) {
-    FinsibleTextVariant.XLargeHeadingBold -> stringResource(R.string.component_playground_text_variant_xlarge_heading_bold)
-    FinsibleTextVariant.LargeHeadingBold -> stringResource(R.string.component_playground_text_variant_large_heading_bold)
-    FinsibleTextVariant.MediumHeadingBold -> stringResource(R.string.component_playground_text_variant_medium_heading_bold)
-    FinsibleTextVariant.SmallHeadingBold -> stringResource(R.string.component_playground_text_variant_small_heading_bold)
-    FinsibleTextVariant.XLargeTitleNormal -> stringResource(R.string.component_playground_text_variant_xlarge_title_normal)
-    FinsibleTextVariant.LargeTitleNormal -> stringResource(R.string.component_playground_text_variant_large_title_normal)
-    FinsibleTextVariant.LargeTitleMedium -> stringResource(R.string.component_playground_text_variant_large_title_medium)
-    FinsibleTextVariant.LargeTitleSemiBold -> stringResource(R.string.component_playground_text_variant_large_title_semibold)
-    FinsibleTextVariant.LargeTitleExtraBold -> stringResource(R.string.component_playground_text_variant_large_title_extrabold)
-    FinsibleTextVariant.MediumTitleNormal -> stringResource(R.string.component_playground_text_variant_medium_title_normal)
-    FinsibleTextVariant.MediumTitleMedium -> stringResource(R.string.component_playground_text_variant_medium_title_medium)
-    FinsibleTextVariant.MediumTitleSemiBold -> stringResource(R.string.component_playground_text_variant_medium_title_semibold)
-    FinsibleTextVariant.MediumTitleBold -> stringResource(R.string.component_playground_text_variant_medium_title_bold)
-    FinsibleTextVariant.SmallTitleNormal -> stringResource(R.string.component_playground_text_variant_small_title_normal)
-    FinsibleTextVariant.SmallTitleBold -> stringResource(R.string.component_playground_text_variant_small_title_bold)
-    FinsibleTextVariant.SmallTitleMedium -> stringResource(R.string.component_playground_text_variant_small_title_medium)
-    FinsibleTextVariant.SmallTitleExtraBold -> stringResource(R.string.component_playground_text_variant_small_title_extrabold)
-    FinsibleTextVariant.XSmallTitleNormal -> stringResource(R.string.component_playground_text_variant_xsmall_title_normal)
-    FinsibleTextVariant.BodyRegular -> stringResource(R.string.component_playground_text_variant_body_regular)
-    FinsibleTextVariant.BodyMedium -> stringResource(R.string.component_playground_text_variant_body_medium)
-    FinsibleTextVariant.BodySemiBold -> stringResource(R.string.component_playground_text_variant_body_semibold)
-    FinsibleTextVariant.BodyBold -> stringResource(R.string.component_playground_text_variant_body_bold)
-    FinsibleTextVariant.SmallBodyRegular -> stringResource(R.string.component_playground_text_variant_small_body_regular)
-    FinsibleTextVariant.SmallBodyMedium -> stringResource(R.string.component_playground_text_variant_small_body_medium)
-    FinsibleTextVariant.SmallBodySemiBold -> stringResource(R.string.component_playground_text_variant_small_body_semibold)
-    FinsibleTextVariant.SmallBodyBold -> stringResource(R.string.component_playground_text_variant_small_body_bold)
-    FinsibleTextVariant.XLargeLabelSemiBold -> stringResource(R.string.component_playground_text_variant_xlarge_label_semibold)
-    FinsibleTextVariant.LargeLabelSemiBold -> stringResource(R.string.component_playground_text_variant_large_label_semibold)
-    FinsibleTextVariant.SmallLabelRegular -> stringResource(R.string.component_playground_text_variant_small_label_regular)
-    FinsibleTextVariant.SmallLabelMedium -> stringResource(R.string.component_playground_text_variant_small_label_medium)
-    FinsibleTextVariant.SmallLabelSemiBold -> stringResource(R.string.component_playground_text_variant_small_label_semibold)
-    FinsibleTextVariant.MicroLabelMedium -> stringResource(R.string.component_playground_text_variant_micro_label_medium)
-    FinsibleTextVariant.MicroLabelSemiBold -> stringResource(R.string.component_playground_text_variant_micro_label_semibold)
 }
 
 @Composable
@@ -108,6 +71,13 @@ fun segmentedButtonVariantLabel(variant: FinsibleSegmentedButtonVariant): String
 }
 
 @Composable
+fun segmentedButtonArrangementLabel(arrangement: FinsibleSegmentedButtonArrangement): String =
+    when (arrangement) {
+        FinsibleSegmentedButtonArrangement.Clubbed -> stringResource(R.string.finsible_segmented_button_arrangement_clubbed)
+        FinsibleSegmentedButtonArrangement.Separated -> stringResource(R.string.finsible_segmented_button_arrangement_separated)
+    }
+
+@Composable
 fun badgeTypeLabel(badgeType: FinsibleBadgeType): String = when (badgeType) {
     FinsibleBadgeType.None -> stringResource(R.string.finsible_badge_none)
     FinsibleBadgeType.Dot -> stringResource(R.string.finsible_badge_dot)
@@ -133,6 +103,7 @@ fun buttonVariantLabel(variant: FinsibleButtonVariant): String = when (variant) 
 fun textColorVariantLabel(variant: FinsibleTextColorVariant): String = when (variant) {
     FinsibleTextColorVariant.Primary -> stringResource(R.string.component_playground_text_color_primary)
     FinsibleTextColorVariant.Secondary -> stringResource(R.string.component_playground_text_color_secondary)
+    FinsibleTextColorVariant.Tertiary -> stringResource(R.string.component_playground_text_color_tertiary)
     FinsibleTextColorVariant.Accent -> stringResource(R.string.component_playground_text_color_accent)
     FinsibleTextColorVariant.Link -> stringResource(R.string.component_playground_text_color_link)
     FinsibleTextColorVariant.Error -> stringResource(R.string.component_playground_text_color_error)

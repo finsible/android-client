@@ -13,22 +13,42 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.FinsibleLabeledTextField
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.OptionDropdown
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.OptionToggle
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.textColorVariantLabel
-import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.textVariantLabel
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
+import com.itsjeel01.finsiblefrontend.ui.theme.bold
 
 @Composable
 fun TextPlayground() {
+    val t = FinsibleTheme.typography
+    val textStyleOptions = listOf(
+        "Display XL" to t.displayXl.bold(),
+        "Display LG" to t.displayLg.bold(),
+        "Display MD" to t.displayMd.bold(),
+        "Display SM" to t.displaySm.bold(),
+        "Heading LG" to t.headingLg,
+        "Heading MD" to t.headingMd,
+        "Heading SM" to t.headingSm,
+        "Body LG" to t.bodyLg,
+        "Body MD" to t.bodyMd,
+        "Body SM" to t.bodySm,
+        "Label LG" to t.labelLg,
+        "Label MD" to t.labelMd,
+        "Label SM" to t.labelSm,
+        "Caption" to t.caption,
+        "Numeral LG" to t.numeralLg,
+        "Numeral MD" to t.numeralMd,
+    )
+
     val defaultText = stringResource(R.string.component_playground_text_sample)
-    var textVariant by rememberSaveable { mutableStateOf(FinsibleTextVariant.BodyRegular) }
+    var selectedIndex by rememberSaveable { mutableIntStateOf(6) } // Body LG
     var textColorVariant by rememberSaveable { mutableStateOf(FinsibleTextColorVariant.Primary) }
     var uppercase by rememberSaveable { mutableStateOf(false) }
     var underline by rememberSaveable { mutableStateOf(false) }
@@ -42,12 +62,12 @@ fun TextPlayground() {
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = FinsibleTheme.dimes.d16, vertical = FinsibleTheme.dimes.d12),
-        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d12)
+            .padding(horizontal = FinsibleTheme.spacing.insetLg, vertical = FinsibleTheme.spacing.gapMd),
+        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackMd)
     ) {
         FinsibleText(
             text = text.text,
-            variant = textVariant,
+            textStyle = textStyleOptions[selectedIndex].second,
             colorVariant = textColorVariant,
             maxLines = maxLines,
             uppercase = uppercase,
@@ -64,10 +84,10 @@ fun TextPlayground() {
 
         OptionDropdown(
             label = stringResource(R.string.component_playground_text_variant_selector),
-            selectedLabel = textVariantLabel(textVariant),
-            options = FinsibleTextVariant.entries,
-            optionLabel = { textVariantLabel(it) },
-            onSelect = { textVariant = it }
+            selectedLabel = textStyleOptions[selectedIndex].first,
+            options = textStyleOptions.indices.toList(),
+            optionLabel = { textStyleOptions[it].first },
+            onSelect = { selectedIndex = it }
         )
 
         OptionDropdown(
@@ -78,44 +98,38 @@ fun TextPlayground() {
             onSelect = { textColorVariant = it }
         )
 
-        val fontLabelMap = { it: Boolean? ->
-            when (it) {
-                null -> "Default"; true -> "Display"; false -> "Interface"
-            }
-        }
-
         OptionDropdown(
-            label = "Font Family",
-            selectedLabel = fontLabelMap(isDisplayFont),
+            label = "Font",
+            selectedLabel = when (isDisplayFont) { true -> "Display"; false -> "Interface"; null -> "Default" },
             options = listOf(null, true, false),
-            optionLabel = { fontLabelMap(it) },
+            optionLabel = { when (it) { true -> "Display"; false -> "Interface"; null -> "Default" } },
             onSelect = { isDisplayFont = it }
         )
 
-        OptionDropdown(
-            label = stringResource(R.string.component_playground_text_max_lines),
-            selectedLabel = maxLines.toString(),
-            options = listOf(1, 2, 3, 4),
-            optionLabel = { it.toString() },
-            onSelect = { maxLines = it }
-        )
-
         OptionToggle(
-            label = stringResource(R.string.component_playground_text_uppercase),
+            label = "Uppercase",
             checked = uppercase,
             onCheckedChange = { uppercase = it }
         )
 
         OptionToggle(
-            label = stringResource(R.string.component_playground_text_underline),
+            label = "Underline",
             checked = underline,
             onCheckedChange = { underline = it }
         )
 
         OptionToggle(
-            label = stringResource(R.string.component_playground_text_strikethrough),
+            label = "Strikethrough",
             checked = strikethrough,
             onCheckedChange = { strikethrough = it }
+        )
+
+        OptionDropdown(
+            label = "Max Lines",
+            selectedLabel = maxLines.toString(),
+            options = (1..5).toList(),
+            optionLabel = { it.toString() },
+            onSelect = { maxLines = it }
         )
     }
 }

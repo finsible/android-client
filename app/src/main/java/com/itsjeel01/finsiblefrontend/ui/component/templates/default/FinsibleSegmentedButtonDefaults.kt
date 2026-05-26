@@ -24,34 +24,34 @@ object FinsibleSegmentedButtonDefaults {
         rippleColor: Color = Color.Unspecified,
         variant: FinsibleSegmentedButtonVariant = FinsibleSegmentedButtonVariant.Filled
     ): FinsibleSegmentedButtonColors {
-        val theme = FinsibleTheme.colors
+        val s = FinsibleTheme.colors
 
         val baseSelectedContainer = when (variant) {
-            FinsibleSegmentedButtonVariant.Filled -> theme.primaryContent
-            FinsibleSegmentedButtonVariant.Tonal -> theme.selection
+            FinsibleSegmentedButtonVariant.Filled -> s.contentPrimary
+            FinsibleSegmentedButtonVariant.Tonal -> s.surfaceBrandTint
         }
         val baseSelectedContent = when (variant) {
-            FinsibleSegmentedButtonVariant.Filled -> theme.primaryBackground
-            FinsibleSegmentedButtonVariant.Tonal -> theme.primaryContent
+            FinsibleSegmentedButtonVariant.Filled -> s.surfaceBase
+            FinsibleSegmentedButtonVariant.Tonal -> s.contentPrimary
         }
-        val baseUnselectedContainer = theme.transparent
+        val baseUnselectedContainer = Color.Transparent
 
         return FinsibleSegmentedButtonColors(
             selectedContainerColor = if (selectedContainerColor != Color.Unspecified) selectedContainerColor else baseSelectedContainer,
             selectedContentColor = if (selectedContentColor != Color.Unspecified) selectedContentColor else baseSelectedContent,
             unselectedContainerColor = if (unselectedContainerColor != Color.Unspecified) unselectedContainerColor else baseUnselectedContainer,
-            unselectedContentColor = if (unselectedContentColor != Color.Unspecified) unselectedContentColor else theme.primaryContent,
-            disabledContainerColor = if (disabledContainerColor != Color.Unspecified) disabledContainerColor else theme.disabled,
-            disabledContentColor = if (disabledContentColor != Color.Unspecified) disabledContentColor else theme.disabledContent,
-            borderColor = if (borderColor != Color.Unspecified) borderColor else theme.border,
-            rippleColor = if (rippleColor != Color.Unspecified) rippleColor else theme.ripple
+            unselectedContentColor = if (unselectedContentColor != Color.Unspecified) unselectedContentColor else s.contentPrimary,
+            disabledContainerColor = if (disabledContainerColor != Color.Unspecified) disabledContainerColor else s.surfaceSunken,
+            disabledContentColor = if (disabledContentColor != Color.Unspecified) disabledContentColor else s.contentDisabled,
+            borderColor = if (borderColor != Color.Unspecified) borderColor else s.borderDefault,
+            rippleColor = if (rippleColor != Color.Unspecified) rippleColor else s.contentPrimary.copy(alpha = 0.12f)
         )
     }
 
     @Composable
     fun selectedTintContentColor(inverted: Boolean): Color {
-        val theme = FinsibleTheme.colors
-        return if (inverted) theme.primaryBackground else theme.primaryContent
+        val s = FinsibleTheme.colors
+        return if (inverted) s.surfaceBase else s.contentPrimary
     }
 
     fun applySelectedTint(
@@ -82,50 +82,49 @@ object FinsibleSegmentedButtonDefaults {
 
     @Composable
     fun sizes(size: FinsibleSize): FinsibleSegmentedButtonSizes {
-        val d = FinsibleTheme.dimes
+        val sp = FinsibleTheme.spacing
         val t = FinsibleTheme.typography
 
         return when (size) {
             FinsibleSize.ExtraSmall -> FinsibleSegmentedButtonSizes(
-                textStyle = t.t12.medium(),
-                iconSize = d.d12,
-                iconSpacing = d.d4,
-                horizontalPadding = d.d10,
-                verticalPadding = d.d6
+                textStyle = t.bodySm.medium(),
+                iconSize = FinsibleTheme.sizes.icon.xs,
+                iconSpacing = sp.insetXs,
+                horizontalPadding = sp.gapSm + sp.insetXs / 2,
+                verticalPadding = sp.insetSm - sp.insetXs / 2
             )
 
             FinsibleSize.Small -> FinsibleSegmentedButtonSizes(
-                textStyle = t.t14.medium(),
-                iconSize = d.d14,
-                iconSpacing = d.d6,
-                horizontalPadding = d.d12,
-                verticalPadding = d.d8
+                textStyle = t.bodyMd.medium(),
+                iconSize = FinsibleTheme.sizes.icon.sm,
+                iconSpacing = sp.insetSm - sp.insetXs / 2,
+                horizontalPadding = sp.gapMd,
+                verticalPadding = sp.inlineMd
             )
 
             FinsibleSize.Medium -> FinsibleSegmentedButtonSizes(
-                textStyle = t.t16.medium(),
-                iconSize = d.d18,
-                iconSpacing = d.d8,
-                horizontalPadding = d.d14,
-                verticalPadding = d.d10
+                textStyle = t.bodyLg.medium(),
+                iconSize = FinsibleTheme.sizes.icon.md,
+                iconSpacing = sp.inlineMd,
+                horizontalPadding = sp.insetLg - sp.insetXs / 2,
+                verticalPadding = sp.gapSm + sp.insetXs / 2
             )
 
             FinsibleSize.Large -> FinsibleSegmentedButtonSizes(
-                textStyle = t.t18.medium(),
-                iconSize = d.d20,
-                iconSpacing = d.d10,
-                horizontalPadding = d.d16,
-                verticalPadding = d.d12
+                textStyle = t.bodyLg.medium(),
+                iconSize = FinsibleTheme.sizes.icon.lg - sp.insetXs,
+                iconSpacing = sp.gapSm + sp.insetXs / 2,
+                horizontalPadding = sp.insetLg,
+                verticalPadding = sp.gapMd
             )
 
             FinsibleSize.ExtraLarge -> FinsibleSegmentedButtonSizes(
-                textStyle = t.t20.medium(),
-                iconSize = d.d24,
-                iconSpacing = d.d12,
-                horizontalPadding = d.d18,
-                verticalPadding = d.d14
+                textStyle = t.headingSm,
+                iconSize = FinsibleTheme.sizes.icon.lg,
+                iconSpacing = sp.gapMd,
+                horizontalPadding = sp.insetLg + sp.insetXs / 2,
+                verticalPadding = sp.insetLg - sp.insetXs / 2
             )
         }
     }
 }
-

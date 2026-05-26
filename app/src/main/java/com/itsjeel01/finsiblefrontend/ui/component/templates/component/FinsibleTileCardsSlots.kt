@@ -27,16 +27,16 @@ internal fun resolveSlotVariant(card: FinsibleTileCardData): TileCardSlotVariant
 
 @Composable
 internal fun TileCardSlotVariant.bodyTopSpacing() = when (this) {
-    TileCardSlotVariant.HeroOnly -> FinsibleTheme.dimes.d8
+    TileCardSlotVariant.HeroOnly -> FinsibleTheme.spacing.inlineMd
     TileCardSlotVariant.HeroAndMeta,
     TileCardSlotVariant.HeroAndKpi,
-    TileCardSlotVariant.HeroMetaAndKpi -> FinsibleTheme.dimes.d10
+    TileCardSlotVariant.HeroMetaAndKpi -> FinsibleTheme.spacing.gapMd
 
-    TileCardSlotVariant.HeroAndStats -> FinsibleTheme.dimes.d16
+    TileCardSlotVariant.HeroAndStats -> FinsibleTheme.spacing.insetLg
     TileCardSlotVariant.HeroMetaAndStats,
-    TileCardSlotVariant.HeroKpiAndStats -> FinsibleTheme.dimes.d14
+    TileCardSlotVariant.HeroKpiAndStats -> FinsibleTheme.spacing.insetLg
 
-    TileCardSlotVariant.HeroMetaKpiAndStats -> FinsibleTheme.dimes.d12
+    TileCardSlotVariant.HeroMetaKpiAndStats -> FinsibleTheme.spacing.gapMd
 }
 
 internal fun allowedStats(size: FinsibleSize): Int = when (size) {

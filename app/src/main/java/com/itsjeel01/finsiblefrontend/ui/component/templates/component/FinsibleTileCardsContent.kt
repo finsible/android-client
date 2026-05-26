@@ -33,6 +33,10 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleTileC
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTileCardRotationVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
+/** Narrow-card breakpoint — cards narrower than this use a compact layout. */
+@Composable
+internal fun tileCardNarrowMaxWidth(): Dp = FinsibleTheme.sizes.touch.xl * 4 + FinsibleTheme.spacing.insetXs
+
 @Composable
 internal fun TileCardFace(
     card: FinsibleTileCardData,
@@ -59,11 +63,9 @@ internal fun TileCardFace(
             .background(backgroundBrush)
             .padding(sizes.padding)
     ) {
-        val isNarrowCard = maxWidth <= FinsibleTheme.dimes.d260
-        // Resolve the slot variant directly using the card
+        val isNarrowCard = maxWidth <= tileCardNarrowMaxWidth()
         val slotVariant = remember(card) { resolveSlotVariant(card) }
 
-        // Removed AnimatedContent wrapper here
         Column(modifier = Modifier.fillMaxWidth()) {
             TileCardHeader(
                 card = card,
@@ -74,21 +76,21 @@ internal fun TileCardFace(
                 isNarrowCard = isNarrowCard
             )
 
-            Spacer(Modifier.height(FinsibleTheme.dimes.d4))
+            Spacer(Modifier.height(FinsibleTheme.spacing.insetXs))
 
             FinsibleText(
                 text = card.heroText,
-                textStyleOverride = sizes.heroStyle,
+                textStyle = sizes.heroStyle,
                 color = colors.contentColor,
                 maxLines = if (isNarrowCard) 2 else 1,
                 overflow = if (isNarrowCard) TextOverflow.Clip else TextOverflow.Ellipsis
             )
 
             if (!card.kpiText.isNullOrBlank()) {
-                Spacer(Modifier.height(FinsibleTheme.dimes.d8))
+                Spacer(Modifier.height(FinsibleTheme.spacing.inlineMd))
                 FinsibleText(
                     text = card.kpiText,
-                    textStyleOverride = sizes.kpiStyle,
+                    textStyle = sizes.kpiStyle,
                     color = if (card.kpiPositive) colors.positiveKpiColor else colors.negativeKpiColor,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -101,11 +103,11 @@ internal fun TileCardFace(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(FinsibleTheme.dimes.d1)
+                        .height(FinsibleTheme.stroke.thin)
                         .background(colors.dividerColor)
                 )
 
-                Spacer(Modifier.height(FinsibleTheme.dimes.d12))
+                Spacer(Modifier.height(FinsibleTheme.spacing.gapMd))
 
                 if (slotVariant.useCompactStats) {
                     CompactStatisticsRow(card = card, colors = colors, sizes = sizes, isNarrowCard = isNarrowCard)
@@ -130,7 +132,6 @@ private fun TileCardHeader(
         rotationVariant == FinsibleTileCardRotationVariant.Sequential -> {
             { DefaultRotationIcon(iconSize = sizes.rotationIconSize) }
         }
-
         else -> decorativeIcon
     }
     val trailingIconTint = if (rotationVariant == FinsibleTileCardRotationVariant.Sequential) {
@@ -139,7 +140,7 @@ private fun TileCardHeader(
         colors.decorativeIconTint
     }
 
-    Column(verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d4)) {
+    Column(verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackXs)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -147,7 +148,7 @@ private fun TileCardHeader(
         ) {
             FinsibleText(
                 text = card.title,
-                textStyleOverride = sizes.titleStyle,
+                textStyle = sizes.titleStyle,
                 color = colors.contentColor,
                 maxLines = if (isNarrowCard) 2 else 1,
                 overflow = if (isNarrowCard) TextOverflow.Clip else TextOverflow.Ellipsis,
@@ -163,11 +164,11 @@ private fun TileCardHeader(
 
         if (!card.subtitle.isNullOrBlank() || !card.pillText.isNullOrBlank()) {
             if (isNarrowCard) {
-                Column(verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d4)) {
+                Column(verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackXs)) {
                     if (!card.subtitle.isNullOrBlank()) {
                         FinsibleText(
                             text = card.subtitle,
-                            textStyleOverride = sizes.subtitleStyle,
+                            textStyle = sizes.subtitleStyle,
                             color = colors.subtitleColor,
                             maxLines = 2,
                             overflow = TextOverflow.Clip
@@ -184,7 +185,7 @@ private fun TileCardHeader(
                     if (!card.subtitle.isNullOrBlank()) {
                         FinsibleText(
                             text = card.subtitle,
-                            textStyleOverride = sizes.subtitleStyle,
+                            textStyle = sizes.subtitleStyle,
                             color = colors.subtitleColor,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
@@ -193,7 +194,7 @@ private fun TileCardHeader(
                     } else {
                         Spacer(modifier = Modifier.weight(1f))
                     }
-                    Spacer(Modifier.width(FinsibleTheme.dimes.d8))
+                    Spacer(Modifier.width(FinsibleTheme.spacing.inlineMd))
                     PillText(pillText = card.pillText, sizes = sizes, colors = colors)
                 }
             }
@@ -222,11 +223,11 @@ private fun PillText(
         modifier = Modifier
             .clip(RoundedCornerShape(percent = 50))
             .background(colors.pillContainerColor)
-            .padding(horizontal = FinsibleTheme.dimes.d8, vertical = FinsibleTheme.dimes.d4)
+            .padding(horizontal = FinsibleTheme.spacing.inlineMd, vertical = FinsibleTheme.spacing.insetXs)
     ) {
         FinsibleText(
             text = pillText,
-            textStyleOverride = sizes.pillStyle,
+            textStyle = sizes.pillStyle,
             color = colors.pillContentColor,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
@@ -250,7 +251,7 @@ private fun StandardStatisticsRow(
             card.statistics.forEach { stat ->
                 FinsibleText(
                     text = stat.title,
-                    textStyleOverride = sizes.statTitleStyle,
+                    textStyle = sizes.statTitleStyle,
                     color = colors.subtitleColor,
                     textAlign = TextAlign.Center,
                     maxLines = 1,
@@ -259,7 +260,7 @@ private fun StandardStatisticsRow(
                 )
                 FinsibleText(
                     text = stat.value,
-                    textStyleOverride = sizes.statValueStyle,
+                    textStyle = sizes.statValueStyle,
                     color = colors.contentColor,
                     textAlign = TextAlign.Center,
                     maxLines = 1,
@@ -283,16 +284,16 @@ private fun StandardStatisticsRow(
             ) {
                 FinsibleText(
                     text = stat.title,
-                    textStyleOverride = sizes.statTitleStyle,
+                    textStyle = sizes.statTitleStyle,
                     color = colors.subtitleColor,
                     textAlign = TextAlign.Center,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                Spacer(Modifier.height(FinsibleTheme.dimes.d4))
+                Spacer(Modifier.height(FinsibleTheme.spacing.insetXs))
                 FinsibleText(
                     text = stat.value,
-                    textStyleOverride = sizes.statValueStyle,
+                    textStyle = sizes.statValueStyle,
                     color = colors.contentColor,
                     textAlign = TextAlign.Center,
                     maxLines = 1,
@@ -301,7 +302,7 @@ private fun StandardStatisticsRow(
             }
 
             if (index < card.statistics.lastIndex) {
-                Spacer(Modifier.width(FinsibleTheme.dimes.d8))
+                Spacer(Modifier.width(FinsibleTheme.spacing.inlineMd))
             }
         }
     }
@@ -323,7 +324,7 @@ private fun CompactStatisticsRow(
             card.statistics.forEachIndexed { index, stat ->
                 FinsibleText(
                     text = stat.title,
-                    textStyleOverride = sizes.subtitleStyle,
+                    textStyle = sizes.subtitleStyle,
                     color = colors.subtitleColor,
                     textAlign = TextAlign.Center,
                     maxLines = 1,
@@ -332,7 +333,7 @@ private fun CompactStatisticsRow(
                 )
                 FinsibleText(
                     text = stat.value,
-                    textStyleOverride = sizes.kpiStyle,
+                    textStyle = sizes.kpiStyle,
                     color = colors.contentColor,
                     textAlign = TextAlign.Center,
                     maxLines = 1,
@@ -343,7 +344,7 @@ private fun CompactStatisticsRow(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth(0.38f)
-                            .height(FinsibleTheme.dimes.d1)
+                            .height(FinsibleTheme.stroke.thin)
                             .background(colors.dividerColor)
                     )
                 }
@@ -354,7 +355,7 @@ private fun CompactStatisticsRow(
 
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d8)
+        horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.inlineMd)
     ) {
         card.statistics.forEachIndexed { index, stat ->
             Column(
@@ -363,16 +364,16 @@ private fun CompactStatisticsRow(
             ) {
                 FinsibleText(
                     text = stat.title,
-                    textStyleOverride = sizes.subtitleStyle,
+                    textStyle = sizes.subtitleStyle,
                     color = colors.subtitleColor,
                     textAlign = TextAlign.Center,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                Spacer(Modifier.height(FinsibleTheme.dimes.d2))
+                Spacer(Modifier.height(FinsibleTheme.spacing.insetMicro))
                 FinsibleText(
                     text = stat.value,
-                    textStyleOverride = sizes.kpiStyle,
+                    textStyle = sizes.kpiStyle,
                     color = colors.contentColor,
                     textAlign = TextAlign.Center,
                     maxLines = 1,
@@ -382,13 +383,11 @@ private fun CompactStatisticsRow(
             if (index < card.statistics.lastIndex) {
                 Box(
                     modifier = Modifier
-                        .width(FinsibleTheme.dimes.d1)
-                        .height(FinsibleTheme.dimes.d36)
+                        .width(FinsibleTheme.stroke.thin)
+                        .height(FinsibleTheme.sizes.touch.sm)
                         .background(colors.dividerColor)
                 )
             }
         }
     }
 }
-
-

@@ -20,7 +20,6 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleT
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.CalendarConstraints
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleDateRange
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleMonthYear
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.finsibleDateRangeSaver
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.finsibleMonthYearSaver
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
@@ -65,8 +64,8 @@ fun DateRangePickerPlayground() {
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = FinsibleTheme.dimes.d16, vertical = FinsibleTheme.dimes.d12),
-        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d12)
+            .padding(horizontal = FinsibleTheme.spacing.insetLg, vertical = FinsibleTheme.spacing.gapMd),
+        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackMd)
     ) {
         FinsibleDateRangePicker(
             onRangeSelected = { range = it },
@@ -80,15 +79,15 @@ fun DateRangePickerPlayground() {
                 range.startDate?.toString() ?: "-",
                 range.endDate?.toString() ?: "-"
             ),
-            variant = FinsibleTextVariant.SmallLabelRegular,
-            color = FinsibleTheme.colors.secondaryContent
+            textStyle = FinsibleTheme.typography.bodySm,
+            color = FinsibleTheme.colors.contentSecondary
         )
 
 
         FinsibleText(
             text = stringResource(R.string.component_playground_date_start_boundary),
-            variant = FinsibleTextVariant.SmallLabelRegular,
-            color = FinsibleTheme.colors.secondaryContent,
+            textStyle = FinsibleTheme.typography.bodySm,
+            color = FinsibleTheme.colors.contentSecondary,
         )
 
         FinsibleMonthYearPicker(
@@ -113,8 +112,8 @@ fun DateRangePickerPlayground() {
 
         FinsibleText(
             text = stringResource(R.string.component_playground_date_end_boundary),
-            variant = FinsibleTextVariant.SmallLabelRegular,
-            color = FinsibleTheme.colors.secondaryContent,
+            textStyle = FinsibleTheme.typography.bodySm,
+            color = FinsibleTheme.colors.contentSecondary,
         )
 
         FinsibleMonthYearPicker(

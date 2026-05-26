@@ -32,7 +32,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.toCompactCurrency
-import com.itsjeel01.finsiblefrontend.data.di.hiltCurrencyFormatter
+import com.itsjeel01.finsiblefrontend.ui.di.hiltCurrencyFormatter
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant

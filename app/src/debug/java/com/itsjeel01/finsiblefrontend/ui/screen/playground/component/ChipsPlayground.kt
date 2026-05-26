@@ -1,4 +1,7 @@
+
 package com.itsjeel01.finsiblefrontend.ui.screen.playground.component
+import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleSemanticColors
+
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,7 +34,6 @@ import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.filterChipTint
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.filterChipVariantLabel
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.shapeLabel
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.sizeLabel
-import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleColors
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.composables.icons.lucide.R as LucideR
 
@@ -62,8 +64,8 @@ fun ChipsPlayground() {
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = FinsibleTheme.dimes.d16, vertical = FinsibleTheme.dimes.d12),
-        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d12)
+            .padding(horizontal = FinsibleTheme.spacing.insetLg, vertical = FinsibleTheme.spacing.gapMd),
+        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackMd)
     ) {
         FinsibleChipsRow(
             chips = labels.mapIndexed { index, label ->
@@ -159,12 +161,12 @@ fun ChipsPlayground() {
     }
 }
 
-private fun FilterChipTintOption.resolveColor(colors: FinsibleColors): Color = when (this) {
-    FilterChipTintOption.BrandAccent -> colors.brandAccent
-    FilterChipTintOption.Success -> colors.success
-    FilterChipTintOption.Info -> colors.info
-    FilterChipTintOption.Warning -> colors.warning
-    FilterChipTintOption.Error -> colors.error
+private fun FilterChipTintOption.resolveColor(colors: FinsibleSemanticColors): Color = when (this) {
+    FilterChipTintOption.BrandAccent -> colors.brandInteractive
+    FilterChipTintOption.Success -> colors.feedbackSuccess
+    FilterChipTintOption.Info -> colors.feedbackInfo
+    FilterChipTintOption.Warning -> colors.feedbackWarning
+    FilterChipTintOption.Error -> colors.feedbackError
 }
 
 

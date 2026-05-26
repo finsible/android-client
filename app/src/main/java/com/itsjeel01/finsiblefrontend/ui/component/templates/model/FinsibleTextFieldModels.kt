@@ -10,6 +10,8 @@ import androidx.compose.ui.unit.Dp
 @Immutable
 data class FinsibleTextFieldColors(
     val containerColor: Color,
+    val focusedContainerColor: Color,
+    val errorContainerColor: Color,
     val contentColor: Color,
     val placeholderColor: Color,
     val borderColor: Color,

@@ -10,6 +10,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleTextFieldColors
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleTextFieldInputConfig
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleTextFieldSizes
+import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleRadius
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.medium
 
@@ -19,6 +20,8 @@ object FinsibleTextFieldDefaults {
     @Composable
     fun colors(
         containerColor: Color = Color.Unspecified,
+        focusedContainerColor: Color = Color.Unspecified,
+        errorContainerColor: Color = Color.Unspecified,
         contentColor: Color = Color.Unspecified,
         placeholderColor: Color = Color.Unspecified,
         borderColor: Color = Color.Unspecified,
@@ -32,87 +35,89 @@ object FinsibleTextFieldDefaults {
         disabledIconTint: Color = Color.Unspecified,
         rippleColor: Color = Color.Unspecified
     ): FinsibleTextFieldColors {
-        val colors = FinsibleTheme.colors
+        val s = FinsibleTheme.colors
 
         return FinsibleTextFieldColors(
-            containerColor = if (containerColor != Color.Unspecified) containerColor else colors.input,
-            contentColor = if (contentColor != Color.Unspecified) contentColor else colors.primaryContent,
-            placeholderColor = if (placeholderColor != Color.Unspecified) placeholderColor else colors.secondaryContent,
-            borderColor = if (borderColor != Color.Unspecified) borderColor else colors.border,
-            focusedBorderColor = if (focusedBorderColor != Color.Unspecified) focusedBorderColor else colors.primaryContent80,
-            errorBorderColor = if (errorBorderColor != Color.Unspecified) errorBorderColor else colors.error,
-            disabledContainerColor = if (disabledContainerColor != Color.Unspecified) disabledContainerColor else colors.disabled,
-            disabledContentColor = if (disabledContentColor != Color.Unspecified) disabledContentColor else colors.disabledContent,
-            supportingTextColor = if (supportingTextColor != Color.Unspecified) supportingTextColor else colors.secondaryContent,
-            errorTextColor = if (errorTextColor != Color.Unspecified) errorTextColor else colors.error,
-            iconTint = if (iconTint != Color.Unspecified) iconTint else colors.primaryContent,
-            disabledIconTint = if (disabledIconTint != Color.Unspecified) disabledIconTint else colors.disabledContent,
-            rippleColor = if (rippleColor != Color.Unspecified) rippleColor else colors.primaryContent.copy(alpha = 0.12f)
+            containerColor = if (containerColor != Color.Unspecified) containerColor else s.inputSurface,
+            focusedContainerColor = if (focusedContainerColor != Color.Unspecified) focusedContainerColor else s.inputSurface.copy(alpha = 0.7f),
+            errorContainerColor = if (errorContainerColor != Color.Unspecified) errorContainerColor else s.feedbackError.copy(alpha = 0.1f),
+            contentColor = if (contentColor != Color.Unspecified) contentColor else s.contentPrimary,
+            placeholderColor = if (placeholderColor != Color.Unspecified) placeholderColor else s.contentSecondary,
+            borderColor = if (borderColor != Color.Unspecified) borderColor else Color.Transparent,
+            focusedBorderColor = if (focusedBorderColor != Color.Unspecified) focusedBorderColor else Color.Transparent,
+            errorBorderColor = if (errorBorderColor != Color.Unspecified) errorBorderColor else Color.Transparent,
+            disabledContainerColor = if (disabledContainerColor != Color.Unspecified) disabledContainerColor else s.surfaceSunken,
+            disabledContentColor = if (disabledContentColor != Color.Unspecified) disabledContentColor else s.contentDisabled,
+            supportingTextColor = if (supportingTextColor != Color.Unspecified) supportingTextColor else s.contentSecondary,
+            errorTextColor = if (errorTextColor != Color.Unspecified) errorTextColor else s.feedbackError,
+            iconTint = if (iconTint != Color.Unspecified) iconTint else s.contentPrimary,
+            disabledIconTint = if (disabledIconTint != Color.Unspecified) disabledIconTint else s.contentDisabled,
+            rippleColor = if (rippleColor != Color.Unspecified) rippleColor else s.contentPrimary.copy(alpha = 0.12f)
         )
     }
 
     @Composable
     fun sizes(size: FinsibleSize, shapeVariant: FinsibleShape = FinsibleShape.Rounded): FinsibleTextFieldSizes {
-        val d = FinsibleTheme.dimes
+        val sp = FinsibleTheme.spacing
         val t = FinsibleTheme.typography
 
         val spec = when (size) {
             FinsibleSize.ExtraSmall -> FinsibleTextFieldSizes(
-                horizontalPadding = d.d10,
-                verticalPadding = d.d8,
-                textStyle = t.t14,
-                placeholderStyle = t.t14,
-                supportingTextStyle = t.t12,
-                iconSize = d.d16,
-                cornerRadius = d.d8
+                horizontalPadding = sp.gapSm + sp.insetXs / 2,
+                verticalPadding = sp.inlineMd,
+                textStyle = t.bodySm,
+                placeholderStyle = t.bodySm,
+                supportingTextStyle = t.caption,
+                iconSize = FinsibleTheme.sizes.icon.md,
+                cornerRadius = FinsibleTheme.radius.sm
             )
 
             FinsibleSize.Small -> FinsibleTextFieldSizes(
-                horizontalPadding = d.d12,
-                verticalPadding = d.d10,
-                textStyle = t.t16,
-                placeholderStyle = t.t16,
-                supportingTextStyle = t.t12,
-                iconSize = d.d18,
-                cornerRadius = d.d10
+                horizontalPadding = sp.gapMd,
+                verticalPadding = sp.gapSm + sp.insetXs / 2,
+                textStyle = t.bodyMd,
+                placeholderStyle = t.bodyMd,
+                supportingTextStyle = t.bodySm,
+                iconSize = FinsibleTheme.sizes.icon.md,
+                cornerRadius = FinsibleTheme.radius.md
             )
 
             FinsibleSize.Medium -> FinsibleTextFieldSizes(
-                horizontalPadding = d.d14,
-                verticalPadding = d.d12,
-                textStyle = t.t18,
-                placeholderStyle = t.t18,
-                supportingTextStyle = t.t12,
-                iconSize = d.d20,
-                cornerRadius = d.d12
+                horizontalPadding = sp.insetLg - sp.insetXs / 2,
+                verticalPadding = sp.gapMd,
+                textStyle = t.bodyLg,
+                placeholderStyle = t.bodyLg,
+                supportingTextStyle = t.bodySm,
+                iconSize = FinsibleTheme.sizes.icon.lg - sp.insetXs,
+                cornerRadius = FinsibleRadius.md
             )
 
             FinsibleSize.Large -> FinsibleTextFieldSizes(
-                horizontalPadding = d.d16,
-                verticalPadding = d.d14,
-                textStyle = t.t20.medium(),
-                placeholderStyle = t.t20,
-                supportingTextStyle = t.t14,
-                iconSize = d.d24,
-                cornerRadius = d.d14
+                horizontalPadding = sp.insetLg,
+                verticalPadding = sp.insetLg - sp.insetXs / 2,
+                textStyle = t.bodyLg.medium(),
+                placeholderStyle = t.bodyLg,
+                supportingTextStyle = t.bodyMd,
+                iconSize = FinsibleTheme.sizes.icon.lg,
+                cornerRadius = FinsibleRadius.md
             )
 
             FinsibleSize.ExtraLarge -> FinsibleTextFieldSizes(
-                horizontalPadding = d.d16,
-                verticalPadding = d.d16,
-                textStyle = t.t24.medium(),
-                placeholderStyle = t.t24,
-                supportingTextStyle = t.t16,
-                iconSize = d.d28,
-                cornerRadius = d.d16
+                horizontalPadding = sp.insetLg,
+                verticalPadding = sp.insetLg,
+                textStyle = t.headingMd.medium(),
+                placeholderStyle = t.headingMd,
+                supportingTextStyle = t.bodyLg,
+                iconSize = FinsibleTheme.sizes.icon.xl - sp.insetXs,
+                cornerRadius = FinsibleTheme.radius.lg
             )
         }
 
         val corner = when (shapeVariant) {
-            FinsibleShape.Sharp -> FinsibleTheme.dimes.d0
+            FinsibleShape.Sharp -> FinsibleTheme.radius.none
             FinsibleShape.Rounded -> spec.cornerRadius
             FinsibleShape.Pill,
-            FinsibleShape.Circle -> (spec.iconSize / 2) + spec.verticalPadding
+            FinsibleShape.Circle -> FinsibleTheme.radius.pill
         }
 
         return spec.copy(cornerRadius = corner)
@@ -129,5 +134,3 @@ object FinsibleTextFieldDefaults {
         )
     }
 }
-
-

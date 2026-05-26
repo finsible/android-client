@@ -157,7 +157,11 @@ class CategoryLocalRepository @Inject constructor(
         return queueDeleteEntity(id)
     }
 
-    /** Reactively emits the top [limit] categories sorted purely by recency. */
+    /**
+     * Reactively emits the top [limit] categories sorted by recency.
+     * Categories never used (null lastUsedAt) are excluded — ObjectBox places nulls first on
+     * orderDesc, which would incorrectly rank unused categories as "most recent".
+     */
     fun getRecentCategoriesFlow(
         type: TransactionType,
         limit: Int
@@ -165,6 +169,7 @@ class CategoryLocalRepository @Inject constructor(
         val typeInt = TransactionTypeConverter().convertToDatabaseValue(type)!!
         return box.query()
             .equal(CategoryEntity_.type, typeInt)
+            .notNull(CategoryEntity_.lastUsedAt)
             .orderDesc(CategoryEntity_.lastUsedAt)
             .build()
             .flow()

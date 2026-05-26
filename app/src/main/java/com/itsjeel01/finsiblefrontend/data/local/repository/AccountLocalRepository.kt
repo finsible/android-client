@@ -155,10 +155,15 @@ class AccountLocalRepository @Inject constructor(
             .map { it.take(limit) }
     }
 
-    /** Reactively emits the top [limit] active accounts sorted purely by recency. */
+    /**
+     * Reactively emits the top [limit] active accounts sorted by recency.
+     * Accounts never used (null lastUsedAt) are excluded — ObjectBox places nulls first on orderDesc,
+     * which would incorrectly rank unused accounts as "most recent".
+     */
     fun getRecentAccountsFlow(limit: Int): Flow<List<AccountEntity>> {
         return box.query()
             .equal(AccountEntity_.isActive, true)
+            .notNull(AccountEntity_.lastUsedAt)
             .orderDesc(AccountEntity_.lastUsedAt)
             .build()
             .flow()

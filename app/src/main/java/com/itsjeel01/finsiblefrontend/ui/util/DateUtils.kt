@@ -8,9 +8,36 @@ import java.time.format.DateTimeFormatter
 
 object DateUtils {
 
-    private fun getFormatter(pattern: String): DateTimeFormatter {
-        return DateTimeFormatter.ofPattern(pattern, UserLocaleRegistry.currentLocale())
-            .withZone(ZoneId.systemDefault())
+    private data class FormatterCacheEntry(
+        val localeTag: String,
+        val zoneId: String,
+        val formatter: DateTimeFormatter
+    )
+
+    private val formatterCache = mutableMapOf<String, FormatterCacheEntry>()
+
+    private fun getFormatter(cacheKey: String): DateTimeFormatter {
+        val locale = UserLocaleRegistry.currentLocale()
+        val zoneId = ZoneId.systemDefault()
+        val localeTag = locale.toLanguageTag()
+        val zoneKey = zoneId.id
+
+        synchronized(this) {
+            val cached = formatterCache[cacheKey]
+            if (cached != null && cached.localeTag == localeTag && cached.zoneId == zoneKey) {
+                return cached.formatter
+            }
+
+            return DateTimeFormatter.ofPattern(cacheKey, locale)
+                .withZone(zoneId)
+                .also {
+                    formatterCache[cacheKey] = FormatterCacheEntry(
+                        localeTag = localeTag,
+                        zoneId = zoneKey,
+                        formatter = it
+                    )
+                }
+        }
     }
 
     fun formatDateHeader(

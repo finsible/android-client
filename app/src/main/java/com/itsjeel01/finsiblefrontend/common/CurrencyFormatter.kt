@@ -5,6 +5,7 @@ import android.icu.math.MathContext
 import android.icu.text.CompactDecimalFormat
 import android.icu.text.DecimalFormat
 import android.icu.text.NumberFormat
+import com.itsjeel01.finsiblefrontend.data.model.Currency
 import com.itsjeel01.finsiblefrontend.data.repository.CurrencyRepository
 import java.util.Locale
 import javax.inject.Inject
@@ -48,12 +49,14 @@ class CurrencyFormatter @Inject constructor(
         options: CurrencyFormatOptions = CurrencyFormatOptions(),
     ): String {
         val absCentis = if (centis < 0L) -centis else centis
-        val formatter = getConfiguredFormatter(currencyCode = currencyCode, compact = false, options = options)
+        val currency = currencyRepository.getByIsoCode(currencyCode)
+        val symbol = currency?.symbol ?: currencyCode
+        val formatter = getConfiguredFormatter(currency = currency, compact = false, options = options)
         val formattedValue = formatter.format(centisToDecimal(absCentis))
         return composeValue(
             formattedAmount = formattedValue,
             isNegative = centis < 0L,
-            currencyCode = currencyCode,
+            symbol = symbol,
             options = options,
         )
     }
@@ -64,7 +67,9 @@ class CurrencyFormatter @Inject constructor(
         options: CurrencyFormatOptions = CurrencyFormatOptions(),
     ): String {
         val absCentis = if (centis < 0L) -centis else centis
-        val compactFormatter = getConfiguredFormatter(currencyCode = currencyCode, compact = true, options = options)
+        val currency = currencyRepository.getByIsoCode(currencyCode)
+        val symbol = currency?.symbol ?: currencyCode
+        val compactFormatter = getConfiguredFormatter(currency = currency, compact = true, options = options)
 
         // ICU natively scales the number down AND appends K, M, L, Cr based on the locale!
         val formattedAmount = compactFormatter.format(centisToDecimal(absCentis))
@@ -72,18 +77,17 @@ class CurrencyFormatter @Inject constructor(
         return composeValue(
             formattedAmount = formattedAmount,
             isNegative = centis < 0L,
-            currencyCode = currencyCode,
+            symbol = symbol,
             options = options,
         )
     }
 
     private fun getConfiguredFormatter(
-        currencyCode: String,
+        currency: Currency?,
         compact: Boolean,
         options: CurrencyFormatOptions,
     ): DecimalFormat {
         val normalized = normalizeOptions(options)
-        val currency = currencyRepository.getByIsoCode(currencyCode)
 
         // 1. Get the user's actual device language (e.g., "es" for Spanish)
         val userLocale = UserLocaleRegistry.currentLocale()
@@ -99,7 +103,7 @@ class CurrencyFormatter @Inject constructor(
         } ?: userLocale
 
         val key = FormatterCacheKey(
-            currencyCode = currencyCode,
+            currencyCode = currency?.code ?: "",
             localeTag = resolvedLocale.toLanguageTag(),
             compact = compact,
             useGrouping = normalized.useGrouping,
@@ -137,7 +141,7 @@ class CurrencyFormatter @Inject constructor(
     private fun composeValue(
         formattedAmount: String,
         isNegative: Boolean,
-        currencyCode: String,
+        symbol: String,
         options: CurrencyFormatOptions,
     ): String {
         val signPrefix = if (options.includeSign) {
@@ -150,7 +154,6 @@ class CurrencyFormatter @Inject constructor(
             ""
         }
 
-        val symbol = currencyRepository.getByIsoCode(currencyCode)?.symbol ?: currencyCode
         val valueWithSymbol = if (!options.includeCurrencySymbol) {
             formattedAmount
         } else {

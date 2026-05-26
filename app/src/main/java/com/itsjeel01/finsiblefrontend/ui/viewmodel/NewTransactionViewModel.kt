@@ -146,7 +146,10 @@ class NewTransactionViewModel @Inject constructor(
         )
 
     /** Emits ALL active From accounts, sorted contextually */
-    val topKFromAccounts: StateFlow<List<AccountUIModel>> = accountLocalRepository.getAccountsFlow().map { entities ->
+    val topKFromAccounts: StateFlow<List<AccountUIModel>> = combine(
+        accountLocalRepository.getAccountsFlow(),
+        preferenceManager.defaultCurrencyFlow
+    ) { entities, currency ->
         val activeAccounts = entities.filter { it.isActive }
         val topEntities = activeAccounts.sortedContextually(
             getUsageCount = { it.usageCount },
@@ -154,8 +157,7 @@ class NewTransactionViewModel @Inject constructor(
             getName = { it.name }
         )
 
-        val currencyCode = preferenceManager.getCurrency().code
-        topEntities.map { it.toUiModel(currencyFormatter, currencyCode) }
+        topEntities.map { it.toUiModel(currencyFormatter, currency.code) }
     }.flowOn(Dispatchers.Default)
         .stateIn(
             scope = viewModelScope,
@@ -166,8 +168,9 @@ class NewTransactionViewModel @Inject constructor(
     /** Emits ALL valid To accounts (excluding selected From account), sorted contextually */
     val topKToAccounts: StateFlow<List<AccountUIModel>> = combine(
         accountLocalRepository.getAccountsFlow(),
-        state.map { it.fromAccountId }.distinctUntilChanged()
-    ) { entities, fromId ->
+        state.map { it.fromAccountId }.distinctUntilChanged(),
+        preferenceManager.defaultCurrencyFlow
+    ) { entities, fromId, currency ->
         val validAccounts = entities.filter { it.isActive && it.id != fromId }
         val topEntities = validAccounts.sortedContextually(
             getUsageCount = { it.usageCount },
@@ -175,8 +178,7 @@ class NewTransactionViewModel @Inject constructor(
             getName = { it.name }
         )
 
-        val currencyCode = preferenceManager.getCurrency().code
-        topEntities.map { it.toUiModel(currencyFormatter, currencyCode) }
+        topEntities.map { it.toUiModel(currencyFormatter, currency.code) }
     }.flowOn(Dispatchers.Default)
         .stateIn(
             scope = viewModelScope,

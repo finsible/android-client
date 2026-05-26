@@ -2,10 +2,12 @@ package com.itsjeel01.finsiblefrontend.common
 
 import androidx.datastore.core.DataStore
 import com.itsjeel01.finsiblefrontend.common.datastore.UserPreferences
+import com.itsjeel01.finsiblefrontend.common.logging.Logger
 import com.itsjeel01.finsiblefrontend.data.model.Currency
 import com.itsjeel01.finsiblefrontend.data.remote.model.AuthData
 import com.itsjeel01.finsiblefrontend.data.repository.CurrencyRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -16,9 +18,13 @@ class PreferenceManager @Inject constructor(
     private val dataStore: DataStore<UserPreferences>,
     private val currencyRepository: CurrencyRepository
 ) {
-    val defaultCurrencyCodeFlow: Flow<String> = dataStore.data.map { prefs ->
-        prefs.preferredCurrencyCode ?: resolveDefaultCurrencyCode()
-    }
+    val defaultCurrencyFlow: Flow<Currency> = dataStore.data.map { prefs ->
+        resolveCurrency(prefs.preferredCurrencyCode)
+    }.distinctUntilChanged()
+
+    val defaultCurrencyCodeFlow: Flow<String> = defaultCurrencyFlow.map { it.code }
+
+    val jwtFlow: Flow<String?> = dataStore.data.map { it.jwt }.distinctUntilChanged()
 
     suspend fun saveAuthData(authResponse: AuthData) {
         dataStore.updateData { current ->
@@ -60,23 +66,28 @@ class PreferenceManager @Inject constructor(
         dataStore.updateData { it.copy(preferredCurrencyCode = null) }
     }
 
-    // Synchronous-style suspend getters for one-off reads (e.g., inside Repositories or Interceptors)
-    suspend fun getJwt(): String? = dataStore.data.first().jwt
-    suspend fun getLocalIdCounter(): Long = dataStore.data.first().localIdCounter
-    suspend fun isSyncEnabled(): Boolean = dataStore.data.first().isSyncEnabled
-    suspend fun isBackupEnabled(): Boolean = dataStore.data.first().isBackupEnabled
-    suspend fun isWifiOnlySyncEnabled(): Boolean = dataStore.data.first().isWifiOnlySyncEnabled
-    suspend fun isLoggedIn(): Boolean = dataStore.data.first().isLoggedIn
+    private suspend fun <T> readPrefs(selector: (UserPreferences) -> T, default: T): T =
+        runCatching { selector(dataStore.data.first()) }
+            .onFailure { Logger.App.e("Failed to read preference, using default: $default", it) }
+            .getOrDefault(default)
 
-    suspend fun getDefaultCurrencyCode(): String = getCurrency().code
+    private suspend fun <T> readPrefsNullable(selector: (UserPreferences) -> T?): T? =
+        runCatching { selector(dataStore.data.first()) }
+            .onFailure { Logger.App.e("Failed to read nullable preference, returning null", it) }
+            .getOrNull()
 
-    private suspend fun resolveDefaultCurrencyCode(): String = getCurrency().code
+    suspend fun getJwt(): String? = readPrefsNullable { it.jwt }
+    suspend fun getLocalIdCounter(): Long = readPrefs({ it.localIdCounter }, default = 0L)
+    suspend fun isSyncEnabled(): Boolean = readPrefs({ it.isSyncEnabled }, default = false)
+    suspend fun isBackupEnabled(): Boolean = readPrefs({ it.isBackupEnabled }, default = false)
+    suspend fun isWifiOnlySyncEnabled(): Boolean = readPrefs({ it.isWifiOnlySyncEnabled }, default = true)
+    suspend fun isLoggedIn(): Boolean = readPrefs({ it.isLoggedIn }, default = false)
+    suspend fun getDefaultCurrencyCode(): String = defaultCurrencyCodeFlow.first()
+    suspend fun getCurrency(): Currency = defaultCurrencyFlow.first()
 
-    suspend fun getCurrency(): Currency {
-        val prefs = dataStore.data.first()
-
+    private fun resolveCurrency(preferredCode: String?): Currency {
         // Try stored preference
-        prefs.preferredCurrencyCode?.let { code ->
+        preferredCode?.let { code ->
             currencyRepository.getByIsoCode(code)?.let { return it }
         }
 

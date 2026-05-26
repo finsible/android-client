@@ -13,6 +13,7 @@ import com.itsjeel01.finsiblefrontend.data.remote.converter.ResponseHandler
 import com.itsjeel01.finsiblefrontend.data.remote.converter.ResponseHandlingConverterFactory
 import com.itsjeel01.finsiblefrontend.data.remote.interceptor.AuthInterceptor
 import com.itsjeel01.finsiblefrontend.data.sync.CacheManager
+import com.itsjeel01.finsiblefrontend.data.sync.ScopeManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -61,13 +62,14 @@ object NetworkModule {
     @Singleton
     fun okHttpClient(
         preferenceManager: PreferenceManager,
+        scopeManager: ScopeManager,
         networkInterceptorsProvider: NetworkInterceptorsProvider
     ): OkHttpClient {
         return OkHttpClient.Builder()
             .apply {
                 networkInterceptorsProvider.interceptors().forEach { addInterceptor(it) }
             }
-            .addInterceptor(AuthInterceptor(preferenceManager))
+            .addInterceptor(AuthInterceptor(preferenceManager, scopeManager))
             .build()
     }
 

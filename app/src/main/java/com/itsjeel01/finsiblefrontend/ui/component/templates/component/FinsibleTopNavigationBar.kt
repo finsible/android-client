@@ -33,8 +33,8 @@ import com.itsjeel01.finsiblefrontend.ui.theme.finsibleShadow
 
 @Composable
 fun FinsibleTopNavigationBar(
-    modifier: Modifier = Modifier,
     state: FinsibleHeaderState,
+    modifier: Modifier = Modifier,
 ) {
     val targetColor = state.backgroundColor ?: FinsibleHeaderDefaults.backgroundColor()
     val animatedBackgroundColor by animateColorAsState(

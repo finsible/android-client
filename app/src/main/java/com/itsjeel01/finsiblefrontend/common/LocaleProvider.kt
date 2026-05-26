@@ -45,8 +45,12 @@ class DeviceLocaleProvider @Inject constructor(
         }
 
         // SIM Country fallback
-        val tm = context.getSystemService(Context.TELEPHONY_SERVICE) as? TelephonyManager
-        val simCountry = tm?.simCountryIso
+        val simCountry = try {
+            val tm = context.getSystemService(Context.TELEPHONY_SERVICE) as? TelephonyManager
+            tm?.simCountryIso
+        } catch (_: SecurityException) {
+            null
+        }
         if (!simCountry.isNullOrBlank()) {
             return simCountry.uppercase()
         }

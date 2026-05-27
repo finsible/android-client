@@ -1,12 +1,15 @@
 package com.itsjeel01.finsiblefrontend.data.local.repository
 
 import com.itsjeel01.finsiblefrontend.common.EntityType
+import com.itsjeel01.finsiblefrontend.common.OperationType
 import com.itsjeel01.finsiblefrontend.common.Status
 import com.itsjeel01.finsiblefrontend.common.TransactionType
 import com.itsjeel01.finsiblefrontend.common.asCentisAmount
 import com.itsjeel01.finsiblefrontend.common.logging.Logger
+import com.itsjeel01.finsiblefrontend.data.local.OperationTypeConverter
 import com.itsjeel01.finsiblefrontend.data.local.TransactionTypeConverter
 import com.itsjeel01.finsiblefrontend.data.local.entity.PendingOperationEntity
+import com.itsjeel01.finsiblefrontend.data.local.entity.PendingOperationEntity_
 import com.itsjeel01.finsiblefrontend.data.local.entity.TransactionEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.TransactionEntity_
 import com.itsjeel01.finsiblefrontend.data.local.entity.toAmountString
@@ -21,6 +24,9 @@ import com.itsjeel01.finsiblefrontend.ui.model.TransactionDailySummary
 import io.objectbox.Box
 import io.objectbox.Property
 import io.objectbox.query.QueryBuilder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
 import java.util.Calendar
 import java.util.Locale
 import javax.inject.Inject
@@ -29,6 +35,7 @@ class TransactionLocalRepository @Inject constructor(
     override val box: Box<TransactionEntity>,
     pendingOperationBox: Box<PendingOperationEntity>,
     localIdGenerator: LocalIdGenerator,
+    private val json: Json,
     private val categoryLocalRepository: CategoryLocalRepository,
     private val accountLocalRepository: AccountLocalRepository
 ) : SyncableLocalRepository<Transaction, TransactionEntity>(
@@ -138,9 +145,11 @@ class TransactionLocalRepository @Inject constructor(
         toAccountId: Long?,
         description: String?,
         currencyCode: String
-    ): TransactionEntity {
-        val entity = queueCreateEntity { localId ->
-            TransactionEntity(
+    ): TransactionEntity = withContext(Dispatchers.IO) {
+        val localId = localIdGenerator.nextLocalId()
+
+        box.store.callInTx {
+            val entity = TransactionEntity(
                 id = localId,
                 type = type,
                 totalAmount = totalAmount,
@@ -159,22 +168,28 @@ class TransactionLocalRepository @Inject constructor(
                 currencyCode = currencyCode,
                 syncStatus = Status.PENDING
             )
-        }
 
-        // Update category usage when transaction is associated with a category
-        if (categoryId > 0) {
-            categoryLocalRepository.updateCategoryUsage(categoryId)
-        }
+            box.put(entity)
 
-        // Track usage for accounts used by this transaction.
-        if (fromAccountId != null && fromAccountId > 0) {
-            accountLocalRepository.updateAccountUsage(fromAccountId)
-        }
-        if (toAccountId != null && toAccountId > 0) {
-            accountLocalRepository.updateAccountUsage(toAccountId)
-        }
+            val request = toCreateRequest(entity)
+            pendingOperationBox.put(
+                PendingOperationEntity(
+                    entityType = entityType,
+                    operationType = OperationType.CREATE,
+                    localEntityId = localId,
+                    payload = json.encodeToString(request),
+                    status = Status.PENDING,
+                    createdAt = System.currentTimeMillis()
+                )
+            )
 
-        return entity
+            // Usage tracking — atomic with the entity write in the same transaction
+            if (categoryId > 0) categoryLocalRepository.incrementUsage(categoryId)
+            if (fromAccountId != null && fromAccountId > 0) accountLocalRepository.incrementUsage(fromAccountId)
+            if (toAccountId != null && toAccountId > 0) accountLocalRepository.incrementUsage(toAccountId)
+
+            entity
+        }
     }
 
     fun updateTransaction(
@@ -194,42 +209,65 @@ class TransactionLocalRepository @Inject constructor(
         val oldCategoryId = entity.categoryId
         val oldFromAccountId = entity.fromAccountId
         val oldToAccountId = entity.toAccountId
-        type?.let { entity.type = it }
-        totalAmount?.let { entity.totalAmount = it }
-        transactionDate?.let { entity.transactionDate = it }
-        categoryId?.let {
-            entity.categoryId = it
-            entity.categoryIcon = try {
-                categoryLocalRepository.get(it).icon
-            } catch (_: Exception) {
-                ""
+
+        return box.store.callInTx {
+            type?.let { entity.type = it }
+            totalAmount?.let { entity.totalAmount = it }
+            transactionDate?.let { entity.transactionDate = it }
+            categoryId?.let {
+                entity.categoryId = it
+                entity.categoryIcon = try {
+                    categoryLocalRepository.get(it).icon
+                } catch (_: Exception) {
+                    ""
+                }
             }
-        }
-        categoryName?.let { entity.categoryName = it }
-        fromAccountId?.let { entity.fromAccountId = it }
-        toAccountId?.let { entity.toAccountId = it }
-        description?.let { entity.description = it }
-        currencyCode?.let { entity.currencyCode = it }
+            categoryName?.let { entity.categoryName = it }
+            fromAccountId?.let { entity.fromAccountId = it }
+            toAccountId?.let { entity.toAccountId = it }
+            description?.let { entity.description = it }
+            currencyCode?.let { entity.currencyCode = it }
 
-        // Update searchableText if description or categoryName changed
-        if (description != null || categoryName != null) {
-            entity.searchableText = buildSearchableText(entity.description, entity.categoryName)
-        }
+            if (description != null || categoryName != null) {
+                entity.searchableText = buildSearchableText(entity.description, entity.categoryName)
+            }
 
-        // Update category usage if category is changed
-        if (categoryId != null && categoryId > 0 && categoryId != oldCategoryId) {
-            categoryLocalRepository.updateCategoryUsage(categoryId)
-        }
+            // Shared entity write — single path for both branches
+            entity.syncStatus = Status.PENDING
+            box.put(entity)
 
-        // Update account usage only when account selection changed.
-        if (fromAccountId != null && fromAccountId > 0 && fromAccountId != oldFromAccountId) {
-            accountLocalRepository.updateAccountUsage(fromAccountId)
-        }
-        if (toAccountId != null && toAccountId > 0 && toAccountId != oldToAccountId) {
-            accountLocalRepository.updateAccountUsage(toAccountId)
-        }
+            if (entity.id <= 0) {
+                val createOpType = OperationTypeConverter()
+                    .convertToDatabaseValue(OperationType.CREATE)!!.toLong()
+                pendingOperationBox.query()
+                    .equal(PendingOperationEntity_.operationType, createOpType)
+                    .equal(PendingOperationEntity_.localEntityId, entity.id)
+                    .build()
+                    .findFirst()?.let { pendingOp ->
+                        pendingOp.payload = json.encodeToString(toCreateRequest(entity))
+                        pendingOperationBox.put(pendingOp)
+                    }
+            } else {
+                val request = toUpdateRequest(entity)
+                pendingOperationBox.put(
+                    PendingOperationEntity(
+                        entityType = entityType,
+                        operationType = OperationType.UPDATE,
+                        entityId = entity.id,
+                        payload = json.encodeToString(request),
+                        status = Status.PENDING,
+                        createdAt = System.currentTimeMillis()
+                    )
+                )
+            }
 
-        return queueUpdateEntity(entity)
+            // Usage tracking — atomic with the entity write in the same transaction
+            if (categoryId != null && categoryId > 0 && categoryId != oldCategoryId) categoryLocalRepository.incrementUsage(categoryId)
+            if (fromAccountId != null && fromAccountId > 0 && fromAccountId != oldFromAccountId) accountLocalRepository.incrementUsage(fromAccountId)
+            if (toAccountId != null && toAccountId > 0 && toAccountId != oldToAccountId) accountLocalRepository.incrementUsage(toAccountId)
+
+            entity
+        }
     }
 
     fun deleteTransaction(id: Long): Boolean = queueDeleteEntity(id)

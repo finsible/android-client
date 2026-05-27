@@ -209,14 +209,18 @@ class AccountLocalRepository @Inject constructor(
      */
     fun updateAccountUsage(id: Long): AccountEntity? {
         return box.store.callInTx {
-            val entity = box.get(id) ?: return@callInTx null
-
-            entity.usageCount += 1
-            entity.lastUsedAt = System.currentTimeMillis()
-
-            box.put(entity)
-            Logger.Database.d("Updated account usage: id=$id, count=${entity.usageCount}")
-            entity
+            incrementUsage(id)
         }
+    }
+
+    internal fun incrementUsage(id: Long): AccountEntity? {
+        val entity = box.get(id) ?: return null
+
+        entity.usageCount += 1
+        entity.lastUsedAt = System.currentTimeMillis()
+
+        box.put(entity)
+        Logger.Database.d("Updated account usage: id=$id, count=${entity.usageCount}")
+        return entity
     }
 }

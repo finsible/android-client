@@ -233,14 +233,18 @@ class CategoryLocalRepository @Inject constructor(
      */
     fun updateCategoryUsage(id: Long): CategoryEntity? {
         return box.store.callInTx {
-            val entity = box.get(id) ?: return@callInTx null
-
-            entity.usageCount += 1
-            entity.lastUsedAt = System.currentTimeMillis()
-
-            box.put(entity)
-            Logger.Database.d("Updated category usage: id=$id, count=${entity.usageCount}")
-            entity
+            incrementUsage(id)
         }
+    }
+
+    internal fun incrementUsage(id: Long): CategoryEntity? {
+        val entity = box.get(id) ?: return null
+
+        entity.usageCount += 1
+        entity.lastUsedAt = System.currentTimeMillis()
+
+        box.put(entity)
+        Logger.Database.d("Updated category usage: id=$id, count=${entity.usageCount}")
+        return entity
     }
 }

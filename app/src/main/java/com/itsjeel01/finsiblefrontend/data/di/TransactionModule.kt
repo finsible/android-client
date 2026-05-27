@@ -12,6 +12,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.objectbox.Box
 import io.objectbox.BoxStore
+import kotlinx.serialization.json.Json
 import javax.inject.Singleton
 
 @Module
@@ -29,13 +30,15 @@ object TransactionModule {
         transactionEntityBox: Box<TransactionEntity>,
         pendingOperationBox: Box<PendingOperationEntity>,
         localIdGenerator: LocalIdGenerator,
+        json: Json,
         categoryLocalRepository: CategoryLocalRepository,
-        accountLocalRepository: AccountLocalRepository
+        accountLocalRepository: AccountLocalRepository,
     ): TransactionLocalRepository {
         return TransactionLocalRepository(
             transactionEntityBox,
             pendingOperationBox,
             localIdGenerator,
+            json,
             categoryLocalRepository,
             accountLocalRepository
         )

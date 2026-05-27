@@ -1,9 +1,9 @@
 package com.itsjeel01.finsiblefrontend.data.local.repository
 
+import com.itsjeel01.finsiblefrontend.common.logging.Logger
 import com.itsjeel01.finsiblefrontend.data.local.entity.ExchangeRateEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.ExchangeRateEntity_
 import io.objectbox.Box
-import io.objectbox.kotlin.equal
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -53,6 +53,23 @@ class ExchangeRateLocalRepository @Inject constructor(
     }
 
     fun saveRates(rates: List<ExchangeRateEntity>) {
-        box.put(rates)
+        if (rates.isEmpty()) return
+
+        box.store.callInTx {
+            val pairCodes = rates.map(ExchangeRateEntity::pairCode).toTypedArray()
+            val existingByPairCode = box.query()
+                .apply(ExchangeRateEntity_.pairCode.oneOf(pairCodes))
+                .build()
+                .find()
+                .associateBy { it.pairCode }
+
+            rates.forEach { rate ->
+                existingByPairCode[rate.pairCode]?.let { rate.id = it.id }
+            }
+
+            box.put(rates)
+        }
+
+        Logger.Database.d("Saved ${rates.size} exchange rates")
     }
 }

@@ -11,11 +11,11 @@ data class TransactionUpdateRequest(
     val transactionDate: Long? = null,
     val categoryId: Long? = null,
     val description: String? = null,
-    @SerialName("currency") val currencyCode: String,
+    @SerialName("currency") val currencyCode: String? = null,
     val fromAccountId: Long? = null,
     val toAccountId: Long? = null,
     val spaceId: Long? = null,
     val userShare: String? = null,
-    val isSplit: Boolean = false,
+    val isSplit: Boolean? = null,
     val paidByUserId: Long? = null
 )

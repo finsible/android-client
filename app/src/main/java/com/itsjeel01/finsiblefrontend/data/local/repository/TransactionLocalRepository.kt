@@ -248,7 +248,16 @@ class TransactionLocalRepository @Inject constructor(
                         pendingOperationBox.put(pendingOp)
                     }
             } else {
-                val request = toUpdateRequest(entity)
+                val request = TransactionUpdateRequest(
+                    type = type?.name,
+                    totalAmount = totalAmount?.toAmountString(),
+                    transactionDate = transactionDate,
+                    categoryId = categoryId,
+                    description = description,
+                    currencyCode = currencyCode,
+                    fromAccountId = fromAccountId,
+                    toAccountId = toAccountId
+                )
                 pendingOperationBox.put(
                     PendingOperationEntity(
                         entityType = entityType,

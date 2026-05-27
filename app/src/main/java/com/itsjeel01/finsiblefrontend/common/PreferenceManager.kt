@@ -18,15 +18,17 @@ class PreferenceManager @Inject constructor(
     private val dataStore: DataStore<UserPreferences>,
     private val currencyRepository: CurrencyRepository
 ) {
+    @Volatile
+    private var jwtCache: String? = null
+
     val defaultCurrencyFlow: Flow<Currency> = dataStore.data.map { prefs ->
         resolveCurrency(prefs.preferredCurrencyCode)
     }.distinctUntilChanged()
 
     val defaultCurrencyCodeFlow: Flow<String> = defaultCurrencyFlow.map { it.code }
 
-    val jwtFlow: Flow<String?> = dataStore.data.map { it.jwt }.distinctUntilChanged()
-
     suspend fun saveAuthData(authResponse: AuthData) {
+        jwtCache = authResponse.jwt
         dataStore.updateData { current ->
             current.copy(
                 jwt = authResponse.jwt,
@@ -39,6 +41,7 @@ class PreferenceManager @Inject constructor(
     }
 
     suspend fun clearAuthData() {
+        jwtCache = null
         dataStore.updateData { current ->
             current.copy(
                 jwt = null,
@@ -76,7 +79,20 @@ class PreferenceManager @Inject constructor(
             .onFailure { Logger.App.e("Failed to read nullable preference, returning null", it) }
             .getOrNull()
 
-    suspend fun getJwt(): String? = readPrefsNullable { it.jwt }
+    fun getCachedJwt(): String? = jwtCache
+
+    suspend fun primeJwtCache() {
+        if (!jwtCache.isNullOrEmpty()) return
+        jwtCache = readPrefsNullable { it.jwt }
+    }
+
+    suspend fun getJwt(): String? {
+        val cached = jwtCache
+        if (!cached.isNullOrEmpty()) return cached
+
+        return readPrefsNullable { it.jwt }
+            .also { jwtCache = it }
+    }
     suspend fun getLocalIdCounter(): Long = readPrefs({ it.localIdCounter }, default = 0L)
     suspend fun isSyncEnabled(): Boolean = readPrefs({ it.isSyncEnabled }, default = false)
     suspend fun isBackupEnabled(): Boolean = readPrefs({ it.isBackupEnabled }, default = false)

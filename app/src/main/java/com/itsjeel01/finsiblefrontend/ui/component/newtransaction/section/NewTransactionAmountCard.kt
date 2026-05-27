@@ -38,8 +38,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.CurrencyFormatter
-import com.itsjeel01.finsiblefrontend.data.di.hiltCurrencyFormatter
-import com.itsjeel01.finsiblefrontend.data.di.hiltCurrencyRepository
+import com.itsjeel01.finsiblefrontend.data.repository.CurrencyRepository
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleTextField
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
@@ -61,14 +60,18 @@ fun NewTransactionAmountCard(
     state: NewTransactionFormState,
     onEvent: (NewTransactionUiEvent) -> Unit,
     accentColor: Color,
+    currencyFormatter: CurrencyFormatter,
+    currencyRepository: CurrencyRepository,
     modifier: Modifier = Modifier,
 ) {
     val hasError = state.validationErrors.contains(NewTransactionValidationError.AMOUNT)
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
     val amountFocusRequester = remember { FocusRequester() }
-    val currencyFormatter = hiltCurrencyFormatter()
-    val currencyRepository = hiltCurrencyRepository()
+
+    val flagEmoji = remember(state.currencyCode, currencyRepository) {
+        currencyRepository.getFlagEmojiByIsoCode(state.currencyCode) ?: ""
+    }
 
     val groupedAmountTransformation = remember(currencyFormatter, state.currencyCode) {
         AmountGroupingVisualTransformation { wholePart ->
@@ -134,7 +137,7 @@ fun NewTransactionAmountCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     FinsibleText(
-                        text = "${currencyRepository.getFlagEmojiByIsoCode(state.currencyCode)}",
+                        text = flagEmoji,
                         textStyle = FinsibleTheme.typography.bodySm
                     )
                     FinsibleText(

@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
-import com.itsjeel01.finsiblefrontend.data.repository.CurrencyRepository
+import com.itsjeel01.finsiblefrontend.data.model.Currency
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleBottomSheet
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleButton
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
@@ -40,7 +40,7 @@ fun NewTransactionBottomSheetHost(
     onEvent: (NewTransactionUiEvent) -> Unit,
     accentColor: androidx.compose.ui.graphics.Color,
     surfaceColor: androidx.compose.ui.graphics.Color,
-    currencyRepository: CurrencyRepository,
+    availableCurrencies: List<Currency>,
     modifier: Modifier = Modifier
 ) {
     // 1. Hoist these ABOVE the early return so they survive recompositions
@@ -113,7 +113,7 @@ fun NewTransactionBottomSheetHost(
                 NewTransactionSheetMode.CURRENCY -> {
                     CurrencySheetContent(
                         selectedCurrencyCode = state.currencyCode,
-                        currencies = currencyRepository.getAll(state.currencyCode),
+                        currencies = availableCurrencies,
                         accentColor = accentColor,
                         surfaceColor = surfaceColor,
                         onCurrencySelected = { currencyCode ->

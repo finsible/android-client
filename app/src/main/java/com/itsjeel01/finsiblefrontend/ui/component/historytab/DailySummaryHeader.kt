@@ -17,17 +17,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.CurrencyFormatter
+import com.itsjeel01.finsiblefrontend.common.UserLocaleRegistry
 import com.itsjeel01.finsiblefrontend.data.repository.CurrencyRepository
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
-import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleDurations
 import com.itsjeel01.finsiblefrontend.ui.model.DateFilterMode
+import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleDurations
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.expanded
 import com.itsjeel01.finsiblefrontend.ui.theme.medium
 import com.itsjeel01.finsiblefrontend.ui.theme.relaxed
 import com.itsjeel01.finsiblefrontend.ui.util.DateUtils
-import java.util.Locale.getDefault
 
 @Composable
 fun DailySummaryHeader(
@@ -37,9 +37,9 @@ fun DailySummaryHeader(
     expenseSumCentis: Long,
     netSumCentis: Long,
     onToggleFilter: () -> Unit,
+    defaultCurrencyCode: String,
     currencyFormatter: CurrencyFormatter,
     currencyRepository: CurrencyRepository,
-    currencyCode: String,
     modifier: Modifier = Modifier
 ) {
     val todayLabel = stringResource(R.string.history_date_header_today)
@@ -71,7 +71,7 @@ fun DailySummaryHeader(
         verticalAlignment = Alignment.CenterVertically
     ) {
         FinsibleText(
-            text = dateText.uppercase(getDefault()),
+            text = dateText.uppercase(UserLocaleRegistry.currentLocale()),
             color = FinsibleTheme.colors.contentTertiary,
             textStyle = FinsibleTheme.typography.bodySm.medium().expanded()
         )
@@ -96,7 +96,7 @@ fun DailySummaryHeader(
                 contentDescription = stringResource(R.string.cd_change_view)
             )
             FinsibleText(
-                text = formatAmount(displayAmountCentis, filterMode, currencyFormatter, currencyRepository, currencyCode),
+                text = formatAmount(displayAmountCentis, filterMode, currencyFormatter, currencyRepository, defaultCurrencyCode),
                 textStyle = FinsibleTheme.typography.bodyMd.relaxed(),
                 color = animatedColor,
             )
@@ -112,6 +112,7 @@ private fun formatAmount(
     currencyCode: String
 ): String {
     val absCentis = if (amountCentis < 0) -amountCentis else amountCentis
+    val symbol = currencyRepository.getByIsoCode(currencyCode)?.symbol ?: currencyCode
     val formattedAmount = currencyFormatter.format(
         centis = absCentis,
         currencyCode = currencyCode,
@@ -120,7 +121,6 @@ private fun formatAmount(
             includeSign = false
         )
     )
-    val symbol = currencyRepository.getByIsoCode(currencyCode)?.symbol ?: currencyCode
     return when (mode) {
         DateFilterMode.NET -> {
             val sign = if (amountCentis >= 0L) "+" else "-"

@@ -10,7 +10,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.itsjeel01.finsiblefrontend.R
-import com.itsjeel01.finsiblefrontend.data.di.hiltUserLocale
+import com.itsjeel01.finsiblefrontend.common.UserLocaleRegistry
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleDatePickerDefaults
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleDropdownDefaults
@@ -55,7 +55,7 @@ fun FinsibleMonthYearPicker(
         "FinsibleMonthYearPicker supports only Small, Medium, and Large sizes."
     }
 
-    val resolvedLocale = constraints.resolveLocale(hiltUserLocale())
+    val resolvedLocale = constraints.resolveLocale(UserLocaleRegistry.currentLocale())
 
     val allMonthsLabel = stringResource(R.string.finsible_date_picker_all_months)
     val validMonthsForYear = remember(constraints.availableMonths, constraints.startMonth, constraints.endMonth, constraints.displayYear) {

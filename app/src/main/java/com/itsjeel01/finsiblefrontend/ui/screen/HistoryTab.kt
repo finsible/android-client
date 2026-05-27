@@ -33,8 +33,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.itsjeel01.finsiblefrontend.R
-import com.itsjeel01.finsiblefrontend.data.di.hiltCurrencyFormatter
-import com.itsjeel01.finsiblefrontend.data.di.hiltCurrencyRepository
 import com.itsjeel01.finsiblefrontend.ui.component.historytab.FilteredResultsSummary
 import com.itsjeel01.finsiblefrontend.ui.component.historytab.TransactionEmptyContent
 import com.itsjeel01.finsiblefrontend.ui.component.historytab.TransactionListContent
@@ -46,7 +44,6 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleT
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleButtonVariant
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.HistoryViewModel
@@ -62,9 +59,7 @@ fun HistoryTab(
     viewModel: HistoryViewModel,
     modifier: Modifier = Modifier
 ) {
-    val currencyFormatter = hiltCurrencyFormatter()
-    val currencyRepository = hiltCurrencyRepository()
-    val currencyCode by viewModel.currencyCode.collectAsStateWithLifecycle()
+    val defaultCurrencyCode by viewModel.defaultCurrencyCode.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val filterState by viewModel.filterState.collectAsStateWithLifecycle()
     val isSearchExpanded by viewModel.isSearchExpanded.collectAsStateWithLifecycle()
@@ -105,7 +100,7 @@ fun HistoryTab(
     TransactionFilterSheet(
         isVisible = showFilterSheet,
         appliedFilters = filterState,
-        currencyCode = currencyCode,
+        currencyCode = defaultCurrencyCode,
         onDismiss = {
             scope.launch { filterSheetState.hide() }.invokeOnCompletion { showFilterSheet = false }
         },
@@ -141,9 +136,9 @@ fun HistoryTab(
             if (filterState.hasActiveFiltersOrSearch && uiState.filteredSummary != null) {
                 FilteredResultsSummary(
                     summary = uiState.filteredSummary!!,
-                    currencyFormatter = currencyFormatter,
-                    currencyRepository = currencyRepository,
-                    currencyCode = currencyCode
+                    currencyFormatter = viewModel.currencyFormatter,
+                    currencyRepository = viewModel.currencyRepository,
+                    defaultCurrencyCode = defaultCurrencyCode
                 )
                 Spacer(Modifier.height(FinsibleTheme.spacing.stackMd))
             }
@@ -187,9 +182,9 @@ fun HistoryTab(
                         dateFilterModes = dateFilterModes,
                         hasActiveFiltersOrSearch = filterState.hasActiveFiltersOrSearch,
                         listState = listState,
-                        currencyFormatter = currencyFormatter,
-                        currencyRepository = currencyRepository,
-                        currencyCode = currencyCode,
+                        defaultCurrencyCode = defaultCurrencyCode,
+                        currencyFormatter = viewModel.currencyFormatter,
+                        currencyRepository = viewModel.currencyRepository,
                         onToggleDateFilter = { viewModel.toggleDateFilter(it) }
                     )
                 }

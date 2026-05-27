@@ -14,8 +14,10 @@ import com.itsjeel01.finsiblefrontend.data.local.repository.AccountLocalReposito
 import com.itsjeel01.finsiblefrontend.data.local.repository.CategoryLocalRepository
 import com.itsjeel01.finsiblefrontend.data.local.repository.ExchangeRateLocalRepository
 import com.itsjeel01.finsiblefrontend.data.local.repository.TransactionLocalRepository
+import com.itsjeel01.finsiblefrontend.data.model.Currency
 import com.itsjeel01.finsiblefrontend.data.repository.AccountRepository
 import com.itsjeel01.finsiblefrontend.data.repository.CategoryRepository
+import com.itsjeel01.finsiblefrontend.data.repository.CurrencyRepository
 import com.itsjeel01.finsiblefrontend.data.repository.ExchangeRateRepository
 import com.itsjeel01.finsiblefrontend.data.sync.DataFetcher
 import com.itsjeel01.finsiblefrontend.data.sync.IntegrityChecker
@@ -54,10 +56,11 @@ class NewTransactionViewModel @Inject constructor(
     private val transactionLocalRepository: TransactionLocalRepository,
     private val categoryRepository: CategoryRepository,
     private val accountRepository: AccountRepository,
+    val currencyRepository: CurrencyRepository,
     private val dataFetcher: DataFetcher,
     private val integrityChecker: IntegrityChecker,
-    private val currencyFormatter: CurrencyFormatter,
-    private val preferenceManager: PreferenceManager,
+    val currencyFormatter: CurrencyFormatter,
+    val preferenceManager: PreferenceManager,
     private val exchangeRateLocalRepository: ExchangeRateLocalRepository,
     private val exchangeRateRepository: ExchangeRateRepository,
     private val networkMonitor: NetworkMonitor
@@ -83,6 +86,12 @@ class NewTransactionViewModel @Inject constructor(
     /** Consolidated form state for the new transaction flow. */
     private val _state = MutableStateFlow(NewTransactionFormState.DEFAULT)
     val state: StateFlow<NewTransactionFormState> = _state.asStateFlow()
+
+    /** Currencies for the picker — pre-resolved via repository without exposing it to UI. */
+    val availableCurrencies: StateFlow<List<Currency>> = state.map { it.currencyCode }
+        .distinctUntilChanged()
+        .map { currencyRepository.getAll(it) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), currencyRepository.getAll(""))
 
     private val _topKLimit = MutableStateFlow(5)
     val topKLimit: StateFlow<Int> = _topKLimit.asStateFlow()
@@ -123,22 +132,20 @@ class NewTransactionViewModel @Inject constructor(
             )
 
     /** Leaf + parent categories — parents sorted after leaf categories. */
-    val topKCategories: StateFlow<List<CategoryUIModel>> = combine(
-        state.map { it.transactionType }.distinctUntilChanged(),
-        categoriesMap
-    ) { _, rawMap ->
-        val allCategories = rawMap.entries.flatMap { (parent, children) ->
-            children + parent
-        }
-        allCategories
-            .distinctBy { it.id }
-            .sortedWith(
-                compareBy<CategoryUIModel> { it.isParent }
-                    .thenByDescending<CategoryUIModel> { it.usageCount }
-                    .thenByDescending { it.lastUsedAt ?: 0L }
-                    .thenBy { it.name.lowercase() }
-            )
-    }.flowOn(Dispatchers.Default)
+    val topKCategories: StateFlow<List<CategoryUIModel>> = categoriesMap
+        .map { rawMap ->
+            val allCategories = rawMap.entries.flatMap { (parent, children) ->
+                children + parent
+            }
+            allCategories
+                .distinctBy { it.id }
+                .sortedWith(
+                    compareBy<CategoryUIModel> { it.isParent }
+                        .thenByDescending { it.usageCount }
+                        .thenByDescending { it.lastUsedAt ?: 0L }
+                        .thenBy { it.name.lowercase() }
+                )
+        }.flowOn(Dispatchers.Default)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(SUBSCRIPTION_TIMEOUT),
@@ -146,19 +153,15 @@ class NewTransactionViewModel @Inject constructor(
         )
 
     /** Emits ALL active From accounts, sorted contextually */
-    val topKFromAccounts: StateFlow<List<AccountUIModel>> = combine(
-        accountLocalRepository.getAccountsFlow(),
-        preferenceManager.defaultCurrencyFlow
-    ) { entities, currency ->
-        val activeAccounts = entities.filter { it.isActive }
-        val topEntities = activeAccounts.sortedContextually(
-            getUsageCount = { it.usageCount },
-            getLastUsedAt = { it.lastUsedAt ?: 0L },
-            getName = { it.name }
-        )
-
-        topEntities.map { it.toUiModel(currencyFormatter, currency.code) }
-    }.flowOn(Dispatchers.Default)
+    val topKFromAccounts: StateFlow<List<AccountUIModel>> = accountLocalRepository.getAccountsFlow()
+        .map { entities ->
+            val activeAccounts = entities.filter { it.isActive }
+            activeAccounts.sortedContextually(
+                getUsageCount = { it.usageCount },
+                getLastUsedAt = { it.lastUsedAt ?: 0L },
+                getName = { it.name }
+            ).map { it.toUiModel(currencyFormatter) }
+        }.flowOn(Dispatchers.Default)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(SUBSCRIPTION_TIMEOUT),
@@ -168,17 +171,14 @@ class NewTransactionViewModel @Inject constructor(
     /** Emits ALL valid To accounts (excluding selected From account), sorted contextually */
     val topKToAccounts: StateFlow<List<AccountUIModel>> = combine(
         accountLocalRepository.getAccountsFlow(),
-        state.map { it.fromAccountId }.distinctUntilChanged(),
-        preferenceManager.defaultCurrencyFlow
-    ) { entities, fromId, currency ->
+        state.map { it.fromAccountId }.distinctUntilChanged()
+    ) { entities, fromId ->
         val validAccounts = entities.filter { it.isActive && it.id != fromId }
-        val topEntities = validAccounts.sortedContextually(
+        validAccounts.sortedContextually(
             getUsageCount = { it.usageCount },
             getLastUsedAt = { it.lastUsedAt ?: 0L },
             getName = { it.name }
-        )
-
-        topEntities.map { it.toUiModel(currencyFormatter, currency.code) }
+        ).map { it.toUiModel(currencyFormatter) }
     }.flowOn(Dispatchers.Default)
         .stateIn(
             scope = viewModelScope,

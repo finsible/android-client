@@ -10,6 +10,7 @@ import com.itsjeel01.finsiblefrontend.data.local.entity.AccountEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.AccountGroupEntity
 import com.itsjeel01.finsiblefrontend.data.local.repository.AccountGroupLocalRepository
 import com.itsjeel01.finsiblefrontend.data.local.repository.AccountLocalRepository
+import com.itsjeel01.finsiblefrontend.data.repository.CurrencyRepository
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleTileCardData
 import com.itsjeel01.finsiblefrontend.ui.mapper.toUiModel
 import com.itsjeel01.finsiblefrontend.ui.model.state.AccountListItem
@@ -23,6 +24,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -32,7 +34,8 @@ class AccountsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val accountLocalRepository: AccountLocalRepository,
     private val accountGroupLocalRepository: AccountGroupLocalRepository,
-    private val currencyFormatter: CurrencyFormatter,
+    val currencyFormatter: CurrencyFormatter,
+    val currencyRepository: CurrencyRepository,
     private val preferenceManager: PreferenceManager
 ) : ViewModel() {
 
@@ -43,9 +46,9 @@ class AccountsViewModel @Inject constructor(
         accountGroupLocalRepository.getAccountGroupsFlow(),
         _selectedGroupId,
         preferenceManager.defaultCurrencyCodeFlow
-    ) { accounts, groups, selectedGroupId, currencyCode ->
+    ) { accounts, groups, selectedGroupId, defaultCurrencyCode ->
         withContext(Dispatchers.Default) {
-            computeUiState(accounts, groups, selectedGroupId, currencyCode)
+            computeUiState(accounts, groups, selectedGroupId, defaultCurrencyCode)
         }
     }.stateIn(
         scope = viewModelScope,
@@ -61,20 +64,20 @@ class AccountsViewModel @Inject constructor(
         accounts: List<AccountEntity>,
         groups: List<AccountGroupEntity>,
         selectedGroupId: Long?,
-        currencyCode: String
+        defaultCurrencyCode: String
     ): AccountsUIState {
 
         val (totalAssetCentis, totalLiabilityCentis) = calculateTotals(accounts)
         val netWorthCentis = totalAssetCentis - totalLiabilityCentis
 
         val cards = if (accounts.isEmpty()) emptyList() else buildList {
-            add(createNetWorthCard(netWorthCentis, totalAssetCentis, totalLiabilityCentis, currencyCode))
+            add(createNetWorthCard(netWorthCentis, totalAssetCentis, totalLiabilityCentis, defaultCurrencyCode))
 
-            val assetStats = buildGroupedStatistics(accounts, { it >= 0L }, { it.balanceCentis }, currencyCode)
-            if (assetStats.isNotEmpty()) add(createAssetsCard(totalAssetCentis, assetStats, currencyCode))
+            val assetStats = buildGroupedStatistics(accounts, { it >= 0L }, { it.balanceCentis }, defaultCurrencyCode)
+            if (assetStats.isNotEmpty()) add(createAssetsCard(totalAssetCentis, assetStats, defaultCurrencyCode))
 
-            val liabilityStats = buildGroupedStatistics(accounts, { it < 0L }, { -it.balanceCentis }, currencyCode)
-            if (liabilityStats.isNotEmpty()) add(createLiabilitiesCard(totalLiabilityCentis, liabilityStats, currencyCode))
+            val liabilityStats = buildGroupedStatistics(accounts, { it < 0L }, { -it.balanceCentis }, defaultCurrencyCode)
+            if (liabilityStats.isNotEmpty()) add(createLiabilitiesCard(totalLiabilityCentis, liabilityStats, defaultCurrencyCode))
         }
 
         val filteredAccounts = if (selectedGroupId == null) accounts
@@ -85,7 +88,7 @@ class AccountsViewModel @Inject constructor(
             .flatMap { (groupName, accountsInGroup) ->
                 buildList {
                     if (selectedGroupId == null) add(AccountListItem.Header(groupName))
-                    addAll(accountsInGroup.map { AccountListItem.Account(it.toUiModel(currencyFormatter, currencyCode)) })
+                    addAll(accountsInGroup.map { AccountListItem.Account(it.toUiModel(currencyFormatter, currencyRepository)) })
                 }
             }
 
@@ -129,11 +132,12 @@ class AccountsViewModel @Inject constructor(
         statistics = statistics.toPersistentList()
     )
 
-    private fun createLiabilitiesCard(totalLiabilityCentis: Long, statistics: List<StatEntryUIModel>, currencyCode: String) = FinsibleTileCardData(
-        title = context.getString(R.string.total_liabilities),
-        heroText = currencyFormatter.format(centis = totalLiabilityCentis, currencyCode = currencyCode),
-        statistics = statistics.toPersistentList()
-    )
+    private fun createLiabilitiesCard(totalLiabilityCentis: Long, statistics: List<StatEntryUIModel>, currencyCode: String) =
+        FinsibleTileCardData(
+            title = context.getString(R.string.total_liabilities),
+            heroText = currencyFormatter.format(centis = totalLiabilityCentis, currencyCode = currencyCode),
+            statistics = statistics.toPersistentList()
+        )
 
     private fun buildGroupedStatistics(
         accounts: List<AccountEntity>,

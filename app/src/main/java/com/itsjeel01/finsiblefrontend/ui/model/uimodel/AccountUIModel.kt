@@ -9,6 +9,7 @@ data class AccountUIModel(
     val name: String,
     val description: String,
     val icon: String,
+    val currencyCode: String,
     val formattedBalance: String,
     val groupColor: String?,
     val groupName: String?,

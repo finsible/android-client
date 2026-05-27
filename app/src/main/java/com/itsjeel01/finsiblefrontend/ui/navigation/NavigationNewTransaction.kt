@@ -20,6 +20,7 @@ fun NavigationNewTransaction(
     val topKCategories by viewModel.topKCategories.collectAsStateWithLifecycle()
     val topKFromAccounts by viewModel.topKFromAccounts.collectAsStateWithLifecycle()
     val topKToAccounts by viewModel.topKToAccounts.collectAsStateWithLifecycle()
+    val availableCurrencies by viewModel.availableCurrencies.collectAsStateWithLifecycle()
 
     NewTransactionScreen(
         state = state,
@@ -27,6 +28,9 @@ fun NavigationNewTransaction(
         categories = topKCategories,   // Passed for the inline row
         fromAccounts = topKFromAccounts,
         toAccounts = topKToAccounts,
+        currencyFormatter = viewModel.currencyFormatter,
+        currencyRepository = viewModel.currencyRepository,
+        availableCurrencies = availableCurrencies,
         onEvent = { event: NewTransactionUiEvent -> viewModel.onEvent(event) },
         onSave = {
             viewModel.submit(

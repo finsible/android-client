@@ -26,10 +26,10 @@ fun FilteredResultsSummary(
     summary: FilteredTransactionSummary,
     currencyFormatter: CurrencyFormatter,
     currencyRepository: CurrencyRepository,
-    currencyCode: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    defaultCurrencyCode: String,
 ) {
-    val symbol = currencyRepository.getByIsoCode(currencyCode)?.symbol ?: currencyCode
+    val symbol = currencyRepository.getByIsoCode(defaultCurrencyCode)?.symbol ?: defaultCurrencyCode
 
     Row(
         modifier = modifier
@@ -58,7 +58,7 @@ fun FilteredResultsSummary(
                 text = "+$symbol${
                     currencyFormatter.format(
                         centis = summary.totalIncomeCentis,
-                        currencyCode = currencyCode,
+                        currencyCode = defaultCurrencyCode,
                         options = CurrencyFormatter.CurrencyFormatOptions(
                             includeCurrencySymbol = false,
                             includeSign = false
@@ -69,10 +69,10 @@ fun FilteredResultsSummary(
                 color = FinsibleTheme.colors.transactionIncome
             )
             FinsibleText(
-                text = "+$symbol${
+                text = "-$symbol${
                     currencyFormatter.format(
                         centis = summary.totalExpenseCentis,
-                        currencyCode = currencyCode,
+                        currencyCode = defaultCurrencyCode,
                         options = CurrencyFormatter.CurrencyFormatOptions(
                             includeCurrencySymbol = false,
                             includeSign = false

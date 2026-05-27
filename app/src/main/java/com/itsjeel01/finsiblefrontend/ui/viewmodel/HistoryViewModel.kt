@@ -32,6 +32,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -45,8 +46,8 @@ private const val SEARCH_DEBOUNCE_MS = 300L
 class HistoryViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val transactionLocalRepository: TransactionLocalRepository,
-    private val currencyFormatter: CurrencyFormatter,
-    private val currencyRepository: CurrencyRepository,
+    val currencyFormatter: CurrencyFormatter,
+    val currencyRepository: CurrencyRepository,
     preferenceManager: PreferenceManager
 ) : ViewModel() {
 
@@ -67,7 +68,7 @@ class HistoryViewModel @Inject constructor(
     private val _dateFilterModes = MutableStateFlow(persistentMapOf<Long, DateFilterMode>())
     val dateFilterModes: StateFlow<ImmutableMap<Long, DateFilterMode>> = _dateFilterModes.asStateFlow()
 
-    val currencyCode: StateFlow<String> = preferenceManager.defaultCurrencyCodeFlow
+    val defaultCurrencyCode: StateFlow<String> = preferenceManager.defaultCurrencyCodeFlow
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
 
     private var currentOffset: Int = 0

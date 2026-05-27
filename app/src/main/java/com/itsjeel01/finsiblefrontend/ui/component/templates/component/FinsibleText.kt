@@ -9,7 +9,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
-import com.itsjeel01.finsiblefrontend.data.di.hiltUserLocale
+import com.itsjeel01.finsiblefrontend.common.UserLocaleRegistry
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.theme.displayFont
@@ -77,7 +77,7 @@ fun FinsibleText(
         else -> resolvedStyle
     }
 
-    val displayText = if (uppercase) text.uppercase(hiltUserLocale()) else text
+    val displayText = if (uppercase) text.uppercase(UserLocaleRegistry.currentLocale()) else text
 
     BasicText(
         text = displayText,

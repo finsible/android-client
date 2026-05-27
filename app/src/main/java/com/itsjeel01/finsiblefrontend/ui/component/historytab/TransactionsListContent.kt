@@ -1,6 +1,4 @@
 package com.itsjeel01.finsiblefrontend.ui.component.historytab
-import androidx.compose.ui.unit.dp
-
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +14,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.itsjeel01.finsiblefrontend.common.CurrencyFormatter
 import com.itsjeel01.finsiblefrontend.common.TransactionType
 import com.itsjeel01.finsiblefrontend.data.repository.CurrencyRepository
@@ -37,9 +36,9 @@ fun TransactionListContent(
     dateFilterModes: Map<Long, DateFilterMode>,
     hasActiveFiltersOrSearch: Boolean,
     listState: LazyListState,
+    defaultCurrencyCode: String,
     currencyFormatter: CurrencyFormatter,
     currencyRepository: CurrencyRepository,
-    currencyCode: String,
     onToggleDateFilter: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -65,9 +64,9 @@ fun TransactionListContent(
                             expenseSumCentis = aggregates.expenseSumCentis,
                             netSumCentis = aggregates.netSumCentis,
                             onToggleFilter = { onToggleDateFilter(startOfDayMs) },
+                            defaultCurrencyCode = defaultCurrencyCode,
                             currencyFormatter = currencyFormatter,
                             currencyRepository = currencyRepository,
-                            currencyCode = currencyCode,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(bottom = FinsibleTheme.spacing.gapMd, top = FinsibleTheme.spacing.insetLg)

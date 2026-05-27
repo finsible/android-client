@@ -7,12 +7,16 @@ import com.itsjeel01.finsiblefrontend.ui.model.uimodel.AccountGroupUIModel
 import com.itsjeel01.finsiblefrontend.ui.model.uimodel.AccountUIModel
 
 /** Map an [AccountEntity] to a stable [AccountUIModel] for Compose. */
-fun AccountEntity.toUiModel(currencyFormatter: CurrencyFormatter, currencyCode: String): AccountUIModel = AccountUIModel(
+fun AccountEntity.toUiModel(currencyFormatter: CurrencyFormatter): AccountUIModel = AccountUIModel(
     id = id,
     name = name,
     description = description,
     icon = icon,
-    formattedBalance = currencyFormatter.format(centis = balanceCentis, currencyCode = currencyCode),
+    currencyCode = currencyCode,
+    formattedBalance = currencyFormatter.format(
+        centis = balanceCentis,
+        currencyCode = currencyCode
+    ),
     groupColor = accountGroup.target?.color,
     groupName = accountGroup.target?.name,
     isPositiveBalance = balanceCentis >= 0L,

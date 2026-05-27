@@ -229,7 +229,9 @@
         {
           "id": "3:3468496160291766673",
           "name": "baseCurrencyCode",
-          "type": 9
+          "indexId": "12:2667203881193070252",
+          "type": 9,
+          "flags": 2048
         },
         {
           "id": "4:2513452322616507256",
@@ -463,7 +465,7 @@
     }
   ],
   "lastEntityId": "6:8225296764426090392",
-  "lastIndexId": "11:1647952815908945277",
+  "lastIndexId": "12:2667203881193070252",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 5,

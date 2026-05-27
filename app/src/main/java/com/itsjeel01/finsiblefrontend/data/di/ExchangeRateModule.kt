@@ -19,5 +19,3 @@ object ExchangeRateModule {
         return store.boxFor(ExchangeRateEntity::class.java)
     }
 }
-
-

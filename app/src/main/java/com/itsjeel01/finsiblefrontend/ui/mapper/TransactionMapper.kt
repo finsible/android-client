@@ -47,6 +47,7 @@ private fun formatAmount(
         TransactionType.TRANSFER -> ""
     }
     val currencyCode = transaction.currencyCode
+    val symbol = currencyRepository.getByIsoCode(currencyCode)?.symbol ?: currencyCode
     val amountStr = currencyFormatter.format(
         centis = transaction.totalAmount,
         currencyCode = currencyCode,
@@ -55,6 +56,5 @@ private fun formatAmount(
             includeSign = false
         )
     )
-    val symbol = currencyRepository.getByIsoCode(currencyCode)?.symbol ?: currencyCode
     return "$sign $symbol$amountStr"
 }

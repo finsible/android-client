@@ -6,10 +6,11 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.serialization)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlinAndroidKsp)
+    alias(libs.plugins.kotlinKapt)
     alias(libs.plugins.hiltAndroid)
     id("kotlin-parcelize") // needed only for non-primitive classes
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
-    id("io.objectbox")
+    alias(libs.plugins.objectboxPlugin)
 }
 
 android {
@@ -52,9 +53,6 @@ android {
         buildConfig = true
         compose = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
-    }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -62,14 +60,9 @@ android {
     }
 }
 
-kotlin {
-    compilerOptions {
-        jvmTarget = JvmTarget.JVM_17
-    }
-}
-
 tasks.withType<KotlinCompile> {
     compilerOptions {
+        jvmTarget = JvmTarget.JVM_17
         freeCompilerArgs.add("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
     }
 }
@@ -125,6 +118,7 @@ dependencies {
     implementation(libs.composables.icons.tabler.filled)
     implementation(libs.androidx.datastore)
     implementation(libs.tink.android)
+    implementation(libs.objectbox.kotlin)
 
     ksp(libs.hilt.compiler)
     ksp(libs.kotlin.metadata.jvm)

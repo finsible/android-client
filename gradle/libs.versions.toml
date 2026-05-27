@@ -1,8 +1,6 @@
 [versions]
 agp = "9.2.1"
 kotlinMetadataJvm = "2.3.0"
-objectboxAndroid = "5.4.2"
-objectboxAndroidObjectbrowser = "5.4.2"
 retrofit = "3.0.0"
 secretsGradlePlugin = "2.0.1"
 credentials = "1.6.0"
@@ -20,7 +18,7 @@ securityCrypto = "1.1.0"
 kotlinxSerializationJson = "1.11.0"
 kotlinxSerialization = "2.3.21"
 hilt = "2.59.2"
-ksp = "2.3.3"
+ksp = "2.3.9"
 activityKtx = "1.13.0"
 googleid = "1.2.0"
 objectBox = "5.4.2"
@@ -72,8 +70,9 @@ hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activityKtx" }
 googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
-objectbox-android = { module = "io.objectbox:objectbox-android", version.ref = "objectboxAndroid" }
-objectbox-android-objectbrowser = { module = "io.objectbox:objectbox-android-objectbrowser", version.ref = "objectboxAndroidObjectbrowser" }
+objectbox-android = { module = "io.objectbox:objectbox-android", version.ref = "objectBox" }
+objectbox-kotlin = { module = "io.objectbox:objectbox-kotlin", version.ref = "objectBox" }
+objectbox-android-objectbrowser = { module = "io.objectbox:objectbox-android-objectbrowser", version.ref = "objectBox" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
 objectbox-gradle-plugin = { module = "io.objectbox:objectbox-gradle-plugin", version.ref = "objectBox" }
@@ -109,3 +108,5 @@ jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serializati
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinAndroidKsp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hiltAndroid = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+kotlinKapt = { id = "com.android.legacy-kapt", version.ref = "agp" }
+objectboxPlugin = { id = "io.objectbox", version.ref = "objectBox" }

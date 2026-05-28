@@ -3,15 +3,15 @@ package com.itsjeel01.finsiblefrontend.ui.screen
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import com.itsjeel01.finsiblefrontend.common.CurrencyFormatter
 import com.itsjeel01.finsiblefrontend.data.model.Currency
+import com.itsjeel01.finsiblefrontend.data.repository.CurrencyRepository
 import com.itsjeel01.finsiblefrontend.ui.component.newtransaction.NewTransactionBottomSheetHost
 import com.itsjeel01.finsiblefrontend.ui.component.newtransaction.NewTransactionInputSection
 import com.itsjeel01.finsiblefrontend.ui.component.newtransaction.NewTransactionSingleScreenHost
 import com.itsjeel01.finsiblefrontend.ui.component.newtransaction.section.NewTransactionCtaSection
 import com.itsjeel01.finsiblefrontend.ui.model.event.NewTransactionUiEvent
 import com.itsjeel01.finsiblefrontend.ui.model.state.NewTransactionFormState
-import com.itsjeel01.finsiblefrontend.common.CurrencyFormatter
-import com.itsjeel01.finsiblefrontend.data.repository.CurrencyRepository
 import com.itsjeel01.finsiblefrontend.ui.model.uimodel.AccountUIModel
 import com.itsjeel01.finsiblefrontend.ui.model.uimodel.CategoryUIModel
 
@@ -28,7 +28,6 @@ fun NewTransactionScreen(
     onEvent: (NewTransactionUiEvent) -> Unit,
     onSave: () -> Unit,
     onSaveAndAddMore: () -> Unit,
-    onClose: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val transactionAccentColor = state.transactionType.getColor()

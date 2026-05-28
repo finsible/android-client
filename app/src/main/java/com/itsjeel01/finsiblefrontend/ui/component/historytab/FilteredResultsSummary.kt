@@ -24,8 +24,8 @@ import com.itsjeel01.finsiblefrontend.ui.theme.medium
 fun FilteredResultsSummary(
     summary: FilteredTransactionSummary,
     currencyFormatter: CurrencyFormatter,
-    modifier: Modifier = Modifier,
     defaultCurrencyCode: String,
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier

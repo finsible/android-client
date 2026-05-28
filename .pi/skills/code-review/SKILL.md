@@ -47,6 +47,7 @@ description: "Code review skill for Android Compose projects, enforcing best pra
 
 ## 4. Design System & Theming
 
+* **Modifier Position:** Enforce `modifier: Modifier = Modifier` as the last non-lambda parameter. It follows required params (no defaults), before optional params (with defaults). If all params have defaults, modifier may be first.
 * **Theme Enforcement:** Reject any `MaterialTheme` import or usage → enforce `FinsibleTheme`.
 * **Hardcoded Values:**
     * Reject explicit strings → enforce `stringResource`.

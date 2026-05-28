@@ -15,7 +15,6 @@ fun NavigationNewTransaction(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    // Collect the new mapped/Top-K flows
     val categoriesMap by viewModel.categoriesMap.collectAsStateWithLifecycle()
     val topKCategories by viewModel.topKCategories.collectAsStateWithLifecycle()
     val topKFromAccounts by viewModel.topKFromAccounts.collectAsStateWithLifecycle()
@@ -46,6 +45,5 @@ fun NavigationNewTransaction(
                 onError = { /* TODO: Show error notification */ }
             )
         },
-        onClose = onNavigateBack
     )
 }

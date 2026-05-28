@@ -68,7 +68,7 @@ class CurrencyRepository @Inject constructor(
         return currenciesMap[code]?.flagEmoji
     }
 
-    /** * Pre-warms the currency cache during app startup.
+    /** Pre-warms the currency cache during app startup.
      * Note: This should ideally be called from a background thread to avoid blocking the Main thread with disk I/O.
      */
     fun initialize() {

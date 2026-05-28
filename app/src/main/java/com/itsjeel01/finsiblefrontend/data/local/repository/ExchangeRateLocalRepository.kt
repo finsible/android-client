@@ -55,21 +55,23 @@ class ExchangeRateLocalRepository @Inject constructor(
     fun saveRates(rates: List<ExchangeRateEntity>) {
         if (rates.isEmpty()) return
 
+        val deduplicatedRates = rates.distinctBy { it.pairCode }
+
         box.store.callInTx {
-            val pairCodes = rates.map(ExchangeRateEntity::pairCode).toTypedArray()
+            val pairCodes = deduplicatedRates.map(ExchangeRateEntity::pairCode).toTypedArray()
             val existingByPairCode = box.query()
                 .apply(ExchangeRateEntity_.pairCode.oneOf(pairCodes))
                 .build()
                 .find()
                 .associateBy { it.pairCode }
 
-            rates.forEach { rate ->
+            deduplicatedRates.forEach { rate ->
                 existingByPairCode[rate.pairCode]?.let { rate.id = it.id }
             }
 
-            box.put(rates)
+            box.put(deduplicatedRates)
         }
 
-        Logger.Database.d("Saved ${rates.size} exchange rates")
+        Logger.Database.d("Saved ${deduplicatedRates.size} exchange rates (deduplicated from ${rates.size})")
     }
 }

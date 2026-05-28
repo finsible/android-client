@@ -1,12 +1,13 @@
 package com.itsjeel01.finsiblefrontend.data.repository
 
 import com.itsjeel01.finsiblefrontend.common.logging.Logger
+import com.itsjeel01.finsiblefrontend.data.di.IoDispatcher
 import com.itsjeel01.finsiblefrontend.data.local.entity.ExchangeRateEntity
 import com.itsjeel01.finsiblefrontend.data.local.repository.ExchangeRateLocalRepository
 import com.itsjeel01.finsiblefrontend.data.remote.api.ExchangeRateApiService
 import com.itsjeel01.finsiblefrontend.data.remote.model.BaseResponse
 import com.itsjeel01.finsiblefrontend.data.remote.model.ExchangeRatesData
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -14,14 +15,15 @@ import javax.inject.Singleton
 @Singleton
 class ExchangeRateRepository @Inject constructor(
     private val apiService: ExchangeRateApiService,
-    private val exchangeRateLocalRepository: ExchangeRateLocalRepository
+    private val exchangeRateLocalRepository: ExchangeRateLocalRepository,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) {
     suspend fun fetchRates(baseCurrencyCode: String): BaseResponse<ExchangeRatesData> {
         return apiService.getExchangeRates(baseCurrencyCode)
     }
 
     /** Fetches the latest rates for [baseCurrencyCode] and caches them into ObjectBox. */
-    suspend fun refreshRatesAndCache(baseCurrencyCode: String): Boolean = withContext(Dispatchers.IO) {
+    suspend fun refreshRatesAndCache(baseCurrencyCode: String): Boolean = withContext(ioDispatcher) {
         try {
             val response = fetchRates(baseCurrencyCode)
             if (!response.success) {

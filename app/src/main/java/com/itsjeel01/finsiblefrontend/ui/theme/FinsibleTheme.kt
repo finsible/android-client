@@ -19,8 +19,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
 
-// ── CompositionLocals ────────────────────────────────────────────────────
-
 private val LocalFinsibleSemanticColors = compositionLocalOf<FinsibleSemanticColors> {
     error("No FinsibleSemanticColors provided")
 }
@@ -57,8 +55,6 @@ private val LocalFinsibleRadius = compositionLocalOf<FinsibleRadius> {
     error("No FinsibleRadius provided")
 }
 
-// ── Theme composable ─────────────────────────────────────────────────────
-
 @Composable
 fun FinsibleTheme(
     isDarkTheme: Boolean = isSystemInDarkTheme(),
@@ -67,8 +63,8 @@ fun FinsibleTheme(
     val deviceInfo = rememberDeviceInfo()
     val scaler = remember(deviceInfo.width) { FinsibleUiScaler(deviceInfo) }
 
-    val semantic = if (isDarkTheme) FinsibleSemanticColors.dark else FinsibleSemanticColors.light
-    val colorResolver = remember(isDarkTheme) { FinsibleColorResolver(semantic) }
+    val colors = if (isDarkTheme) FinsibleSemanticColors.dark else FinsibleSemanticColors.light
+    val colorResolver = remember(isDarkTheme) { FinsibleColorResolver(colors) }
     val spacing = remember(scaler) { scaler.scaleSpacing(FinsibleSpacing.values) }
     val sizes = remember(scaler) { scaler.scaleSizes(FinsibleSizes.values) }
     val stroke = remember(scaler) { scaler.scaleStroke(FinsibleStroke.values) }
@@ -82,7 +78,7 @@ fun FinsibleTheme(
     val radius = remember(scaler) { scaler.scaleRadius(FinsibleRadius.values) }
 
     CompositionLocalProvider(
-        LocalFinsibleSemanticColors provides semantic,
+        LocalFinsibleSemanticColors provides colors,
         LocalFinsibleSpacing provides spacing,
         LocalFinsibleSizes provides sizes,
         LocalFinsibleStroke provides stroke,
@@ -132,8 +128,6 @@ fun PreloadFonts() {
     }
 }
 
-// ── Animation bridge data class ──────────────────────────────────────────
-
 /**
  * Groups animation durations and pre-built specs under one accessor.
  * Accessed via [FinsibleTheme.animations].
@@ -143,8 +137,6 @@ data class FinsibleAnimations(
     val durations: FinsibleDurations,
     val specs: FinsibleAnimationSpecs,
 )
-
-// ── Public accessor object ───────────────────────────────────────────────
 
 object FinsibleTheme {
 

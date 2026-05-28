@@ -1,6 +1,5 @@
 package com.itsjeel01.finsiblefrontend.data.repository
 
-import com.itsjeel01.finsiblefrontend.data.local.repository.AccountLocalRepository
 import com.itsjeel01.finsiblefrontend.data.model.Account
 import com.itsjeel01.finsiblefrontend.data.remote.api.AccountApiService
 import com.itsjeel01.finsiblefrontend.data.remote.model.AccountCreateRequest
@@ -12,7 +11,6 @@ import javax.inject.Singleton
 @Singleton
 class AccountRepository @Inject constructor(
     private val apiService: AccountApiService,
-    private val localRepository: AccountLocalRepository
 ) {
     suspend fun getAccounts(): BaseResponse<List<Account>> {
         return apiService.getAccounts()

@@ -1,7 +1,8 @@
 package com.itsjeel01.finsiblefrontend.data.sync
 
 import com.itsjeel01.finsiblefrontend.common.PreferenceManager
-import java.util.concurrent.atomic.AtomicLong
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -10,18 +11,18 @@ import javax.inject.Singleton
 class LocalIdGenerator @Inject constructor(
     private val preferenceManager: PreferenceManager
 ) {
+    private val mutex = Mutex()
     private var isInitialized = false
-    private val idCounter = AtomicLong(0)
+    private var idCounter = 0L
 
-    suspend fun nextLocalId(): Long {
+    suspend fun nextLocalId(): Long = mutex.withLock {
         if (!isInitialized) {
-            idCounter.set(preferenceManager.getLocalIdCounter())
+            idCounter = preferenceManager.getLocalIdCounter()
             isInitialized = true
         }
-
-        val next = idCounter.decrementAndGet()
+        val next = --idCounter
         preferenceManager.saveLocalIdCounter(next)
-        return next  // Returns -1, -2, -3, ...
+        next
     }
 
     fun isLocalId(id: Long): Boolean = id < 0

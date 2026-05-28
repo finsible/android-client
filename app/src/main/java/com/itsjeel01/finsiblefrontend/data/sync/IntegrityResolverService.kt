@@ -7,6 +7,7 @@ import com.itsjeel01.finsiblefrontend.data.repository.AccountGroupRepository
 import com.itsjeel01.finsiblefrontend.data.repository.AccountRepository
 import com.itsjeel01.finsiblefrontend.data.repository.CategoryRepository
 import com.itsjeel01.finsiblefrontend.data.repository.TransactionRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -28,72 +29,71 @@ class IntegrityResolverService @Inject constructor(
         Logger.Sync.i("Starting background integrity check on app launch")
 
         scopeManager.scope.launch {
-            // Move the check INSIDE the background coroutine
             if (!preferenceManager.isLoggedIn()) {
                 Logger.Sync.d("User not authenticated, skipping integrity check")
                 return@launch
             }
 
-            scopeManager.scope.launch {
-                try {
-                    networkMonitor.initialize()
+            try {
+                networkMonitor.initialize()
 
-                    if (!networkMonitor.isOnline.value) {
-                        Logger.Sync.i("Network unavailable - skipping integrity check (offline-first mode)")
-                        Logger.Sync.d("App will continue with local data. Integrity will be checked when network becomes available.")
-                        return@launch
-                    }
-
-                    val report = integrityChecker.verifyAllIntegrity()
-
-                    if (!report.networkAvailable) {
-                        Logger.Sync.i("Network became unavailable during integrity check")
-                        Logger.Sync.d("App continues with local data. Integrity check will retry when online.")
-                        return@launch
-                    }
-
-                    if (!report.hasDiscrepancy) {
-                        Logger.Sync.i("✓ All entity counts match server snapshot - integrity verified")
-                        return@launch
-                    }
-
-                    Logger.Sync.w("⚠ Integrity discrepancies detected - starting resolution")
-                    logDiscrepancyReport(report)
-
-                    if (!report.categoriesMatch) {
-                        resolveCategories()
-                    }
-
-                    if (!report.accountGroupsMatch) {
-                        resolveAccountGroups()
-                    }
-
-                    if (!report.accountsMatch) {
-                        resolveAccounts()
-                    }
-
-                    if (!report.transactionsMatch) {
-                        resolveTransactions()
-                    }
-
-                    // Verify integrity again after resolution
-                    val finalReport = integrityChecker.verifyAllIntegrity()
-
-                    if (!finalReport.networkAvailable) {
-                        Logger.Sync.w("Network lost during resolution - app continues with partial sync")
-                        return@launch
-                    }
-
-                    if (!finalReport.hasDiscrepancy) {
-                        Logger.Sync.i("✓ All discrepancies resolved successfully")
-                    } else {
-                        Logger.Sync.w("⚠ Some discrepancies remain after resolution attempt")
-                        logDiscrepancyReport(finalReport)
-                    }
-                } catch (e: Exception) {
-                    Logger.Sync.e("Error during integrity check and resolution", e)
-                    Logger.Sync.d("App continues with local data despite error")
+                if (!networkMonitor.isOnline.value) {
+                    Logger.Sync.i("Network unavailable - skipping integrity check (offline-first mode)")
+                    Logger.Sync.d("App will continue with local data. Integrity will be checked when network becomes available.")
+                    return@launch
                 }
+
+                val report = integrityChecker.verifyAllIntegrity()
+
+                if (!report.networkAvailable) {
+                    Logger.Sync.i("Network became unavailable during integrity check")
+                    Logger.Sync.d("App continues with local data. Integrity check will retry when online.")
+                    return@launch
+                }
+
+                if (!report.hasDiscrepancy) {
+                    Logger.Sync.i("✓ All entity counts match server snapshot - integrity verified")
+                    return@launch
+                }
+
+                Logger.Sync.w("⚠ Integrity discrepancies detected - starting resolution")
+                logDiscrepancyReport(report)
+
+                if (!report.categoriesMatch) {
+                    resolveCategories()
+                }
+
+                if (!report.accountGroupsMatch) {
+                    resolveAccountGroups()
+                }
+
+                if (!report.accountsMatch) {
+                    resolveAccounts()
+                }
+
+                if (!report.transactionsMatch) {
+                    resolveTransactions()
+                }
+
+                val finalReport = integrityChecker.verifyAllIntegrity()
+
+                if (!finalReport.networkAvailable) {
+                    Logger.Sync.w("Network lost during resolution - app continues with partial sync")
+                    return@launch
+                }
+
+                if (!finalReport.hasDiscrepancy) {
+                    Logger.Sync.i("✓ All discrepancies resolved successfully")
+                } else {
+                    Logger.Sync.w("⚠ Some discrepancies remain after resolution attempt")
+                    logDiscrepancyReport(finalReport)
+                }
+            } catch (e: CancellationException) {
+                Logger.Sync.i("Integrity check cancelled (likely due to app shutdown or logout)")
+                throw e
+            } catch (e: Exception) {
+                Logger.Sync.e("Error during integrity check and resolution", e)
+                Logger.Sync.d("App continues with local data despite error")
             }
         }
     }

@@ -1,5 +1,4 @@
 package com.itsjeel01.finsiblefrontend.ui.screen
-import com.itsjeel01.finsiblefrontend.ui.theme.medium
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -42,6 +41,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleToggl
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleButtonVariant
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleCheckboxVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
+import com.itsjeel01.finsiblefrontend.ui.theme.medium
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.OperationStatus
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.TestViewModel
 import kotlinx.coroutines.delay

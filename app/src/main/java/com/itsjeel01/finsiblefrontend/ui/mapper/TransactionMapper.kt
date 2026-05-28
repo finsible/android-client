@@ -5,12 +5,10 @@ import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.CurrencyFormatter
 import com.itsjeel01.finsiblefrontend.common.TransactionType
 import com.itsjeel01.finsiblefrontend.data.local.entity.TransactionEntity
-import com.itsjeel01.finsiblefrontend.data.repository.CurrencyRepository
 import com.itsjeel01.finsiblefrontend.ui.model.uimodel.TransactionUIModel
 
 fun TransactionEntity.toUiModel(
     currencyFormatter: CurrencyFormatter,
-    currencyRepository: CurrencyRepository,
     context: Context
 ): TransactionUIModel {
     return TransactionUIModel(
@@ -18,7 +16,7 @@ fun TransactionEntity.toUiModel(
         type = this.type,
         title = this.description.takeUnless { it.isNullOrBlank() } ?: this.categoryName,
         subtitle = formatAccountLabel(this, context),
-        formattedAmount = formatAmount(this, currencyFormatter, currencyRepository),
+        formattedAmount = formatAmount(this, currencyFormatter),
         categoryIcon = this.categoryIcon,
         currencyCode = this.currencyCode,
         transactionDate = this.transactionDate,
@@ -38,23 +36,21 @@ private fun formatAccountLabel(transaction: TransactionEntity, context: Context)
 
 private fun formatAmount(
     transaction: TransactionEntity,
-    currencyFormatter: CurrencyFormatter,
-    currencyRepository: CurrencyRepository
+    currencyFormatter: CurrencyFormatter
 ): String {
-    val sign = when (transaction.type) {
-        TransactionType.INCOME -> "+"
-        TransactionType.EXPENSE -> "-"
-        TransactionType.TRANSFER -> ""
+    val signedCentis = when (transaction.type) {
+        TransactionType.EXPENSE -> -transaction.totalAmount
+        else -> transaction.totalAmount
     }
-    val currencyCode = transaction.currencyCode
-    val symbol = currencyRepository.getByIsoCode(currencyCode)?.symbol ?: currencyCode
-    val amountStr = currencyFormatter.format(
-        centis = transaction.totalAmount,
-        currencyCode = currencyCode,
+    return currencyFormatter.format(
+        centis = signedCentis,
+        currencyCode = transaction.currencyCode,
         options = CurrencyFormatter.CurrencyFormatOptions(
-            includeCurrencySymbol = false,
-            includeSign = false
+            includeSign = transaction.type != TransactionType.TRANSFER,
+            includeSpaceAfterSign = transaction.type != TransactionType.TRANSFER,
+            showPositiveSign = transaction.type == TransactionType.INCOME,
+            includeCurrencySymbol = true,
+            includeSpaceAfterCurrencySymbol = false,
         )
     )
-    return "$sign $symbol$amountStr"
 }

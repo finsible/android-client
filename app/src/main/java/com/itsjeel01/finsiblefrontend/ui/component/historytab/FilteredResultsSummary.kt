@@ -14,7 +14,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.CurrencyFormatter
-import com.itsjeel01.finsiblefrontend.data.repository.CurrencyRepository
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
 import com.itsjeel01.finsiblefrontend.ui.model.FilteredTransactionSummary
@@ -25,12 +24,9 @@ import com.itsjeel01.finsiblefrontend.ui.theme.medium
 fun FilteredResultsSummary(
     summary: FilteredTransactionSummary,
     currencyFormatter: CurrencyFormatter,
-    currencyRepository: CurrencyRepository,
     modifier: Modifier = Modifier,
     defaultCurrencyCode: String,
 ) {
-    val symbol = currencyRepository.getByIsoCode(defaultCurrencyCode)?.symbol ?: defaultCurrencyCode
-
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -55,30 +51,29 @@ fun FilteredResultsSummary(
             verticalAlignment = Alignment.CenterVertically
         ) {
             FinsibleText(
-                text = "+$symbol${
-                    currencyFormatter.format(
-                        centis = summary.totalIncomeCentis,
-                        currencyCode = defaultCurrencyCode,
-                        options = CurrencyFormatter.CurrencyFormatOptions(
-                            includeCurrencySymbol = false,
-                            includeSign = false
-                        )
+                text = currencyFormatter.format(
+                    centis = summary.totalIncomeCentis,
+                    currencyCode = defaultCurrencyCode,
+                    options = CurrencyFormatter.CurrencyFormatOptions(
+                        includeSign = true,
+                        showPositiveSign = true,
+                        includeCurrencySymbol = true,
+                        includeSpaceAfterCurrencySymbol = false,
                     )
-                }",
+                ),
                 textStyle = FinsibleTheme.typography.bodyMd.medium(),
                 color = FinsibleTheme.colors.transactionIncome
             )
             FinsibleText(
-                text = "-$symbol${
-                    currencyFormatter.format(
-                        centis = summary.totalExpenseCentis,
-                        currencyCode = defaultCurrencyCode,
-                        options = CurrencyFormatter.CurrencyFormatOptions(
-                            includeCurrencySymbol = false,
-                            includeSign = false
-                        )
+                text = currencyFormatter.format(
+                    centis = -summary.totalExpenseCentis,
+                    currencyCode = defaultCurrencyCode,
+                    options = CurrencyFormatter.CurrencyFormatOptions(
+                        includeSign = true,
+                        includeCurrencySymbol = true,
+                        includeSpaceAfterCurrencySymbol = false,
                     )
-                }",
+                ),
                 textStyle = FinsibleTheme.typography.bodyMd.medium(),
                 color = FinsibleTheme.colors.transactionExpense
             )

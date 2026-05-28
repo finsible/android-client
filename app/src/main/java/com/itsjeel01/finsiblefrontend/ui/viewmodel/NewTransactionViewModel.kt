@@ -24,6 +24,7 @@ import com.itsjeel01.finsiblefrontend.data.sync.IntegrityChecker
 import com.itsjeel01.finsiblefrontend.data.sync.NetworkMonitor
 import com.itsjeel01.finsiblefrontend.ui.mapper.toUiModel
 import com.itsjeel01.finsiblefrontend.ui.model.event.NewTransactionUiEvent
+import com.itsjeel01.finsiblefrontend.ui.model.state.ExchangeRateFreshness
 import com.itsjeel01.finsiblefrontend.ui.model.state.NewTransactionDateSelection
 import com.itsjeel01.finsiblefrontend.ui.model.state.NewTransactionFormState
 import com.itsjeel01.finsiblefrontend.ui.model.state.NewTransactionValidationError
@@ -101,7 +102,7 @@ class NewTransactionViewModel @Inject constructor(
         crossinline getLastUsedAt: (T) -> Long,
         crossinline getName: (T) -> String
     ): List<T> {
-        val list = this.toList()
+        val list = this as? List<T> ?: this.toList()
         if (list.isEmpty()) return emptyList()
 
         val hasUsage = list.any { getUsageCount(it) > 0 }
@@ -187,7 +188,6 @@ class NewTransactionViewModel @Inject constructor(
         )
 
     init {
-        networkMonitor.initialize()
         ensureDataFetched()
         hydrateDefaultCurrencyCode()
         observeConversion()
@@ -241,7 +241,7 @@ class NewTransactionViewModel @Inject constructor(
             _state.update {
                 it.copy(
                     convertedAmountDisplay = null,
-                    exchangeRateFreshness = com.itsjeel01.finsiblefrontend.ui.model.state.ExchangeRateFreshness.AVAILABLE
+                    exchangeRateFreshness = ExchangeRateFreshness.AVAILABLE
                 )
             }
             return
@@ -251,7 +251,7 @@ class NewTransactionViewModel @Inject constructor(
             _state.update {
                 it.copy(
                     convertedAmountDisplay = null,
-                    exchangeRateFreshness = com.itsjeel01.finsiblefrontend.ui.model.state.ExchangeRateFreshness.UNAVAILABLE
+                    exchangeRateFreshness = ExchangeRateFreshness.UNAVAILABLE
                 )
             }
             return
@@ -261,7 +261,7 @@ class NewTransactionViewModel @Inject constructor(
             _state.update {
                 it.copy(
                     convertedAmountDisplay = null,
-                    exchangeRateFreshness = com.itsjeel01.finsiblefrontend.ui.model.state.ExchangeRateFreshness.AVAILABLE
+                    exchangeRateFreshness = ExchangeRateFreshness.AVAILABLE
                 )
             }
             return
@@ -275,7 +275,7 @@ class NewTransactionViewModel @Inject constructor(
             _state.update {
                 it.copy(
                     convertedAmountDisplay = null,
-                    exchangeRateFreshness = com.itsjeel01.finsiblefrontend.ui.model.state.ExchangeRateFreshness.UNAVAILABLE
+                    exchangeRateFreshness = ExchangeRateFreshness.UNAVAILABLE
                 )
             }
             return
@@ -298,12 +298,12 @@ class NewTransactionViewModel @Inject constructor(
         )
 
         val freshness = if (System.currentTimeMillis() - rateEntity.lastSyncedAt > RATE_STALE_THRESHOLD_MS) {
-            com.itsjeel01.finsiblefrontend.ui.model.state.ExchangeRateFreshness.STALE
+            ExchangeRateFreshness.STALE
         } else {
-            com.itsjeel01.finsiblefrontend.ui.model.state.ExchangeRateFreshness.AVAILABLE
+            ExchangeRateFreshness.AVAILABLE
         }
 
-        if (allowRefresh && freshness == com.itsjeel01.finsiblefrontend.ui.model.state.ExchangeRateFreshness.STALE && isOnline) {
+        if (allowRefresh && freshness == ExchangeRateFreshness.STALE && isOnline) {
             maybeRefreshRates(baseCurrencyCode = currentCurrency)
         }
 

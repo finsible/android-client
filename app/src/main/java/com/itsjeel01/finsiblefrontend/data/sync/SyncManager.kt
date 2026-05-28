@@ -30,13 +30,15 @@ class SyncManager @Inject constructor(
     val pendingCount: StateFlow<Int> = _pendingCount.asStateFlow()
 
     private var isSyncing = false
+    private var started = false
 
-    init {
-        networkMonitor.initialize()
+    /** Must be called once at app startup (e.g., from Application.onCreate()). */
+    fun start() {
+        if (started) return
+        started = true
         observeNetworkAndSync()
         updatePendingCount()
-
-        Logger.Sync.i("SyncManager initialized with ${syncHandlers.size} handlers: ${syncHandlers.keys}")
+        Logger.Sync.i("SyncManager started with ${syncHandlers.size} handlers: ${syncHandlers.keys}")
     }
 
     private fun observeNetworkAndSync() {
@@ -50,6 +52,10 @@ class SyncManager @Inject constructor(
     }
 
     suspend fun processQueue() {
+        if (!started) {
+            Logger.Sync.e("SyncManager.processQueue() called before start() — syncing disabled")
+            return
+        }
         if (isSyncing) {
             Logger.Sync.d("Already syncing, skipping")
             return

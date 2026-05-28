@@ -137,7 +137,6 @@ fun HistoryTab(
                 FilteredResultsSummary(
                     summary = uiState.filteredSummary!!,
                     currencyFormatter = viewModel.currencyFormatter,
-                    currencyRepository = viewModel.currencyRepository,
                     defaultCurrencyCode = defaultCurrencyCode
                 )
                 Spacer(Modifier.height(FinsibleTheme.spacing.stackMd))
@@ -184,7 +183,6 @@ fun HistoryTab(
                         listState = listState,
                         defaultCurrencyCode = defaultCurrencyCode,
                         currencyFormatter = viewModel.currencyFormatter,
-                        currencyRepository = viewModel.currencyRepository,
                         onToggleDateFilter = { viewModel.toggleDateFilter(it) }
                     )
                 }

@@ -9,7 +9,6 @@ import com.itsjeel01.finsiblefrontend.common.PreferenceManager
 import com.itsjeel01.finsiblefrontend.common.logging.Logger
 import com.itsjeel01.finsiblefrontend.data.local.entity.TransactionEntity
 import com.itsjeel01.finsiblefrontend.data.local.repository.TransactionLocalRepository
-import com.itsjeel01.finsiblefrontend.data.repository.CurrencyRepository
 import com.itsjeel01.finsiblefrontend.ui.mapper.toUiModel
 import com.itsjeel01.finsiblefrontend.ui.model.DateAggregates
 import com.itsjeel01.finsiblefrontend.ui.model.DateFilterMode
@@ -32,7 +31,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -47,11 +45,8 @@ class HistoryViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val transactionLocalRepository: TransactionLocalRepository,
     val currencyFormatter: CurrencyFormatter,
-    val currencyRepository: CurrencyRepository,
-    preferenceManager: PreferenceManager
+    private val preferenceManager: PreferenceManager
 ) : ViewModel() {
-
-    private val preferenceManager = preferenceManager
 
     private val _filterState = MutableStateFlow(TransactionsFilterState.DEFAULT)
     val filterState: StateFlow<TransactionsFilterState> = _filterState.asStateFlow()
@@ -109,13 +104,13 @@ class HistoryViewModel @Inject constructor(
                     val loadedTransactionsGrouped = _uiState.value.groupedTransactions
 
                     val incomingTransactions = if (!shouldGroup) {
-                        result.transactions.map { it.toUiModel(currencyFormatter, currencyRepository, context) }.toPersistentList()
+                        result.transactions.map { it.toUiModel(currencyFormatter, context) }.toPersistentList()
                     } else {
                         loadedTransactions
                     }
 
                     val incomingTransactionsGrouped = if (shouldGroup) {
-                        val mapped = result.transactions.map { it.toUiModel(currencyFormatter, currencyRepository, context) }
+                        val mapped = result.transactions.map { it.toUiModel(currencyFormatter, context) }
                         val groupedPage = mapped.groupBy { DateUtils.getStartOfDayMs(it.transactionDate) }
                             .mapValues { (_, list) -> list.toPersistentList() }
                         mergeGroupedTransactions(loadedTransactionsGrouped, groupedPage.toPersistentMap())
@@ -270,7 +265,7 @@ class HistoryViewModel @Inject constructor(
         entities: List<TransactionEntity>,
         shouldGroup: Boolean = true
     ): Pair<ImmutableList<TransactionUIModel>, ImmutableMap<Long, ImmutableList<TransactionUIModel>>> {
-        val uiModels = entities.map { it.toUiModel(currencyFormatter, currencyRepository, context) }
+        val uiModels = entities.map { it.toUiModel(currencyFormatter, context) }
 
         val grouped = if (shouldGroup) {
             uiModels.groupBy { DateUtils.getStartOfDayMs(it.transactionDate) }

@@ -9,6 +9,7 @@ import com.itsjeel01.finsiblefrontend.common.logging.ReleaseLogTree
 import com.itsjeel01.finsiblefrontend.data.repository.CurrencyRepository
 import com.itsjeel01.finsiblefrontend.data.sync.IntegrityResolverService
 import com.itsjeel01.finsiblefrontend.data.sync.ScopeManager
+import com.itsjeel01.finsiblefrontend.data.sync.SyncManager
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 import javax.inject.Inject
@@ -22,6 +23,9 @@ class FinsibleApp : Application() {
     lateinit var integrityResolverService: IntegrityResolverService
 
     @Inject
+    lateinit var syncManager: SyncManager
+
+    @Inject
     lateinit var localeProvider: LocaleProvider
 
     @Inject
@@ -33,6 +37,7 @@ class FinsibleApp : Application() {
         initializeLogging()
         logResolvedLocaleAndCurrency()
         currencyRepository.initialize()
+        syncManager.start()
         integrityResolverService.checkAndResolveOnLaunch()
     }
 

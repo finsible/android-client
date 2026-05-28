@@ -18,7 +18,6 @@ import androidx.compose.ui.text.style.TextAlign
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.CurrencyFormatter
 import com.itsjeel01.finsiblefrontend.common.UserLocaleRegistry
-import com.itsjeel01.finsiblefrontend.data.repository.CurrencyRepository
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
 import com.itsjeel01.finsiblefrontend.ui.model.DateFilterMode
@@ -39,7 +38,6 @@ fun DailySummaryHeader(
     onToggleFilter: () -> Unit,
     defaultCurrencyCode: String,
     currencyFormatter: CurrencyFormatter,
-    currencyRepository: CurrencyRepository,
     modifier: Modifier = Modifier
 ) {
     val todayLabel = stringResource(R.string.history_date_header_today)
@@ -96,7 +94,7 @@ fun DailySummaryHeader(
                 contentDescription = stringResource(R.string.cd_change_view)
             )
             FinsibleText(
-                text = formatAmount(displayAmountCentis, filterMode, currencyFormatter, currencyRepository, defaultCurrencyCode),
+                text = formatAmount(displayAmountCentis, filterMode, currencyFormatter, defaultCurrencyCode),
                 textStyle = FinsibleTheme.typography.bodyMd.relaxed(),
                 color = animatedColor,
             )
@@ -108,26 +106,32 @@ private fun formatAmount(
     amountCentis: Long,
     mode: DateFilterMode,
     currencyFormatter: CurrencyFormatter,
-    currencyRepository: CurrencyRepository,
     currencyCode: String
 ): String {
     val absCentis = if (amountCentis < 0) -amountCentis else amountCentis
-    val symbol = currencyRepository.getByIsoCode(currencyCode)?.symbol ?: currencyCode
-    val formattedAmount = currencyFormatter.format(
-        centis = absCentis,
-        currencyCode = currencyCode,
-        options = CurrencyFormatter.CurrencyFormatOptions(
-            includeCurrencySymbol = false,
-            includeSign = false
-        )
+    val baseOptions = CurrencyFormatter.CurrencyFormatOptions(
+        includeCurrencySymbol = true,
+        includeSpaceAfterCurrencySymbol = false,
     )
     return when (mode) {
-        DateFilterMode.NET -> {
-            val sign = if (amountCentis >= 0L) "+" else "-"
-            "$sign $symbol$formattedAmount"
-        }
-
-        DateFilterMode.INCOME -> "+ $symbol$formattedAmount"
-        DateFilterMode.EXPENSE -> "- $symbol$formattedAmount"
+        DateFilterMode.NET -> currencyFormatter.format(
+            centis = amountCentis,
+            currencyCode = currencyCode,
+            options = baseOptions.copy(includeSign = true, showPositiveSign = true, includeSpaceAfterSign = true)
+        )
+        DateFilterMode.INCOME -> currencyFormatter.format(
+            centis = absCentis,
+            currencyCode = currencyCode,
+            options = baseOptions.copy(
+                includeSign = true,
+                showPositiveSign = true,
+                includeSpaceAfterSign = true
+            )
+        )
+        DateFilterMode.EXPENSE -> currencyFormatter.format(
+            centis = -absCentis,
+            currencyCode = currencyCode,
+            options = baseOptions.copy(includeSign = true, includeSpaceAfterSign = true)
+        )
     }
 }

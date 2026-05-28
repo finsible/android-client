@@ -35,8 +35,6 @@ class IntegrityResolverService @Inject constructor(
             }
 
             try {
-                networkMonitor.initialize()
-
                 if (!networkMonitor.isOnline.value) {
                     Logger.Sync.i("Network unavailable - skipping integrity check (offline-first mode)")
                     Logger.Sync.d("App will continue with local data. Integrity will be checked when network becomes available.")

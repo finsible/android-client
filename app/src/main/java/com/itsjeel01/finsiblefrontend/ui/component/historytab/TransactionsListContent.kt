@@ -17,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.itsjeel01.finsiblefrontend.common.CurrencyFormatter
 import com.itsjeel01.finsiblefrontend.common.TransactionType
-import com.itsjeel01.finsiblefrontend.data.repository.CurrencyRepository
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleLoader
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleLoaderDefaults
@@ -38,7 +37,6 @@ fun TransactionListContent(
     listState: LazyListState,
     defaultCurrencyCode: String,
     currencyFormatter: CurrencyFormatter,
-    currencyRepository: CurrencyRepository,
     onToggleDateFilter: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -66,7 +64,6 @@ fun TransactionListContent(
                             onToggleFilter = { onToggleDateFilter(startOfDayMs) },
                             defaultCurrencyCode = defaultCurrencyCode,
                             currencyFormatter = currencyFormatter,
-                            currencyRepository = currencyRepository,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(bottom = FinsibleTheme.spacing.gapMd, top = FinsibleTheme.spacing.insetLg)

@@ -1,0 +1,32 @@
+{
+  "defaultProvider": "deepseek",
+  "defaultModel": "deepseek-v4-flash",
+  "fallbackModel": "deepseek-v4-pro",
+  "defaultThinkingLevel": "medium",
+  "compaction": {
+    "enabled": true
+  },
+  "retry": {
+    "enabled": true,
+    "maxRetries": 3,
+    "provider": {
+      "timeoutMs": 120000
+    }
+  },
+  "enableSkillCommands": true,
+  "skills": [
+    ".pi/skills"
+  ],
+  "extensions": [
+    ".pi/extensions/gate.ts",
+    ".pi/extensions/context-graph.ts"
+  ],
+  "prompts": [
+    ".pi/prompts"
+  ],
+  "contextFiles": [
+    "AGENTS.md"
+  ],
+  "telemetry": false,
+  "progressReporting": false
+}

@@ -2,179 +2,202 @@ package com.itsjeel01.finsiblefrontend.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 
+/**
+ * Finsible typography — semantic role-based tokens.
+ *
+ * ### Roles
+ * - **display.***   Oswald, Normal weight — hero numbers, net worth totals
+ * - **heading.***   Manrope, SemiBold — screen titles, card/dialog headings
+ * - **body.***      Manrope, Normal weight — transaction names, descriptions, fine print
+ * - **label.***     Manrope, Medium weight — buttons, tags, micro-labels
+ * - **caption**     Manrope, Normal weight — timestamps, helper text
+ * - **numeral.***   Manrope, tabular-nums enforced — amounts in cards, lists, tables
+ */
+@Immutable
 data class FinsibleTypes(
-    val t72: TextStyle,    // Hero/Marketing
-    val t64: TextStyle,    // Large display
-    val t56: TextStyle,    // Display
-    val t48: TextStyle,    // Big headlines
-    val t44: TextStyle,    // Headlines
-    val t40: TextStyle,    // Headlines
-    val t36: TextStyle,    // Headlines
-    val t32: TextStyle,    // Section titles
-    val t28: TextStyle,    // Section titles
-    val t24: TextStyle,    // Subsections
-    val t20: TextStyle,    // Large text
-    val t18: TextStyle,    // Large text
-    val t16: TextStyle,    // Base text
-    val t14: TextStyle,    // Small text
-    val t12: TextStyle,    // Fine text
-    val t10: TextStyle,    // Micro text
-    val t8: TextStyle,     // Nano text
+    // Display — Oswald
+    val displayXl: TextStyle,
+    val displayLg: TextStyle,
+    val displayMd: TextStyle,
+    val displaySm: TextStyle,
+
+    // Heading — Manrope SemiBold
+    val headingLg: TextStyle,
+    val headingMd: TextStyle,
+    val headingSm: TextStyle,
+
+    // Body — Manrope Normal
+    val bodyLg: TextStyle,
+    val bodyMd: TextStyle,
+    val bodySm: TextStyle,
+
+    // Label — Manrope Medium
+    val labelLg: TextStyle,
+    val labelMd: TextStyle,
+    val labelSm: TextStyle,
+
+    // Caption
+    val caption: TextStyle,
+
+    // Numeral — Manrope, tabular-nums enforced
+    val numeralXl: TextStyle,
+    val numeralLg: TextStyle,
+    val numeralMd: TextStyle,
+    val numeralSm: TextStyle,
+    val numeralXs: TextStyle,
 ) {
     companion object {
         val materialTypography = Typography()
 
-        val types = with(materialTypography) {
+        val values = with(materialTypography) {
             val displayFont = FinsibleFontFamily.displayFont
             val interfaceFont = FinsibleFontFamily.interfaceFont
 
             FinsibleTypes(
-                t72 = displayLarge.copy(
+                // Display — Oswald, Normal
+                displayXl = TextStyle(
                     fontFamily = displayFont,
-                    fontSize = 72.sp,
-                    fontWeight = FontWeight.Normal,
-                    lineHeight = 80.sp,
-                    letterSpacing = (-0.02).em
+                    fontSize = 48.sp, fontWeight = FontWeight.Normal,
+                    lineHeight = 54.sp, letterSpacing = (-0.02).em
                 ),
-                t64 = displayLarge.copy(
+                displayLg = TextStyle(
                     fontFamily = displayFont,
-                    fontSize = 64.sp,
-                    fontWeight = FontWeight.Normal,
-                    lineHeight = 72.sp,
-                    letterSpacing = (-0.015).em
+                    fontSize = 36.sp, fontWeight = FontWeight.Normal,
+                    lineHeight = 42.sp, letterSpacing = (-0.015).em
                 ),
-                t56 = displayMedium.copy(
+                displayMd = TextStyle(
                     fontFamily = displayFont,
-                    fontSize = 56.sp,
-                    fontWeight = FontWeight.Normal,
-                    lineHeight = 64.sp,
-                    letterSpacing = (-0.01).em
+                    fontSize = 28.sp, fontWeight = FontWeight.Normal,
+                    lineHeight = 34.sp, letterSpacing = (-0.01).em
                 ),
-                t48 = displaySmall.copy(
-                    fontFamily = interfaceFont,
-                    fontSize = 48.sp,
-                    fontWeight = FontWeight.Normal,
-                    lineHeight = 56.sp,
-                    letterSpacing = (-0.005).em
+                displaySm = TextStyle(
+                    fontFamily = displayFont,
+                    fontSize = 22.sp, fontWeight = FontWeight.Normal,
+                    lineHeight = 28.sp, letterSpacing = 0.em
                 ),
-                t44 = headlineLarge.copy(
+
+                // Heading — Manrope SemiBold
+                headingLg = TextStyle(
                     fontFamily = interfaceFont,
-                    fontSize = 44.sp,
-                    fontWeight = FontWeight.Normal,
-                    lineHeight = 52.sp,
-                    letterSpacing = 0.em
+                    fontSize = 22.sp, fontWeight = FontWeight.SemiBold,
+                    lineHeight = 30.sp, letterSpacing = 0.em
                 ),
-                t40 = headlineLarge.copy(
+                headingMd = TextStyle(
                     fontFamily = interfaceFont,
-                    fontSize = 40.sp,
-                    fontWeight = FontWeight.Normal,
-                    lineHeight = 48.sp,
-                    letterSpacing = 0.em
+                    fontSize = 18.sp, fontWeight = FontWeight.SemiBold,
+                    lineHeight = 26.sp, letterSpacing = 0.em
                 ),
-                t36 = headlineLarge.copy(
+                headingSm = TextStyle(
                     fontFamily = interfaceFont,
-                    fontSize = 36.sp,
-                    fontWeight = FontWeight.Normal,
-                    lineHeight = 44.sp,
-                    letterSpacing = 0.em
+                    fontSize = 16.sp, fontWeight = FontWeight.SemiBold,
+                    lineHeight = 22.sp, letterSpacing = 0.em
                 ),
-                t32 = headlineLarge.copy(
+
+                // Body — Manrope Normal
+                bodyLg = TextStyle(
                     fontFamily = interfaceFont,
-                    fontSize = 32.sp,
-                    fontWeight = FontWeight.Normal,
-                    lineHeight = 40.sp,
-                    letterSpacing = 0.em
+                    fontSize = 16.sp, fontWeight = FontWeight.Normal,
+                    lineHeight = 24.sp, letterSpacing = 0.01.em
                 ),
-                t28 = headlineMedium.copy(
+                bodyMd = TextStyle(
                     fontFamily = interfaceFont,
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Normal,
-                    lineHeight = 36.sp,
-                    letterSpacing = 0.em
+                    fontSize = 14.sp, fontWeight = FontWeight.Normal,
+                    lineHeight = 20.sp, letterSpacing = 0.02.em
                 ),
-                t24 = headlineMedium.copy(
+                bodySm = TextStyle(
                     fontFamily = interfaceFont,
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Normal,
-                    lineHeight = 32.sp,
-                    letterSpacing = 0.em
+                    fontSize = 12.sp, fontWeight = FontWeight.Normal,
+                    lineHeight = 16.sp, letterSpacing = 0.03.em
                 ),
-                t20 = headlineSmall.copy(
+
+                // Label — Manrope Medium
+                labelLg = TextStyle(
                     fontFamily = interfaceFont,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Normal,
-                    lineHeight = 28.sp,
-                    letterSpacing = 0.01.em
+                    fontSize = 14.sp, fontWeight = FontWeight.Medium,
+                    lineHeight = 20.sp, letterSpacing = 0.01.em
                 ),
-                t18 = bodyLarge.copy(
+                labelMd = TextStyle(
                     fontFamily = interfaceFont,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Normal,
-                    lineHeight = 24.sp,
-                    letterSpacing = 0.01.em
+                    fontSize = 12.sp, fontWeight = FontWeight.Medium,
+                    lineHeight = 16.sp, letterSpacing = 0.04.em
                 ),
-                t16 = bodyLarge.copy(
+                labelSm = TextStyle(
                     fontFamily = interfaceFont,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Normal,
-                    lineHeight = 24.sp,
-                    letterSpacing = 0.01.em
+                    fontSize = 10.sp, fontWeight = FontWeight.Medium,
+                    lineHeight = 14.sp, letterSpacing = 0.06.em
                 ),
-                t14 = bodyMedium.copy(
+
+                // Caption
+                caption = TextStyle(
                     fontFamily = interfaceFont,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Normal,
-                    lineHeight = 20.sp,
-                    letterSpacing = 0.02.em
+                    fontSize = 11.sp, fontWeight = FontWeight.Normal,
+                    lineHeight = 15.sp, letterSpacing = 0.03.em
                 ),
-                t12 = bodySmall.copy(
+
+                // Numeral — Manrope with tabular-nums
+                numeralXl = TextStyle(
                     fontFamily = interfaceFont,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Normal,
-                    lineHeight = 16.sp,
-                    letterSpacing = 0.03.em
+                    fontSize = 40.sp, fontWeight = FontWeight.SemiBold,
+                    lineHeight = 48.sp, letterSpacing = (-0.01).em,
+                    fontFeatureSettings = "tnum"
                 ),
-                t10 = labelSmall.copy(
+                numeralLg = TextStyle(
                     fontFamily = interfaceFont,
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.Normal,
-                    lineHeight = 14.sp,
-                    letterSpacing = 0.04.em
+                    fontSize = 32.sp, fontWeight = FontWeight.SemiBold,
+                    lineHeight = 40.sp, letterSpacing = 0.em,
+                    fontFeatureSettings = "tnum"
                 ),
-                t8 = labelSmall.copy(
+                numeralMd = TextStyle(
                     fontFamily = interfaceFont,
-                    fontSize = 8.sp,
-                    fontWeight = FontWeight.Normal,
-                    lineHeight = 12.sp,
-                    letterSpacing = 0.05.em
-                )
+                    fontSize = 20.sp, fontWeight = FontWeight.Medium,
+                    lineHeight = 28.sp, letterSpacing = 0.em,
+                    fontFeatureSettings = "tnum"
+                ),
+                numeralSm = TextStyle(
+                    fontFamily = interfaceFont,
+                    fontSize = 14.sp, fontWeight = FontWeight.Medium,
+                    lineHeight = 20.sp, letterSpacing = 0.01.em,
+                    fontFeatureSettings = "tnum"
+                ),
+                numeralXs = TextStyle(
+                    fontFamily = interfaceFont,
+                    fontSize = 12.sp, fontWeight = FontWeight.Medium,
+                    lineHeight = 16.sp, letterSpacing = 0.02.em,
+                    fontFeatureSettings = "tnum"
+                ),
             )
         }
     }
 }
 
-/** Weight modifiers for complete flexibility */
-fun TextStyle.extraLight() = this.copy(fontWeight = FontWeight.ExtraLight)
-fun TextStyle.light() = this.copy(fontWeight = FontWeight.Light)
-fun TextStyle.normal() = this.copy(fontWeight = FontWeight.Normal)
-fun TextStyle.medium() = this.copy(fontWeight = FontWeight.Medium)
-fun TextStyle.semiBold() = this.copy(fontWeight = FontWeight.SemiBold)
-fun TextStyle.bold() = this.copy(fontWeight = FontWeight.Bold)
-fun TextStyle.extraBold() = this.copy(fontWeight = FontWeight.ExtraBold)
+// ── Weight modifiers ────────────────────────────────────────────────────
 
-/** Line height modifiers */
-fun TextStyle.tight() = this.copy(lineHeight = this.fontSize * 1.1)
-fun TextStyle.standard() = this.copy(lineHeight = this.fontSize * 1.5)
-fun TextStyle.loose() = this.copy(lineHeight = this.fontSize * 1.8)
+fun TextStyle.extraLight() = copy(fontWeight = FontWeight.ExtraLight)
+fun TextStyle.light()      = copy(fontWeight = FontWeight.Light)
+fun TextStyle.normal()     = copy(fontWeight = FontWeight.Normal)
+fun TextStyle.medium()     = copy(fontWeight = FontWeight.Medium)
+fun TextStyle.semiBold()   = copy(fontWeight = FontWeight.SemiBold)
+fun TextStyle.bold()       = copy(fontWeight = FontWeight.Bold)
+fun TextStyle.extraBold()  = copy(fontWeight = FontWeight.ExtraBold)
 
-/** Letter spacing modifiers */
-fun TextStyle.condensed() = this.copy(letterSpacing = (-0.02).em)
-fun TextStyle.relaxed() = this.copy(letterSpacing = (0.025).em)
-fun TextStyle.expanded() = this.copy(letterSpacing = 0.1.em)
+// ── Line height modifiers ───────────────────────────────────────────────
 
-fun TextStyle.displayFont() = this.copy(fontFamily = FinsibleFontFamily.displayFont)
-fun TextStyle.interfaceFont() = this.copy(fontFamily = FinsibleFontFamily.interfaceFont)
+fun TextStyle.tight()      = copy(lineHeight = fontSize * 1.1)
+fun TextStyle.standard()   = copy(lineHeight = fontSize * 1.5)
+fun TextStyle.loose()      = copy(lineHeight = fontSize * 1.8)
+
+// ── Letter spacing modifiers ────────────────────────────────────────────
+
+fun TextStyle.condensed()  = copy(letterSpacing = (-0.02).em)
+fun TextStyle.relaxed()    = copy(letterSpacing = 0.025.em)
+fun TextStyle.expanded()   = copy(letterSpacing = 0.1.em)
+
+// ── Font family modifiers ───────────────────────────────────────────────
+
+fun TextStyle.displayFont()  = copy(fontFamily = FinsibleFontFamily.displayFont)
+fun TextStyle.interfaceFont() = copy(fontFamily = FinsibleFontFamily.interfaceFont)

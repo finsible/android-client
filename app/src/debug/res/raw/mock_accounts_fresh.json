@@ -12,7 +12,9 @@
       "icon": "cash_icon",
       "currencyCode": "INR",
       "isActive": true,
-      "isSystemDefault": true
+      "isSystemDefault": true,
+      "usageCount": 0,
+      "lastUsedAt": null
     }
   ]
 }

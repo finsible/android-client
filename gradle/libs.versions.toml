@@ -1,42 +1,42 @@
 [versions]
-agp = "8.13.2"
+agp = "9.2.1"
 kotlinMetadataJvm = "2.3.0"
-objectboxAndroid = "5.0.1"
-objectboxAndroidObjectbrowser = "5.0.1"
 retrofit = "3.0.0"
 secretsGradlePlugin = "2.0.1"
-credentials = "1.5.0"
+credentials = "1.6.0"
 hiltNavigationCompose = "1.3.0"
-kotlin = "2.3.0"
-coreKtx = "1.17.0"
+kotlin = "2.3.21"
+coreKtx = "1.18.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
-mockk = "1.14.7"
-coroutinesTest = "1.10.2"
+mockk = "1.14.9"
+coroutinesTest = "1.11.0"
 lifecycleRuntimeKtx = "2.10.0"
-activityCompose = "1.12.2"
+activityCompose = "1.13.0"
 securityCrypto = "1.1.0"
-kotlinxSerializationJson = "1.9.0"
-kotlinxSerialization = "2.3.0"
-hilt = "2.57.2"
-ksp = "2.3.3"
-activityKtx = "1.12.2"
-googleid = "1.1.1"
-objectBox = "5.0.1"
+kotlinxSerializationJson = "1.11.0"
+kotlinxSerialization = "2.3.21"
+hilt = "2.59.2"
+ksp = "2.3.9"
+activityKtx = "1.13.0"
+googleid = "1.2.0"
+objectBox = "5.4.2"
 material3 = "1.4.0"
 timber = "5.0.1"
 okHttpLoggingInterceptor = "5.3.2"
-nav3Core = "1.0.0"
+nav3Core = "1.1.2"
 lifecycleViewmodelNav3 = "2.10.0"
-kotlinxSerializationCore = "1.9.0"
-material3AdaptiveNav3 = "1.3.0-alpha05"
-composeBom = "2025.12.01"
-composeUi = "1.10.0"
+kotlinxSerializationCore = "1.11.0"
+material3AdaptiveNav3 = "1.3.0-beta02"
+composeBom = "2026.05.01"
+composeUi = "1.11.2"
 coreTesting = "2.2.0"
 composeIcons = "2.2.1"
-kotlinxCollectionsImmutable = "0.3.7"
-kizitonwoseCalendar = "2.10.0"
+kotlinxCollectionsImmutable = "0.4.0"
+kizitonwoseCalendar = "2.10.1"
+datastore = "1.2.1"
+tink = "1.21.0"
 
 [libraries]
 androidx-activity = { module = "androidx.activity:activity", version.ref = "activityCompose" }
@@ -63,7 +63,6 @@ androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
-androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "composeUi" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
@@ -71,8 +70,9 @@ hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activityKtx" }
 googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
-objectbox-android = { module = "io.objectbox:objectbox-android", version.ref = "objectboxAndroid" }
-objectbox-android-objectbrowser = { module = "io.objectbox:objectbox-android-objectbrowser", version.ref = "objectboxAndroidObjectbrowser" }
+objectbox-android = { module = "io.objectbox:objectbox-android", version.ref = "objectBox" }
+objectbox-kotlin = { module = "io.objectbox:objectbox-kotlin", version.ref = "objectBox" }
+objectbox-android-objectbrowser = { module = "io.objectbox:objectbox-android-objectbrowser", version.ref = "objectBox" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
 objectbox-gradle-plugin = { module = "io.objectbox:objectbox-gradle-plugin", version.ref = "objectBox" }
@@ -99,11 +99,14 @@ composables-icons-tabler-outline = { group = "com.composables", name = "icons-ta
 composables-icons-tabler-filled = { group = "com.composables", name = "icons-tabler-filled-android", version.ref = "composeIcons" }
 kizitonwose-calendar-compose = { module = "com.kizitonwose.calendar:compose", version.ref = "kizitonwoseCalendar" }
 kizitonwose-calendar-core = { module = "com.kizitonwose.calendar:core", version.ref = "kizitonwoseCalendar" }
+androidx-datastore = { group = "androidx.datastore", name = "datastore", version.ref = "datastore" }
+tink-android = { group = "com.google.crypto.tink", name = "tink-android", version.ref = "tink" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinxSerialization" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinAndroidKsp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hiltAndroid = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+kotlinKapt = { id = "com.android.legacy-kapt", version.ref = "agp" }
+objectboxPlugin = { id = "io.objectbox", version.ref = "objectBox" }

@@ -35,7 +35,6 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleRad
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleTextFieldDefaults
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleDropdownOption
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
 import com.itsjeel01.finsiblefrontend.ui.model.TimeFilterMode
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
@@ -57,7 +56,7 @@ fun TimeBasedFilter(
     Column {
         FinsibleText(
             text = stringResource(R.string.time_period),
-            variant = FinsibleTextVariant.MicroLabelSemiBold,
+            textStyle = FinsibleTheme.typography.labelSm,
             colorVariant = FinsibleTextColorVariant.Secondary,
             uppercase = true
         )
@@ -66,7 +65,7 @@ fun TimeBasedFilter(
 
         // Radio row
         Row(
-            horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d16),
+            horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackLg),
             verticalAlignment = Alignment.CenterVertically
         ) {
             TimeFilterMode.entries.forEach { mode ->
@@ -88,7 +87,7 @@ fun TimeBasedFilter(
         ) { mode ->
 
             Column {
-                if (mode != TimeFilterMode.ALL) Spacer(Modifier.height(FinsibleTheme.dimes.d12))
+                if (mode != TimeFilterMode.ALL) Spacer(Modifier.height(FinsibleTheme.spacing.stackMd))
 
                 when (mode) {
                     TimeFilterMode.ALL -> Unit  // no picker — null range means all transactions
@@ -112,7 +111,6 @@ fun TimeBasedFilter(
     }
 }
 
-/** Dropdown that shows month name + year dropdowns side-by-side. */
 @Composable
 private fun MonthYearRow(
     selectedMonth: Int,
@@ -123,7 +121,7 @@ private fun MonthYearRow(
     onYearChange: (Int) -> Unit
 ) {
     Row(
-        horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d10),
+        horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.gapSm),
         modifier = Modifier
             .fillMaxWidth()
     ) {
@@ -152,16 +150,16 @@ private fun MonthYearRow(
             size = FinsibleSize.Small,
             shapeVariant = FinsibleShape.Rounded,
             colors = FinsibleDropdownDefaults.colors(
-                containerColor = FinsibleTheme.colors.surfaceContainerLow,
-                menuColor = FinsibleTheme.colors.surfaceContainer,
-                borderColor = FinsibleTheme.colors.outlineVariant,
-                selectedOptionColor = FinsibleTheme.colors.surfaceContainerHigh,
-                selectedOptionTextColor = FinsibleTheme.colors.primaryContent,
-                optionTextColor = FinsibleTheme.colors.secondaryContent,
-                placeholderColor = FinsibleTheme.colors.primaryContent,
-                iconTint = FinsibleTheme.colors.secondaryContent,
-                selectedIconTint = FinsibleTheme.colors.secondaryContent,
-                disabledIconTint = FinsibleTheme.colors.disabledContent
+                containerColor = FinsibleTheme.colors.surfaceDefault,
+                menuColor = FinsibleTheme.colors.surfaceBase,
+                borderColor = FinsibleTheme.colors.borderDefault,
+                selectedOptionColor = FinsibleTheme.colors.surfaceRaised,
+                selectedOptionTextColor = FinsibleTheme.colors.contentPrimary,
+                optionTextColor = FinsibleTheme.colors.contentSecondary,
+                placeholderColor = FinsibleTheme.colors.contentPrimary,
+                iconTint = FinsibleTheme.colors.contentSecondary,
+                selectedIconTint = FinsibleTheme.colors.contentSecondary,
+                disabledIconTint = FinsibleTheme.colors.contentDisabled
             )
         )
 
@@ -175,16 +173,16 @@ private fun MonthYearRow(
             size = FinsibleSize.Small,
             shapeVariant = FinsibleShape.Rounded,
             colors = FinsibleDropdownDefaults.colors(
-                containerColor = FinsibleTheme.colors.surfaceContainerLow,
-                menuColor = FinsibleTheme.colors.surfaceContainer,
-                borderColor = FinsibleTheme.colors.outlineVariant,
-                selectedOptionColor = FinsibleTheme.colors.surfaceContainerHigh,
-                selectedOptionTextColor = FinsibleTheme.colors.primaryContent,
-                optionTextColor = FinsibleTheme.colors.secondaryContent,
-                placeholderColor = FinsibleTheme.colors.primaryContent,
-                iconTint = FinsibleTheme.colors.secondaryContent,
-                selectedIconTint = FinsibleTheme.colors.secondaryContent,
-                disabledIconTint = FinsibleTheme.colors.disabledContent
+                containerColor = FinsibleTheme.colors.surfaceDefault,
+                menuColor = FinsibleTheme.colors.surfaceBase,
+                borderColor = FinsibleTheme.colors.borderDefault,
+                selectedOptionColor = FinsibleTheme.colors.surfaceRaised,
+                selectedOptionTextColor = FinsibleTheme.colors.contentPrimary,
+                optionTextColor = FinsibleTheme.colors.contentSecondary,
+                placeholderColor = FinsibleTheme.colors.contentPrimary,
+                iconTint = FinsibleTheme.colors.contentSecondary,
+                selectedIconTint = FinsibleTheme.colors.contentSecondary,
+                disabledIconTint = FinsibleTheme.colors.contentDisabled
             )
         )
     }
@@ -208,7 +206,7 @@ private fun CustomRangeField(
         else -> stringResource(R.string.select_date_range)
     }
     val hasValue = rangeStart != null || rangeEnd != null
-    val borderColor = if (hasValue) FinsibleTheme.colors.outline else FinsibleTheme.colors.outlineVariant
+    val borderColor = if (hasValue) FinsibleTheme.colors.borderStrong else FinsibleTheme.colors.borderDefault
 
     FinsibleTextField(
         value = if (hasValue) label else "",
@@ -221,19 +219,19 @@ private fun CustomRangeField(
         size = FinsibleSize.Small,
         shapeVariant = FinsibleShape.Rounded,
         colors = FinsibleTextFieldDefaults.colors(
-            containerColor = FinsibleTheme.colors.surfaceContainerLow,
-            contentColor = FinsibleTheme.colors.primaryContent,
-            placeholderColor = FinsibleTheme.colors.placeholder,
+            containerColor = FinsibleTheme.colors.surfaceDefault,
+            contentColor = FinsibleTheme.colors.contentPrimary,
+            placeholderColor = FinsibleTheme.colors.contentPlaceholder,
             borderColor = borderColor,
             focusedBorderColor = borderColor,
-            iconTint = if (hasValue) FinsibleTheme.colors.primaryContent else FinsibleTheme.colors.tertiaryContent,
-            disabledIconTint = FinsibleTheme.colors.tertiaryContent
+            iconTint = if (hasValue) FinsibleTheme.colors.contentPrimary else FinsibleTheme.colors.contentTertiary,
+            disabledIconTint = FinsibleTheme.colors.contentTertiary
         ),
         trailingIcon = {
             Icon(
                 painter = painterResource(R.drawable.ic_calendar),
                 contentDescription = null,
-                modifier = Modifier.size(FinsibleTheme.dimes.d18)
+                modifier = Modifier.size(FinsibleTheme.sizes.icon.sm)
             )
         }
     )

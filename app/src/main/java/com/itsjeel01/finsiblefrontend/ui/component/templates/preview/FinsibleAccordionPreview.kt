@@ -18,7 +18,7 @@ fun FinsibleAccordionPreview() {
     FinsibleComponentPreviewScaffold {
         Column(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d16)
+            verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackLg)
         ) {
             FinsibleAccordion(
                 title = "Account Summary",
@@ -39,7 +39,7 @@ fun FinsibleAccordionPreview() {
 
 @Composable
 private fun DemoAccordionContent() {
-    Column(verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d4)) {
+    Column(verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackXs)) {
         com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText(text = "Item 1")
         com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText(text = "Item 2")
     }

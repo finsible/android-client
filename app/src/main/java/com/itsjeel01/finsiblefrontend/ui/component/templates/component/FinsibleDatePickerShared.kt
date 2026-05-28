@@ -73,7 +73,7 @@ import java.time.format.TextStyle as DateTextStyle
 
 @Composable
 internal fun BaseCalendarContainer(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     colors: FinsibleDatePickerColors,
     sizes: FinsibleDatePickerSizes,
     content: @Composable ColumnScope.() -> Unit,
@@ -333,7 +333,7 @@ internal fun FinsibleCalendarWeekHeader(
             ) {
                 FinsibleText(
                     text = narrowName,
-                    variant = typography.weekdayTextVariant,
+                    textStyle = typography.weekdayTextStyle,
                     color = colors.weekdayContentColor,
                     maxLines = 1,
                     modifier = Modifier.semantics { contentDescription = fullName },
@@ -409,13 +409,13 @@ internal fun FinsibleCalendarDay(
             contentAlignment = Alignment.Center,
         ) {
             val dayVariant = if (state.isSelected) {
-                typography.daySelectedTextVariant
+                typography.daySelectedTextStyle
             } else {
-                typography.dayDefaultTextVariant
+                typography.dayDefaultTextStyle
             }
             FinsibleText(
                 text = date.dayOfMonth.toString(),
-                variant = dayVariant,
+                textStyle = dayVariant,
                 color = contentColor,
                 maxLines = 1,
             )
@@ -482,7 +482,7 @@ internal fun FinsibleMonthYearGridPicker(
 
             FinsibleText(
                 text = displayYear.toString(),
-                variant = typography.monthGridYearTextVariant,
+                textStyle = typography.monthGridYearTextStyle,
                 color = colors.monthHeaderContentColor,
             )
 
@@ -549,7 +549,7 @@ internal fun FinsibleMonthYearGridPicker(
                         ) {
                             FinsibleText(
                                 text = monthLabel,
-                                variant = typography.monthGridItemTextVariant,
+                                textStyle = typography.monthGridItemTextStyle,
                                 color = contentColor,
                             )
                         }

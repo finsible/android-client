@@ -1,25 +1,32 @@
 package com.itsjeel01.finsiblefrontend.ui.component.templates.component
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Surface
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -43,7 +50,9 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleSegme
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleSegmentedButtonColors
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleSegmentedButtonOption
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleSegmentedButtonSizes
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleSegmentedButtonArrangement
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleSegmentedButtonVariant
+import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
 /** Single-select segmented control API.
  *
@@ -55,6 +64,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.Finsi
  * @param size The size of the segmented control.
  * @param shapeVariant The shape variant of the segmented control.
  * @param variant The variant of the segmented control.
+ * @param arrangement The arrangement of the segmented control.
  * @param colors The colors of the segmented control.
  * @param selectedTint The tint color to apply to the selected option.
  * @param inverted Whether to invert the colors of the segmented control.
@@ -70,6 +80,7 @@ fun FinsibleSegmentedButtonRow(
     size: FinsibleSize = FinsibleSize.Medium,
     shapeVariant: FinsibleShape = FinsibleShape.Rounded,
     variant: FinsibleSegmentedButtonVariant = FinsibleSegmentedButtonVariant.Filled,
+    arrangement: FinsibleSegmentedButtonArrangement = FinsibleSegmentedButtonArrangement.Clubbed,
     colors: FinsibleSegmentedButtonColors = FinsibleSegmentedButtonDefaults.colors(variant = variant),
     selectedTint: Color = Color.Unspecified,
     inverted: Boolean = false,
@@ -90,6 +101,7 @@ fun FinsibleSegmentedButtonRow(
         size = size,
         shapeVariant = shapeVariant,
         variant = variant,
+        arrangement = arrangement,
         colors = colors,
         selectedTint = selectedTint,
         inverted = inverted,
@@ -122,6 +134,7 @@ fun FinsibleSegmentedButtonRow(
     size: FinsibleSize = FinsibleSize.Medium,
     shapeVariant: FinsibleShape = FinsibleShape.Rounded,
     variant: FinsibleSegmentedButtonVariant = FinsibleSegmentedButtonVariant.Filled,
+    arrangement: FinsibleSegmentedButtonArrangement = FinsibleSegmentedButtonArrangement.Clubbed,
     colors: FinsibleSegmentedButtonColors = FinsibleSegmentedButtonDefaults.colors(variant = variant),
     selectedTint: Color = Color.Unspecified,
     inverted: Boolean = false,
@@ -140,6 +153,7 @@ fun FinsibleSegmentedButtonRow(
         size = size,
         shapeVariant = shapeVariant,
         variant = variant,
+        arrangement = arrangement,
         colors = colors,
         selectedTint = selectedTint,
         inverted = inverted,
@@ -158,6 +172,7 @@ private fun FinsibleSegmentedButtonRowBase(
     size: FinsibleSize = FinsibleSize.Medium,
     shapeVariant: FinsibleShape = FinsibleShape.Rounded,
     variant: FinsibleSegmentedButtonVariant = FinsibleSegmentedButtonVariant.Filled,
+    arrangement: FinsibleSegmentedButtonArrangement = FinsibleSegmentedButtonArrangement.Clubbed,
     colors: FinsibleSegmentedButtonColors = FinsibleSegmentedButtonDefaults.colors(variant = variant),
     selectedTint: Color = Color.Unspecified,
     inverted: Boolean = false,
@@ -177,105 +192,257 @@ private fun FinsibleSegmentedButtonRowBase(
         variant = variant,
         selectedContentColor = selectedTintContentColor
     )
-    val borderStroke = BorderStroke(width = 1.dp, color = resolvedColors.borderColor)
 
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(segmentShape)
-            .border(borderStroke, segmentShape)
-            .wrapContentHeight(),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        options.forEachIndexed { index, option ->
-            val isSelected = option.id in selectedIds
-            val isLast = index == options.lastIndex
+    if (arrangement == FinsibleSegmentedButtonArrangement.Clubbed) {
+        val clubbedBorderStroke = BorderStroke(width = FinsibleTheme.stroke.thin, color = resolvedColors.borderColor)
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Min)
+                .clip(segmentShape)
+                .border(clubbedBorderStroke, segmentShape),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            options.forEachIndexed { index, option ->
+                val isSelected = option.id in selectedIds
+                val isLast = index == options.lastIndex
 
-            val resolvedContainer = when {
-                !enabled -> resolvedColors.disabledContainerColor
-                isSelected -> resolvedColors.selectedContainerColor
-                else -> resolvedColors.unselectedContainerColor
-            }
-            val resolvedContent = when {
-                !enabled -> resolvedColors.disabledContentColor
-                isSelected -> resolvedColors.selectedContentColor
-                else -> resolvedColors.unselectedContentColor
-            }
-
-            val stateDescriptionText = if (isSelected) {
-                stringResource(com.itsjeel01.finsiblefrontend.R.string.finsible_radio_button_selected_state)
-            } else {
-                stringResource(com.itsjeel01.finsiblefrontend.R.string.finsible_radio_button_unselected_state)
-            }
-
-            key(option.id) {
-                val interactionSource = remember { MutableInteractionSource() }
-
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .clip(middleShape)
-                        .background(resolvedContainer)
-                        .toggleable(
-                            value = isSelected,
-                            enabled = enabled,
-                            role = if (singleSelection) Role.RadioButton else Role.Checkbox,
-                            interactionSource = interactionSource,
-                            indication = ripple(color = resolvedColors.rippleColor),
-                            onValueChange = { checked ->
-                                if (!enabled) return@toggleable
-                                val nextSelection = if (singleSelection) {
-                                    if (checked) setOf(option.id) else emptySet()
-                                } else {
-                                    if (checked) selectedIds + option.id else selectedIds - option.id
-                                }
-                                onSelectionChange(nextSelection)
-                            }
-                        )
-                        .semantics {
-                            stateDescription = stateDescriptionText
-                            if (!enabled) disabled()
-                            contentDescription = option.label
-                        }
-                        .padding(horizontal = sizes.horizontalPadding, vertical = sizes.verticalPadding),
-                    contentAlignment = Alignment.Center
-                ) {
-                    val contentArrangement = when (option.alignment) {
-                        FinsibleSegmentAlignment.Start -> Arrangement.spacedBy(sizes.iconSpacing, Alignment.Start)
-                        FinsibleSegmentAlignment.Center -> Arrangement.spacedBy(sizes.iconSpacing, Alignment.CenterHorizontally)
-                        FinsibleSegmentAlignment.End -> Arrangement.spacedBy(sizes.iconSpacing, Alignment.End)
-                    }
-
-                    val labelStyle = if (isSelected) sizes.textStyle.copy(fontWeight = FontWeight.Bold) else sizes.textStyle
-
-                    Row(horizontalArrangement = contentArrangement, verticalAlignment = Alignment.CenterVertically) {
-                        if (option.icon != null) {
-                            CompositionLocalProvider(LocalContentColor provides resolvedContent) {
-                                Box(
-                                    modifier = Modifier.size(sizes.iconSize),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    option.icon(Modifier.fillMaxSize())
-                                }
-                            }
-                        }
-                        FinsibleText(
-                            text = option.label,
-                            textStyleOverride = labelStyle,
-                            color = resolvedContent,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
+                val targetContainer = when {
+                    !enabled -> resolvedColors.disabledContainerColor
+                    isSelected -> resolvedColors.selectedContainerColor
+                    else -> resolvedColors.unselectedContainerColor
+                }
+                val targetContent = when {
+                    !enabled -> resolvedColors.disabledContentColor
+                    isSelected -> resolvedColors.selectedContentColor
+                    else -> resolvedColors.unselectedContentColor
                 }
 
-                if (!isLast) {
-                    Surface(
-                        color = resolvedColors.borderColor, modifier = Modifier
-                            .fillMaxHeight()
-                            .width(1.dp)
-                    ) {}
+                val animatedContainer by animateColorAsState(
+                    targetValue = targetContainer,
+                    label = "containerColor_${option.id}"
+                )
+                val animatedContent by animateColorAsState(
+                    targetValue = targetContent,
+                    label = "contentColor_${option.id}"
+                )
+
+                val defaultWeight = sizes.textStyle.fontWeight?.weight ?: FontWeight.Normal.weight
+                val targetFontWeight = if (isSelected) FontWeight.Bold.weight else defaultWeight
+                val animatedFontWeight by animateIntAsState(
+                    targetValue = targetFontWeight,
+                    animationSpec = tween(
+                        durationMillis = FinsibleTheme.animations.durations.fadeMs,
+                        easing = FastOutLinearInEasing
+                    ),
+                    label = "fontWeight_${option.id}"
+                )
+
+                val labelStyle = sizes.textStyle.copy(fontWeight = FontWeight(animatedFontWeight))
+
+                val stateDescriptionText = if (isSelected) {
+                    stringResource(com.itsjeel01.finsiblefrontend.R.string.finsible_radio_button_selected_state)
+                } else {
+                    stringResource(com.itsjeel01.finsiblefrontend.R.string.finsible_radio_button_unselected_state)
+                }
+
+                key(option.id) {
+                    val interactionSource = remember { MutableInteractionSource() }
+
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(middleShape)
+                            .background(animatedContainer)
+                            .toggleable(
+                                value = isSelected,
+                                enabled = enabled,
+                                role = if (singleSelection) Role.RadioButton else Role.Checkbox,
+                                interactionSource = interactionSource,
+                                indication = ripple(color = resolvedColors.rippleColor),
+                                onValueChange = { checked ->
+                                    if (!enabled) return@toggleable
+                                    val nextSelection = if (singleSelection) {
+                                        if (checked) setOf(option.id) else emptySet()
+                                    } else {
+                                        if (checked) selectedIds + option.id else selectedIds - option.id
+                                    }
+                                    onSelectionChange(nextSelection)
+                                }
+                            )
+                            .semantics {
+                                stateDescription = stateDescriptionText
+                                if (!enabled) disabled()
+                                contentDescription = option.label
+                            }
+                            .padding(horizontal = sizes.horizontalPadding, vertical = sizes.verticalPadding),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        val contentArrangement = when (option.alignment) {
+                            FinsibleSegmentAlignment.Start -> Arrangement.spacedBy(sizes.iconSpacing, Alignment.Start)
+                            FinsibleSegmentAlignment.Center -> Arrangement.spacedBy(sizes.iconSpacing, Alignment.CenterHorizontally)
+                            FinsibleSegmentAlignment.End -> Arrangement.spacedBy(sizes.iconSpacing, Alignment.End)
+                        }
+
+                        Row(horizontalArrangement = contentArrangement, verticalAlignment = Alignment.CenterVertically) {
+                            if (option.icon != null) {
+                                CompositionLocalProvider(LocalContentColor provides animatedContent) {
+                                    Box(
+                                        modifier = Modifier.size(sizes.iconSize),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        option.icon(Modifier.fillMaxSize())
+                                    }
+                                }
+                            }
+                            FinsibleText(
+                                text = option.label,
+                                textStyle = labelStyle,
+                                color = animatedContent,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
+
+                    if (!isLast) {
+                        Surface(
+                            color = resolvedColors.borderColor, modifier = Modifier
+                                .fillMaxHeight()
+                                .width(FinsibleTheme.stroke.thin)
+                        ) {}
+                    }
+                }
+            }
+        }
+    } else {
+        val sp = FinsibleTheme.spacing
+
+        Row(
+            modifier = modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            options.forEachIndexed { index, option ->
+                val isSelected = option.id in selectedIds
+                val isLast = index == options.lastIndex
+
+                val targetContainer = when {
+                    !enabled -> resolvedColors.disabledContainerColor
+                    isSelected -> resolvedColors.selectedContainerColor
+                    else -> resolvedColors.unselectedContainerColor
+                }
+                val targetContent = when {
+                    !enabled -> resolvedColors.disabledContentColor
+                    isSelected -> resolvedColors.selectedContentColor
+                    else -> resolvedColors.unselectedContentColor
+                }
+
+                // Smoothly calculate border color target
+                val targetBorderColor = when {
+                    !isSelected -> resolvedColors.borderColor
+                    variant == FinsibleSegmentedButtonVariant.Tonal -> targetContainer.copy(alpha = 1f)
+                    variant == FinsibleSegmentedButtonVariant.Filled -> Color.Transparent // Hide border smoothly
+                    else -> resolvedColors.selectedContentColor
+                }
+
+                val animatedContainer by animateColorAsState(
+                    targetValue = targetContainer,
+                    label = "containerColor_${option.id}"
+                )
+                val animatedContent by animateColorAsState(
+                    targetValue = targetContent,
+                    label = "contentColor_${option.id}"
+                )
+                val animatedBorder by animateColorAsState(
+                    targetValue = targetBorderColor,
+                    label = "borderColor_${option.id}"
+                )
+
+                val defaultWeight = sizes.textStyle.fontWeight?.weight ?: FontWeight.Normal.weight
+                val targetFontWeight = if (isSelected) FontWeight.Bold.weight else defaultWeight
+                val animatedFontWeight by animateIntAsState(
+                    targetValue = targetFontWeight,
+                    animationSpec = tween(
+                        durationMillis = FinsibleTheme.animations.durations.fadeMs,
+                        easing = FastOutLinearInEasing
+                    ),
+                    label = "fontWeight_${option.id}"
+                )
+
+                val labelStyle = sizes.textStyle.copy(fontWeight = FontWeight(animatedFontWeight))
+                val itemBorderStroke = BorderStroke(width = FinsibleTheme.stroke.thin, color = animatedBorder)
+
+                val stateDescriptionText = if (isSelected) {
+                    stringResource(com.itsjeel01.finsiblefrontend.R.string.finsible_radio_button_selected_state)
+                } else {
+                    stringResource(com.itsjeel01.finsiblefrontend.R.string.finsible_radio_button_unselected_state)
+                }
+
+                key(option.id) {
+                    val interactionSource = remember { MutableInteractionSource() }
+
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(segmentShape)
+                            .border(itemBorderStroke, segmentShape) // Always applied, animates to transparent if needed
+                            .background(animatedContainer)
+                            .toggleable(
+                                value = isSelected,
+                                enabled = enabled,
+                                role = if (singleSelection) Role.RadioButton else Role.Checkbox,
+                                interactionSource = interactionSource,
+                                indication = ripple(color = resolvedColors.rippleColor),
+                                onValueChange = { checked ->
+                                    if (!enabled) return@toggleable
+                                    val nextSelection = if (singleSelection) {
+                                        if (checked) setOf(option.id) else emptySet()
+                                    } else {
+                                        if (checked) selectedIds + option.id else selectedIds - option.id
+                                    }
+                                    onSelectionChange(nextSelection)
+                                }
+                            )
+                            .semantics {
+                                stateDescription = stateDescriptionText
+                                if (!enabled) disabled()
+                                contentDescription = option.label
+                            }
+                            .padding(horizontal = sizes.horizontalPadding, vertical = sizes.verticalPadding),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        val contentArrangement = when (option.alignment) {
+                            FinsibleSegmentAlignment.Start -> Arrangement.spacedBy(sizes.iconSpacing, Alignment.Start)
+                            FinsibleSegmentAlignment.Center -> Arrangement.spacedBy(sizes.iconSpacing, Alignment.CenterHorizontally)
+                            FinsibleSegmentAlignment.End -> Arrangement.spacedBy(sizes.iconSpacing, Alignment.End)
+                        }
+
+                        Row(horizontalArrangement = contentArrangement, verticalAlignment = Alignment.CenterVertically) {
+                            if (option.icon != null) {
+                                CompositionLocalProvider(LocalContentColor provides animatedContent) {
+                                    Box(
+                                        modifier = Modifier.size(sizes.iconSize),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        option.icon(Modifier.fillMaxSize())
+                                    }
+                                }
+                            }
+                            FinsibleText(
+                                text = option.label,
+                                textStyle = labelStyle,
+                                color = animatedContent,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
+
+                    if (!isLast) {
+                        Spacer(modifier = Modifier.width(sp.inlineMd))
+                    }
                 }
             }
         }

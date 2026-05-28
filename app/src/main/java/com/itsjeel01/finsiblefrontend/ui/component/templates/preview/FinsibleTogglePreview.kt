@@ -30,7 +30,7 @@ fun FinsibleTogglePreview() {
 
         Column(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d16)
+            verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackLg)
         ) {
             FinsibleToggle(
                 checked = primary,

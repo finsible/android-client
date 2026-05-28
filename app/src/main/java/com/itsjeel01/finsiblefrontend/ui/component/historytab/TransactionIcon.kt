@@ -13,7 +13,6 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleIco
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.util.resolveIcon
 
-/** Icon representing transaction type/category. */
 @Composable
 fun TransactionIcon(
     type: TransactionType,
@@ -28,9 +27,9 @@ fun TransactionIcon(
     }
 
     val tint = when (type) {
-        TransactionType.INCOME -> FinsibleTheme.colors.income
-        TransactionType.EXPENSE -> FinsibleTheme.colors.expense
-        TransactionType.TRANSFER -> FinsibleTheme.colors.transfer
+        TransactionType.INCOME -> FinsibleTheme.colors.transactionIncome
+        TransactionType.EXPENSE -> FinsibleTheme.colors.transactionExpense
+        TransactionType.TRANSFER -> FinsibleTheme.colors.transactionTransfer
     }
 
     FinsibleIconBadge(

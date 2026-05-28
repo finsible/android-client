@@ -15,20 +15,19 @@ object FinsibleLoaderDefaults {
         barColor: Color = Color.Unspecified
     ): FinsibleLoaderColors {
         return FinsibleLoaderColors(
-            ballColor = if (ballColor != Color.Unspecified) ballColor else FinsibleTheme.colors.brandAccent,
-            barColor = if (barColor != Color.Unspecified) barColor else FinsibleTheme.colors.primaryContent80
+            ballColor = if (ballColor != Color.Unspecified) ballColor else FinsibleTheme.colors.brandInteractive,
+            barColor = if (barColor != Color.Unspecified) barColor else FinsibleTheme.colors.contentPrimary.copy(alpha = 0.8f)
         )
     }
 
     @Composable
     fun size(size: FinsibleSize): Dp {
-        val d = FinsibleTheme.dimes
         return when (size) {
-            FinsibleSize.ExtraSmall -> d.d24
-            FinsibleSize.Small -> d.d32
-            FinsibleSize.Medium -> d.d48
-            FinsibleSize.Large -> d.d64
-            FinsibleSize.ExtraLarge -> d.d80
+            FinsibleSize.ExtraSmall -> FinsibleTheme.sizes.touch.xs
+            FinsibleSize.Small      -> FinsibleTheme.sizes.touch.sm
+            FinsibleSize.Medium     -> FinsibleTheme.sizes.touch.md
+            FinsibleSize.Large      -> FinsibleTheme.sizes.touch.lg
+            FinsibleSize.ExtraLarge -> FinsibleTheme.sizes.touch.xl
         }
     }
 }

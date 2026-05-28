@@ -16,6 +16,13 @@ import com.itsjeel01.finsiblefrontend.data.sync.LocalIdGenerator
 import io.objectbox.Box
 import io.objectbox.Property
 import io.objectbox.kotlin.equal
+import io.objectbox.kotlin.flow
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.conflate
 import javax.inject.Inject
 
 class CategoryLocalRepository @Inject constructor(
@@ -100,7 +107,7 @@ class CategoryLocalRepository @Inject constructor(
             .associateBy { it.id }
     }
 
-    fun createCategory(
+    suspend fun createCategory(
         type: TransactionType,
         name: String,
         icon: String,
@@ -151,5 +158,93 @@ class CategoryLocalRepository @Inject constructor(
         }
 
         return queueDeleteEntity(id)
+    }
+
+    /**
+     * Reactively emits the top [limit] categories sorted by recency.
+     * Categories never used (null lastUsedAt) are excluded — ObjectBox places nulls first on
+     * orderDesc, which would incorrectly rank unused categories as "most recent".
+     */
+    fun getRecentCategoriesFlow(
+        type: TransactionType,
+        limit: Long
+    ): Flow<List<CategoryEntity>> = callbackFlow {
+        val typeInt = TransactionTypeConverter().convertToDatabaseValue(type)!!
+
+        val query = box.query()
+            .equal(CategoryEntity_.type, typeInt)
+            .notNull(CategoryEntity_.lastUsedAt)
+            .orderDesc(CategoryEntity_.lastUsedAt)
+            .build()
+
+        val subscription = query.subscribe().observer {
+            trySend(query.find(0, limit))
+        }
+
+        awaitClose {
+            subscription.cancel()
+            query.close()
+        }
+    }.conflate()
+
+    /** Reactively emits the top [limit] categories sorted purely by usage frequency. */
+    fun getFrequentCategoriesFlow(
+        type: TransactionType,
+        limit: Long
+    ): Flow<List<CategoryEntity>> = callbackFlow {
+        val typeInt = TransactionTypeConverter().convertToDatabaseValue(type)!!
+
+        val query = box.query()
+            .equal(CategoryEntity_.type, typeInt)
+            .orderDesc(CategoryEntity_.usageCount)
+            .build()
+
+        val subscription = query.subscribe().observer {
+            trySend(query.find(0, limit))
+        }
+
+        awaitClose {
+            subscription.cancel()
+            query.close()
+        }
+    }.conflate()
+
+    /**
+     * Reactive top-K by usage frequency, driven by a Flow<Int> for K so the limit can change reactively.
+     * Local ObjectBox only — no remote fetch.
+     */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun getTopK(type: TransactionType, kFlow: Flow<Int>): Flow<List<CategoryEntity>> {
+        val typeInt = TransactionTypeConverter().convertToDatabaseValue(type)!!
+        val baseFlow = box.query()
+            .equal(CategoryEntity_.type, typeInt)
+            .orderDesc(CategoryEntity_.usageCount)
+            .build()
+            .flow()
+
+        return combine(baseFlow, kFlow) { entities, k -> entities.take(k) }
+    }
+
+    /**
+     * Increments usage count and updates lastUsedAt for the given category.
+     *
+     * Uses `BoxStore.callInTx` which blocks the calling thread. Callers must ensure this
+     * runs on a background dispatcher (e.g. `Dispatchers.IO`) to avoid main-thread jank.
+     */
+    fun updateCategoryUsage(id: Long): CategoryEntity? {
+        return box.store.callInTx {
+            incrementUsage(id)
+        }
+    }
+
+    internal fun incrementUsage(id: Long): CategoryEntity? {
+        val entity = box.get(id) ?: return null
+
+        entity.usageCount += 1
+        entity.lastUsedAt = System.currentTimeMillis()
+
+        box.put(entity)
+        Logger.Database.d("Updated category usage: id=$id, count=${entity.usageCount}")
+        return entity
     }
 }

@@ -2,6 +2,7 @@ package com.itsjeel01.finsiblefrontend.data.di
 
 import com.itsjeel01.finsiblefrontend.data.local.entity.PendingOperationEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.TransactionEntity
+import com.itsjeel01.finsiblefrontend.data.local.repository.AccountLocalRepository
 import com.itsjeel01.finsiblefrontend.data.local.repository.CategoryLocalRepository
 import com.itsjeel01.finsiblefrontend.data.local.repository.TransactionLocalRepository
 import com.itsjeel01.finsiblefrontend.data.sync.LocalIdGenerator
@@ -11,6 +12,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.objectbox.Box
 import io.objectbox.BoxStore
+import kotlinx.serialization.json.Json
 import javax.inject.Singleton
 
 @Module
@@ -28,13 +30,17 @@ object TransactionModule {
         transactionEntityBox: Box<TransactionEntity>,
         pendingOperationBox: Box<PendingOperationEntity>,
         localIdGenerator: LocalIdGenerator,
-        categoryLocalRepository: CategoryLocalRepository
+        json: Json,
+        categoryLocalRepository: CategoryLocalRepository,
+        accountLocalRepository: AccountLocalRepository,
     ): TransactionLocalRepository {
         return TransactionLocalRepository(
             transactionEntityBox,
             pendingOperationBox,
             localIdGenerator,
-            categoryLocalRepository
+            json,
+            categoryLocalRepository,
+            accountLocalRepository
         )
     }
 }

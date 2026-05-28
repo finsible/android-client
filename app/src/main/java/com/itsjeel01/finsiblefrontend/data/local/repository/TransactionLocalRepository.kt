@@ -1,13 +1,15 @@
 package com.itsjeel01.finsiblefrontend.data.local.repository
 
-import com.itsjeel01.finsiblefrontend.common.Currency
 import com.itsjeel01.finsiblefrontend.common.EntityType
+import com.itsjeel01.finsiblefrontend.common.OperationType
 import com.itsjeel01.finsiblefrontend.common.Status
 import com.itsjeel01.finsiblefrontend.common.TransactionType
+import com.itsjeel01.finsiblefrontend.common.asCentisAmount
 import com.itsjeel01.finsiblefrontend.common.logging.Logger
-import com.itsjeel01.finsiblefrontend.common.toAmountCentisOrZero
+import com.itsjeel01.finsiblefrontend.data.local.OperationTypeConverter
 import com.itsjeel01.finsiblefrontend.data.local.TransactionTypeConverter
 import com.itsjeel01.finsiblefrontend.data.local.entity.PendingOperationEntity
+import com.itsjeel01.finsiblefrontend.data.local.entity.PendingOperationEntity_
 import com.itsjeel01.finsiblefrontend.data.local.entity.TransactionEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.TransactionEntity_
 import com.itsjeel01.finsiblefrontend.data.local.entity.toAmountString
@@ -22,6 +24,9 @@ import com.itsjeel01.finsiblefrontend.ui.model.TransactionDailySummary
 import io.objectbox.Box
 import io.objectbox.Property
 import io.objectbox.query.QueryBuilder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
 import java.util.Calendar
 import java.util.Locale
 import javax.inject.Inject
@@ -30,7 +35,9 @@ class TransactionLocalRepository @Inject constructor(
     override val box: Box<TransactionEntity>,
     pendingOperationBox: Box<PendingOperationEntity>,
     localIdGenerator: LocalIdGenerator,
-    private val categoryLocalRepository: CategoryLocalRepository
+    private val json: Json,
+    private val categoryLocalRepository: CategoryLocalRepository,
+    private val accountLocalRepository: AccountLocalRepository
 ) : SyncableLocalRepository<Transaction, TransactionEntity>(
     box,
     pendingOperationBox,
@@ -46,7 +53,7 @@ class TransactionLocalRepository @Inject constructor(
         transactionDate = entity.transactionDate,
         categoryId = entity.categoryId,
         description = entity.description,
-        currency = entity.currency,
+        currencyCode = entity.currencyCode,
         fromAccountId = entity.fromAccountId,
         toAccountId = entity.toAccountId
     )
@@ -57,7 +64,7 @@ class TransactionLocalRepository @Inject constructor(
         transactionDate = entity.transactionDate,
         categoryId = entity.categoryId,
         description = entity.description,
-        currency = entity.currency,
+        currencyCode = entity.currencyCode,
         fromAccountId = entity.fromAccountId,
         toAccountId = entity.toAccountId
     )
@@ -128,7 +135,7 @@ class TransactionLocalRepository @Inject constructor(
         }
     }
 
-    fun createTransaction(
+    suspend fun createTransaction(
         type: TransactionType,
         totalAmount: Long,
         transactionDate: Long,
@@ -137,10 +144,12 @@ class TransactionLocalRepository @Inject constructor(
         fromAccountId: Long?,
         toAccountId: Long?,
         description: String?,
-        currency: Currency = Currency.INR
-    ): TransactionEntity {
-        return queueCreateEntity { localId ->
-            TransactionEntity(
+        currencyCode: String
+    ): TransactionEntity = withContext(Dispatchers.IO) {
+        val localId = localIdGenerator.nextLocalId()
+
+        box.store.callInTx {
+            val entity = TransactionEntity(
                 id = localId,
                 type = type,
                 totalAmount = totalAmount,
@@ -156,9 +165,30 @@ class TransactionLocalRepository @Inject constructor(
                 fromAccountId = fromAccountId,
                 toAccountId = toAccountId,
                 description = description,
-                currency = currency,
+                currencyCode = currencyCode,
                 syncStatus = Status.PENDING
             )
+
+            box.put(entity)
+
+            val request = toCreateRequest(entity)
+            pendingOperationBox.put(
+                PendingOperationEntity(
+                    entityType = entityType,
+                    operationType = OperationType.CREATE,
+                    localEntityId = localId,
+                    payload = json.encodeToString(request),
+                    status = Status.PENDING,
+                    createdAt = System.currentTimeMillis()
+                )
+            )
+
+            // Usage tracking — atomic with the entity write in the same transaction
+            if (categoryId > 0) categoryLocalRepository.incrementUsage(categoryId)
+            if (fromAccountId != null && fromAccountId > 0) accountLocalRepository.incrementUsage(fromAccountId)
+            if (toAccountId != null && toAccountId > 0) accountLocalRepository.incrementUsage(toAccountId)
+
+            entity
         }
     }
 
@@ -172,33 +202,81 @@ class TransactionLocalRepository @Inject constructor(
         fromAccountId: Long? = null,
         toAccountId: Long? = null,
         description: String? = null,
-        currency: Currency? = null
+        currencyCode: String? = null
     ): TransactionEntity? {
         val entity = box.get(id) ?: return null
 
-        type?.let { entity.type = it }
-        totalAmount?.let { entity.totalAmount = it }
-        transactionDate?.let { entity.transactionDate = it }
-        categoryId?.let {
-            entity.categoryId = it
-            entity.categoryIcon = try {
-                categoryLocalRepository.get(it).icon
-            } catch (_: Exception) {
-                ""
+        val oldCategoryId = entity.categoryId
+        val oldFromAccountId = entity.fromAccountId
+        val oldToAccountId = entity.toAccountId
+
+        return box.store.callInTx {
+            type?.let { entity.type = it }
+            totalAmount?.let { entity.totalAmount = it }
+            transactionDate?.let { entity.transactionDate = it }
+            categoryId?.let {
+                entity.categoryId = it
+                entity.categoryIcon = try {
+                    categoryLocalRepository.get(it).icon
+                } catch (_: Exception) {
+                    ""
+                }
             }
-        }
-        categoryName?.let { entity.categoryName = it }
-        fromAccountId?.let { entity.fromAccountId = it }
-        toAccountId?.let { entity.toAccountId = it }
-        description?.let { entity.description = it }
-        currency?.let { entity.currency = it }
+            categoryName?.let { entity.categoryName = it }
+            fromAccountId?.let { entity.fromAccountId = it }
+            toAccountId?.let { entity.toAccountId = it }
+            description?.let { entity.description = it }
+            currencyCode?.let { entity.currencyCode = it }
 
-        // Update searchableText if description or categoryName changed
-        if (description != null || categoryName != null) {
-            entity.searchableText = buildSearchableText(entity.description, entity.categoryName)
-        }
+            if (description != null || categoryName != null) {
+                entity.searchableText = buildSearchableText(entity.description, entity.categoryName)
+            }
 
-        return queueUpdateEntity(entity)
+            // Shared entity write — single path for both branches
+            entity.syncStatus = Status.PENDING
+            box.put(entity)
+
+            if (entity.id <= 0) {
+                val createOpType = OperationTypeConverter()
+                    .convertToDatabaseValue(OperationType.CREATE)!!.toLong()
+                pendingOperationBox.query()
+                    .equal(PendingOperationEntity_.operationType, createOpType)
+                    .equal(PendingOperationEntity_.localEntityId, entity.id)
+                    .build()
+                    .findFirst()?.let { pendingOp ->
+                        pendingOp.payload = json.encodeToString(toCreateRequest(entity))
+                        pendingOperationBox.put(pendingOp)
+                    }
+            } else {
+                val request = TransactionUpdateRequest(
+                    type = type?.name,
+                    totalAmount = totalAmount?.toAmountString(),
+                    transactionDate = transactionDate,
+                    categoryId = categoryId,
+                    description = description,
+                    currencyCode = currencyCode,
+                    fromAccountId = fromAccountId,
+                    toAccountId = toAccountId
+                )
+                pendingOperationBox.put(
+                    PendingOperationEntity(
+                        entityType = entityType,
+                        operationType = OperationType.UPDATE,
+                        entityId = entity.id,
+                        payload = json.encodeToString(request),
+                        status = Status.PENDING,
+                        createdAt = System.currentTimeMillis()
+                    )
+                )
+            }
+
+            // Usage tracking — atomic with the entity write in the same transaction
+            if (categoryId != null && categoryId > 0 && categoryId != oldCategoryId) categoryLocalRepository.incrementUsage(categoryId)
+            if (fromAccountId != null && fromAccountId > 0 && fromAccountId != oldFromAccountId) accountLocalRepository.incrementUsage(fromAccountId)
+            if (toAccountId != null && toAccountId > 0 && toAccountId != oldToAccountId) accountLocalRepository.incrementUsage(toAccountId)
+
+            entity
+        }
     }
 
     fun deleteTransaction(id: Long): Boolean = queueDeleteEntity(id)
@@ -343,7 +421,7 @@ class TransactionLocalRepository @Inject constructor(
         val trimmed = searchQuery.trim().lowercase(Locale.ROOT)
         if (trimmed.isBlank()) return
 
-        val amountCentis = trimmed.toAmountCentisOrZero().takeIf { it > 0L }
+        val amountCentis = trimmed.asCentisAmount().takeIf { it > 0L }
 
         val searchCondition = if (amountCentis != null)
             TransactionEntity_.searchableText.contains(trimmed)

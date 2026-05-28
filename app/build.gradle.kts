@@ -3,23 +3,24 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.jetbrains.kotlin.serialization)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlinAndroidKsp)
+    alias(libs.plugins.kotlinKapt)
     alias(libs.plugins.hiltAndroid)
     id("kotlin-parcelize") // needed only for non-primitive classes
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+    alias(libs.plugins.objectboxPlugin)
 }
 
 android {
     namespace = "com.itsjeel01.finsiblefrontend"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.itsjeel01.finsiblefrontend"
         minSdk = 26
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 1
         versionName = "1.0"
 
@@ -48,27 +49,21 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlin {
-        compilerOptions {
-            jvmTarget = JvmTarget.JVM_17
-        }
-    }
     buildFeatures {
         buildConfig = true
         compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
     }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-    tasks.withType<KotlinCompile> {
-        compilerOptions {
-            freeCompilerArgs.add("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
-        }
+}
+
+tasks.withType<KotlinCompile> {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_17
+        freeCompilerArgs.add("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
     }
 }
 
@@ -105,7 +100,6 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.kizitonwose.calendar.compose)
     implementation(libs.kizitonwose.calendar.core)
@@ -122,6 +116,9 @@ dependencies {
     implementation(libs.composables.icons.material.symbols.sharp.filled)
     implementation(libs.composables.icons.tabler.outline)
     implementation(libs.composables.icons.tabler.filled)
+    implementation(libs.androidx.datastore)
+    implementation(libs.tink.android)
+    implementation(libs.objectbox.kotlin)
 
     ksp(libs.hilt.compiler)
     ksp(libs.kotlin.metadata.jvm)
@@ -144,5 +141,3 @@ dependencies {
 
     releaseImplementation(libs.objectbox.android)
 }
-
-apply(plugin = "io.objectbox")

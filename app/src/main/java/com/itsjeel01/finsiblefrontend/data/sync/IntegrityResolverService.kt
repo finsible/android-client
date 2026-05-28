@@ -7,9 +7,7 @@ import com.itsjeel01.finsiblefrontend.data.repository.AccountGroupRepository
 import com.itsjeel01.finsiblefrontend.data.repository.AccountRepository
 import com.itsjeel01.finsiblefrontend.data.repository.CategoryRepository
 import com.itsjeel01.finsiblefrontend.data.repository.TransactionRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -24,22 +22,19 @@ class IntegrityResolverService @Inject constructor(
     private val transactionRepository: TransactionRepository,
     private val preferenceManager: PreferenceManager,
     private val dataFetcher: DataFetcher,
-    private val networkMonitor: NetworkMonitor
+    private val networkMonitor: NetworkMonitor,
+    private val scopeManager: ScopeManager
 ) {
-    private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-
     fun checkAndResolveOnLaunch() {
-        if (!preferenceManager.isLoggedIn()) {
-            Logger.Sync.d("User not authenticated, skipping integrity check")
-            return
-        }
-
         Logger.Sync.i("Starting background integrity check on app launch")
 
-        applicationScope.launch {
-            try {
-                networkMonitor.initialize()
+        scopeManager.scope.launch {
+            if (!preferenceManager.isLoggedIn()) {
+                Logger.Sync.d("User not authenticated, skipping integrity check")
+                return@launch
+            }
 
+            try {
                 if (!networkMonitor.isOnline.value) {
                     Logger.Sync.i("Network unavailable - skipping integrity check (offline-first mode)")
                     Logger.Sync.d("App will continue with local data. Integrity will be checked when network becomes available.")
@@ -78,7 +73,6 @@ class IntegrityResolverService @Inject constructor(
                     resolveTransactions()
                 }
 
-                // Verify integrity again after resolution
                 val finalReport = integrityChecker.verifyAllIntegrity()
 
                 if (!finalReport.networkAvailable) {
@@ -92,6 +86,9 @@ class IntegrityResolverService @Inject constructor(
                     Logger.Sync.w("⚠ Some discrepancies remain after resolution attempt")
                     logDiscrepancyReport(finalReport)
                 }
+            } catch (e: CancellationException) {
+                Logger.Sync.i("Integrity check cancelled (likely due to app shutdown or logout)")
+                throw e
             } catch (e: Exception) {
                 Logger.Sync.e("Error during integrity check and resolution", e)
                 Logger.Sync.d("App continues with local data despite error")

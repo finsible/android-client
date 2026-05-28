@@ -9,7 +9,11 @@ data class AccountUIModel(
     val name: String,
     val description: String,
     val icon: String,
+    val currencyCode: String,
     val formattedBalance: String,
     val groupColor: String?,
-    val isPositiveBalance: Boolean
+    val groupName: String?,
+    val isPositiveBalance: Boolean,
+    val usageCount: Long = 0,
+    val lastUsedAt: Long? = null,
 )

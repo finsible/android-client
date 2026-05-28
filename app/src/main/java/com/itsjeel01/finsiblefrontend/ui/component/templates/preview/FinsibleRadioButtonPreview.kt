@@ -23,10 +23,10 @@ import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 @Composable
 fun FinsibleRadioButtonPreview() {
     FinsibleComponentPreviewScaffold {
-        val d = FinsibleTheme.dimes
+        val sp = FinsibleTheme.spacing
 
         FinsiblePreviewSection("Sizes and selection") {
-            Column(verticalArrangement = Arrangement.spacedBy(d.d12)) {
+            Column(verticalArrangement = Arrangement.spacedBy(sp.gapMd)) {
                 RadioRow(size = FinsibleSize.Small, label = "Small")
                 RadioRow(size = FinsibleSize.Medium, label = "Medium")
             }
@@ -38,7 +38,7 @@ fun FinsibleRadioButtonPreview() {
 private fun RadioRow(size: FinsibleSize, label: String) {
     var selected by remember { mutableStateOf(false) }
 
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d12)) {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.gapMd)) {
         FinsibleRadioButton(
             selected = selected,
             onSelectedChange = { selected = it },

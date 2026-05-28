@@ -15,9 +15,18 @@ enum class TransactionType(@StringRes val displayText: Int, val icon: Int) {
     @Composable
     fun getColor(): Color {
         return when (this) {
-            INCOME -> FinsibleTheme.colors.income
-            EXPENSE -> FinsibleTheme.colors.expense
-            TRANSFER -> FinsibleTheme.colors.transfer
+            INCOME -> FinsibleTheme.colors.transactionIncome
+            EXPENSE -> FinsibleTheme.colors.transactionExpense
+            TRANSFER -> FinsibleTheme.colors.transactionTransfer
+        }
+    }
+
+    @Composable
+    fun getSurfaceColor(): Color {
+        return when (this) {
+            INCOME -> FinsibleTheme.colors.transactionIncomeSurface
+            EXPENSE -> FinsibleTheme.colors.transactionExpenseSurface
+            TRANSFER -> FinsibleTheme.colors.transactionTransferSurface
         }
     }
 
@@ -31,12 +40,15 @@ enum class TransactionType(@StringRes val displayText: Int, val icon: Int) {
 enum class TransactionRecurringFrequency(@StringRes val displayText: Int) {
     DAILY(R.string.frequency_daily),
     WEEKLY(R.string.frequency_weekly),
+    BIWEEKLY(R.string.frequency_biweekly),
     MONTHLY(R.string.frequency_monthly),
-    YEARLY(R.string.frequency_yearly);
+    QUARTERLY(R.string.frequency_quarterly),
+    SEMIANNUALLY(R.string.frequency_semi_annually),
+    ANNUALLY(R.string.frequency_annually);
 
     companion object {
         fun toOrderedList(): List<TransactionRecurringFrequency> {
-            return listOf(DAILY, WEEKLY, MONTHLY, YEARLY)
+            return listOf(DAILY, WEEKLY, BIWEEKLY, MONTHLY, QUARTERLY, SEMIANNUALLY, ANNUALLY)
         }
     }
 }
@@ -71,14 +83,4 @@ enum class Status {
     SYNCING,
     FAILED,
     COMPLETED
-}
-
-enum class Currency {
-    INR;
-
-    fun getSymbol(): String {
-        return when (this) {
-            INR -> "₹"
-        }
-    }
 }

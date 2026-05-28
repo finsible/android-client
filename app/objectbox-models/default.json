@@ -4,127 +4,137 @@
   "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
   "entities": [
     {
-      "id": "1:36553080464490998",
-      "lastPropertyId": "13:5817362973252964116",
+      "id": "1:1286646852691253489",
+      "lastPropertyId": "14:2241315311073744514",
       "name": "AccountEntity",
       "properties": [
         {
-          "id": "1:1058006565558947712",
+          "id": "1:573120235374112748",
           "name": "id",
           "type": 6,
           "flags": 129
         },
         {
-          "id": "2:3780035084888424327",
+          "id": "2:7089411233745933217",
           "name": "name",
           "type": 9
         },
         {
-          "id": "3:4401009694744929550",
+          "id": "3:5484089587014335896",
           "name": "description",
           "type": 9
         },
         {
-          "id": "5:2089800335052208818",
+          "id": "4:8344086184258518341",
+          "name": "balanceCentis",
+          "indexId": "1:1661735250184546025",
+          "type": 6,
+          "flags": 8
+        },
+        {
+          "id": "5:1677720447278614160",
           "name": "currencyCode",
           "type": 9
         },
         {
-          "id": "6:9165745087724474390",
+          "id": "6:3666347095851986813",
           "name": "icon",
           "type": 9
         },
         {
-          "id": "7:7357196607818087448",
+          "id": "7:1814219607870539652",
           "name": "isActive",
           "type": 1
         },
         {
-          "id": "8:2644817289342382453",
+          "id": "8:952984016300903",
           "name": "isSystemDefault",
           "type": 1
         },
         {
-          "id": "9:3798427125761117976",
-          "name": "accountGroupId",
-          "indexId": "1:5822709340570074625",
-          "type": 11,
-          "flags": 520,
-          "relationTarget": "AccountGroupEntity"
+          "id": "9:8025688289637131042",
+          "name": "usageCount",
+          "type": 6
         },
         {
-          "id": "10:895874324304979569",
+          "id": "10:2912586854758970077",
+          "name": "lastUsedAt",
+          "type": 6
+        },
+        {
+          "id": "11:1929675096620475484",
           "name": "syncStatus",
           "type": 5
         },
         {
-          "id": "11:7813238861931728595",
+          "id": "12:7552244086991043163",
           "name": "lastSyncAttempt",
           "type": 6
         },
         {
-          "id": "12:8267619782700735346",
+          "id": "13:1535488636138190788",
           "name": "syncError",
           "type": 9
         },
         {
-          "id": "13:5817362973252964116",
-          "name": "balanceCentis",
-          "indexId": "12:6868491128436372398",
-          "type": 6,
-          "flags": 8
+          "id": "14:2241315311073744514",
+          "name": "accountGroupId",
+          "indexId": "2:2467058960543385722",
+          "type": 11,
+          "flags": 520,
+          "relationTarget": "AccountGroupEntity"
         }
       ],
       "relations": []
     },
     {
-      "id": "2:7368046151551549444",
-      "lastPropertyId": "10:8556354421461280899",
+      "id": "2:1978319227510766453",
+      "lastPropertyId": "9:3724773390577011026",
       "name": "AccountGroupEntity",
       "properties": [
         {
-          "id": "1:895658194240739708",
+          "id": "1:1131528784995960482",
           "name": "id",
           "type": 6,
           "flags": 129
         },
         {
-          "id": "2:7688130585418148413",
+          "id": "2:8858840731443862290",
           "name": "name",
           "type": 9
         },
         {
-          "id": "3:4075785853950157520",
+          "id": "3:2561219147824482990",
           "name": "description",
           "type": 9
         },
         {
-          "id": "4:2053663533840178283",
+          "id": "4:1129059218023748453",
           "name": "icon",
           "type": 9
         },
         {
-          "id": "5:3545391668362356281",
-          "name": "isSystemDefault",
-          "type": 1
-        },
-        {
-          "id": "7:4153419291246027839",
+          "id": "5:8864671648443282172",
           "name": "color",
           "type": 9
         },
         {
-          "id": "8:6093340448463310117",
+          "id": "6:7284964948320578577",
+          "name": "isSystemDefault",
+          "type": 1
+        },
+        {
+          "id": "7:9054025514327589952",
           "name": "syncStatus",
           "type": 5
         },
         {
-          "id": "9:103838674188763162",
+          "id": "8:8393701291322417324",
           "name": "lastSyncAttempt",
           "type": 6
         },
         {
-          "id": "10:8556354421461280899",
+          "id": "9:3724773390577011026",
           "name": "syncError",
           "type": 9
         }
@@ -132,56 +142,66 @@
       "relations": []
     },
     {
-      "id": "3:5871642001295074462",
-      "lastPropertyId": "9:5214877657357606756",
+      "id": "3:4684970307524267868",
+      "lastPropertyId": "11:7961735674330921174",
       "name": "CategoryEntity",
       "properties": [
         {
-          "id": "1:3469121546852165697",
+          "id": "1:3827609449834826896",
           "name": "id",
           "type": 6,
           "flags": 129
         },
         {
-          "id": "2:5301997883664094372",
+          "id": "2:2826688696403635834",
           "name": "type",
           "type": 5
         },
         {
-          "id": "3:505971947842327554",
+          "id": "3:8747632900476113054",
           "name": "name",
           "type": 9
         },
         {
-          "id": "4:5249263161931434025",
+          "id": "4:3216997874522380126",
           "name": "icon",
           "type": 9
         },
         {
-          "id": "5:2352641445893941993",
+          "id": "5:8203756844170685638",
           "name": "readOnly",
           "type": 1
         },
         {
-          "id": "6:3342119977911513536",
+          "id": "6:4204253746215176036",
           "name": "parentCategoryId",
-          "indexId": "2:1732055873534834238",
+          "indexId": "3:2956080758573822484",
           "type": 11,
           "flags": 520,
           "relationTarget": "CategoryEntity"
         },
         {
-          "id": "7:5236418690861165911",
+          "id": "7:3103229995941045842",
+          "name": "usageCount",
+          "type": 6
+        },
+        {
+          "id": "8:4459229365203953456",
+          "name": "lastUsedAt",
+          "type": 6
+        },
+        {
+          "id": "9:5960750690513021340",
           "name": "syncStatus",
           "type": 5
         },
         {
-          "id": "8:7316278624835019433",
+          "id": "10:718390429801112235",
           "name": "lastSyncAttempt",
           "type": 6
         },
         {
-          "id": "9:5214877657357606756",
+          "id": "11:7961735674330921174",
           "name": "syncError",
           "type": 9
         }
@@ -189,221 +209,270 @@
       "relations": []
     },
     {
-      "id": "4:7824650354570744645",
-      "lastPropertyId": "10:780184699393623222",
-      "name": "PendingOperationEntity",
+      "id": "4:5609741574594302367",
+      "lastPropertyId": "6:1414478067246530263",
+      "name": "ExchangeRateEntity",
       "properties": [
         {
-          "id": "1:8188090066166363042",
-          "name": "localId",
-          "type": 6,
-          "flags": 1
-        },
-        {
-          "id": "2:5080046570742386870",
-          "name": "entityType",
-          "indexId": "3:4104008363458638896",
-          "type": 5,
-          "flags": 8
-        },
-        {
-          "id": "3:4586508779587152261",
-          "name": "operationType",
-          "type": 5
-        },
-        {
-          "id": "4:8571396475636559315",
-          "name": "entityId",
-          "type": 6
-        },
-        {
-          "id": "5:8296888291495233356",
-          "name": "localEntityId",
-          "type": 6
-        },
-        {
-          "id": "6:5619789414625017808",
-          "name": "payload",
-          "type": 9
-        },
-        {
-          "id": "7:1841751128890477048",
-          "name": "createdAt",
-          "indexId": "4:7852976736432077778",
-          "type": 6,
-          "flags": 8
-        },
-        {
-          "id": "8:667465932678301913",
-          "name": "retryCount",
-          "type": 5
-        },
-        {
-          "id": "9:5521201265034387840",
-          "name": "lastError",
-          "type": 9
-        },
-        {
-          "id": "10:780184699393623222",
-          "name": "status",
-          "indexId": "5:668552313088343717",
-          "type": 5,
-          "flags": 8
-        }
-      ],
-      "relations": []
-    },
-    {
-      "id": "6:6297331166862476803",
-      "lastPropertyId": "22:3622881014852802664",
-      "name": "TransactionEntity",
-      "properties": [
-        {
-          "id": "1:6535295201450048590",
+          "id": "1:3533287776305021331",
           "name": "id",
           "type": 6,
           "flags": 129
         },
         {
-          "id": "2:2198274159466277857",
+          "id": "2:7904672567600342142",
+          "name": "pairCode",
+          "indexId": "4:2823094211510044677",
+          "type": 9,
+          "flags": 2080
+        },
+        {
+          "id": "3:3468496160291766673",
+          "name": "baseCurrencyCode",
+          "indexId": "12:2667203881193070252",
+          "type": 9,
+          "flags": 2048
+        },
+        {
+          "id": "4:2513452322616507256",
+          "name": "targetCurrencyCode",
+          "type": 9
+        },
+        {
+          "id": "5:6564922444433476942",
+          "name": "rate",
+          "type": 8
+        },
+        {
+          "id": "6:1414478067246530263",
+          "name": "lastSyncedAt",
+          "type": 6
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "5:8616941299529787739",
+      "lastPropertyId": "10:6637063750349770956",
+      "name": "PendingOperationEntity",
+      "properties": [
+        {
+          "id": "1:1971506288999301556",
+          "name": "localId",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:2193158068333298198",
+          "name": "entityType",
+          "indexId": "5:1237724183976405362",
+          "type": 5,
+          "flags": 8
+        },
+        {
+          "id": "3:7755572868650868914",
+          "name": "operationType",
+          "type": 5
+        },
+        {
+          "id": "4:3275211043882105473",
+          "name": "entityId",
+          "type": 6
+        },
+        {
+          "id": "5:5392348686295374693",
+          "name": "localEntityId",
+          "type": 6
+        },
+        {
+          "id": "6:5895018763772745297",
+          "name": "payload",
+          "type": 9
+        },
+        {
+          "id": "7:4983904996653615740",
+          "name": "createdAt",
+          "indexId": "6:6917745941972038893",
+          "type": 6,
+          "flags": 8
+        },
+        {
+          "id": "8:5092715273891930479",
+          "name": "retryCount",
+          "type": 5
+        },
+        {
+          "id": "9:9096532585980317623",
+          "name": "lastError",
+          "type": 9
+        },
+        {
+          "id": "10:6637063750349770956",
+          "name": "status",
+          "indexId": "7:6502390337373832214",
+          "type": 5,
+          "flags": 8
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "6:8225296764426090392",
+      "lastPropertyId": "26:4762211702261880948",
+      "name": "TransactionEntity",
+      "properties": [
+        {
+          "id": "1:5744550170417443823",
+          "name": "id",
+          "type": 6,
+          "flags": 129
+        },
+        {
+          "id": "2:5033102159591408022",
           "name": "type",
           "type": 5
         },
         {
-          "id": "3:2521166742728888635",
+          "id": "3:1446465629522163905",
           "name": "totalAmount",
-          "indexId": "11:6119797495717609941",
+          "indexId": "8:7011502166722079439",
           "type": 6,
           "flags": 8
         },
         {
-          "id": "4:2662661078709497583",
+          "id": "4:4203241031235343284",
+          "name": "searchableText",
+          "type": 9
+        },
+        {
+          "id": "5:2248569636682874989",
           "name": "transactionDate",
-          "indexId": "7:2365433086039832229",
+          "indexId": "9:4747470267526379279",
           "type": 6,
           "flags": 8
         },
         {
-          "id": "5:3204969547010595238",
+          "id": "6:6010893529997602093",
           "name": "categoryId",
           "type": 6
         },
         {
-          "id": "6:4920132113607817760",
+          "id": "7:1234241663540221310",
           "name": "categoryName",
           "type": 9
         },
         {
-          "id": "7:3042605271206442117",
-          "name": "description",
-          "type": 9
-        },
-        {
-          "id": "8:8267661360558778926",
-          "name": "currency",
-          "type": 9
-        },
-        {
-          "id": "9:7185900333499558796",
-          "name": "fromAccountId",
-          "indexId": "8:4951901483789596214",
-          "type": 6,
-          "flags": 8
-        },
-        {
-          "id": "10:7525679039484019981",
-          "name": "toAccountId",
-          "indexId": "9:7059000698431375794",
-          "type": 6,
-          "flags": 8
-        },
-        {
-          "id": "11:962634001898964754",
-          "name": "syncStatus",
-          "type": 5
-        },
-        {
-          "id": "12:84446355918655650",
-          "name": "lastSyncAttempt",
-          "type": 6
-        },
-        {
-          "id": "13:4733277871178640452",
-          "name": "syncError",
-          "type": 9
-        },
-        {
-          "id": "14:5293204965154620592",
-          "name": "spaceId",
-          "type": 6
-        },
-        {
-          "id": "15:143327194536192384",
-          "name": "userShare",
-          "type": 9
-        },
-        {
-          "id": "16:4985289428304389260",
-          "name": "isSplit",
-          "type": 1
-        },
-        {
-          "id": "17:5264902117481397694",
-          "name": "paidByUserId",
-          "type": 6
-        },
-        {
-          "id": "18:4042880049046244444",
-          "name": "paidByUserName",
-          "type": 9
-        },
-        {
-          "id": "19:5632570290119854791",
-          "name": "fromAccountName",
-          "type": 9
-        },
-        {
-          "id": "20:4973124976255063115",
-          "name": "toAccountName",
-          "type": 9
-        },
-        {
-          "id": "21:3722423812120378061",
+          "id": "8:3398108143727310680",
           "name": "categoryIcon",
           "type": 9
         },
         {
-          "id": "22:3622881014852802664",
-          "name": "searchableText",
+          "id": "9:2312380199584383125",
+          "name": "description",
           "type": 9
+        },
+        {
+          "id": "10:3298106997750187694",
+          "name": "currencyCode",
+          "type": 9
+        },
+        {
+          "id": "11:494142474144358638",
+          "name": "fromAccountId",
+          "indexId": "10:6449220460022877233",
+          "type": 6,
+          "flags": 8
+        },
+        {
+          "id": "12:6363725817704403141",
+          "name": "fromAccountName",
+          "type": 9
+        },
+        {
+          "id": "13:1155732399950450426",
+          "name": "toAccountId",
+          "indexId": "11:1647952815908945277",
+          "type": 6,
+          "flags": 8
+        },
+        {
+          "id": "14:2412915600097297417",
+          "name": "toAccountName",
+          "type": 9
+        },
+        {
+          "id": "15:1417814096828954296",
+          "name": "syncStatus",
+          "type": 5
+        },
+        {
+          "id": "16:7649423743846291870",
+          "name": "lastSyncAttempt",
+          "type": 6
+        },
+        {
+          "id": "17:3046741571663026728",
+          "name": "syncError",
+          "type": 9
+        },
+        {
+          "id": "18:5638480314145281969",
+          "name": "spaceId",
+          "type": 6
+        },
+        {
+          "id": "19:7681711935587385258",
+          "name": "userShare",
+          "type": 9
+        },
+        {
+          "id": "20:1528377149319597947",
+          "name": "isSplit",
+          "type": 1
+        },
+        {
+          "id": "21:4347001010953923437",
+          "name": "paidByUserId",
+          "type": 6
+        },
+        {
+          "id": "22:62000455206187723",
+          "name": "paidByUserName",
+          "type": 9
+        },
+        {
+          "id": "23:3907829961114759138",
+          "name": "conversionBaseCurrency",
+          "type": 9
+        },
+        {
+          "id": "24:7234277778210293486",
+          "name": "conversionRate",
+          "type": 8
+        },
+        {
+          "id": "25:4775933613362543222",
+          "name": "conversionBaseAmountCentis",
+          "type": 6
+        },
+        {
+          "id": "26:4762211702261880948",
+          "name": "isRateEstimated",
+          "type": 1
         }
       ],
       "relations": []
     }
   ],
-  "lastEntityId": "6:6297331166862476803",
-  "lastIndexId": "12:6868491128436372398",
+  "lastEntityId": "6:8225296764426090392",
+  "lastIndexId": "12:2667203881193070252",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 5,
   "modelVersionParserMinimum": 5,
-  "retiredEntityUids": [
-    6551058013786594843
-  ],
-  "retiredIndexUids": [
-    715497229392411252,
-    8469686178105220491
-  ],
-  "retiredPropertyUids": [
-    8650068926350279347,
-    8664804153958251931,
-    1304933345668673609,
-    4648368035987455136,
-    4522232263756840346,
-    1259847168904331729,
-    9196209529055799685,
-    4480711609445654992
-  ],
+  "retiredEntityUids": [],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [],
   "retiredRelationUids": [],
   "version": 1
 }

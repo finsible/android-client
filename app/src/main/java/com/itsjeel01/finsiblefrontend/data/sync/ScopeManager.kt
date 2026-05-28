@@ -1,23 +1,23 @@
 package com.itsjeel01.finsiblefrontend.data.sync
 
 import com.itsjeel01.finsiblefrontend.common.logging.Logger
+import com.itsjeel01.finsiblefrontend.data.di.IoDispatcher
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/** Manages the lifecycle of the application-level CoroutineScope for sync operations. */
+/** Manages the lifecycle of the application-level CoroutineScope for background operations. */
 @Singleton
-class ScopeManager @Inject constructor() {
+class ScopeManager @Inject constructor(
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+) {
     @Volatile
-    private var job: Job = SupervisorJob()
-    @Volatile
-    private var _scope: CoroutineScope = CoroutineScope(job + Dispatchers.IO)
+    private var _scope: CoroutineScope = CoroutineScope(SupervisorJob() + ioDispatcher)
 
-    /** The application-level CoroutineScope for background sync operations. */
+    /** The application-level CoroutineScope. */
     val scope: CoroutineScope
         get() = _scope
 
@@ -26,16 +26,13 @@ class ScopeManager @Inject constructor() {
     fun reset() {
         Logger.Sync.i("Resetting CoroutineScope - cancelling all ongoing operations")
         _scope.cancel()
-        job = SupervisorJob()
-        _scope = CoroutineScope(job + Dispatchers.IO)
+        _scope = CoroutineScope(SupervisorJob() + ioDispatcher)
     }
 
-    /** Cancels all ongoing coroutines. Called on application termination. */
+    /** Cancels all ongoing coroutines. */
     @Synchronized
     fun shutdown() {
         Logger.Sync.i("Shutting down CoroutineScope - cancelling all operations")
         _scope.cancel()
-        // Note: We don't recreate the scope after shutdown since this is terminal (app termination).
-        // If the scope is needed again, the app will be restarted and a new ScopeManager created.
     }
 }

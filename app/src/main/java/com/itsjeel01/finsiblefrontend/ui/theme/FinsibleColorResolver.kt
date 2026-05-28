@@ -5,77 +5,80 @@ import androidx.compose.ui.graphics.Color
 import androidx.core.graphics.toColorInt
 import com.itsjeel01.finsiblefrontend.common.logging.Logger
 
-/** Resolves FinsibleColors tokens to Material3 ColorScheme and string-based lookups. */
-class FinsibleColorResolver(private val colors: FinsibleColors) {
+/**
+ * Resolves Finsible semantic colors to Material3 ColorScheme and string-based lookups.
+ *
+ * [resolve] supports both hex strings ("#RRGGBB" / "#AARRGGBB") and named tokens
+ * from the semantic design system (e.g. "contentPrimary", "brandInteractive").
+ */
+class FinsibleColorResolver(
+    private val semantic: FinsibleSemanticColors,
+) {
 
     private val colorCache = mutableMapOf<String, Color>()
 
+    /**
+     * Resolve a color reference string to a [Color].
+     * Accepts hex strings ("#RRGGBB" / "#AARRGGBB") and named semantic tokens.
+     * Falls back to [fallbackColor], then [Color.Gray].
+     */
     fun resolve(colorReference: String, fallbackColor: Color? = null): Color {
         return colorCache.getOrPut(colorReference) {
-            resolveColorToken(colorReference)
+            resolveNamedToken(colorReference)
                 ?: parseHexColor(colorReference)
                 ?: fallbackColor
                 ?: Color.Gray
         }
     }
 
-    /** Map FinsibleColors → Material3 light ColorScheme. Every parameter is explicitly overridden. */
+    // ── M3 ColorScheme mappings ──────────────────────────────────────────
+
     fun lightColors(): ColorScheme = ColorScheme(
-        // Primary
-        primary = colors.primaryButton,
-        onPrimary = colors.same,
-        primaryContainer = colors.surfaceContainerHigh,
-        onPrimaryContainer = colors.primaryContent,
-        inversePrimary = colors.brandAccent50,
+        primary = semantic.brandInteractive,
+        onPrimary = semantic.contentOnBrand,
+        primaryContainer = semantic.surfaceBrandSubtle,
+        onPrimaryContainer = semantic.brandInteractivePressed,
+        inversePrimary = semantic.brandAccent,
 
-        // Secondary
-        secondary = colors.secondaryButton,
-        onSecondary = colors.primaryContent,
-        secondaryContainer = colors.surfaceContainer,
-        onSecondaryContainer = colors.secondaryContent,
+        secondary = semantic.surfaceDefault,
+        onSecondary = semantic.contentPrimary,
+        secondaryContainer = semantic.surfaceSunken,
+        onSecondaryContainer = semantic.contentSecondary,
 
-        // Tertiary
-        tertiary = colors.tertiaryButton,
-        onTertiary = colors.onTertiaryButton,
-        tertiaryContainer = colors.tertiaryContainer,
-        onTertiaryContainer = colors.onTertiaryContainer,
+        tertiary = semantic.surfaceSunken,
+        onTertiary = semantic.contentOnBrand,
+        tertiaryContainer = semantic.surfaceBrandSubtle,
+        onTertiaryContainer = semantic.brandInteractive,
 
-        // Error
-        error = colors.error,
-        onError = colors.same,
-        errorContainer = colors.errorContainer,
-        onErrorContainer = colors.error,
+        error = semantic.feedbackError,
+        onError = semantic.contentOnBrand,
+        errorContainer = semantic.feedbackErrorSurface,
+        onErrorContainer = semantic.feedbackError,
 
-        // Backgrounds
-        background = colors.primaryBackground,
-        onBackground = colors.primaryContent,
+        background = semantic.surfaceBase,
+        onBackground = semantic.contentPrimary,
 
-        // Surfaces
-        surface = colors.secondaryBackground,
-        onSurface = colors.primaryContent,
-        surfaceVariant = colors.surfaceContainer,
-        onSurfaceVariant = colors.onSurfaceVariant,
-        surfaceTint = colors.brandAccent,
+        surface = semantic.surfaceDefault,
+        onSurface = semantic.contentPrimary,
+        surfaceVariant = semantic.surfaceSunken,
+        onSurfaceVariant = semantic.contentSecondary,
+        surfaceTint = semantic.brandInteractive,
 
-        // Inverse
-        inverseSurface = colors.primaryContent,
-        inverseOnSurface = colors.secondaryBackground,
+        inverseSurface = semantic.contentPrimary,
+        inverseOnSurface = semantic.surfaceDefault,
 
-        // Outlines
-        outline = colors.outline,
-        outlineVariant = colors.outlineVariant,
-        scrim = colors.scrim,
+        outline = semantic.borderStrong,
+        outlineVariant = semantic.borderDefault,
+        scrim = semantic.scrim,
 
-        // Surface elevation scale
-        surfaceBright = colors.surfaceBright,
-        surfaceContainer = colors.surfaceContainer,
-        surfaceContainerHigh = colors.surfaceContainerHigh,
-        surfaceContainerHighest = colors.surfaceContainerHighest,
-        surfaceContainerLow = colors.surfaceContainerLow,
-        surfaceContainerLowest = colors.surfaceContainerLowest,
-        surfaceDim = colors.surfaceDim,
+        surfaceBright = Color(0xFFFCFCFD),
+        surfaceContainer = semantic.surfaceSunken,
+        surfaceContainerHigh = semantic.surfaceRaised,
+        surfaceContainerHighest = semantic.surfaceRaised,
+        surfaceContainerLow = semantic.surfaceDefault,
+        surfaceContainerLowest = semantic.surfaceBase,
+        surfaceDim = semantic.surfaceBase,
 
-        // Fixed accent palette — derived from brand, not stored in FinsibleColors
         primaryFixed = Color(0xFFCDE9D7),
         primaryFixedDim = Color(0xFFA3D4B3),
         onPrimaryFixed = Color(0xFF0A2E1A),
@@ -90,63 +93,52 @@ class FinsibleColorResolver(private val colors: FinsibleColors) {
         onTertiaryFixedVariant = Color(0xFF266070),
     )
 
-    /** Map FinsibleColors → Material3 dark ColorScheme. Every parameter is explicitly overridden. */
     fun darkColors(): ColorScheme = ColorScheme(
-        // Primary
-        primary = colors.primaryButton,
-        onPrimary = colors.same,
-        primaryContainer = colors.surfaceContainerHigh,
-        onPrimaryContainer = colors.primaryContent,
-        inversePrimary = colors.brandAccent50,
+        primary = semantic.brandInteractive,
+        onPrimary = semantic.contentOnBrand,
+        primaryContainer = semantic.surfaceBrandSubtle,
+        onPrimaryContainer = semantic.brandInteractivePressed,
+        inversePrimary = semantic.brandAccent,
 
-        // Secondary
-        secondary = colors.secondaryButton,
-        onSecondary = colors.primaryContent,
-        secondaryContainer = colors.surfaceContainer,
-        onSecondaryContainer = colors.secondaryContent,
+        secondary = semantic.surfaceDefault,
+        onSecondary = semantic.contentPrimary,
+        secondaryContainer = semantic.surfaceSunken,
+        onSecondaryContainer = semantic.contentSecondary,
 
-        // Tertiary
-        tertiary = colors.tertiaryButton,
-        onTertiary = colors.onTertiaryButton,
-        tertiaryContainer = colors.tertiaryContainer,
-        onTertiaryContainer = colors.onTertiaryContainer,
+        tertiary = semantic.surfaceSunken,
+        onTertiary = semantic.contentOnBrand,
+        tertiaryContainer = semantic.surfaceBrandSubtle,
+        onTertiaryContainer = semantic.brandInteractive,
 
-        // Error
-        error = colors.error,
-        onError = colors.same,
-        errorContainer = colors.errorContainer,
-        onErrorContainer = colors.error,
+        error = semantic.feedbackError,
+        onError = semantic.contentOnBrand,
+        errorContainer = semantic.feedbackErrorSurface,
+        onErrorContainer = semantic.feedbackError,
 
-        // Backgrounds
-        background = colors.primaryBackground,
-        onBackground = colors.primaryContent,
+        background = semantic.surfaceBase,
+        onBackground = semantic.contentPrimary,
 
-        // Surfaces
-        surface = colors.secondaryBackground,
-        onSurface = colors.primaryContent,
-        surfaceVariant = colors.surfaceContainer,
-        onSurfaceVariant = colors.onSurfaceVariant,
-        surfaceTint = colors.brandAccent,
+        surface = semantic.surfaceDefault,
+        onSurface = semantic.contentPrimary,
+        surfaceVariant = semantic.surfaceSunken,
+        onSurfaceVariant = semantic.contentSecondary,
+        surfaceTint = semantic.brandInteractive,
 
-        // Inverse
-        inverseSurface = colors.primaryContent,
-        inverseOnSurface = colors.primaryBackground,
+        inverseSurface = semantic.contentPrimary,
+        inverseOnSurface = semantic.surfaceBase,
 
-        // Outlines
-        outline = colors.outline,
-        outlineVariant = colors.outlineVariant,
-        scrim = colors.scrim,
+        outline = semantic.borderStrong,
+        outlineVariant = semantic.borderDefault,
+        scrim = semantic.scrim,
 
-        // Surface elevation scale
-        surfaceBright = colors.surfaceBright,
-        surfaceContainer = colors.surfaceContainer,
-        surfaceContainerHigh = colors.surfaceContainerHigh,
-        surfaceContainerHighest = colors.surfaceContainerHighest,
-        surfaceContainerLow = colors.surfaceContainerLow,
-        surfaceContainerLowest = colors.surfaceContainerLowest,
-        surfaceDim = colors.surfaceDim,
+        surfaceBright = Color(0xFF343440),
+        surfaceContainer = semantic.surfaceSunken,
+        surfaceContainerHigh = semantic.surfaceRaised,
+        surfaceContainerHighest = semantic.surfaceRaised,
+        surfaceContainerLow = semantic.surfaceDefault,
+        surfaceContainerLowest = semantic.surfaceBase,
+        surfaceDim = semantic.surfaceBase,
 
-        // Fixed accent palette — derived from brand, same values both themes (cross-theme by spec)
         primaryFixed = Color(0xFFCDE9D7),
         primaryFixedDim = Color(0xFFA3D4B3),
         onPrimaryFixed = Color(0xFF0A2E1A),
@@ -161,72 +153,113 @@ class FinsibleColorResolver(private val colors: FinsibleColors) {
         onTertiaryFixedVariant = Color(0xFF266070),
     )
 
-    private fun resolveColorToken(token: String): Color? {
-        return when (token.lowercase()) {
-            // Backgrounds & Surfaces
-            "primarybackground" -> colors.primaryBackground
-            "secondarybackground" -> colors.secondaryBackground
-            "surface" -> colors.surface
-            "surfacecontainer" -> colors.surfaceContainer
-            "surfacecontainerhigh" -> colors.surfaceContainerHigh
-            "surfacecontainerhighest" -> colors.surfaceContainerHighest
-            "surfacecontainerlow" -> colors.surfaceContainerLow
-            "surfacecontainerlowest" -> colors.surfaceContainerLowest
-            "surfacebright" -> colors.surfaceBright
-            "surfacedim" -> colors.surfaceDim
-            "card" -> colors.card
-            "input" -> colors.input
+    // ── Named token resolution ───────────────────────────────────────────
 
-            // Content hierarchy
-            "primarycontent" -> colors.primaryContent
-            "secondarycontent" -> colors.secondaryContent
-            "tertiarycontent" -> colors.tertiaryContent
-            "onsurfacevariant" -> colors.onSurfaceVariant
-            "placeholder" -> colors.placeholder
-            "disabledcontent" -> colors.disabledContent
+    private fun resolveNamedToken(token: String): Color? {
+        val t = token.lowercase()
+        return when (// Surfaces
+            t) {
+            "surfacebase" -> semantic.surfaceBase
+            "surfacedefault" -> semantic.surfaceDefault
+            "surfaceraised" -> semantic.surfaceRaised
+            "surfaceoverlay" -> semantic.surfaceOverlay
+            "surfacesunken" -> semantic.surfaceSunken
+            "surfacebrandsubtle" -> semantic.surfaceBrandSubtle
+            "surfacebrandtint" -> semantic.surfaceBrandTint
+            "inputsurface" -> semantic.inputSurface
+            "cardsurface" -> semantic.cardSurface
 
-            // Interactive / Controls
-            "primarybutton" -> colors.primaryButton
-            "secondarybutton" -> colors.secondaryButton
-            "tertiarybutton" -> colors.tertiaryButton
-            "ontertiarybutton" -> colors.onTertiaryButton
-            "tertiarycontainer" -> colors.tertiaryContainer
-            "ontertiarycontainer" -> colors.onTertiaryContainer
-            "link" -> colors.link
-            "selection" -> colors.selection
-            "hover" -> colors.hover
-            "hoverstrong" -> colors.hoverStrong
-            "pressed" -> colors.pressed
-            "focused" -> colors.focused
-            "disabled" -> colors.disabled
-            "shadow" -> colors.shadow
-            "overlay" -> colors.overlay
+            // Content
+            "contentprimary" -> semantic.contentPrimary
+            "contentsecondary" -> semantic.contentSecondary
+            "contenttertiary" -> semantic.contentTertiary
+            "contentplaceholder" -> semantic.contentPlaceholder
+            "contentdisabled" -> semantic.contentDisabled
+            "contentonbrand" -> semantic.contentOnBrand
+            "contentlink" -> semantic.contentLink
+            "contentinverse" -> semantic.contentInverse
 
-            // Borders / Outlines
-            "border" -> colors.border
-            "outline" -> colors.outline
-            "outlinevariant" -> colors.outlineVariant
-            "scrim" -> colors.scrim
-            "divider" -> colors.divider
-
-            // Semantic
-            "error" -> colors.error
-            "success" -> colors.success
-            "warning" -> colors.warning
-            "info" -> colors.info
-            "infocontainer" -> colors.infoContainer
-            "successcontainer" -> colors.successContainer
-            "warningcontainer" -> colors.warningContainer
-            "errorcontainer" -> colors.errorContainer
+            // Icons
+            "iconprimary" -> semantic.iconPrimary
+            "iconsecondary" -> semantic.iconSecondary
+            "icontertiary" -> semantic.iconTertiary
+            "icondisabled" -> semantic.iconDisabled
+            "icononbrand" -> semantic.iconOnBrand
+            "iconlink" -> semantic.iconLink
 
             // Brand
-            "brandaccent" -> colors.brandAccent
+            "brandinteractive" -> semantic.brandInteractive
+            "brandinteractivehovered" -> semantic.brandInteractiveHovered
+            "brandinteractivepressed" -> semantic.brandInteractivePressed
+            "brandaccent" -> semantic.brandAccent
+            "brandtint" -> semantic.brandTint
+            "brandsubtle" -> semantic.brandSubtle
 
-            // Transaction types
-            "income" -> colors.income
-            "expense" -> colors.expense
-            "transfer" -> colors.transfer
+            // Borders
+            "bordersubtle" -> semantic.borderSubtle
+            "borderdefault" -> semantic.borderDefault
+            "borderstrong" -> semantic.borderStrong
+            "borderbrand" -> semantic.borderBrand
+            "bordererror" -> semantic.borderError
+            "inputborder" -> semantic.inputBorder
+            "cardborder" -> semantic.cardBorder
+            "scrim" -> semantic.scrim
+            "overlay" -> semantic.overlay
 
+            // Feedback
+            "feedbackerror" -> semantic.feedbackError
+            "feedbackerrorsurface" -> semantic.feedbackErrorSurface
+            "feedbacksuccess" -> semantic.feedbackSuccess
+            "feedbacksuccesssurface" -> semantic.feedbackSuccessSurface
+            "feedbackwarning" -> semantic.feedbackWarning
+            "feedbackwarningsurface" -> semantic.feedbackWarningSurface
+            "feedbackinfo" -> semantic.feedbackInfo
+            "feedbackinfosurface" -> semantic.feedbackInfoSurface
+
+            // Transaction
+            "transactionincome" -> semantic.transactionIncome
+            "transactionexpense" -> semantic.transactionExpense
+            "transactiontransfer" -> semantic.transactionTransfer
+            "transactionincomesurface" -> semantic.transactionIncomeSurface
+            "transactionexpensesurface" -> semantic.transactionExpenseSurface
+            "transactiontransfersurface" -> semantic.transactionTransferSurface
+
+            // Legacy aliases (backward compat for string-based consumers)
+            "primarybackground" -> semantic.surfaceBase
+            "secondarybackground" -> semantic.surfaceDefault
+            "surface" -> semantic.surfaceRaised
+            "surfacecontainer" -> semantic.surfaceSunken
+            "input" -> semantic.inputSurface
+            "card" -> semantic.cardSurface
+            "primarycontent" -> semantic.contentPrimary
+            "secondarycontent" -> semantic.contentSecondary
+            "tertiarycontent" -> semantic.contentTertiary
+            "onsurfacevariant" -> semantic.contentSecondary
+            "placeholder" -> semantic.contentPlaceholder
+            "disabledcontent" -> semantic.contentDisabled
+            "primarybutton" -> semantic.brandInteractive
+            "link" -> semantic.contentLink
+            "selection" -> semantic.surfaceBrandTint
+            "hover" -> semantic.surfaceDefault
+            "pressed" -> semantic.surfaceSunken
+            "focused" -> semantic.surfaceBrandSubtle
+            "disabled" -> semantic.surfaceSunken
+            "border" -> semantic.borderDefault
+            "outline" -> semantic.borderStrong
+            "outlinevariant" -> semantic.borderDefault
+            "divider" -> semantic.borderSubtle
+            "error" -> semantic.feedbackError
+            "success" -> semantic.feedbackSuccess
+            "warning" -> semantic.feedbackWarning
+            "info" -> semantic.feedbackInfo
+            "errorcontainer" -> semantic.feedbackErrorSurface
+            "successcontainer" -> semantic.feedbackSuccessSurface
+            "warningcontainer" -> semantic.feedbackWarningSurface
+            "infocontainer" -> semantic.feedbackInfoSurface
+            "brandaccent" -> semantic.brandInteractive
+            "income" -> semantic.transactionIncome
+            "expense" -> semantic.transactionExpense
+            "transfer" -> semantic.transactionTransfer
             else -> null
         }
     }

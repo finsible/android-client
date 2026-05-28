@@ -1,10 +1,10 @@
 package com.itsjeel01.finsiblefrontend.data.model
 
-import com.itsjeel01.finsiblefrontend.common.Currency
 import com.itsjeel01.finsiblefrontend.common.Status
 import com.itsjeel01.finsiblefrontend.common.TransactionType
 import com.itsjeel01.finsiblefrontend.data.local.entity.TransactionEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.toAmountCentis
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.util.Locale
 
@@ -13,11 +13,11 @@ data class Transaction(
     val id: Long,
     val type: String,
     val totalAmount: String,
-    val transactionDate: String,
+    val transactionDate: Long,
     val categoryId: Long,
     val categoryName: String,
     val description: String? = null,
-    val currency: Currency,
+    @SerialName("currency") val currencyCode: String,
     val fromAccountId: Long? = null,
     val fromAccountName: String? = null,
     val toAccountId: Long? = null,
@@ -26,7 +26,8 @@ data class Transaction(
     val userShare: String? = null,
     val isSplit: Boolean = false,
     val paidByUserId: Long? = null,
-    val paidByUserName: String? = null
+    val paidByUserName: String? = null,
+    val conversion: CurrencyConversion? = null
 )
 
 fun Transaction.toEntity(
@@ -36,12 +37,16 @@ fun Transaction.toEntity(
     type = TransactionType.valueOf(type),
     totalAmount = totalAmount.toAmountCentis(),
     searchableText = buildSearchableText(description, categoryName),
-    transactionDate = transactionDate.toLongOrNull() ?: 0L,
+    transactionDate = transactionDate,
     categoryId = categoryId,
     categoryName = categoryName,
     categoryIcon = "", // Will be populated by repository
     description = description,
-    currency = currency,
+    currencyCode = currencyCode,
+    conversionBaseCurrency = conversion?.baseCurrencyCode,
+    conversionRate = conversion?.rate,
+    conversionBaseAmountCentis = conversion?.baseAmount?.toAmountCentis(),
+    isRateEstimated = conversion?.isEstimated ?: false,
     fromAccountId = fromAccountId,
     fromAccountName = fromAccountName,
     toAccountId = toAccountId,
@@ -52,6 +57,14 @@ fun Transaction.toEntity(
     paidByUserId = paidByUserId,
     paidByUserName = paidByUserName,
     syncStatus = syncStatus
+)
+
+@Serializable
+data class CurrencyConversion(
+    val baseCurrencyCode: String,
+    val rate: Double,
+    val baseAmount: String,
+    val isEstimated: Boolean
 )
 
 /** Builds pre-computed lowercase searchable text for efficient text search. */

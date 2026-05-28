@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -53,7 +52,6 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -66,6 +64,9 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleDropd
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleDropdownOption
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleDropdownSizes
 import com.itsjeel01.finsiblefrontend.ui.component.templates.util.FlushDropdownPositionProvider
+import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
+import com.itsjeel01.finsiblefrontend.ui.theme.extraBold
+
 
 /** Finsible dropdown component.
  *
@@ -113,6 +114,7 @@ fun FinsibleDropdown(
     val toggleMenu = { if (onExpandedChange != null) onExpandedChange(!isExpanded) else internalExpanded = !internalExpanded }
 
     val expandedStates = remember { MutableTransitionState(false) }
+    val maxMenuHeight = FinsibleTheme.screenHeight * 0.4f
     expandedStates.targetState = isExpanded
 
     var isUpward by remember { mutableStateOf(false) }
@@ -122,7 +124,7 @@ fun FinsibleDropdown(
     val textMeasurer = rememberTextMeasurer()
     val maxTextWidth = remember(options, placeholder, sizes.textStyle, fullWidth) {
         if (fullWidth) 0.dp else {
-            val measureStyle = sizes.textStyle.copy(fontWeight = FontWeight.ExtraBold)
+            val measureStyle = sizes.textStyle.extraBold()
             val placeholderWidth = textMeasurer.measure(placeholder, measureStyle).size.width
             val maxOptionWidth = options.maxOfOrNull { textMeasurer.measure(it.label, measureStyle).size.width } ?: 0
             with(density) { maxOf(placeholderWidth, maxOptionWidth).toDp() }
@@ -201,7 +203,7 @@ fun FinsibleDropdown(
             Box(modifier = textModifier, contentAlignment = Alignment.CenterStart) {
                 FinsibleText(
                     text = labelText,
-                    textStyleOverride = sizes.textStyle,
+                    textStyle = sizes.textStyle,
                     color = labelColor,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -232,15 +234,15 @@ fun FinsibleDropdown(
             ) {
                 AnimatedVisibility(
                     visibleState = expandedStates,
-                    enter = fadeIn(tween(120)) + scaleIn(tween(120), transformOrigin = transformOrigin),
-                    exit = fadeOut(tween(100)) + scaleOut(tween(100), transformOrigin = transformOrigin)
+                    enter = fadeIn(FinsibleTheme.animations.specs.fadeIn) + scaleIn(FinsibleTheme.animations.specs.scaleIn, transformOrigin = transformOrigin),
+                    exit = fadeOut(FinsibleTheme.animations.specs.fadeOut) + scaleOut(FinsibleTheme.animations.specs.scaleOut, transformOrigin = transformOrigin)
                 ) {
                     Surface(
-                        modifier = menuModifier.heightIn(max = 300.dp),
+                        modifier = menuModifier.heightIn(max = maxMenuHeight),
                         shape = menuShape,
                         color = colors.menuColor,
                         border = BorderStroke(sizes.borderWidth, borderColor),
-                        shadowElevation = 8.dp
+                        shadowElevation = FinsibleTheme.elevation.floatingShadow.elevation
                     ) {
                         Column(
                             modifier = Modifier.verticalScroll(rememberScrollState())
@@ -287,10 +289,10 @@ fun FinsibleDropdown(
                                             }
                                         }
                                     }
-                                    val itemStyle = if (isSelected) sizes.textStyle.copy(fontWeight = FontWeight.ExtraBold) else sizes.textStyle
+                                    val itemStyle = if (isSelected) sizes.textStyle.extraBold() else sizes.textStyle
                                     FinsibleText(
                                         text = option.label,
-                                        textStyleOverride = itemStyle,
+                                        textStyle = itemStyle,
                                         color = itemTextColor,
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis

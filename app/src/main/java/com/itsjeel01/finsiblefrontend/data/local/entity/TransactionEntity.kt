@@ -1,11 +1,10 @@
 package com.itsjeel01.finsiblefrontend.data.local.entity
 
-import com.itsjeel01.finsiblefrontend.common.Currency
 import com.itsjeel01.finsiblefrontend.common.Status
 import com.itsjeel01.finsiblefrontend.common.TransactionType
-import com.itsjeel01.finsiblefrontend.data.local.CurrencyConverter
 import com.itsjeel01.finsiblefrontend.data.local.StatusConverter
 import com.itsjeel01.finsiblefrontend.data.local.TransactionTypeConverter
+import com.itsjeel01.finsiblefrontend.data.model.CurrencyConversion
 import com.itsjeel01.finsiblefrontend.data.model.Transaction
 import io.objectbox.annotation.Convert
 import io.objectbox.annotation.Entity
@@ -33,8 +32,12 @@ data class TransactionEntity(
     var categoryIcon: String = "",
     var description: String? = null,
 
-    @Convert(converter = CurrencyConverter::class, dbType = String::class)
-    var currency: Currency = Currency.INR,
+    var currencyCode: String = "",
+
+    var conversionBaseCurrency: String? = null,
+    var conversionRate: Double? = null,
+    var conversionBaseAmountCentis: Long? = null,
+    var isRateEstimated: Boolean = false,
 
     @Index var fromAccountId: Long? = null,
     var fromAccountName: String? = null,
@@ -54,7 +57,6 @@ data class TransactionEntity(
     var paidByUserName: String? = null,
 ) : BaseEntity(), SyncableEntity
 
-/** Multiplier for centis conversion (2 decimal places). E.g., 123.45 → 12345. */
 const val AMOUNT_MULTIPLIER = 100L
 
 /** Convert centis (Long) to decimal String with exactly 2dp. E.g., 12345 → "123.45", -12345 → "-123.45". */
@@ -84,11 +86,19 @@ fun TransactionEntity.toDTO(): Transaction = Transaction(
     id = id,
     type = type.name,
     totalAmount = totalAmount.toAmountString(),
-    transactionDate = transactionDate.toString(),
+    transactionDate = transactionDate,
     categoryId = categoryId,
     categoryName = categoryName,
     description = description,
-    currency = currency,
+    currencyCode = currencyCode,
+    conversion = conversionBaseCurrency?.let {
+        CurrencyConversion(
+            baseCurrencyCode = it,
+            rate = conversionRate ?: 1.0,
+            baseAmount = conversionBaseAmountCentis?.toAmountString() ?: "0.00",
+            isEstimated = isRateEstimated
+        )
+    },
     fromAccountId = fromAccountId,
     fromAccountName = fromAccountName,
     toAccountId = toAccountId,

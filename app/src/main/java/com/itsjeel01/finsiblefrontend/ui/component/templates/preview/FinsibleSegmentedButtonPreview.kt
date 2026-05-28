@@ -19,6 +19,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleS
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleSegmentedButtonOption
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleSegmentedButtonVariant
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleSegmentedButtonArrangement
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
 @Preview(name = "Light Mode", showBackground = true, widthDp = 700, heightDp = 500)
@@ -58,8 +59,8 @@ fun FinsibleSegmentedButtonPreview() {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(FinsibleTheme.dimes.d12),
-            verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d16)
+                .padding(FinsibleTheme.spacing.gapMd),
+            verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackLg)
         ) {
             FinsibleSegmentedButtonRow(
                 options = options,
@@ -74,7 +75,8 @@ fun FinsibleSegmentedButtonPreview() {
                 onSelectedValuesChange = { multiSelected = it },
                 size = FinsibleSize.Small,
                 variant = FinsibleSegmentedButtonVariant.Tonal,
-                selectedTint = FinsibleTheme.colors.info,
+                arrangement = FinsibleSegmentedButtonArrangement.Separated,
+                selectedTint = FinsibleTheme.colors.feedbackInfo,
                 inverted = true
             )
         }

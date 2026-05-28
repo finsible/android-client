@@ -13,53 +13,69 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import com.itsjeel01.finsiblefrontend.R
-import com.itsjeel01.finsiblefrontend.common.Currency
 import com.itsjeel01.finsiblefrontend.common.CurrencyFormatter
-import com.itsjeel01.finsiblefrontend.common.centisToFormattedAmount
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.model.FilteredTransactionSummary
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
+import com.itsjeel01.finsiblefrontend.ui.theme.medium
 
 @Composable
 fun FilteredResultsSummary(
     summary: FilteredTransactionSummary,
     currencyFormatter: CurrencyFormatter,
-    modifier: Modifier = Modifier
+    defaultCurrencyCode: String,
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(FinsibleTheme.dimes.d12))
-            .background(FinsibleTheme.colors.surfaceContainerLow)
+            .clip(RoundedCornerShape(FinsibleTheme.spacing.gapMd))
+            .background(FinsibleTheme.colors.surfaceDefault)
             .border(
-                width = FinsibleTheme.dimes.d1,
-                color = FinsibleTheme.colors.border,
-                shape = RoundedCornerShape(FinsibleTheme.dimes.d12)
+                width = FinsibleTheme.stroke.thin,
+                color = FinsibleTheme.colors.borderDefault,
+                shape = RoundedCornerShape(FinsibleTheme.spacing.gapMd)
             )
-            .padding(horizontal = FinsibleTheme.dimes.d16, vertical = FinsibleTheme.dimes.d12),
+            .padding(horizontal = FinsibleTheme.spacing.insetLg, vertical = FinsibleTheme.spacing.gapMd),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         FinsibleText(
             text = stringResource(R.string.transactions_count, summary.totalCount),
-            variant = FinsibleTextVariant.SmallBodyMedium,
+            textStyle = FinsibleTheme.typography.bodyMd.medium(),
             colorVariant = FinsibleTextColorVariant.Secondary
         )
         Row(
-            horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d12),
+            horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.gapMd),
             verticalAlignment = Alignment.CenterVertically
         ) {
             FinsibleText(
-                text = "+${Currency.INR.getSymbol()}${summary.totalIncomeCentis.centisToFormattedAmount(currencyFormatter)}",
-                variant = FinsibleTextVariant.SmallBodyMedium,
-                color = FinsibleTheme.colors.income
+                text = currencyFormatter.format(
+                    centis = summary.totalIncomeCentis,
+                    currencyCode = defaultCurrencyCode,
+                    options = CurrencyFormatter.CurrencyFormatOptions(
+                        includeSign = true,
+                        showPositiveSign = true,
+                        includeCurrencySymbol = true,
+                        includeSpaceAfterCurrencySymbol = false,
+                    )
+                ),
+                textStyle = FinsibleTheme.typography.bodyMd.medium(),
+                color = FinsibleTheme.colors.transactionIncome
             )
             FinsibleText(
-                text = "-${Currency.INR.getSymbol()}${summary.totalExpenseCentis.centisToFormattedAmount(currencyFormatter)}",
-                variant = FinsibleTextVariant.SmallBodyMedium,
-                color = FinsibleTheme.colors.expense
+                text = currencyFormatter.format(
+                    centis = -summary.totalExpenseCentis,
+                    currencyCode = defaultCurrencyCode,
+                    options = CurrencyFormatter.CurrencyFormatOptions(
+                        includeSign = true,
+                        includeCurrencySymbol = true,
+                        includeSpaceAfterCurrencySymbol = false,
+                    )
+                ),
+                textStyle = FinsibleTheme.typography.bodyMd.medium(),
+                color = FinsibleTheme.colors.transactionExpense
             )
         }
     }

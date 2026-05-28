@@ -17,7 +17,9 @@ data class Account(
     val currencyCode: String,
     val icon: String,
     val isActive: Boolean,
-    val isSystemDefault: Boolean
+    val isSystemDefault: Boolean,
+    val usageCount: Long = 0,
+    val lastUsedAt: Long? = null
 )
 
 fun Account.toEntity(
@@ -38,6 +40,8 @@ fun Account.toEntity(
         icon = icon,
         isActive = isActive,
         isSystemDefault = isSystemDefault,
+        usageCount = usageCount,
+        lastUsedAt = lastUsedAt,
         syncStatus = syncStatus
     )
 }

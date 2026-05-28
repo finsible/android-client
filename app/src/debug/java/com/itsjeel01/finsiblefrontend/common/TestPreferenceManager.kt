@@ -23,6 +23,7 @@ class TestPreferenceManager @Inject constructor(@ApplicationContext context: Con
         private const val MOCK_ACCOUNTS_FRESH = "mock_accounts_fresh"
         private const val MOCK_SNAPSHOT = "mock_snapshot"
         private const val MOCK_TRANSACTIONS = "mock_transactions"
+        private const val MOCK_EXCHANGE_RATES = "mock_exchange_rates"
     }
 
     private val sharedPreferences: SharedPreferences =
@@ -100,6 +101,13 @@ class TestPreferenceManager @Inject constructor(@ApplicationContext context: Con
         sharedPreferences.edit { putBoolean(MOCK_TRANSACTIONS, enabled) }
     }
 
+    fun isMockExchangeRatesEnabled(): Boolean =
+        sharedPreferences.getBoolean(MOCK_EXCHANGE_RATES, true)
+
+    fun setMockExchangeRatesEnabled(enabled: Boolean) {
+        sharedPreferences.edit { putBoolean(MOCK_EXCHANGE_RATES, enabled) }
+    }
+
     /** Resets all debug preferences to defaults in a single atomic transaction. */
     fun resetToDefaults() {
         sharedPreferences.edit {
@@ -114,6 +122,7 @@ class TestPreferenceManager @Inject constructor(@ApplicationContext context: Con
             putBoolean(MOCK_ACCOUNTS_FRESH, false)
             putBoolean(MOCK_SNAPSHOT, true)
             putBoolean(MOCK_TRANSACTIONS, true)
+            putBoolean(MOCK_EXCHANGE_RATES, true)
         }
     }
 }

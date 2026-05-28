@@ -14,8 +14,8 @@ import androidx.compose.ui.res.stringResource
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
+import com.itsjeel01.finsiblefrontend.ui.theme.medium
 
 @Composable
 fun TransactionEmptyContent(
@@ -31,24 +31,24 @@ fun TransactionEmptyContent(
         FinsibleText(
             text = if (isFilterActive) stringResource(R.string.no_matching_transactions)
             else stringResource(R.string.no_transactions_yet),
-            variant = FinsibleTextVariant.BodyMedium,
+            textStyle = FinsibleTheme.typography.bodyLg.medium(),
             colorVariant = FinsibleTextColorVariant.Secondary
         )
         if (isFilterActive) {
-            Spacer(Modifier.height(FinsibleTheme.dimes.d12))
+            Spacer(Modifier.height(FinsibleTheme.spacing.gapMd))
             FinsibleText(
                 text = stringResource(R.string.try_adjusting_filters),
-                variant = FinsibleTextVariant.SmallBodyRegular,
-                color = FinsibleTheme.colors.tertiaryContent
+                textStyle = FinsibleTheme.typography.bodyMd,
+                color = FinsibleTheme.colors.contentTertiary
             )
-            Spacer(Modifier.height(FinsibleTheme.dimes.d16))
+            Spacer(Modifier.height(FinsibleTheme.spacing.insetLg))
             FinsibleText(
                 text = stringResource(R.string.clear_filters),
-                variant = FinsibleTextVariant.SmallBodyMedium,
-                color = FinsibleTheme.colors.link,
+                textStyle = FinsibleTheme.typography.bodyMd.medium(),
+                color = FinsibleTheme.colors.contentLink,
                 modifier = Modifier
                     .clickable(onClick = onClearFilters)
-                    .padding(FinsibleTheme.dimes.d8)
+                    .padding(FinsibleTheme.spacing.inlineMd)
             )
         }
     }

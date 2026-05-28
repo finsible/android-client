@@ -56,7 +56,7 @@ fun FinsibleTileCardsPreview() {
 
         Column(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d16)
+            verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackLg)
         ) {
             FinsibleTileCards(
                 cards = cards,

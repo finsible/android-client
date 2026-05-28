@@ -19,28 +19,28 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleFilterChipVariant
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
+import com.itsjeel01.finsiblefrontend.ui.theme.semiBold
 
 @Composable
 fun TransactionTypeFilter(
     selectedTypes: Set<TransactionType>,
     onTypeToggle: (TransactionType) -> Unit
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d8)) {
+    Column(verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.inlineMd)) {
         FinsibleText(
             text = stringResource(R.string.transaction_type),
-            variant = FinsibleTextVariant.MicroLabelSemiBold,
+            textStyle = FinsibleTheme.typography.labelSm.semiBold(),
             colorVariant = FinsibleTextColorVariant.Secondary,
             uppercase = true
         )
         Row(
-            horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d8),
+            horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.inlineMd),
         ) {
             TransactionType.entries.forEach { type ->
                 val isSelected = type in selectedTypes
                 val contentColor by animateColorAsState(
-                    targetValue = if (isSelected) FinsibleTheme.colors.primaryContent else FinsibleTheme.colors.secondaryContent,
+                    targetValue = if (isSelected) FinsibleTheme.colors.contentPrimary else FinsibleTheme.colors.contentSecondary,
                     animationSpec = tween(160),
                     label = "tx_type_content"
                 )
@@ -53,7 +53,7 @@ fun TransactionTypeFilter(
                     size = FinsibleSize.Medium,
                     shapeVariant = FinsibleShape.Rounded,
                     variant = FinsibleFilterChipVariant.OutlinedTonal,
-                    selectedTint = FinsibleTheme.colors.primaryContent80,
+                    selectedTint = FinsibleTheme.colors.contentSecondary,
                     icon = {
                         Icon(
                             painter = painterResource(type.icon),

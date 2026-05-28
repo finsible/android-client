@@ -1,11 +1,8 @@
 package com.itsjeel01.finsiblefrontend.ui.component.bottomnav
+import androidx.compose.ui.graphics.Color
+
 
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.EaseInOut
-import androidx.compose.animation.core.EaseOut
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -13,10 +10,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ripple
@@ -29,14 +30,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import com.itsjeel01.finsiblefrontend.ui.constants.Duration
 import com.itsjeel01.finsiblefrontend.ui.navigation.BottomNavItem
 import com.itsjeel01.finsiblefrontend.ui.navigation.BottomNavItems
 import com.itsjeel01.finsiblefrontend.ui.navigation.Route
@@ -59,36 +56,16 @@ fun BottomNavigationBar(
 ) {
     val tabs = BottomNavItems.toMap()
 
-    val shadowHeight = FinsibleTheme.dimes.d8
-    val shadowColor = FinsibleTheme.colors.shadow
-
     Box(
         modifier = Modifier
-            .systemBarsPadding()
             .fillMaxWidth()
-            .background(FinsibleTheme.colors.primaryBackground)
-            .drawBehind {
-                val shadowHeight = shadowHeight.toPx()
-
-                repeat(shadowHeight.toInt()) { i ->
-                    val distance = i.toFloat()
-                    val normalizedDistance = distance / shadowHeight
-
-                    val alpha = kotlin.math.exp(-normalizedDistance * 4) * 0.06f
-
-                    drawLine(
-                        color = shadowColor.copy(alpha = alpha),
-                        start = Offset(0f, -distance),
-                        end = Offset(size.width, -distance),
-                        strokeWidth = 1.dp.toPx()
-                    )
-                }
-            }
+            .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Bottom))
+            .background(FinsibleTheme.colors.surfaceBase)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = FinsibleTheme.dimes.d6),
+                .padding(vertical = FinsibleTheme.spacing.insetMicro),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -120,6 +97,7 @@ private fun StandardNavigationTab(
 ) {
     val coroutineScope = rememberCoroutineScope()
 
+    val specs = FinsibleTheme.animations.specs
     val bounceScale = remember { Animatable(if (isSelected) SELECTED_ICON_SCALE else UNSELECTED_ICON_SCALE) }
     val dotOpacity = remember { Animatable(if (isSelected) SELECTED_OPACITY else UNSELECTED_OPACITY) }
     val pressScale = remember { Animatable(NORMAL_SCALE) }
@@ -130,19 +108,13 @@ private fun StandardNavigationTab(
             launch {
                 bounceScale.animateTo(
                     targetValue = if (isSelected) SELECTED_ICON_SCALE else UNSELECTED_ICON_SCALE,
-                    animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioHighBouncy,
-                        stiffness = Spring.StiffnessLow
-                    )
+                    animationSpec = specs.springBouncy
                 )
             }
             launch {
                 dotOpacity.animateTo(
                     targetValue = if (isSelected) SELECTED_OPACITY else UNSELECTED_OPACITY,
-                    animationSpec = tween(
-                        durationMillis = Duration.MS_150.toInt(),
-                        easing = EaseInOut
-                    )
+                    animationSpec = specs.springGentle
                 )
             }
         } else {
@@ -154,28 +126,28 @@ private fun StandardNavigationTab(
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackMicro)
     ) {
         Box(
             modifier = Modifier
                 .background(
                     shape = CircleShape,
-                    color = FinsibleTheme.colors.transparent
+                    color = Color.Transparent
                 )
-                .size(FinsibleTheme.dimes.d56)
+                .size(FinsibleTheme.sizes.touch.xl)
                 .scale(bounceScale.value * pressScale.value)
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = ripple(
                         bounded = false,
-                        color = FinsibleTheme.colors.ripple,
-                        radius = FinsibleTheme.dimes.d24
+                        color = FinsibleTheme.colors.borderSubtle,
+                        radius = FinsibleTheme.spacing.inset2xl
                     )
                 ) {
                     hasBeenInteracted = true
                     coroutineScope.launch {
-                        pressScale.animateTo(PRESS_SCALE, tween(Duration.MS_75.toInt(), easing = EaseOut))
-                        pressScale.animateTo(NORMAL_SCALE, tween(Duration.MS_150.toInt(), easing = EaseOut))
+                        pressScale.animateTo(PRESS_SCALE, specs.pressSpring)
+                        pressScale.animateTo(NORMAL_SCALE, specs.releaseSpring)
                     }
                     onClick()
                 },
@@ -184,17 +156,17 @@ private fun StandardNavigationTab(
             Icon(
                 painter = painterResource(id = if (isSelected) tab.activeIcon else tab.inactiveIcon),
                 contentDescription = stringResource(tab.labelRes),
-                tint = if (isSelected) FinsibleTheme.colors.primaryContent else FinsibleTheme.colors.primaryContent80,
-                modifier = Modifier.size(FinsibleTheme.dimes.d24)
+                tint = if (isSelected) FinsibleTheme.colors.contentPrimary else FinsibleTheme.colors.contentSecondary,
+                modifier = Modifier.size(FinsibleTheme.spacing.inset2xl)
             )
         }
 
         Box(
             modifier = Modifier
-                .size(FinsibleTheme.dimes.d4)
+                .size(FinsibleTheme.spacing.insetXs)
                 .graphicsLayer(alpha = dotOpacity.value)
                 .background(
-                    color = FinsibleTheme.colors.primaryContent,
+                    color = FinsibleTheme.colors.contentPrimary,
                     shape = CircleShape
                 )
         )
@@ -208,6 +180,7 @@ private fun CentralFABTab(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val specs = FinsibleTheme.animations.specs
     val selectionScale = remember {
         Animatable(
             if (isSelected) SELECTED_ICON_SCALE
@@ -228,19 +201,13 @@ private fun CentralFABTab(
             launch {
                 selectionScale.animateTo(
                     targetValue = if (isSelected) SELECTED_ICON_SCALE else NORMAL_SCALE,
-                    animationSpec = tween(
-                        durationMillis = Duration.MS_150.toInt(),
-                        easing = EaseInOut
-                    )
+                    animationSpec = specs.springBouncy
                 )
             }
             launch {
                 shadowElevation.animateTo(
                     targetValue = if (isSelected) FAB_SELECTED_ELEVATION else FAB_UNSELECTED_ELEVATION,
-                    animationSpec = tween(
-                        durationMillis = Duration.MS_150.toInt(),
-                        easing = EaseInOut
-                    )
+                    animationSpec = specs.springGentle
                 )
             }
         } else {
@@ -251,22 +218,22 @@ private fun CentralFABTab(
 
     Box(
         modifier = modifier
-            .size(FinsibleTheme.dimes.d48)
+            .size(FinsibleTheme.sizes.touch.md)
             .graphicsLayer(
                 scaleX = selectionScale.value,
                 scaleY = selectionScale.value,
                 shadowElevation = shadowElevation.value,
                 shape = CircleShape,
-                spotShadowColor = FinsibleTheme.colors.primaryContent,
-                ambientShadowColor = FinsibleTheme.colors.primaryContent
+                spotShadowColor = FinsibleTheme.colors.contentPrimary,
+                ambientShadowColor = FinsibleTheme.colors.contentPrimary
             )
             .background(
-                color = if (isSelected) FinsibleTheme.colors.primaryContent else FinsibleTheme.colors.primaryContent80,
+                color = if (isSelected) FinsibleTheme.colors.contentPrimary else FinsibleTheme.colors.contentSecondary,
                 shape = CircleShape
             )
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
-                indication = ripple(bounded = false, color = FinsibleTheme.colors.ripple)
+                indication = ripple(bounded = false, color = FinsibleTheme.colors.borderSubtle)
             ) {
                 hasBeenInteracted = true
                 onClick()
@@ -276,8 +243,8 @@ private fun CentralFABTab(
         Icon(
             painter = painterResource(id = tab.activeIcon),
             contentDescription = stringResource(tab.labelRes),
-            tint = FinsibleTheme.colors.primaryBackground,
-            modifier = Modifier.size(FinsibleTheme.dimes.d24)
+            tint = FinsibleTheme.colors.surfaceBase,
+            modifier = Modifier.size(FinsibleTheme.spacing.inset2xl)
         )
     }
 }

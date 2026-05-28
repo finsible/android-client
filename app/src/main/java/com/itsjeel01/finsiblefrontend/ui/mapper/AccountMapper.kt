@@ -1,7 +1,6 @@
 package com.itsjeel01.finsiblefrontend.ui.mapper
 
 import com.itsjeel01.finsiblefrontend.common.CurrencyFormatter
-import com.itsjeel01.finsiblefrontend.common.centisToFormattedCurrency
 import com.itsjeel01.finsiblefrontend.data.local.entity.AccountEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.AccountGroupEntity
 import com.itsjeel01.finsiblefrontend.ui.model.uimodel.AccountGroupUIModel
@@ -13,9 +12,16 @@ fun AccountEntity.toUiModel(currencyFormatter: CurrencyFormatter): AccountUIMode
     name = name,
     description = description,
     icon = icon,
-    formattedBalance = balanceCentis.centisToFormattedCurrency(currencyFormatter),
+    currencyCode = currencyCode,
+    formattedBalance = currencyFormatter.format(
+        centis = balanceCentis,
+        currencyCode = currencyCode
+    ),
     groupColor = accountGroup.target?.color,
+    groupName = accountGroup.target?.name,
     isPositiveBalance = balanceCentis >= 0L,
+    usageCount = usageCount,
+    lastUsedAt = lastUsedAt,
 )
 
 /** Map an [AccountGroupEntity] to a stable [AccountGroupUIModel] for Compose. */

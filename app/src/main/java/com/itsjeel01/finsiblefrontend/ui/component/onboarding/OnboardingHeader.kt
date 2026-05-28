@@ -1,4 +1,6 @@
 package com.itsjeel01.finsiblefrontend.ui.component.onboarding
+import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
+
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -17,7 +19,6 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleButtonDefaults
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleButtonVariant
-import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
 @Composable
 fun OnboardingHeader(onSkip: () -> Unit = {}, isLastItem: Boolean) {
@@ -29,7 +30,7 @@ fun OnboardingHeader(onSkip: () -> Unit = {}, isLastItem: Boolean) {
         Image(
             painter = painterResource(id = R.drawable.ic_logo),
             contentDescription = stringResource(R.string.cd_finsible_logo),
-            modifier = Modifier.height(FinsibleTheme.dimes.d64),
+            modifier = Modifier.height(FinsibleTheme.sizes.touch.xl),
             contentScale = ContentScale.Fit
         )
 
@@ -42,7 +43,7 @@ fun OnboardingHeader(onSkip: () -> Unit = {}, isLastItem: Boolean) {
                 shapeVariant = FinsibleShape.Rounded,
                 colors = FinsibleButtonDefaults.colors(
                     variant = FinsibleButtonVariant.Text,
-                    contentColor = FinsibleTheme.colors.secondaryContent
+                    contentColor = FinsibleTheme.colors.contentSecondary
                 )
             )
         }

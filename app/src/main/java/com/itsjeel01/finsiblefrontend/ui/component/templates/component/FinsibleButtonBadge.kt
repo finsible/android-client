@@ -1,4 +1,9 @@
+
 package com.itsjeel01.finsiblefrontend.ui.component.templates.component
+import com.itsjeel01.finsiblefrontend.ui.theme.semiBold
+
+import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
+
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -13,7 +18,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleBadgeType
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleButtonBadgeSpec
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 
 @Composable
 internal fun FinsibleButtonBadge(
@@ -53,9 +57,8 @@ internal fun FinsibleButtonBadge(
             ) {
                 FinsibleText(
                     text = displayText,
-                    variant = FinsibleTextVariant.MicroLabelSemiBold,
                     color = contentColor,
-                    textStyleOverride = badgeMetrics.textStyle,
+                    textStyle = badgeMetrics.textStyle,
                     maxLines = 1,
                     softWrap = false
                 )

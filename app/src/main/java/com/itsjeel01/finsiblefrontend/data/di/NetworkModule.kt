@@ -6,12 +6,14 @@ import com.itsjeel01.finsiblefrontend.data.remote.api.AccountApiService
 import com.itsjeel01.finsiblefrontend.data.remote.api.AccountGroupApiService
 import com.itsjeel01.finsiblefrontend.data.remote.api.AuthApiService
 import com.itsjeel01.finsiblefrontend.data.remote.api.CategoryApiService
+import com.itsjeel01.finsiblefrontend.data.remote.api.ExchangeRateApiService
 import com.itsjeel01.finsiblefrontend.data.remote.api.SyncApiService
 import com.itsjeel01.finsiblefrontend.data.remote.api.TransactionApiService
 import com.itsjeel01.finsiblefrontend.data.remote.converter.ResponseHandler
 import com.itsjeel01.finsiblefrontend.data.remote.converter.ResponseHandlingConverterFactory
 import com.itsjeel01.finsiblefrontend.data.remote.interceptor.AuthInterceptor
 import com.itsjeel01.finsiblefrontend.data.sync.CacheManager
+import com.itsjeel01.finsiblefrontend.data.sync.ScopeManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -48,6 +50,10 @@ object NetworkModule {
         retrofit.create(TransactionApiService::class.java)
 
     @Provides
+    fun exchangeRateApiService(retrofit: Retrofit): ExchangeRateApiService =
+        retrofit.create(ExchangeRateApiService::class.java)
+
+    @Provides
     fun provideSyncApiService(retrofit: Retrofit): SyncApiService {
         return retrofit.create(SyncApiService::class.java)
     }
@@ -56,13 +62,14 @@ object NetworkModule {
     @Singleton
     fun okHttpClient(
         preferenceManager: PreferenceManager,
+        scopeManager: ScopeManager,
         networkInterceptorsProvider: NetworkInterceptorsProvider
     ): OkHttpClient {
         return OkHttpClient.Builder()
             .apply {
                 networkInterceptorsProvider.interceptors().forEach { addInterceptor(it) }
             }
-            .addInterceptor(AuthInterceptor(preferenceManager))
+            .addInterceptor(AuthInterceptor(preferenceManager, scopeManager))
             .build()
     }
 

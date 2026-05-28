@@ -17,7 +17,11 @@ import io.objectbox.Box
 import io.objectbox.Property
 import io.objectbox.kotlin.flow
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.conflate
 import javax.inject.Inject
 
 class AccountLocalRepository @Inject constructor(
@@ -92,7 +96,7 @@ class AccountLocalRepository @Inject constructor(
             .also { Logger.Database.d("Fetched ${it.size} active accounts") }
     }
 
-    fun createAccount(
+    suspend fun createAccount(
         name: String,
         description: String,
         balance: String,
@@ -142,4 +146,81 @@ class AccountLocalRepository @Inject constructor(
     }
 
     fun deleteAccount(id: Long): Boolean = queueDeleteEntity(id)
+
+    /** Reactively emits the top [limit] active accounts sorted purely by usage frequency. */
+    fun getFrequentAccountsFlow(limit: Long): Flow<List<AccountEntity>> = callbackFlow {
+        val query = box.query()
+            .equal(AccountEntity_.isActive, true)
+            .orderDesc(AccountEntity_.usageCount)
+            .build()
+
+        val subscription = query.subscribe().observer {
+            trySend(query.find(0, limit))
+        }
+
+        awaitClose {
+            subscription.cancel()
+            query.close()
+        }
+    }.conflate()
+
+    /**
+     * Reactively emits the top [limit] active accounts sorted by recency.
+     * Accounts never used (null lastUsedAt) are excluded — ObjectBox places nulls first on orderDesc,
+     * which would incorrectly rank unused accounts as "most recent".
+     */
+    fun getRecentAccountsFlow(limit: Long): Flow<List<AccountEntity>> = callbackFlow {
+        val query = box.query()
+            .equal(AccountEntity_.isActive, true)
+            .notNull(AccountEntity_.lastUsedAt)
+            .orderDesc(AccountEntity_.lastUsedAt)
+            .build()
+
+        val subscription = query.subscribe().observer {
+            trySend(query.find(0, limit))
+        }
+
+        awaitClose {
+            subscription.cancel()
+            query.close()
+        }
+    }.conflate()
+
+    /**
+     * Reactive top-K by usage frequency, driven by a Flow<Int> for K so the limit can change reactively.
+     * Only returns active accounts. Local ObjectBox only — no remote fetch.
+     */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun getTopK(kFlow: Flow<Int>): Flow<List<AccountEntity>> {
+        val baseFlow = box.query()
+            .equal(AccountEntity_.isActive, true)
+            .orderDesc(AccountEntity_.usageCount)
+            .build()
+            .flow()
+
+        return combine(baseFlow, kFlow) { entities, k -> entities.take(k) }
+    }
+
+    /**
+     * Increments usage count and updates lastUsedAt for the given account.
+     *
+     * Uses `BoxStore.callInTx` which blocks the calling thread. Callers must ensure this
+     * runs on a background dispatcher (e.g. `Dispatchers.IO`) to avoid main-thread jank.
+     */
+    fun updateAccountUsage(id: Long): AccountEntity? {
+        return box.store.callInTx {
+            incrementUsage(id)
+        }
+    }
+
+    internal fun incrementUsage(id: Long): AccountEntity? {
+        val entity = box.get(id) ?: return null
+
+        entity.usageCount += 1
+        entity.lastUsedAt = System.currentTimeMillis()
+
+        box.put(entity)
+        Logger.Database.d("Updated account usage: id=$id, count=${entity.usageCount}")
+        return entity
+    }
 }

@@ -1,109 +1,119 @@
 package com.itsjeel01.finsiblefrontend.common
 
-import android.content.Context
-import android.content.SharedPreferences
-import androidx.core.content.edit
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
+import androidx.datastore.core.DataStore
+import com.itsjeel01.finsiblefrontend.common.datastore.UserPreferences
+import com.itsjeel01.finsiblefrontend.common.logging.Logger
+import com.itsjeel01.finsiblefrontend.data.model.Currency
 import com.itsjeel01.finsiblefrontend.data.remote.model.AuthData
+import com.itsjeel01.finsiblefrontend.data.repository.CurrencyRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import javax.inject.Singleton
 
-class PreferenceManager @Inject constructor(context: Context) {
-    companion object {
-        private const val KEY_JWT = "jwt"
-        private const val KEY_IS_LOGGED_IN = "is_logged_in"
-        private const val KEY_USER_ID = "user_id"
-        private const val KEY_USER_EMAIL = "email"
-        private const val KEY_USER_NAME = "name"
-        private const val KEY_LOCAL_ID_COUNTER = "local_id_counter"
-        private const val KEY_SYNC_ENABLED = "sync_enabled"
-        private const val KEY_BACKUP_ENABLED = "backup_enabled"
-        private const val KEY_WIFI_ONLY_SYNC = "wifi_only_sync"
-        private const val KEY_CURRENCY = "currency"
-        private const val PREFS_FILE_NAME = "secret_shared_prefs"
-    }
+@Singleton
+class PreferenceManager @Inject constructor(
+    private val dataStore: DataStore<UserPreferences>,
+    private val currencyRepository: CurrencyRepository
+) {
+    @Volatile
+    private var jwtCache: String? = null
 
-    private var masterKey: MasterKey = MasterKey.Builder(context)
-        .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-        .build()
+    val defaultCurrencyFlow: Flow<Currency> = dataStore.data.map { prefs ->
+        resolveCurrency(prefs.preferredCurrencyCode)
+    }.distinctUntilChanged()
 
-    private var sharedPreferences: SharedPreferences = EncryptedSharedPreferences.create(
-        context,
-        PREFS_FILE_NAME,
-        masterKey,
-        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-    )
+    val defaultCurrencyCodeFlow: Flow<String> = defaultCurrencyFlow.map { it.code }
 
-    /** Saves authentication data to encrypted shared preferences. */
-    fun saveAuthData(authResponse: AuthData) {
-        sharedPreferences.edit {
-            putString(KEY_JWT, authResponse.jwt)
-            putBoolean(KEY_IS_LOGGED_IN, true)
-            putString(KEY_USER_ID, authResponse.userId)
-            putString(KEY_USER_EMAIL, authResponse.email)
-            putString(KEY_USER_NAME, authResponse.name)
+    suspend fun saveAuthData(authResponse: AuthData) {
+        jwtCache = authResponse.jwt
+        dataStore.updateData { current ->
+            current.copy(
+                jwt = authResponse.jwt,
+                isLoggedIn = true,
+                userId = authResponse.userId,
+                email = authResponse.email,
+                name = authResponse.name
+            )
         }
     }
 
-    fun clearAuthData() {
-        sharedPreferences.edit {
-            remove(KEY_JWT)
-            putBoolean(KEY_IS_LOGGED_IN, false)
-            remove(KEY_USER_ID)
-            remove(KEY_USER_EMAIL)
-            remove(KEY_USER_NAME)
+    suspend fun clearAuthData() {
+        jwtCache = null
+        dataStore.updateData { current ->
+            current.copy(
+                jwt = null,
+                isLoggedIn = false,
+                userId = null,
+                email = null,
+                name = null
+            )
         }
     }
 
-    fun getLocalIdCounter(): Long {
-        return sharedPreferences.getLong(KEY_LOCAL_ID_COUNTER, 0L)
+    suspend fun saveLocalIdCounter(counter: Long) {
+        dataStore.updateData { it.copy(localIdCounter = counter) }
     }
 
-    fun saveLocalIdCounter(counter: Long) {
-        sharedPreferences.edit { putLong(KEY_LOCAL_ID_COUNTER, counter) }
+    suspend fun setSyncEnabled(enabled: Boolean) {
+        dataStore.updateData { it.copy(isSyncEnabled = enabled) }
     }
 
-    fun isSyncEnabled(): Boolean {
-        return sharedPreferences.getBoolean(KEY_SYNC_ENABLED, false)
+    suspend fun setCurrency(currency: Currency) {
+        dataStore.updateData { it.copy(preferredCurrencyCode = currency.code) }
     }
 
-    fun setSyncEnabled(enabled: Boolean) {
-        sharedPreferences.edit { putBoolean(KEY_SYNC_ENABLED, enabled) }
+    suspend fun clearPreferredCurrencyCode() {
+        dataStore.updateData { it.copy(preferredCurrencyCode = null) }
     }
 
-    fun isBackupEnabled(): Boolean {
-        return sharedPreferences.getBoolean(KEY_BACKUP_ENABLED, false)
+    private suspend fun <T> readPrefs(selector: (UserPreferences) -> T, default: T): T =
+        runCatching { selector(dataStore.data.first()) }
+            .onFailure { Logger.App.e("Failed to read preference, using default: $default", it) }
+            .getOrDefault(default)
+
+    private suspend fun <T> readPrefsNullable(selector: (UserPreferences) -> T?): T? =
+        runCatching { selector(dataStore.data.first()) }
+            .onFailure { Logger.App.e("Failed to read nullable preference, returning null", it) }
+            .getOrNull()
+
+    fun getCachedJwt(): String? = jwtCache
+
+    suspend fun primeJwtCache() {
+        if (!jwtCache.isNullOrEmpty()) return
+        jwtCache = readPrefsNullable { it.jwt }
     }
 
-    fun setBackupEnabled(enabled: Boolean) {
-        sharedPreferences.edit { putBoolean(KEY_BACKUP_ENABLED, enabled) }
+    suspend fun getJwt(): String? {
+        val cached = jwtCache
+        if (!cached.isNullOrEmpty()) return cached
+
+        return readPrefsNullable { it.jwt }
+            .also { jwtCache = it }
     }
+    suspend fun getLocalIdCounter(): Long = readPrefs({ it.localIdCounter }, default = 0L)
+    suspend fun isSyncEnabled(): Boolean = readPrefs({ it.isSyncEnabled }, default = false)
+    suspend fun isBackupEnabled(): Boolean = readPrefs({ it.isBackupEnabled }, default = false)
+    suspend fun isWifiOnlySyncEnabled(): Boolean = readPrefs({ it.isWifiOnlySyncEnabled }, default = true)
+    suspend fun isLoggedIn(): Boolean = readPrefs({ it.isLoggedIn }, default = false)
+    suspend fun getDefaultCurrencyCode(): String = defaultCurrencyCodeFlow.first()
+    suspend fun getCurrency(): Currency = defaultCurrencyFlow.first()
 
-    fun isWifiOnlySyncEnabled(): Boolean {
-        return sharedPreferences.getBoolean(KEY_WIFI_ONLY_SYNC, true)
-    }
-
-    fun setWifiOnlySyncEnabled(enabled: Boolean) {
-        sharedPreferences.edit { putBoolean(KEY_WIFI_ONLY_SYNC, enabled) }
-    }
-
-    fun isLoggedIn(): Boolean = sharedPreferences.getBoolean(KEY_IS_LOGGED_IN, false)
-    fun getJwt(): String? = sharedPreferences.getString(KEY_JWT, null)
-    fun getUserId(): String? = sharedPreferences.getString(KEY_USER_ID, null)
-    fun getEmail(): String? = sharedPreferences.getString(KEY_USER_EMAIL, null)
-    fun getName(): String? = sharedPreferences.getString(KEY_USER_NAME, null)
-
-    fun getCurrency(): Currency {
-        val currencyName = sharedPreferences.getString(KEY_CURRENCY, Currency.INR.name)
-        return try {
-            Currency.valueOf(currencyName ?: Currency.INR.name)
-        } catch (_: IllegalArgumentException) {
-            Currency.INR
+    private fun resolveCurrency(preferredCode: String?): Currency {
+        // Try stored preference
+        preferredCode?.let { code ->
+            currencyRepository.getByIsoCode(code)?.let { return it }
         }
-    }
 
-    fun setCurrency(currency: Currency) {
-        sharedPreferences.edit { putString(KEY_CURRENCY, currency.name) }
+        // Try device locale currency
+        UserLocaleRegistry.currentGeographicCurrencyCode()?.let { code ->
+            currencyRepository.getByIsoCode(code)?.let { return it }
+        }
+
+        // Fallback
+        return currencyRepository.getAll().firstOrNull()
+            ?: throw IllegalStateException("No currencies available in repository")
     }
 }

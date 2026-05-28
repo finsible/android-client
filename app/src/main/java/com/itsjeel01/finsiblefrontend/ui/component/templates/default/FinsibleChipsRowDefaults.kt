@@ -8,11 +8,10 @@ import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 object FinsibleChipsRowDefaults {
     @Composable
     fun config(): FinsibleChipsRowConfig {
-        val d = FinsibleTheme.dimes
+        val s = FinsibleTheme.spacing
         return FinsibleChipsRowConfig(
-            horizontalSpacing = d.d8,
-            verticalSpacing = d.d8,
+            horizontalSpacing = s.gapSm,
+            verticalSpacing = s.stackSm,
         )
     }
 }
-

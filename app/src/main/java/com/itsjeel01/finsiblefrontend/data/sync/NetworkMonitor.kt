@@ -34,13 +34,13 @@ class NetworkMonitor @Inject constructor(
     private var networkCallback: ConnectivityManager.NetworkCallback? = null
     private var isInitialized = false
 
-    /** Lazy initialization - call this when network monitoring is actually needed. */
+    init {
+        initialize()
+    }
+
     @Synchronized
     fun initialize() {
-        if (isInitialized) {
-            Logger.Network.d("NetworkMonitor already initialized")
-            return
-        }
+        if (isInitialized) return
 
         if (connectivityManager == null) {
             Logger.Network.w("ConnectivityManager unavailable - app will operate in offline mode")

@@ -34,6 +34,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleTextFieldDefaults
@@ -101,18 +102,18 @@ fun FinsibleTextField(
     require(label == null || label.isNotBlank()) { "label must be non-blank when provided." }
     require(inputConfig.maxLength == null || inputConfig.maxLength > 0) { "maxLength must be > 0 when provided." }
     require(minLines in 1 .. maxLines) { "minLines must be > 0 and maxLines >= minLines." }
-    require(sizes.iconSize > FinsibleTheme.dimes.d0) { "sizes.iconSize must be > 0." }
-    require(sizes.horizontalPadding >= FinsibleTheme.dimes.d0) { "sizes.horizontalPadding must be >= 0." }
-    require(sizes.verticalPadding >= FinsibleTheme.dimes.d0) { "sizes.verticalPadding must be >= 0." }
-    require(sizes.cornerRadius >= FinsibleTheme.dimes.d0) { "sizes.cornerRadius must be >= 0." }
+    require(sizes.iconSize > 0.dp) { "sizes.iconSize must be > 0." }
+    require(sizes.horizontalPadding >= 0.dp) { "sizes.horizontalPadding must be >= 0." }
+    require(sizes.verticalPadding >= 0.dp) { "sizes.verticalPadding must be >= 0." }
+    require(sizes.cornerRadius >= 0.dp) { "sizes.cornerRadius must be >= 0." }
 
     val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
 
     val resolvedBorderColor by animateColorAsState(
         targetValue = when {
-            !enabled -> colors.disabledContentColor
             isError -> colors.errorBorderColor
-            interactionSource.collectIsFocusedAsState().value -> colors.focusedBorderColor
+            isFocused -> colors.focusedBorderColor
             else -> colors.borderColor
         },
         animationSpec = spring(),
@@ -120,7 +121,12 @@ fun FinsibleTextField(
     )
 
     val resolvedContainerColor by animateColorAsState(
-        targetValue = if (enabled) colors.containerColor else colors.disabledContainerColor,
+        targetValue = when {
+            !enabled -> colors.disabledContainerColor
+            isError -> colors.errorContainerColor
+            isFocused -> colors.focusedContainerColor
+            else -> colors.containerColor
+        },
         animationSpec = spring(),
         label = "containerColor"
     )
@@ -134,12 +140,12 @@ fun FinsibleTextField(
                 if (!contentDescription.isNullOrEmpty()) this.contentDescription = contentDescription
                 if (!enabled) disabled()
             },
-        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d4)
+        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackXs)
     ) {
         if (!label.isNullOrEmpty()) {
             FinsibleText(
                 text = label,
-                textStyleOverride = sizes.supportingTextStyle,
+                textStyle = sizes.supportingTextStyle,
                 color = colors.supportingTextColor,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -175,7 +181,7 @@ fun FinsibleTextField(
             val supportingColor = if (isError) colors.errorTextColor else colors.supportingTextColor
             FinsibleText(
                 text = supportingText,
-                textStyleOverride = sizes.supportingTextStyle,
+                textStyle = sizes.supportingTextStyle,
                 color = supportingColor,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
@@ -236,10 +242,10 @@ private fun SurfaceField(
             modifier = Modifier
                 .clip(shape)
                 .background(containerColor)
-                .border(width = FinsibleTheme.dimes.d1, color = borderColor, shape = shape)
+                .border(width = FinsibleTheme.stroke.thin, color = borderColor, shape = shape)
                 .padding(horizontal = sizes.horizontalPadding, vertical = sizes.verticalPadding),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d8)
+            horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.inlineMd)
         ) {
             val iconTint by animateColorAsState(
                 targetValue = if (enabled) colors.iconTint else colors.disabledIconTint,
@@ -251,11 +257,18 @@ private fun SurfaceField(
                 IconSlot(tint = iconTint, size = sizes.iconSize) { leadingIcon() }
             }
 
-            Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
+            Box(
+                modifier = Modifier.weight(1f),
+                contentAlignment = if (singleLine && minLines == 1) {
+                    Alignment.CenterStart
+                } else {
+                    Alignment.TopStart
+                }
+            ) {
                 if (value.isEmpty()) {
                     FinsibleText(
                         text = placeholder,
-                        textStyleOverride = sizes.placeholderStyle,
+                        textStyle = sizes.placeholderStyle,
                         color = if (enabled) colors.placeholderColor else colors.disabledContentColor,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -287,4 +300,3 @@ private fun IconSlot(
         }
     }
 }
-

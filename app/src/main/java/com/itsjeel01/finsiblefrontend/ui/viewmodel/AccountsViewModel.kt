@@ -5,12 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.common.CurrencyFormatter
-import com.itsjeel01.finsiblefrontend.common.centisToCompactCurrency
-import com.itsjeel01.finsiblefrontend.common.centisToFormattedCurrency
+import com.itsjeel01.finsiblefrontend.common.PreferenceManager
 import com.itsjeel01.finsiblefrontend.data.local.entity.AccountEntity
 import com.itsjeel01.finsiblefrontend.data.local.entity.AccountGroupEntity
 import com.itsjeel01.finsiblefrontend.data.local.repository.AccountGroupLocalRepository
 import com.itsjeel01.finsiblefrontend.data.local.repository.AccountLocalRepository
+import com.itsjeel01.finsiblefrontend.data.repository.CurrencyRepository
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleTileCardData
 import com.itsjeel01.finsiblefrontend.ui.mapper.toUiModel
 import com.itsjeel01.finsiblefrontend.ui.model.state.AccountListItem
@@ -33,31 +33,26 @@ class AccountsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val accountLocalRepository: AccountLocalRepository,
     private val accountGroupLocalRepository: AccountGroupLocalRepository,
-    private val currencyFormatter: CurrencyFormatter
+    val currencyFormatter: CurrencyFormatter,
+    val currencyRepository: CurrencyRepository,
+    private val preferenceManager: PreferenceManager
 ) : ViewModel() {
 
     private val _selectedGroupId = MutableStateFlow<Long?>(null)
 
-    private val initialState: AccountsUIState by lazy {
-        computeUiState(
-            accounts = accountLocalRepository.getAll(),
-            groups = accountGroupLocalRepository.getAll(),
-            selectedGroupId = null
-        )
-    }
-
     val uiState: StateFlow<AccountsUIState> = combine(
         accountLocalRepository.getAccountsFlow(),
         accountGroupLocalRepository.getAccountGroupsFlow(),
-        _selectedGroupId
-    ) { accounts, groups, selectedGroupId ->
+        _selectedGroupId,
+        preferenceManager.defaultCurrencyCodeFlow
+    ) { accounts, groups, selectedGroupId, defaultCurrencyCode ->
         withContext(Dispatchers.Default) {
-            computeUiState(accounts, groups, selectedGroupId)
+            computeUiState(accounts, groups, selectedGroupId, defaultCurrencyCode)
         }
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = initialState
+        initialValue = AccountsUIState(isLoading = true)
     )
 
     fun selectGroupFilter(groupId: Long?) {
@@ -67,32 +62,21 @@ class AccountsViewModel @Inject constructor(
     private fun computeUiState(
         accounts: List<AccountEntity>,
         groups: List<AccountGroupEntity>,
-        selectedGroupId: Long?
+        selectedGroupId: Long?,
+        defaultCurrencyCode: String
     ): AccountsUIState {
 
         val (totalAssetCentis, totalLiabilityCentis) = calculateTotals(accounts)
         val netWorthCentis = totalAssetCentis - totalLiabilityCentis
 
-        val cards = if (accounts.isEmpty()) {
-            emptyList()
-        } else {
-            buildList {
-                add(createNetWorthCard(netWorthCentis, totalAssetCentis, totalLiabilityCentis))
+        val cards = if (accounts.isEmpty()) emptyList() else buildList {
+            add(createNetWorthCard(netWorthCentis, totalAssetCentis, totalLiabilityCentis, defaultCurrencyCode))
 
-                val assetStats = buildGroupedStatistics(
-                    accounts,
-                    includePredicate = { it >= 0L },
-                    valueSelector = { it.balanceCentis }
-                )
-                if (assetStats.isNotEmpty()) add(createAssetsCard(totalAssetCentis, assetStats))
+            val assetStats = buildGroupedStatistics(accounts, { it >= 0L }, { it.balanceCentis }, defaultCurrencyCode)
+            if (assetStats.isNotEmpty()) add(createAssetsCard(totalAssetCentis, assetStats, defaultCurrencyCode))
 
-                val liabilityStats = buildGroupedStatistics(
-                    accounts,
-                    includePredicate = { it < 0L },
-                    valueSelector = { -it.balanceCentis }
-                )
-                if (liabilityStats.isNotEmpty()) add(createLiabilitiesCard(totalLiabilityCentis, liabilityStats))
-            }
+            val liabilityStats = buildGroupedStatistics(accounts, { it < 0L }, { -it.balanceCentis }, defaultCurrencyCode)
+            if (liabilityStats.isNotEmpty()) add(createLiabilitiesCard(totalLiabilityCentis, liabilityStats, defaultCurrencyCode))
         }
 
         val filteredAccounts = if (selectedGroupId == null) accounts
@@ -116,7 +100,6 @@ class AccountsViewModel @Inject constructor(
         )
     }
 
-    /** Returns (totalAssetCentis, totalLiabilityCentis) — liabilities are positive (magnitude). */
     private fun calculateTotals(accounts: List<AccountEntity>): Pair<Long, Long> {
         var assets = 0L
         var liabilities = 0L
@@ -127,39 +110,44 @@ class AccountsViewModel @Inject constructor(
         return assets to liabilities
     }
 
-    private fun createNetWorthCard(netWorthCentis: Long, assetCentis: Long, liabilityCentis: Long) = FinsibleTileCardData(
+    private fun createNetWorthCard(netWorthCentis: Long, assetCentis: Long, liabilityCentis: Long, currencyCode: String) = FinsibleTileCardData(
         title = context.getString(R.string.net_worth),
-        heroText = netWorthCentis.centisToFormattedCurrency(currencyFormatter),
+        heroText = currencyFormatter.format(centis = netWorthCentis, currencyCode = currencyCode),
         statistics = listOf(
-            StatEntryUIModel(context.getString(R.string.assets), assetCentis.centisToCompactCurrency(currencyFormatter)),
-            StatEntryUIModel(context.getString(R.string.liabilities), liabilityCentis.centisToCompactCurrency(currencyFormatter))
+            StatEntryUIModel(
+                context.getString(R.string.assets),
+                currencyFormatter.formatCompact(centis = assetCentis, currencyCode = currencyCode)
+            ),
+            StatEntryUIModel(
+                context.getString(R.string.liabilities),
+                currencyFormatter.formatCompact(centis = liabilityCentis, currencyCode = currencyCode)
+            )
         ).toPersistentList()
     )
 
-    private fun createAssetsCard(totalAssetCentis: Long, statistics: List<StatEntryUIModel>) = FinsibleTileCardData(
+    private fun createAssetsCard(totalAssetCentis: Long, statistics: List<StatEntryUIModel>, currencyCode: String) = FinsibleTileCardData(
         title = context.getString(R.string.total_assets),
-        heroText = totalAssetCentis.centisToFormattedCurrency(currencyFormatter),
+        heroText = currencyFormatter.format(centis = totalAssetCentis, currencyCode = currencyCode),
         statistics = statistics.toPersistentList()
     )
 
-    private fun createLiabilitiesCard(totalLiabilityCentis: Long, statistics: List<StatEntryUIModel>) = FinsibleTileCardData(
-        title = context.getString(R.string.total_liabilities),
-        heroText = totalLiabilityCentis.centisToFormattedCurrency(currencyFormatter),
-        statistics = statistics.toPersistentList()
-    )
+    private fun createLiabilitiesCard(totalLiabilityCentis: Long, statistics: List<StatEntryUIModel>, currencyCode: String) =
+        FinsibleTileCardData(
+            title = context.getString(R.string.total_liabilities),
+            heroText = currencyFormatter.format(centis = totalLiabilityCentis, currencyCode = currencyCode),
+            statistics = statistics.toPersistentList()
+        )
 
     private fun buildGroupedStatistics(
         accounts: List<AccountEntity>,
         includePredicate: (Long) -> Boolean,
-        valueSelector: (AccountEntity) -> Long
+        valueSelector: (AccountEntity) -> Long,
+        currencyCode: String
     ): List<StatEntryUIModel> {
         val matchingAccounts = accounts.filter { includePredicate(it.balanceCentis) }
         if (matchingAccounts.isEmpty()) return emptyList()
 
-        val (orphanAccounts, groupedAccounts) = matchingAccounts.partition {
-            it.accountGroup.target == null
-        }
-
+        val (orphanAccounts, groupedAccounts) = matchingAccounts.partition { it.accountGroup.target == null }
         val orphanTotal = orphanAccounts.sumOfCentis(valueSelector)
 
         val namedGroups = groupedAccounts
@@ -169,16 +157,19 @@ class AccountsViewModel @Inject constructor(
 
         return buildList {
             namedGroups.take(2).forEach { (name, totalCentis) ->
-                add(StatEntryUIModel(name, totalCentis.centisToCompactCurrency(currencyFormatter)))
+                add(StatEntryUIModel(name, currencyFormatter.formatCompact(centis = totalCentis, currencyCode = currencyCode)))
             }
 
             var othersTotalCentis = orphanTotal
-            if (namedGroups.size > 2) {
-                othersTotalCentis += namedGroups.drop(2).sumOf { it.second }
-            }
+            if (namedGroups.size > 2) othersTotalCentis += namedGroups.drop(2).sumOf { it.second }
 
             if (othersTotalCentis > 0L) {
-                add(StatEntryUIModel(context.getString(R.string.others), othersTotalCentis.centisToCompactCurrency(currencyFormatter)))
+                add(
+                    StatEntryUIModel(
+                        context.getString(R.string.others),
+                        currencyFormatter.formatCompact(centis = othersTotalCentis, currencyCode = currencyCode)
+                    )
+                )
             }
         }
     }

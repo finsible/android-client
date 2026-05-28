@@ -25,9 +25,10 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleIconBadgeDefaults
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.model.uimodel.AccountUIModel
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
+import com.itsjeel01.finsiblefrontend.ui.theme.semiBold
+import com.itsjeel01.finsiblefrontend.ui.theme.bold
 import com.itsjeel01.finsiblefrontend.ui.util.resolveIcon
 
 @Composable
@@ -35,9 +36,9 @@ fun AccountListItem(
     model: AccountUIModel,
     modifier: Modifier = Modifier
 ) {
-    val cornerRadius = FinsibleTheme.dimes.d12
-    val borderWidth = FinsibleTheme.dimes.d4
-    val fallbackColor = if (model.isPositiveBalance) FinsibleTheme.colors.income else FinsibleTheme.colors.expense
+    val cornerRadius = FinsibleTheme.spacing.gapMd
+    val borderWidth = FinsibleTheme.spacing.insetXs
+    val fallbackColor = if (model.isPositiveBalance) FinsibleTheme.colors.transactionIncome else FinsibleTheme.colors.transactionExpense
 
     val borderColor = if (model.groupColor != null) {
         FinsibleTheme.resolveColor(model.groupColor, fallbackColor)
@@ -55,15 +56,15 @@ fun AccountListItem(
                 .fillMaxWidth()
                 .padding(start = borderWidth)
                 .background(
-                    color = FinsibleTheme.colors.surfaceContainerLow,
-                    shape = RoundedCornerShape(FinsibleTheme.dimes.d8)
+                    color = FinsibleTheme.colors.surfaceDefault,
+                    shape = RoundedCornerShape(FinsibleTheme.spacing.inlineMd)
                 )
                 .padding(
-                    vertical = FinsibleTheme.dimes.d12,
-                    horizontal = FinsibleTheme.dimes.d12
+                    vertical = FinsibleTheme.spacing.gapMd,
+                    horizontal = FinsibleTheme.spacing.gapMd
                 ),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d12)
+            horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.gapMd)
         ) {
             FinsibleIconBadge(
                 icon = {
@@ -84,16 +85,16 @@ fun AccountListItem(
             Column(modifier = Modifier.weight(1f)) {
                 FinsibleText(
                     text = model.name,
-                    variant = FinsibleTextVariant.BodySemiBold,
+                    textStyle = FinsibleTheme.typography.bodyLg.semiBold(),
                     colorVariant = FinsibleTextColorVariant.Primary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 if (model.description.isNotBlank()) {
-                    Spacer(Modifier.height(FinsibleTheme.dimes.d2))
+                    Spacer(Modifier.height(FinsibleTheme.spacing.insetMicro))
                     FinsibleText(
                         text = model.description,
-                        variant = FinsibleTextVariant.SmallBodyRegular,
+                        textStyle = FinsibleTheme.typography.bodyMd,
                         colorVariant = FinsibleTextColorVariant.Secondary,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -103,7 +104,7 @@ fun AccountListItem(
 
             FinsibleText(
                 text = model.formattedBalance,
-                variant = FinsibleTextVariant.SmallBodyBold,
+                textStyle = FinsibleTheme.typography.bodyMd.bold(),
                 colorVariant = FinsibleTextColorVariant.Primary
             )
         }

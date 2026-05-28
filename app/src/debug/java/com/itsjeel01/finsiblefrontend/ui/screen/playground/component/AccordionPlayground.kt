@@ -20,7 +20,6 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleT
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleAccordionIconVariant
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.OptionDropdown
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.OptionToggle
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.shapeLabel
@@ -41,8 +40,8 @@ fun AccordionPlayground() {
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = FinsibleTheme.dimes.d16, vertical = FinsibleTheme.dimes.d12),
-        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d12)
+            .padding(horizontal = FinsibleTheme.spacing.insetLg, vertical = FinsibleTheme.spacing.gapMd),
+        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackMd)
     ) {
         FinsibleAccordion(
             title = stringResource(R.string.component_playground_accordion_title_sample),
@@ -59,8 +58,8 @@ fun AccordionPlayground() {
             content = {
                 FinsibleText(
                     text = stringResource(R.string.component_playground_accordion_content_sample),
-                    variant = FinsibleTextVariant.SmallLabelRegular,
-                    color = FinsibleTheme.colors.secondaryContent
+                    textStyle = FinsibleTheme.typography.bodySm,
+                    color = FinsibleTheme.colors.contentSecondary
                 )
             }
         )

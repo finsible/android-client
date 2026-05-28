@@ -14,11 +14,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleAmountTextField
-import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleNoteTextField
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleTextField
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleAmountTextField
+import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleNoteTextField
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
 @Preview(name = "Light Mode", showBackground = true, widthDp = 700, heightDp = 900)
@@ -33,7 +33,7 @@ fun FinsibleTextFieldPreview() {
 
         Column(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d16)
+            verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackLg)
         ) {
             FinsibleAmountTextField(
                 value = amount,

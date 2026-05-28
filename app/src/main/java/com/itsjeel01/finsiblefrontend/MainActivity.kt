@@ -1,6 +1,5 @@
 package com.itsjeel01.finsiblefrontend
 
-import com.itsjeel01.finsiblefrontend.ui.navigation.Route
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,6 +12,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.util.FinsibleNotifi
 import com.itsjeel01.finsiblefrontend.ui.component.templates.util.LocalFinsibleLoader
 import com.itsjeel01.finsiblefrontend.ui.component.templates.util.LocalFinsibleNotification
 import com.itsjeel01.finsiblefrontend.ui.navigation.NavigationRoot
+import com.itsjeel01.finsiblefrontend.ui.navigation.Route
 import com.itsjeel01.finsiblefrontend.ui.navigation.StartDestinationResolver
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,7 +46,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             CompositionLocalProvider(
                 LocalFinsibleLoader provides finsibleLoaderManager,
-                LocalFinsibleNotification provides finsibleNotificationManager
+                LocalFinsibleNotification provides finsibleNotificationManager,
             ) {
                 FinsibleTheme {
                     FinsibleLoaderHost(finsibleLoaderManager = finsibleLoaderManager) {

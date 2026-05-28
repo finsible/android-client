@@ -13,21 +13,20 @@ import androidx.compose.ui.Modifier
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 
 /** Shared scaffold for long, section-based component previews. */
 @Composable
 fun FinsibleComponentPreviewScaffold(content: @Composable ColumnScope.() -> Unit) {
     FinsibleTheme {
-        val dimes = FinsibleTheme.dimes
+        val sp = FinsibleTheme.spacing
 
-        Surface(color = FinsibleTheme.colors.primaryBackground) {
+        Surface(color = FinsibleTheme.colors.surfaceBase) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
-                    .padding(vertical = dimes.d8, horizontal = dimes.d16),
-                verticalArrangement = Arrangement.spacedBy(dimes.d12),
+                    .padding(vertical = sp.inlineMd, horizontal = sp.insetLg),
+                verticalArrangement = Arrangement.spacedBy(sp.gapMd),
                 content = content
             )
         }
@@ -40,12 +39,12 @@ fun FinsiblePreviewSection(
     title: String,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    val dimes = FinsibleTheme.dimes
+    val sp = FinsibleTheme.spacing
 
-    Column(verticalArrangement = Arrangement.spacedBy(dimes.d12)) {
+    Column(verticalArrangement = Arrangement.spacedBy(sp.gapMd)) {
         FinsibleText(
             text = title,
-            variant = FinsibleTextVariant.MediumTitleSemiBold,
+            textStyle = FinsibleTheme.typography.headingSm,
             colorVariant = FinsibleTextColorVariant.Accent,
         )
         content()

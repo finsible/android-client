@@ -4,7 +4,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
+import androidx.compose.ui.text.TextStyle
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.Month
@@ -74,11 +74,11 @@ data class FinsibleDatePickerSizes(
 
 @Immutable
 data class FinsibleDatePickerTypography(
-    val weekdayTextVariant: FinsibleTextVariant,
-    val daySelectedTextVariant: FinsibleTextVariant,
-    val dayDefaultTextVariant: FinsibleTextVariant,
-    val monthGridYearTextVariant: FinsibleTextVariant,
-    val monthGridItemTextVariant: FinsibleTextVariant,
+    val weekdayTextStyle: TextStyle,
+    val daySelectedTextStyle: TextStyle,
+    val dayDefaultTextStyle: TextStyle,
+    val monthGridYearTextStyle: TextStyle,
+    val monthGridItemTextStyle: TextStyle,
 )
 
 @Immutable

@@ -1,5 +1,6 @@
 package com.itsjeel01.finsiblefrontend.ui.component.historytab.filtersbottomsheet
 
+
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePickerDialog
@@ -15,8 +16,8 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleT
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleDatePickerDefaults
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleDateRange
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.normalized
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
+import com.itsjeel01.finsiblefrontend.ui.theme.medium
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
@@ -46,12 +47,12 @@ fun DateRangePickerDialog(
                         currentSelection.endDate?.toEndOfDayMillis()
                     )
                 },
-                colors = ButtonDefaults.textButtonColors().copy(containerColor = FinsibleTheme.colors.surfaceBright)
+                colors = ButtonDefaults.textButtonColors().copy(containerColor = FinsibleTheme.elevation.floatingSurface)
             ) {
                 FinsibleText(
                     text = stringResource(R.string.date_range_dialog_ok),
-                    variant = FinsibleTextVariant.SmallBodyMedium,
-                    color = FinsibleTheme.colors.primaryContent
+                    textStyle = FinsibleTheme.typography.bodyMd.medium(),
+                    color = FinsibleTheme.colors.contentPrimary
                 )
             }
         },
@@ -59,8 +60,8 @@ fun DateRangePickerDialog(
             TextButton(onClick = onDismiss) {
                 FinsibleText(
                     text = stringResource(R.string.date_range_dialog_cancel),
-                    variant = FinsibleTextVariant.SmallBodyMedium,
-                    color = FinsibleTheme.colors.tertiaryContent
+                    textStyle = FinsibleTheme.typography.bodyMd.medium(),
+                    color = FinsibleTheme.colors.contentTertiary
                 )
             }
         }
@@ -70,11 +71,11 @@ fun DateRangePickerDialog(
             selectedRange = currentSelection,
             onRangeSelected = { selectedRangeState.value = it },
             colors = FinsibleDatePickerDefaults.colors(
-                containerColor = FinsibleTheme.colors.surface,
-                monthHeaderColor = FinsibleTheme.colors.surface,
+                containerColor = FinsibleTheme.colors.surfaceRaised,
+                monthHeaderColor = FinsibleTheme.colors.surfaceRaised,
             ),
             sizes = FinsibleDatePickerDefaults.sizes().copy(
-                containerElevation = FinsibleTheme.dimes.d0,
+                containerElevation = FinsibleTheme.spacing.insetNone,
             ),
             modifier = Modifier
                 .fillMaxWidth()

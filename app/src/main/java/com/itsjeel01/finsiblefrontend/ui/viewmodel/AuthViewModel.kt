@@ -27,12 +27,16 @@ class AuthViewModel @Inject constructor(
     private val postAuthInitializer: PostAuthInitializer,
 ) : ViewModel() {
 
-    private val _authState = MutableStateFlow<AuthState>(AuthState.Negative())
+    private val _authState = MutableStateFlow<AuthState>(AuthState.Loading)
     val authState: StateFlow<AuthState> = _authState.asStateFlow()
 
     init {
-        if (authRepo.isAuthenticated()) {
-            _authState.value = AuthState.Positive
+        viewModelScope.launch {
+            if (authRepo.isAuthenticated()) {
+                _authState.value = AuthState.Positive
+            } else {
+                _authState.value = AuthState.Negative()
+            }
         }
     }
 

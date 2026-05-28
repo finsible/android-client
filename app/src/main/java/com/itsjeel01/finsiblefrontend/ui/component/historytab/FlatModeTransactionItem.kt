@@ -17,74 +17,72 @@ import androidx.compose.ui.text.style.TextOverflow
 import com.itsjeel01.finsiblefrontend.common.TransactionType
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.model.uimodel.TransactionUIModel
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
+import com.itsjeel01.finsiblefrontend.ui.theme.medium
 import com.itsjeel01.finsiblefrontend.ui.theme.bold
 import com.itsjeel01.finsiblefrontend.ui.theme.relaxed
+import com.itsjeel01.finsiblefrontend.ui.util.DateUtils
 
-/** Standalone card for flat mode — always full radius, shows date. */
 @Composable
 fun FlatModeTransactionItem(transaction: TransactionUIModel) {
-    val shape = RoundedCornerShape(FinsibleTheme.dimes.d16)
+    val shape = RoundedCornerShape(FinsibleTheme.spacing.insetLg)
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .clip(shape)
-            .background(FinsibleTheme.colors.surfaceContainerLow)
-            .border(width = FinsibleTheme.dimes.d1, color = FinsibleTheme.colors.divider, shape = shape)
+            .background(FinsibleTheme.colors.surfaceDefault)
+            .border(width = FinsibleTheme.stroke.thin, color = FinsibleTheme.colors.borderSubtle, shape = shape)
     ) {
         Row(
             modifier = Modifier
-                .padding(horizontal = FinsibleTheme.dimes.d16, vertical = FinsibleTheme.dimes.d10)
+                .padding(horizontal = FinsibleTheme.spacing.insetLg, vertical = FinsibleTheme.spacing.inlineMd)
                 .fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d12),
+            horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.gapMd),
             verticalAlignment = Alignment.CenterVertically
         ) {
             TransactionIcon(
                 type = transaction.type,
                 categoryIcon = transaction.categoryIcon,
-                modifier = Modifier.padding(top = FinsibleTheme.dimes.d2)
+                modifier = Modifier.padding(top = FinsibleTheme.spacing.insetMicro)
             )
 
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d2)
+                verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackMicro)
             ) {
                 FinsibleText(
                     text = transaction.title,
-                    variant = FinsibleTextVariant.BodyMedium,
+                    textStyle = FinsibleTheme.typography.bodyLg.medium(),
                     colorVariant = FinsibleTextColorVariant.Primary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 FinsibleText(
                     text = transaction.subtitle,
-                    variant = FinsibleTextVariant.SmallLabelRegular,
-                    color = FinsibleTheme.colors.tertiaryContent,
+                    textStyle = FinsibleTheme.typography.bodySm,
+                    color = FinsibleTheme.colors.contentTertiary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                if (transaction.formattedDate.isNotBlank()) {
-                    FinsibleText(
-                        text = transaction.formattedDate,
-                        variant = FinsibleTextVariant.MicroLabelMedium,
-                        color = FinsibleTheme.colors.placeholder,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
+                val formattedDate = DateUtils.readableDate(transaction.transactionDate)
+                FinsibleText(
+                    text = formattedDate,
+                    textStyle = FinsibleTheme.typography.labelSm.medium(),
+                    color = FinsibleTheme.colors.contentPlaceholder,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
 
             FinsibleText(
                 text = transaction.formattedAmount,
-                variant = FinsibleTextVariant.BodyBold,
                 color = when (transaction.type) {
-                    TransactionType.INCOME -> FinsibleTheme.colors.income
-                    else -> FinsibleTheme.colors.primaryContent80
+                    TransactionType.INCOME -> FinsibleTheme.colors.transactionIncome
+                    else -> FinsibleTheme.colors.contentSecondary
                 },
-                textStyleOverride = FinsibleTheme.typography.t16.bold().relaxed(),
-                modifier = Modifier.padding(top = FinsibleTheme.dimes.d2)
+                textStyle = FinsibleTheme.typography.bodyLg.bold().relaxed(),
+                modifier = Modifier.padding(top = FinsibleTheme.spacing.insetMicro)
             )
         }
     }

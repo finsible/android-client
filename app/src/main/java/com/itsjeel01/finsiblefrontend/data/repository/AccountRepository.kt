@@ -9,7 +9,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AccountRepository @Inject constructor(private val apiService: AccountApiService) {
+class AccountRepository @Inject constructor(
+    private val apiService: AccountApiService,
+) {
     suspend fun getAccounts(): BaseResponse<List<Account>> {
         return apiService.getAccounts()
     }

@@ -1,0 +1,849 @@
+{
+  "_schema": {
+    "version": "2.0",
+    "purpose": "Pi agent context graph — optimised for O(1) lookup, minimal token injection per session",
+    "generated": "FILL: ISO-8601 timestamp",
+    "rootPackage": "com.itsjeel01.finsiblefrontend",
+    "instructions": [
+      "Fill every FILL: placeholder by scanning actual source files",
+      "Remove _example keys before committing — they are schema hints only",
+      "Keep arrays empty [] if no entries exist — never omit keys",
+      "status values: complete | in-progress | planned | deprecated",
+      "All paths relative to app/src/main/java/com/itsjeel01/finsiblefrontend/ unless noted",
+      "Theme: use spacingTokens/sizeTokens/strokeTokens/elevationTokens — NOT dimesTokens (removed in v2)",
+      "rules: 24+ invariants covering architecture, anti-patterns, checklists, triage, and execution sequence"
+    ]
+  },
+  "gradle": {
+    "_purpose": "Answered once here — agent never reads build files again",
+    "compileSdk": "FILL: int",
+    "minSdk": "FILL: int",
+    "targetSdk": "FILL: int",
+    "namespace": "FILL: string",
+    "kotlinVersion": "FILL: string",
+    "agpVersion": "FILL: string",
+    "kspVersion": "FILL: string",
+    "jvmTarget": "FILL: string",
+    "buildFeatures": [
+      "FILL: buildConfig|compose|..."
+    ],
+    "buildConfigFields": {
+      "_example": {
+        "DATABASE_SCHEMA_VERSION": "int:1"
+      },
+      "FILL_KEY": "FILL: type:value"
+    },
+    "plugins": [
+      "FILL: plugin-id list from build.gradle.kts"
+    ],
+    "buildTypes": {
+      "debug": {
+        "minifyEnabled": false,
+        "extras": [
+          "FILL: objectbox-browser, mock network, etc."
+        ]
+      },
+      "release": {
+        "minifyEnabled": "FILL: bool",
+        "extras": []
+      }
+    },
+    "sourceSets": {
+      "main": "app/src/main",
+      "debug": "app/src/debug — playground screens, mock data, debug DI modules",
+      "release": "app/src/release — release DI modules, navigation resolvers",
+      "test": "app/src/test — unit tests",
+      "androidTest": "app/src/androidTest — instrumented tests"
+    }
+  },
+  "dependencies": {
+    "_purpose": "Canonical dep registry — agent resolves versions and import patterns here, not from memory",
+    "di": {
+      "hilt": {
+        "version": "FILL: string",
+        "artifacts": [
+          "hilt-android",
+          "hilt-compiler (ksp)"
+        ],
+        "scope": "SingletonComponent unless noted",
+        "annotation": "@HiltViewModel for VMs, @Inject constructor for repos, @Module @InstallIn for modules"
+      }
+    },
+    "db": {
+      "objectbox": {
+        "version": "FILL: string",
+        "debugArtifact": "objectbox-android-objectbrowser",
+        "releaseArtifact": "objectbox-android",
+        "plugin": "io.objectbox (applied at bottom of build.gradle.kts)",
+        "pattern": "BoxStore → Box<EntityClass> provided via @Module, consumed in LocalRepository constructors"
+      }
+    },
+    "network": {
+      "retrofit": {
+        "version": "FILL: string",
+        "converter": "converter-kotlinx-serialization",
+        "authInterceptor": "data/remote/interceptor/AuthInterceptor.kt",
+        "debugInterceptor": "data/di/NetworkDebugInterceptors.kt (debug only)"
+      },
+      "okhttp": {
+        "loggingInterceptor": "FILL: version (debug only)"
+      }
+    },
+    "compose": {
+      "bom": "FILL: version",
+      "material3": "FILL: version",
+      "nav3": {
+        "version": "FILL: string",
+        "artifacts": [
+          "navigation3-runtime",
+          "navigation3-ui",
+          "lifecycle-viewmodel-navigation3",
+          "adaptive-navigation3"
+        ]
+      },
+      "icons": {
+        "lib": "com.composables",
+        "version": "FILL: string",
+        "availableSets": [
+          "material-icons-filled",
+          "material-icons-outlined",
+          "material-icons-rounded",
+          "material-icons-sharp",
+          "lucide",
+          "material-symbols-outlined",
+          "material-symbols-rounded",
+          "material-symbols-sharp",
+          "material-symbols-outlined-filled",
+          "material-symbols-rounded-filled",
+          "material-symbols-sharp-filled",
+          "tabler-outline",
+          "tabler-filled"
+        ],
+        "importPattern": "import com.composables.icons.{set}.{IconName}",
+        "painterPattern": "import com.composables.icons.lucide.R as LucideR → painterResource(LucideR.drawable.lucide_ic_{name})",
+        "_note": "Always check availableSets before suggesting an icon — do not invent set names"
+      },
+      "calendar": {
+        "lib": "kizitonwose.calendar",
+        "version": "FILL: string",
+        "artifacts": [
+          "compose",
+          "core"
+        ]
+      }
+    },
+    "async": {
+      "coroutines": {
+        "version": "FILL: string",
+        "pattern": "viewModelScope.launch → withContext(Dispatchers.IO) for DB/network → withContext(Dispatchers.Main) for state"
+      },
+      "kotlinxCollectionsImmutable": {
+        "version": "FILL: string",
+        "types": [
+          "ImmutableList",
+          "ImmutableMap",
+          "persistentListOf",
+          "persistentMapOf",
+          "toPersistentList",
+          "toPersistentMap"
+        ],
+        "_note": "Mandatory for all UI state collections — never use plain List/Map in StateFlow"
+      }
+    },
+    "storage": {
+      "datastore": {
+        "version": "FILL: string",
+        "encrypted": true
+      },
+      "tink": {
+        "version": "FILL: string",
+        "purpose": "encryption for datastore"
+      },
+      "securityCrypto": {
+        "version": "FILL: string"
+      }
+    },
+    "serialization": {
+      "json": "FILL: version",
+      "core": "FILL: version",
+      "annotation": "@Serializable on all remote DTOs"
+    },
+    "auth": {
+      "credentials": "FILL: version",
+      "googleId": "FILL: version",
+      "manager": "ui/util/GoogleAuthManager.kt"
+    },
+    "logging": {
+      "timber": {
+        "version": "FILL: string",
+        "wrapper": "common/logging/Logger.kt",
+        "domains": "common/logging/LogDomain.kt"
+      }
+    },
+    "testing": {
+      "unit": {
+        "junit": "FILL: version",
+        "mockk": "FILL: version",
+        "coroutinesTest": "FILL: version",
+        "archCoreTesting": "FILL: version"
+      },
+      "android": {
+        "mockkAndroid": "FILL: version",
+        "espresso": "FILL: version"
+      }
+    }
+  },
+  "theme": {
+    "_purpose": "Complete token surface — agent resolves all theme access here",
+    "entryPoint": "ui/theme/FinsibleTheme.kt",
+    "rule": "NEVER extend MaterialTheme. FinsibleTheme wraps it. Tokens via CompositionLocal only.",
+    "compositionLocals": {
+      "_note": "All private — only accessed via FinsibleTheme object properties below",
+      "LocalFinsibleColors": "→ FinsibleTheme.colors",
+      "LocalFinsibleColorResolver": "→ FinsibleTheme.resolveColor(token, fallback?)",
+      "LocalDeviceInfo": "→ FinsibleTheme.deviceInfo / .screenWidth / .screenHeight",
+      "LocalFinsibleTypes": "→ FinsibleTheme.typography",
+      "LocalFinsibleDimes": "→ FinsibleTheme.dimes"
+    },
+    "accessPoints": {
+      "FinsibleTheme.colors": {
+        "type": "FinsibleColors",
+        "file": "ui/theme/FinsibleColors.kt"
+      },
+      "FinsibleTheme.typography": {
+        "type": "FinsibleTypes",
+        "file": "ui/theme/FinsibleTypes.kt",
+        "scaled": true
+      },
+      "FinsibleTheme.dimes": {
+        "type": "FinsibleDimes",
+        "file": "ui/theme/FinsibleDimes.kt",
+        "scaled": true
+      },
+      "FinsibleTheme.deviceInfo": {
+        "type": "DeviceInfo",
+        "file": "ui/theme/DeviceInfo.kt"
+      },
+      "FinsibleTheme.screenWidth": {
+        "type": "Dp"
+      },
+      "FinsibleTheme.screenHeight": {
+        "type": "Dp"
+      },
+      "FinsibleTheme.materialTypography": {
+        "type": "Typography",
+        "note": "passthrough — use sparingly"
+      },
+      "FinsibleTheme.resolveColor": {
+        "sig": "(token: String, fallback: Color?) → Color",
+        "note": "string-keyed dynamic lookup"
+      },
+      "FinsibleTheme.dimes.Dp.adaptedDp()": {
+        "note": "scales arbitrary Dp value to current device"
+      },
+      "FinsibleTheme.isDarkTheme()": {
+        "type": "Boolean"
+      }
+    },
+    "colorTokens": {
+      "_note": "FILL all tokens by reading FinsibleColors.kt. Extend list if new tokens added.",
+      "_example": {
+        "primaryContent": "text/icon on primary bg",
+        "primaryBackground": "main surface",
+        "secondaryBackground": "secondary surface / tonal fill",
+        "secondaryContent": "muted text",
+        "border": "default stroke",
+        "divider": "list separators",
+        "link": "hyperlink / link-variant button",
+        "brandAccent": "brand highlight color",
+        "disabled": "disabled container",
+        "disabledContent": "disabled text/icon",
+        "surface": "card/sheet surface",
+        "error": "FILL",
+        "success": "FILL",
+        "warning": "FILL"
+      },
+      "FILL_TOKEN_NAME": "FILL: semantic description"
+    },
+    "typographyTokens": {
+      "_note": "FILL all scale steps by reading FinsibleTypes.kt. Scaled per device via FinsibleUiScaler.",
+      "_example": {
+        "t8": "8sp",
+        "t10": "10sp",
+        "t12": "12sp",
+        "t14": "14sp",
+        "t16": "16sp",
+        "t18": "18sp",
+        "t20": "20sp",
+        "t24": "24sp",
+        "t28": "28sp",
+        "t32": "32sp"
+      },
+      "FILL_TOKEN": "FILL: sp value"
+    },
+    "fonts": {
+      "file": "ui/theme/FinsibleFontFamily.kt",
+      "families": [
+        "FILL: e.g. displayFont",
+        "FILL: e.g. interfaceFont"
+      ],
+      "weights": [
+        "ExtraLight",
+        "Light",
+        "Normal",
+        "Medium",
+        "SemiBold",
+        "Bold",
+        "ExtraBold"
+      ],
+      "note": "PreloadFonts() called inside FinsibleTheme — never call manually"
+    },
+    "gradients": {
+      "file": "ui/theme/FinsibleGradients.kt"
+    },
+    "uiScaler": {
+      "file": "ui/theme/FinsibleUiScaler.kt",
+      "note": "auto-applied in FinsibleTheme — never instantiate manually"
+    },
+    "colorResolver": {
+      "file": "ui/theme/FinsibleColorResolver.kt"
+    },
+    "spacingTokens": {
+      "_note": "FILL all spacing roles by reading FinsibleSpacing.kt. Scaled per device via FinsibleUiScaler.",
+      "_example": {
+        "insetNone": "0dp",
+        "insetXs": "4dp",
+        "insetSm": "8dp",
+        "insetMd": "12dp",
+        "insetLg": "16dp",
+        "stackSm": "4dp",
+        "stackMd": "8dp",
+        "stackLg": "12dp",
+        "gapSm": "4dp",
+        "gapMd": "8dp",
+        "gapLg": "12dp",
+        "inlineSm": "4dp",
+        "inlineMd": "8dp",
+        "inlineLg": "12dp"
+      },
+      "FILL_TOKEN": "FILL: dp value — role-based token"
+    },
+    "sizeTokens": {
+      "_note": "FILL all sizes by reading FinsibleSizes.kt. Accessed via FinsibleTheme.sizes.{category}.{name}.",
+      "_example": {
+        "touch.xs": "28dp — inline icon buttons",
+        "touch.sm": "36dp — compact icon buttons",
+        "touch.md": "44dp — standard button/input height",
+        "icon.xs": "12dp — inline status icons",
+        "icon.sm": "16dp — label-adjacent icons",
+        "icon.md": "24dp — standard icons",
+        "avatar.sm": "24dp — small avatars",
+        "avatar.md": "40dp — standard avatars"
+      },
+      "FILL_TOKEN": "FILL: dp value — category.name descriptor"
+    },
+    "strokeTokens": {
+      "_note": "FILL all stroke widths by reading FinsibleStroke.kt.",
+      "_example": {
+        "hairline": "0.5dp — hairline borders",
+        "thin": "1dp — standard border",
+        "semiBold": "1.5dp — emphasized border",
+        "bold": "2dp — strong border",
+        "heavy": "3dp — checkbox check mark"
+      },
+      "FILL_TOKEN": "FILL: dp value"
+    },
+    "elevationTokens": {
+      "_note": "FILL all elevation specs by reading FinsibleElevation.kt.",
+      "_example": {
+        "flatSurface": "base tint (light) / surface tint (dark)",
+        "raisedSurface": "surfaceRaised tint (light) / surface tint (dark)",
+        "raisedShadow": "FinsibleShadowSpec(color=0x12..., offsetY=..., blurRadius=...)"
+      },
+      "FILL_TOKEN": "FILL: FinsibleShadowSpec or surface tint"
+    }
+  },
+  "templateLibrary": {
+    "_purpose": "Finsible UI component library — all under ui/component/templates/",
+    "_templateRoot": "ui/component/templates/",
+    "packageRules": {
+      "component": "Stateful @Composable entry points. Consume FinsibleTheme via CompositionLocal. No hardcoded values.",
+      "core": "Zero-state, zero-side-effect primitives. DrawScope extensions with named constants. Shared enums.",
+      "default": "Finsible{Name}Defaults objects — @Composable fns resolving colors/sizes from FinsibleTheme.",
+      "model": "@Immutable data classes, enums, sealed classes. Variants live in model/variant/ subfolder.",
+      "preview": "@Preview composables ONLY — never shipped. Use FinsibleComponentPreviewScaffold from FinsiblePreviewComponents.kt.",
+      "util": "Runtime-only utilities — Host/Manager pairs, custom indication, position providers."
+    },
+    "namingConventions": {
+      "component": "Finsible{Name}.kt",
+      "defaults": "Finsible{Name}Defaults.kt",
+      "models": "Finsible{Name}Models.kt",
+      "variant": "Finsible{Name}Variant.kt — inside model/variant/",
+      "preview": "Finsible{Name}Preview.kt",
+      "playground": "{Name}Playground.kt — debug source set ONLY, never main"
+    },
+    "coreSharedTypes": {
+      "FinsibleSize": {
+        "values": [
+          "ExtraSmall",
+          "Small",
+          "Medium",
+          "Large",
+          "ExtraLarge"
+        ],
+        "file": "core/FinsibleSize.kt"
+      },
+      "FinsibleShape": {
+        "values": [
+          "Pill",
+          "Rounded",
+          "Sharp",
+          "Circle"
+        ],
+        "file": "core/FinsibleShape.kt"
+      },
+      "FinsibleIconPosition": {
+        "values": [
+          "Leading",
+          "Trailing"
+        ],
+        "file": "core/FinsibleIconPosition.kt"
+      },
+      "FinsibleBadgeType": {
+        "values": [
+          "None",
+          "Dot",
+          "Count"
+        ],
+        "file": "model/FinsibleBadgeType.kt"
+      }
+    },
+    "defaultsPattern": {
+      "_note": "All Defaults objects follow this shape — FILL per component",
+      "colors()": "@Composable — accepts variant enum + optional color overrides, returns XxxColors",
+      "sizes()": "@Composable — accepts FinsibleSize, returns XxxSizes with contentPadding/textStyle/iconSize",
+      "shape()": "@Composable — accepts FinsibleShape + FinsibleSize, returns Shape",
+      "badgeSpec()": "@Composable — accepts FinsibleSize, returns XxxBadgeSpec (if component has badges)"
+    },
+    "components": {
+      "_schemaNote": "One entry per component. Pi fills ALL fields by reading actual source. Remove _example block after filling.",
+      "FILL_ComponentName": {
+        "_example": "Copy this block, rename key to e.g. FinsibleButton, fill all FILL: values",
+        "status": "FILL: complete|in-progress|planned|deprecated",
+        "files": {
+          "component": "FILL: relative path e.g. component/FinsibleButton.kt",
+          "defaults": "FILL: default/FinsibleButtonDefaults.kt",
+          "models": "FILL: model/FinsibleButtonModels.kt",
+          "variant": "FILL: model/variant/FinsibleButtonVariant.kt — omit key if no variant file",
+          "preview": "FILL: preview/FinsibleButtonPreview.kt — omit if no preview",
+          "util": [
+            "FILL: util/FinsibleButtonXxx.kt — omit if no util files"
+          ],
+          "related": [
+            "FILL: sibling component paths e.g. FinsibleButtonBadge.kt — omit if none"
+          ]
+        },
+        "playground": "FILL: debug path e.g. ui/screen/playground/component/ButtonPlayground.kt — null if none",
+        "params": {
+          "_note": "FILL every public parameter: name → 'Type = default — constraint or note'",
+          "FILL_paramName": "FILL: Type = defaultValue — any constraint"
+        },
+        "variants": [
+          "FILL: enum values if component has a variant param — else omit key"
+        ],
+        "modelTypes": [
+          "FILL: data class names defined in models file e.g. FinsibleButtonColors"
+        ],
+        "tokenUsage": {
+          "colors": [
+            "FILL: FinsibleTheme.colors token names actually used"
+          ],
+          "typography": [
+            "FILL: FinsibleTheme.typography token names actually used"
+          ],
+          "spacing": [
+            "FILL: FinsibleTheme.spacing token names used"
+          ],
+          "sizes": [
+            "FILL: FinsibleTheme.sizes token names used"
+          ],
+          "stroke": [
+            "FILL: FinsibleTheme.stroke token names used"
+          ],
+          "elevation": [
+            "FILL: FinsibleTheme.elevation token names used"
+          ]
+        },
+        "constraints": [
+          "FILL: require() guards from component source — critical for correct usage"
+        ]
+      }
+    },
+    "utilComponents": {
+      "_note": "Host/Manager pairs and other runtime-only utils — FILL by scanning util/",
+      "FILL_UtilName": {
+        "files": [
+          "FILL: util/FinsibleXxxHost.kt",
+          "FILL: util/FinsibleXxxManager.kt"
+        ],
+        "purpose": "FILL: one-line description"
+      }
+    }
+  },
+  "data": {
+    "_purpose": "Data layer topology — agent resolves entity→repo→remote chains here without file searching",
+    "db": {
+      "engine": "ObjectBox",
+      "boxStoreProvider": "data/di/ObjectBoxModule.kt (main) | data/di/DebugObjectBoxModule.kt (debug) | data/di/ReleaseObjectBoxModule.kt (release)",
+      "adminBrowser": "data/di/ObjectBoxAdminStarter.kt (interface) | debug/DebugObjectBoxAdminStarter.kt | release/ReleaseObjectBoxAdminStarter.kt",
+      "schemaVersion": "FILL: from BuildConfig.DATABASE_SCHEMA_VERSION",
+      "modelFile": "app/objectbox-models/default.json"
+    },
+    "entities": {
+      "_note": "FILL one entry per @Entity class. Scan data/local/entity/",
+      "_schemaNote": "BaseEntity and SyncableEntity are base classes — include them",
+      "FILL_EntityName": {
+        "file": "FILL: data/local/entity/FillEntityName.kt",
+        "extends": "FILL: BaseEntity | SyncableEntity | null",
+        "fields": [
+          "FILL: fieldName: Type"
+        ],
+        "relations": [
+          "FILL: e.g. ToOne<AccountEntity> account"
+        ],
+        "box": "FILL: Box<FillEntityName> — provided by which DI module"
+      }
+    },
+    "localRepositories": {
+      "_note": "FILL one entry per class in data/local/repository/",
+      "_schemaNote": "BaseLocalRepository and SyncableLocalRepository are base classes",
+      "FILL_RepoName": {
+        "file": "FILL: data/local/repository/FillRepoName.kt",
+        "extends": "FILL: BaseLocalRepository | SyncableLocalRepository",
+        "entity": "FILL: which entity it wraps",
+        "injectedBoxes": [
+          "FILL: Box<XxxEntity>",
+          "FILL: Box<PendingOperationEntity> if syncable"
+        ],
+        "keyMethods": [
+          "FILL: method signatures that callers use"
+        ]
+      }
+    },
+    "remoteModels": {
+      "_note": "FILL one entry per file in data/remote/model/ — all @Serializable",
+      "FILL_DtoName": {
+        "file": "FILL: data/remote/model/FillDtoName.kt",
+        "kind": "FILL: request | response | data",
+        "usedBy": "FILL: which ApiService"
+      }
+    },
+    "apiServices": {
+      "_note": "FILL one entry per Retrofit interface in data/remote/api/",
+      "FILL_ApiServiceName": {
+        "file": "FILL: data/remote/api/FillApiServiceName.kt",
+        "endpoints": [
+          "FILL: METHOD /path → ReturnType"
+        ]
+      }
+    },
+    "repositories": {
+      "_note": "FILL one entry per class in data/repository/ — these are the public data API consumed by ViewModels",
+      "FILL_RepositoryName": {
+        "file": "FILL: data/repository/FillRepositoryName.kt",
+        "localRepo": "FILL: which LocalRepository it delegates to — null if remote-only",
+        "apiService": "FILL: which ApiService it uses — null if local-only",
+        "keyMethods": [
+          "FILL: method signatures"
+        ]
+      }
+    },
+    "sync": {
+      "_note": "FILL high-level sync topology — not every method, just the wiring",
+      "manager": "data/sync/SyncManager.kt",
+      "handlers": [
+        "FILL: data/sync/XxxSyncHandler.kt list"
+      ],
+      "support": {
+        "CacheManager": "data/sync/CacheManager.kt",
+        "DataFetcher": "data/sync/DataFetcher.kt",
+        "IntegrityChecker": "data/sync/IntegrityChecker.kt",
+        "IntegrityResolver": "data/sync/IntegrityResolverService.kt",
+        "LocalIdGenerator": "data/sync/LocalIdGenerator.kt",
+        "NetworkMonitor": "data/sync/NetworkMonitor.kt",
+        "PostAuthInitializer": "data/sync/PostAuthInitializer.kt",
+        "ScopeManager": "data/sync/ScopeManager.kt",
+        "SyncException": "data/sync/SyncException.kt"
+      }
+    },
+    "di": {
+      "_note": "FILL one entry per @Module. Pattern: @Provides @Singleton fns wiring Box<Entity> → LocalRepo → Repository",
+      "FILL_ModuleName": {
+        "file": "FILL: data/di/FillModuleName.kt",
+        "installIn": "FILL: SingletonComponent | ActivityComponent | ...",
+        "provides": [
+          "FILL: ReturnType — brief purpose"
+        ]
+      }
+    },
+    "typeConverters": {
+      "file": "data/local/TypeConverters.kt",
+      "purpose": "FILL: what types are converted"
+    },
+    "common": {
+      "_note": "FILL key utilities consumed across layers",
+      "CurrencyFormatter": {
+        "file": "common/CurrencyFormatter.kt",
+        "injected": true
+      },
+      "PreferenceManager": {
+        "file": "common/PreferenceManager.kt",
+        "injected": true,
+        "exposes": [
+          "FILL: key Flow properties e.g. defaultCurrencyCodeFlow"
+        ]
+      },
+      "UserLocaleRegistry": {
+        "file": "common/UserLocaleRegistry.kt"
+      },
+      "LocaleProvider": {
+        "file": "common/LocaleProvider.kt"
+      },
+      "Extensions": {
+        "file": "common/Extensions.kt",
+        "note": "FILL: key extension functions"
+      },
+      "Enums": {
+        "file": "common/Enums.kt",
+        "note": "FILL: global enum names"
+      },
+      "FinsibleConstants": {
+        "file": "common/FinsibleConstants.kt"
+      },
+      "datastore": {
+        "EncryptedPreferenceSerializer": "common/datastore/EncryptedPreferenceSerializer.kt",
+        "UserPreferences": "common/datastore/UserPreferences.kt"
+      },
+      "logging": {
+        "Logger": "common/logging/Logger.kt — usage: Logger.{Domain}.d/e/w(msg)",
+        "LogDomain": "common/logging/LogDomain.kt — FILL: available domains e.g. Logger.UI, Logger.Sync",
+        "DebugLogTree": "common/logging/DebugLogTree.kt",
+        "ReleaseLogTree": "common/logging/ReleaseLogTree.kt"
+      }
+    }
+  },
+  "ui": {
+    "_purpose": "UI layer topology — screens, VMs, navigation, mappers, ui models",
+    "viewModels": {
+      "_note": "FILL one entry per ViewModel. Pattern: @HiltViewModel + @Inject constructor",
+      "_pattern": {
+        "stateFlow": "MutableStateFlow → exposed as StateFlow via .asStateFlow() or .stateIn()",
+        "io": "viewModelScope.launch → withContext(Dispatchers.IO) → withContext(Dispatchers.Main)",
+        "immutable": "All UI state collections use ImmutableList/ImmutableMap"
+      },
+      "FILL_ViewModelName": {
+        "file": "FILL: ui/viewmodel/FillViewModelName.kt",
+        "injected": [
+          "FILL: ClassName — brief role"
+        ],
+        "stateFlows": [
+          "FILL: val name: StateFlow<Type>"
+        ],
+        "publicMethods": [
+          "FILL: fun name(params) — brief purpose"
+        ]
+      }
+    },
+    "screens": {
+      "_note": "FILL one entry per top-level screen composable",
+      "FILL_ScreenName": {
+        "file": "FILL: ui/screen/FillScreenName.kt",
+        "route": "FILL: Route.XxxRoute — from ui/navigation/Route.kt",
+        "vm": "FILL: which ViewModel(s) it consumes — null if stateless",
+        "isTab": "FILL: true if it's a bottom-nav tab"
+      }
+    },
+    "navigation": {
+      "routes": "ui/navigation/Route.kt",
+      "bottomNav": {
+        "items": "ui/navigation/BottomNavItem.kt",
+        "state": "ui/navigation/BottomNavState.kt",
+        "bar": "ui/component/bottomnav/BottomNavigationBar.kt"
+      },
+      "graphs": {
+        "home": "ui/navigation/NavigationHome.kt",
+        "newTransaction": "ui/navigation/NavigationNewTransaction.kt",
+        "root": {
+          "main": "ui/navigation/NavigationRoot.kt",
+          "debug": "debug/ui/navigation/NavigationRoot.kt",
+          "release": "release/ui/navigation/NavigationRoot.kt"
+        }
+      },
+      "transitions": "ui/navigation/NavigationTransitions.kt",
+      "tabNavigator": "ui/navigation/BottomTabNavigator.kt",
+      "debugContracts": "ui/navigation/DebugNavigationContracts.kt",
+      "debug": {
+        "module": "debug/ui/navigation/DebugNavigationModule.kt",
+        "resolver": "debug/ui/navigation/DebugNavigationResolver.kt"
+      },
+      "release": {
+        "module": "release/ui/navigation/ReleaseNavigationModule.kt",
+        "resolver": "release/ui/navigation/ReleaseStartDestinationResolver.kt"
+      }
+    },
+    "uiModels": {
+      "_note": "FILL one entry per file in ui/model/uimodel/ — these are what VMs expose to screens",
+      "FILL_UiModelName": {
+        "file": "FILL: ui/model/uimodel/FillUiModelName.kt",
+        "fields": [
+          "FILL: fieldName: Type"
+        ]
+      }
+    },
+    "uiState": {
+      "_note": "FILL one entry per file in ui/model/state/",
+      "FILL_StateName": {
+        "file": "FILL: ui/model/state/FillStateName.kt",
+        "fields": [
+          "FILL: fieldName: Type = default"
+        ],
+        "usedBy": "FILL: which ViewModel"
+      }
+    },
+    "uiEvents": {
+      "_note": "FILL one entry per file in ui/model/event/",
+      "FILL_EventName": {
+        "file": "FILL: ui/model/event/FillEventName.kt",
+        "cases": [
+          "FILL: sealed class/interface cases"
+        ]
+      }
+    },
+    "mappers": {
+      "_note": "FILL one entry per mapper file — pattern: Entity.toUiModel() or Model.toUiModel()",
+      "FILL_MapperName": {
+        "file": "FILL: ui/mapper/FillMapperName.kt",
+        "maps": "FILL: SourceType → TargetType",
+        "sig": "FILL: fun XxxEntity.toUiModel(deps...) : XxxUIModel"
+      }
+    },
+    "util": {
+      "DateUtils": {
+        "file": "ui/util/DateUtils.kt",
+        "keyFns": [
+          "FILL: e.g. getStartOfDayMs(Long): Long"
+        ]
+      },
+      "GoogleAuthManager": {
+        "file": "ui/util/GoogleAuthManager.kt"
+      },
+      "IconResolver": {
+        "file": "ui/util/IconResolver.kt"
+      },
+      "NavigationAnimations": {
+        "file": "ui/util/NavigationAnimations.kt"
+      }
+    },
+    "constants": {
+      "Duration": "ui/constants/Duration.kt — FILL: animation duration constants"
+    },
+    "featureComponents": {
+      "_note": "App-specific (non-template) composables consumed by screens. FILL by scanning ui/component/",
+      "FILL_FeatureArea": {
+        "_example": "accountstab | historytab | newtransaction | onboarding | bottomnav",
+        "files": [
+          "FILL: ui/component/{area}/FileName.kt — brief purpose"
+        ]
+      }
+    }
+  },
+  "debug": {
+    "_purpose": "Debug source set — never present in release builds",
+    "playground": {
+      "screen": "debug/ui/screen/playground/ComponentPlaygroundScreen.kt",
+      "components": "debug/ui/screen/playground/component/{Name}Playground.kt — one per template component",
+      "helpers": {
+        "PlaygroundControls": "debug/ui/screen/playground/helper/PlaygroundControls.kt — OptionDropdown, OptionToggle, OptionSlider",
+        "PlaygroundEntries": "debug/ui/screen/playground/helper/PlaygroundEntries.kt",
+        "PlaygroundLabels": "debug/ui/screen/playground/helper/PlaygroundLabels.kt",
+        "DatePlaygroundSavers": "debug/ui/screen/playground/helper/DatePlaygroundSavers.kt"
+      }
+    },
+    "mockData": {
+      "interceptor": "debug/data/remote/interceptor/MockInterceptor.kt",
+      "files": "debug/res/raw/mock_*.json",
+      "module": "debug/data/di/MockNetworkModule.kt"
+    },
+    "testScreen": "debug/ui/screen/TestScreen.kt",
+    "testViewModel": "debug/ui/viewmodel/TestViewModel.kt",
+    "testPreferenceManager": "debug/common/TestPreferenceManager.kt"
+  },
+  "tests": {
+    "_note": "FILL by scanning test/ — key test classes only, not every file",
+    "unitTestRoot": "test/java/com/itsjeel01/finsiblefrontend/",
+    "coverage": {
+      "common": [
+        "FILL: tested class names"
+      ],
+      "data": [
+        "FILL: tested class names"
+      ],
+      "ui": [
+        "FILL: tested class names"
+      ]
+    }
+  },
+  "symbols": {
+    "_purpose": "O(1) symbol → file lookup. FILL every public class, object, top-level function the agent might reference.",
+    "_note": "Extend this map aggressively — it's the primary token-saver. Format: SymbolName → relative path",
+    "FinsibleTheme": "ui/theme/FinsibleTheme.kt",
+    "FinsibleColors": "ui/theme/FinsibleColors.kt",
+    "FinsibleTypes": "ui/theme/FinsibleTypes.kt",
+    "FinsibleDimes": "ui/theme/FinsibleDimes.kt",
+    "FinsibleFontFamily": "ui/theme/FinsibleFontFamily.kt",
+    "FinsibleGradients": "ui/theme/FinsibleGradients.kt",
+    "FinsibleColorResolver": "ui/theme/FinsibleColorResolver.kt",
+    "FinsibleUiScaler": "ui/theme/FinsibleUiScaler.kt",
+    "DeviceInfo": "ui/theme/DeviceInfo.kt",
+    "FinsibleSize": "ui/component/templates/core/FinsibleSize.kt",
+    "FinsibleShape": "ui/component/templates/core/FinsibleShape.kt",
+    "FinsibleIconPosition": "ui/component/templates/core/FinsibleIconPosition.kt",
+    "FinsibleBadgeType": "ui/component/templates/model/FinsibleBadgeType.kt",
+    "FILL_SymbolName": "FILL: relative/path/FileName.kt"
+  },
+  "rules": {
+    "_purpose": "Architectural invariants the agent must enforce — checked before any code generation",
+    "no-material-theme-extension": {
+      "scope": "**/*.kt",
+      "rule": "Never extend MaterialTheme. FinsibleTheme wraps it."
+    },
+    "composition-local-only": {
+      "scope": "ui/component/templates/**",
+      "rule": "Tokens via CompositionLocal / FinsibleTheme object only — never pass tokens as params."
+    },
+    "flat-template-packages": {
+      "scope": "ui/component/templates/**",
+      "rule": "No per-component subfolders. Flat 6-package layout: component/core/default/model/preview/util."
+    },
+    "no-preview-in-main": {
+      "scope": "ui/component/templates/**",
+      "rule": "@Preview only in preview/ package — never in component/ or default/."
+    },
+    "playground-debug-only": {
+      "scope": "ui/screen/playground/**",
+      "rule": "Playground files live in debug source set only — never main."
+    },
+    "immutable-collections-in-state": {
+      "scope": "ui/viewmodel/**",
+      "rule": "All StateFlow<T> where T contains collections must use ImmutableList/ImmutableMap."
+    },
+    "io-dispatcher-for-db": {
+      "scope": "ui/viewmodel/**",
+      "rule": "DB/network calls inside withContext(Dispatchers.IO). State updates on Main."
+    },
+    "gate-before-write": {
+      "scope": "**",
+      "rule": "No file writes without /approve. All writes staged via gate extension."
+    }
+  }
+}

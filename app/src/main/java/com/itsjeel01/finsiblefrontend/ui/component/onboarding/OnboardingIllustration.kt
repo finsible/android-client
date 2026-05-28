@@ -14,6 +14,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
+import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleDurations
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.OnboardingViewModel
 
 @Composable
@@ -29,7 +30,7 @@ fun OnboardingIllustration(
         Crossfade(
             targetState = currentItem,
             animationSpec = tween(
-                durationMillis = Duration.MS_350.toInt(),
+                durationMillis = FinsibleDurations.values.shiftMs,
                 easing = FastOutSlowInEasing
             )
         ) { index ->

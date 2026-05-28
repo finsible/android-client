@@ -19,8 +19,8 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.CalendarConstraints
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleDateRange
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleMonthYear
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
+import com.itsjeel01.finsiblefrontend.ui.theme.bold
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -34,15 +34,15 @@ fun FinsibleDatePickerPreview() {
     var displayYear by remember { mutableIntStateOf(selectedMonthYear.year) }
 
     FinsibleComponentPreviewScaffold {
-        val colors = FinsibleTheme.colors
+        val s = FinsibleTheme.colors
 
         FinsibleText(
             text = "Finsible Date Picker",
-            variant = FinsibleTextVariant.SmallHeadingBold,
-            color = colors.brandAccent,
+            textStyle = FinsibleTheme.typography.displaySm.bold(),
+            color = s.brandInteractive,
         )
 
-        HorizontalDivider(color = colors.divider)
+        HorizontalDivider(color = s.borderSubtle)
 
         FinsiblePreviewSection(title = "Single Date") {
             FinsibleDatePicker(
@@ -59,7 +59,7 @@ fun FinsibleDatePickerPreview() {
         }
 
         FinsiblePreviewSection(title = "Month / Year Coverage Matrix") {
-            Column(verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d8)) {
+            Column(verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.inlineMd)) {
                 listOf(FinsibleSize.Small, FinsibleSize.Medium, FinsibleSize.Large).forEach { size ->
                     MonthYearPreviewRow(
                         selectedMonthYear = selectedMonthYear,
@@ -82,14 +82,14 @@ private fun MonthYearPreviewRow(
     onDisplayYearChange: (Int) -> Unit,
     size: FinsibleSize,
 ) {
-    val colors = FinsibleTheme.colors
+    val s = FinsibleTheme.colors
 
-    Column(verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d4)) {
+    Column(verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackXs)) {
 
         FinsibleText(
             text = size.name,
-            variant = FinsibleTextVariant.SmallLabelRegular,
-            color = colors.secondaryContent,
+            textStyle = FinsibleTheme.typography.bodySm,
+            color = s.contentSecondary,
         )
 
         FinsibleMonthYearPicker(

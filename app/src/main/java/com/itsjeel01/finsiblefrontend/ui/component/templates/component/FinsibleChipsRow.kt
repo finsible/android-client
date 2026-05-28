@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleChipsRowDefaults
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleChipsRowConfig
@@ -41,6 +42,7 @@ fun FinsibleChipsRow(
             modifier = modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(config.horizontalSpacing),
             verticalArrangement = Arrangement.spacedBy(config.verticalSpacing),
+            itemVerticalAlignment = Alignment.CenterVertically
         ) {
             chips.forEachIndexed { index, chip ->
                 val chipKey = chipKeys?.get(index) ?: index

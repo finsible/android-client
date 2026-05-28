@@ -30,9 +30,9 @@ abstract class SyncableLocalRepository<DTO, Entity>(
      * Create entity locally and queue for sync. Returns entity with assigned local ID.
      *
      * @param entityFactory Function that creates entity with provided local ID
-     * @return Created entity with local ID and Status.PENDING
+     * @return Created entity with local ID and `Status.PENDING`
      */
-    fun queueCreateEntity(entityFactory: (localId: Long) -> Entity): Entity {
+    suspend fun queueCreateEntity(entityFactory: (localId: Long) -> Entity): Entity {
         val localId = localIdGenerator.nextLocalId()
         val entity = entityFactory(localId).apply {
             syncStatus = Status.PENDING

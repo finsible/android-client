@@ -29,12 +29,12 @@ import com.itsjeel01.finsiblefrontend.ui.viewmodel.TransactionsFilterViewModel
 import java.text.DecimalFormatSymbols
 import java.util.Calendar
 
-/** Bottom sheet for transaction filters and sort options. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionFilterSheet(
     isVisible: Boolean,
     appliedFilters: TransactionsFilterState,
+    currencyCode: String,
     onDismiss: () -> Unit,
     onApply: (TransactionsFilterState) -> Unit,
     modifier: Modifier = Modifier,
@@ -51,7 +51,7 @@ fun TransactionFilterSheet(
 
     // Seed ViewModel from the currently applied filters whenever the sheet becomes visible.
     LaunchedEffect(isVisible) {
-        viewModel.initFromFilterState(appliedFilters, calendar)
+        viewModel.initFromFilterState(appliedFilters, calendar, currencyCode)
     }
 
     if (sheetState.showDateRangePicker) {
@@ -66,8 +66,8 @@ fun TransactionFilterSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = bottomSheetState,
-        containerColor = FinsibleTheme.colors.primaryBackground,
-        contentColor = FinsibleTheme.colors.primaryContent,
+        containerColor = FinsibleTheme.colors.surfaceBase,
+        contentColor = FinsibleTheme.colors.contentPrimary,
         dragHandle = { SheetDragHandle() },
         sheetGesturesEnabled = true,
         modifier = modifier
@@ -76,8 +76,8 @@ fun TransactionFilterSheet(
             modifier = Modifier
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = FinsibleTheme.dimes.d20)
-                .padding(bottom = FinsibleTheme.dimes.d32)
+                .padding(horizontal = FinsibleTheme.spacing.insetXl)
+                .padding(bottom = FinsibleTheme.spacing.inset3xl)
         ) {
             SheetHeader(
                 hasAnyActive = sheetState.hasAnySheetActive,

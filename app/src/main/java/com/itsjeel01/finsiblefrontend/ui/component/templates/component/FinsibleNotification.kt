@@ -1,4 +1,5 @@
 package com.itsjeel01.finsiblefrontend.ui.component.templates.component
+import androidx.compose.ui.unit.dp
 
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
@@ -53,9 +54,9 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleNotif
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleNotificationPosition
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleButtonVariant
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleNotificationVariant
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
+import com.itsjeel01.finsiblefrontend.ui.theme.medium
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -193,9 +194,9 @@ fun FinsibleNotification(
                         }
                     }
                 },
-            shape = RoundedCornerShape(FinsibleTheme.dimes.d12),
+            shape = RoundedCornerShape(FinsibleTheme.radius.md),
             colors = CardDefaults.cardColors(containerColor = colors.containerColor),
-            elevation = CardDefaults.cardElevation(defaultElevation = FinsibleTheme.dimes.d8)
+            elevation = CardDefaults.cardElevation(defaultElevation = FinsibleTheme.spacing.inlineMd)
         ) {
             Column {
                 val isSimpleNotification = subtitle == null && !showActionButton
@@ -203,12 +204,12 @@ fun FinsibleNotification(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = FinsibleTheme.dimes.d12, vertical = FinsibleTheme.dimes.d8),
+                        .padding(horizontal = FinsibleTheme.spacing.gapMd, vertical = FinsibleTheme.spacing.inlineMd),
                     verticalAlignment = if (isSimpleNotification) Alignment.CenterVertically else Alignment.Top,
-                    horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d8)
+                    horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.inlineMd)
                 ) {
                     Icon(
-                        modifier = Modifier.size(FinsibleTheme.dimes.d20),
+                        modifier = Modifier.size(FinsibleTheme.sizes.icon.lg - FinsibleTheme.spacing.insetXs),
                         painter = painterResource(id = customIcon ?: FinsibleNotificationDefaults.iconFor(variant)),
                         contentDescription = variant.name,
                         tint = colors.iconTintColor,
@@ -216,11 +217,11 @@ fun FinsibleNotification(
 
                     Column(
                         modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d2)
+                        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackMicro)
                     ) {
                         FinsibleText(
                             text = title,
-                            variant = FinsibleTextVariant.SmallBodyMedium,
+                            textStyle = FinsibleTheme.typography.bodyMd.medium(),
                             color = colors.titleColor,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis
@@ -229,18 +230,18 @@ fun FinsibleNotification(
                         subtitle?.let { sub ->
                             FinsibleText(
                                 text = sub,
-                                variant = FinsibleTextVariant.MicroLabelMedium,
+                                textStyle = FinsibleTheme.typography.labelSm.medium(),
                                 color = colors.subtitleColor,
                                 softWrap = true
                             )
                         }
 
                         if (showActionButton) {
-                            CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides FinsibleTheme.dimes.d0) {
+                            CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
                                 FinsibleButton(
                                     modifier = Modifier
-                                        .padding(top = FinsibleTheme.dimes.d6)
-                                        .requiredHeight(FinsibleTheme.dimes.d28),
+                                        .padding(top = FinsibleTheme.spacing.insetXs)
+                                        .requiredHeight(FinsibleTheme.sizes.touch.xs),
                                     text = actionLabel,
                                     onClick = {
                                         onAction()
@@ -250,7 +251,7 @@ fun FinsibleNotification(
                                     size = FinsibleSize.ExtraSmall,
                                     shapeVariant = FinsibleShape.Pill,
                                     sizes = FinsibleButtonDefaults.sizes(FinsibleSize.ExtraSmall).copy(
-                                        contentPadding = PaddingValues(horizontal = FinsibleTheme.dimes.d12, vertical = FinsibleTheme.dimes.d0)
+                                        contentPadding = PaddingValues(horizontal = FinsibleTheme.spacing.gapMd, vertical = 0.dp)
                                     )
                                 )
                             }
@@ -267,7 +268,7 @@ fun FinsibleNotification(
                             shapeVariant = FinsibleShape.Circle,
                             colors = FinsibleButtonDefaults.colors(
                                 variant = FinsibleButtonVariant.Text,
-                                contentColor = FinsibleTheme.colors.secondaryContent
+                                contentColor = FinsibleTheme.colors.contentSecondary
                             ),
                             icon = {
                                 Icon(
@@ -285,11 +286,11 @@ fun FinsibleNotification(
                         progress = { timeLeft },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(FinsibleTheme.dimes.d2)
+                            .height(FinsibleTheme.spacing.insetMicro)
                             .clip(
                                 RoundedCornerShape(
-                                    bottomStart = FinsibleTheme.dimes.d16,
-                                    bottomEnd = FinsibleTheme.dimes.d16
+                                    bottomStart = FinsibleTheme.radius.lg,
+                                    bottomEnd = FinsibleTheme.radius.lg
                                 )
                             ),
                         color = colors.progressIndicatorColor,

@@ -9,6 +9,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,11 +41,11 @@ import com.itsjeel01.finsiblefrontend.R
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleIconPosition
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleToggleDefaults
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleToggleArrangement
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleToggleColors
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleToggleLabelPosition
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleToggleSizes
+import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
 /** Templatised toggle (switch) with optional leading icon label.
  *
@@ -52,6 +53,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleToggl
  * @param onCheckedChange Called when the checked state changes.
  * @param modifier The modifier to be applied to the toggle.
  * @param label The label to be displayed next to the toggle.
+ * @param hint The hint to be displayed below the label.
  * @param enabled Whether the toggle is enabled.
  * @param size The size of the toggle.
  * @param colors The colors to be used for the toggle.
@@ -68,6 +70,7 @@ fun FinsibleToggle(
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     label: String? = null,
+    hint: String? = null,
     enabled: Boolean = true,
     size: FinsibleSize = FinsibleSize.Medium,
     colors: FinsibleToggleColors = FinsibleToggleDefaults.colors(),
@@ -103,6 +106,11 @@ fun FinsibleToggle(
         targetValue = if (enabled) colors.labelColor else colors.disabledLabelColor,
         animationSpec = spring(stiffness = Spring.StiffnessMedium),
         label = "labelColor"
+    )
+    val hintColor by animateColorAsState(
+        targetValue = if (enabled) colors.hintColor else colors.disabledHintColor,
+        animationSpec = spring(stiffness = Spring.StiffnessMedium),
+        label = "hintColor"
     )
 
     val stateDescription = if (checked) {
@@ -146,15 +154,27 @@ fun FinsibleToggle(
                     CompositionLocalProvider(LocalContentColor provides labelColor) { icon() }
                 }
 
-                label?.let {
-                    FinsibleText(
-                        text = it,
-                        variant = FinsibleTextVariant.SmallBodyMedium,
-                        color = labelColor,
-                        textStyleOverride = sizes.labelStyle,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                if (!label.isNullOrBlank() || !hint.isNullOrBlank()) {
+                    Column(verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.insetNone)) {
+                        label?.let {
+                            FinsibleText(
+                                text = it,
+                                color = labelColor,
+                                textStyle = sizes.labelStyle,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                        hint?.let {
+                            FinsibleText(
+                                text = it,
+                                color = hintColor,
+                                textStyle = sizes.hintStyle,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
                 }
 
                 if (labelIcon != null && labelIconPosition == FinsibleIconPosition.Trailing) {
@@ -164,12 +184,17 @@ fun FinsibleToggle(
         }
 
         val toggleContent: @Composable () -> Unit = {
+            val trackBorderColor = when {
+                !enabled -> colors.disabledTrackColor
+                !checked -> colors.trackOffBorderColor
+                else -> Color.Transparent
+            }
             Box(
                 modifier = Modifier
                     .size(width = sizes.width, height = sizes.height)
                     .clip(CircleShape)
                     .background(trackColor)
-                    .border(width = sizes.padding, color = Color.Transparent, shape = CircleShape)
+                    .border(width = FinsibleTheme.stroke.hairline, color = trackBorderColor, shape = CircleShape)
             ) {
                 val travel = sizes.width - (sizes.padding * 2 + sizes.thumbDiameter)
                 val offsetX by animateDpAsState(
@@ -194,19 +219,15 @@ fun FinsibleToggle(
         }
 
         if (labelPosition == FinsibleToggleLabelPosition.Leading) {
-            if (!label.isNullOrBlank() || labelIcon != null) {
+            if (!label.isNullOrBlank() || !hint.isNullOrBlank() || labelIcon != null) {
                 labelContent()
             }
             toggleContent()
         } else {
             toggleContent()
-            if (!label.isNullOrBlank() || labelIcon != null) {
+            if (!label.isNullOrBlank() || !hint.isNullOrBlank() || labelIcon != null) {
                 labelContent()
             }
         }
     }
 }
-
-// clickableWithoutRipple removed; inline clickable used above
-
-

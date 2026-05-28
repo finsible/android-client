@@ -4,7 +4,9 @@ import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -19,8 +21,9 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleBadgeType
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleButtonVariant
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
+import com.itsjeel01.finsiblefrontend.ui.theme.semiBold
+import com.itsjeel01.finsiblefrontend.ui.theme.bold
 
 @Preview(name = "Light Mode", showBackground = true, widthDp = 700, heightDp = 2800)
 @Preview(name = "Dark Mode", showBackground = true, widthDp = 700, heightDp = 2800, uiMode = Configuration.UI_MODE_NIGHT_YES)
@@ -34,27 +37,27 @@ fun FinsibleButtonPreview() {
     }
 
     FinsibleComponentPreviewScaffold {
-        val dimes = FinsibleTheme.dimes
-        val colors = FinsibleTheme.colors
+        val sp = FinsibleTheme.spacing
+        val s = FinsibleTheme.colors
 
         // Header
         Column {
             FinsibleText(
                 text = "Finsible Buttons",
-                variant = FinsibleTextVariant.SmallHeadingBold,
-                color = colors.brandAccent
+                textStyle = FinsibleTheme.typography.displaySm.bold(),
+                color = s.brandInteractive
             )
             FinsibleText(
                 text = "Visual Component Guide",
-                variant = FinsibleTextVariant.BodyRegular,
-                color = colors.secondaryContent
+                textStyle = FinsibleTheme.typography.bodyLg,
+                color = s.contentSecondary
             )
         }
 
-        HorizontalDivider(color = colors.divider)
+        HorizontalDivider(color = s.borderSubtle)
 
         FinsiblePreviewSection("Variants") {
-            Row(horizontalArrangement = Arrangement.spacedBy(dimes.d12)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(sp.gapMd)) {
                 FinsibleButton(onClick = {}, variant = FinsibleButtonVariant.Filled, text = "Filled")
                 FinsibleButton(onClick = {}, variant = FinsibleButtonVariant.FilledTonal, text = "Tonal")
                 FinsibleButton(onClick = {}, variant = FinsibleButtonVariant.Outlined, text = "Outlined")
@@ -65,13 +68,13 @@ fun FinsibleButtonPreview() {
 
         FinsiblePreviewSection("Interactive States") {
             // Filled Comparison
-            Row(horizontalArrangement = Arrangement.spacedBy(dimes.d12)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(sp.gapMd)) {
                 FinsibleButton(onClick = {}, variant = FinsibleButtonVariant.Filled, text = "Enabled")
                 FinsibleButton(onClick = {}, enabled = false, variant = FinsibleButtonVariant.Filled, text = "Disabled")
                 FinsibleButton(onClick = {}, loading = true, variant = FinsibleButtonVariant.Filled, text = "Loading")
             }
             // Outlined Comparison
-            Row(horizontalArrangement = Arrangement.spacedBy(dimes.d12)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(sp.gapMd)) {
                 FinsibleButton(onClick = {}, variant = FinsibleButtonVariant.Outlined, text = "Default")
                 FinsibleButton(onClick = {}, enabled = false, variant = FinsibleButtonVariant.Outlined, text = "Disabled")
                 FinsibleButton(onClick = {}, loading = true, variant = FinsibleButtonVariant.Outlined, text = "Loading")
@@ -81,7 +84,7 @@ fun FinsibleButtonPreview() {
         FinsiblePreviewSection("Sizes") {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(dimes.d12),
+                horizontalArrangement = Arrangement.spacedBy(sp.gapMd),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 SizeDemo(FinsibleSize.ExtraSmall, "XS")
@@ -94,7 +97,7 @@ fun FinsibleButtonPreview() {
 
         // 4. Content Layout (Icons & Badges)
         FinsiblePreviewSection("Icons & Badges") {
-            Row(horizontalArrangement = Arrangement.spacedBy(dimes.d12)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(sp.gapMd)) {
                 FinsibleButton(
                     onClick = {},
                     icon = callIcon,
@@ -129,8 +132,90 @@ fun FinsibleButtonPreview() {
             }
         }
 
+        FinsiblePreviewSection("Micro Buttons (enforceMinTouchTargetSize = false)") {
+            FinsibleText(
+                text = "Icon-only",
+                textStyle = FinsibleTheme.typography.labelSm.semiBold(),
+                colorVariant = com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant.Secondary
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(sp.gapSm)) {
+                FinsibleButton(
+                    onClick = {},
+                    size = FinsibleSize.ExtraSmall,
+                    iconOnly = true,
+                    shapeVariant = FinsibleShape.Rounded,
+                    enforceMinTouchTargetSize = false,
+                    icon = { Icon(painterResource(android.R.drawable.ic_menu_call), contentDescription = null) }
+                )
+                FinsibleButton(
+                    onClick = {},
+                    size = FinsibleSize.ExtraSmall,
+                    iconOnly = true,
+                    shapeVariant = FinsibleShape.Circle,
+                    enforceMinTouchTargetSize = false,
+                    icon = { Icon(painterResource(android.R.drawable.ic_menu_call), contentDescription = null) }
+                )
+                FinsibleButton(
+                    onClick = {},
+                    size = FinsibleSize.Small,
+                    iconOnly = true,
+                    shapeVariant = FinsibleShape.Rounded,
+                    enforceMinTouchTargetSize = false,
+                    icon = { Icon(painterResource(android.R.drawable.ic_menu_call), contentDescription = null) }
+                )
+                FinsibleButton(
+                    onClick = {},
+                    size = FinsibleSize.Small,
+                    iconOnly = true,
+                    shapeVariant = FinsibleShape.Circle,
+                    enforceMinTouchTargetSize = false,
+                    icon = { Icon(painterResource(android.R.drawable.ic_menu_call), contentDescription = null) }
+                )
+            }
+            Spacer(Modifier.height(sp.stackSm))
+            FinsibleText(
+                text = "Labeled",
+                textStyle = FinsibleTheme.typography.labelSm.semiBold(),
+                colorVariant = com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant.Secondary
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(sp.gapSm)) {
+                FinsibleButton(
+                    onClick = {},
+                    size = FinsibleSize.ExtraSmall,
+                    enforceMinTouchTargetSize = false,
+                    text = "XS"
+                )
+                FinsibleButton(
+                    onClick = {},
+                    size = FinsibleSize.Small,
+                    enforceMinTouchTargetSize = false,
+                    text = "SM"
+                )
+                FinsibleButton(
+                    onClick = {},
+                    size = FinsibleSize.ExtraSmall,
+                    variant = FinsibleButtonVariant.Outlined,
+                    enforceMinTouchTargetSize = false,
+                    text = "XS Out"
+                )
+                FinsibleButton(
+                    onClick = {},
+                    size = FinsibleSize.Small,
+                    variant = FinsibleButtonVariant.FilledTonal,
+                    enforceMinTouchTargetSize = false,
+                    text = "SM Tonal"
+                )
+            }
+            Spacer(Modifier.height(sp.stackXl))
+            FinsibleText(
+                text = "Compare with equivalent standard sizes above (Sizes section)",
+                textStyle = FinsibleTheme.typography.bodySm,
+                colorVariant = com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextColorVariant.Tertiary
+            )
+        }
+
         FinsiblePreviewSection("Shapes & Layout") {
-            Row(horizontalArrangement = Arrangement.spacedBy(dimes.d12)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(sp.gapMd)) {
                 FinsibleButton(onClick = {}, shapeVariant = FinsibleShape.Pill, text = "Pill")
                 FinsibleButton(
                     onClick = {},
@@ -152,13 +237,13 @@ fun FinsibleButtonPreview() {
             FinsibleButtonVariant.entries.forEach { matrixVariant ->
                 FinsibleText(
                     text = matrixVariant.name,
-                    variant = FinsibleTextVariant.SmallBodySemiBold,
-                    color = colors.brandAccent
+                    textStyle = FinsibleTheme.typography.bodyMd.semiBold(),
+                    color = s.brandInteractive
                 )
 
                 FinsibleSize.entries.forEach { matrixSize ->
                     Row(
-                        horizontalArrangement = Arrangement.spacedBy(dimes.d8),
+                        horizontalArrangement = Arrangement.spacedBy(sp.inlineMd),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         FinsibleButton(
@@ -209,7 +294,7 @@ fun FinsibleButtonPreview() {
                     }
                 }
 
-                HorizontalDivider(color = colors.divider)
+                HorizontalDivider(color = s.borderSubtle)
             }
         }
     }

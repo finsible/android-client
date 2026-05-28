@@ -26,14 +26,32 @@ class TransactionsFilterViewModel @Inject constructor(
     val filterState: StateFlow<TransactionsFilterState> = _filterState.asStateFlow()
 
     /** Seed sheet state from an applied [TransactionsFilterState] and the current calendar. */
-    fun initFromFilterState(source: TransactionsFilterState, calendar: Calendar) {
+    fun initFromFilterState(source: TransactionsFilterState, calendar: Calendar, currencyCode: String) {
         val currentYear = calendar.get(Calendar.YEAR)
 
         _filterState.value = source.copy(
             selectedYear = if (source.selectedYear == -1) currentYear else source.selectedYear,
             selectedMonth = source.selectedMonth,
-            amountMinText = source.amountMin?.let { currencyFormatter.formatWithoutSign(it) } ?: "",
-            amountMaxText = source.amountMax?.let { currencyFormatter.formatWithoutSign(it) } ?: "",
+            amountMinText = source.amountMin?.let {
+                currencyFormatter.format(
+                    centis = it,
+                    currencyCode = currencyCode, // Pass it here
+                    options = CurrencyFormatter.CurrencyFormatOptions(
+                        includeCurrencySymbol = false,
+                        includeSign = false,
+                    )
+                )
+            } ?: "",
+            amountMaxText = source.amountMax?.let {
+                currencyFormatter.format(
+                    centis = it,
+                    currencyCode = currencyCode, // And pass it here
+                    options = CurrencyFormatter.CurrencyFormatOptions(
+                        includeCurrencySymbol = false,
+                        includeSign = false,
+                    )
+                )
+            } ?: "",
             showDateRangePicker = false,
             amountRangeError = false
         )

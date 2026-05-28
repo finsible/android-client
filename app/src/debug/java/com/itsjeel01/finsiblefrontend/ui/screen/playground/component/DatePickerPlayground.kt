@@ -19,7 +19,6 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleM
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleText
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.CalendarConstraints
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleMonthYear
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.*
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import java.time.LocalDate
@@ -64,8 +63,8 @@ fun DatePickerPlayground() {
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = FinsibleTheme.dimes.d16, vertical = FinsibleTheme.dimes.d12),
-        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.dimes.d12)
+            .padding(horizontal = FinsibleTheme.spacing.insetLg, vertical = FinsibleTheme.spacing.gapMd),
+        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackMd)
     ) {
         FinsibleDatePicker(
             onDateSelected = { selectedDate = it },
@@ -75,8 +74,8 @@ fun DatePickerPlayground() {
 
         FinsibleText(
             text = stringResource(R.string.component_playground_date_start_boundary),
-            variant = FinsibleTextVariant.SmallLabelRegular,
-            color = FinsibleTheme.colors.secondaryContent,
+            textStyle = FinsibleTheme.typography.bodySm,
+            color = FinsibleTheme.colors.contentSecondary,
         )
 
         FinsibleMonthYearPicker(
@@ -101,8 +100,8 @@ fun DatePickerPlayground() {
 
         FinsibleText(
             text = stringResource(R.string.component_playground_date_end_boundary),
-            variant = FinsibleTextVariant.SmallLabelRegular,
-            color = FinsibleTheme.colors.secondaryContent,
+            textStyle = FinsibleTheme.typography.bodySm,
+            color = FinsibleTheme.colors.contentSecondary,
         )
 
         FinsibleMonthYearPicker(

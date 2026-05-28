@@ -2,8 +2,10 @@ package com.itsjeel01.finsiblefrontend.ui.screen
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
@@ -31,11 +33,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.itsjeel01.finsiblefrontend.R
-import com.itsjeel01.finsiblefrontend.data.di.hiltCurrencyFormatter
 import com.itsjeel01.finsiblefrontend.ui.component.historytab.FilteredResultsSummary
 import com.itsjeel01.finsiblefrontend.ui.component.historytab.TransactionEmptyContent
 import com.itsjeel01.finsiblefrontend.ui.component.historytab.TransactionListContent
-import com.itsjeel01.finsiblefrontend.ui.component.historytab.TransactionSearchHeader
+import com.itsjeel01.finsiblefrontend.ui.component.historytab.TransactionSearchBar
 import com.itsjeel01.finsiblefrontend.ui.component.historytab.filtersbottomsheet.TransactionFilterSheet
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleButton
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleLoader
@@ -43,9 +44,7 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleT
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleButtonVariant
-import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleTextVariant
 import com.itsjeel01.finsiblefrontend.ui.constants.Duration
-import com.itsjeel01.finsiblefrontend.ui.model.SortOption
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.HistoryViewModel
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -60,7 +59,7 @@ fun HistoryTab(
     viewModel: HistoryViewModel,
     modifier: Modifier = Modifier
 ) {
-    val currencyFormatter = hiltCurrencyFormatter()
+    val defaultCurrencyCode by viewModel.defaultCurrencyCode.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val filterState by viewModel.filterState.collectAsStateWithLifecycle()
     val isSearchExpanded by viewModel.isSearchExpanded.collectAsStateWithLifecycle()
@@ -101,6 +100,7 @@ fun HistoryTab(
     TransactionFilterSheet(
         isVisible = showFilterSheet,
         appliedFilters = filterState,
+        currencyCode = defaultCurrencyCode,
         onDismiss = {
             scope.launch { filterSheetState.hide() }.invokeOnCompletion { showFilterSheet = false }
         },
@@ -114,29 +114,32 @@ fun HistoryTab(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = FinsibleTheme.dimes.d16, vertical = FinsibleTheme.dimes.d12)
+                .padding(horizontal = FinsibleTheme.spacing.insetLg, vertical = FinsibleTheme.spacing.stackMd)
         ) {
-            // Title, Search and Filter
-            TransactionSearchHeader(
-                isExpanded = isSearchExpanded,
-                searchQuery = filterState.searchQuery,
-                onSearchQueryChange = { viewModel.updateSearchQuery(it) },
-                onSearchIconClick = { viewModel.toggleSearchExpanded() },
-                onCancelClick = { viewModel.collapseSearch() },
-                onFilterClick = { showFilterSheet = true },
-                activeFilterCount = filterState.activeFilterCount,
-                hasActiveSort = filterState.sortOption != SortOption.NEWEST_FIRST
-            )
+            // Inline search bar (expandable via global header button)
+            AnimatedVisibility(
+                visible = isSearchExpanded,
+                enter = fadeIn(tween(150)) + expandVertically(tween(200)),
+                exit = fadeOut(tween(100)) + shrinkVertically(tween(150))
+            ) {
+                TransactionSearchBar(
+                    value = filterState.searchQuery,
+                    onValueChange = { viewModel.updateSearchQuery(it) },
+                    onClose = { viewModel.collapseSearch() }
+                )
+                Spacer(Modifier.height(FinsibleTheme.spacing.stackMd))
+            }
 
-            Spacer(Modifier.height(FinsibleTheme.dimes.d16))
+            Spacer(Modifier.height(FinsibleTheme.spacing.stackLg))
 
             // Summary Card for filtered/sorted results
             if (filterState.hasActiveFiltersOrSearch && uiState.filteredSummary != null) {
                 FilteredResultsSummary(
                     summary = uiState.filteredSummary!!,
-                    currencyFormatter = currencyFormatter
+                    currencyFormatter = viewModel.currencyFormatter,
+                    defaultCurrencyCode = defaultCurrencyCode
                 )
-                Spacer(Modifier.height(FinsibleTheme.dimes.d12))
+                Spacer(Modifier.height(FinsibleTheme.spacing.stackMd))
             }
 
             when {
@@ -156,8 +159,8 @@ fun HistoryTab(
                     ) {
                         FinsibleText(
                             text = uiState.error ?: stringResource(R.string.unknown_error),
-                            color = FinsibleTheme.colors.error,
-                            variant = FinsibleTextVariant.BodyRegular
+                            color = FinsibleTheme.colors.feedbackError,
+                            textStyle = FinsibleTheme.typography.bodyMd
                         )
                     }
                 }
@@ -178,7 +181,8 @@ fun HistoryTab(
                         dateFilterModes = dateFilterModes,
                         hasActiveFiltersOrSearch = filterState.hasActiveFiltersOrSearch,
                         listState = listState,
-                        currencyFormatter = currencyFormatter,
+                        defaultCurrencyCode = defaultCurrencyCode,
+                        currencyFormatter = viewModel.currencyFormatter,
                         onToggleDateFilter = { viewModel.toggleDateFilter(it) }
                     )
                 }
@@ -194,7 +198,7 @@ fun HistoryTab(
             visible = showScrollToTop,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = FinsibleTheme.dimes.d16),
+                .padding(bottom = FinsibleTheme.spacing.stackLg),
             enter = fadeIn(tween(Duration.MS_200.toInt())) + slideInVertically(tween(Duration.MS_200.toInt())) { it },
             exit = fadeOut(tween(Duration.MS_150.toInt())) + slideOutVertically(tween(Duration.MS_150.toInt())) { it }
         ) {

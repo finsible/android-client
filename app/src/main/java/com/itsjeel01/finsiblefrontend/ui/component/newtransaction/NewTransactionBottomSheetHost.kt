@@ -8,20 +8,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import com.itsjeel01.finsiblefrontend.data.model.Currency
+import com.itsjeel01.finsiblefrontend.ui.component.newtransaction.sheet.CategorySelectionSheetContent
+import com.itsjeel01.finsiblefrontend.ui.component.newtransaction.sheet.CurrencySheetContent
+import com.itsjeel01.finsiblefrontend.ui.component.newtransaction.sheet.DatePickerSheetContent
+import com.itsjeel01.finsiblefrontend.ui.component.newtransaction.sheet.SelectAccountBottomSheetContent
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleBottomSheet
 import com.itsjeel01.finsiblefrontend.ui.component.templates.component.FinsibleButton
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleShape
 import com.itsjeel01.finsiblefrontend.ui.component.templates.core.FinsibleSize
 import com.itsjeel01.finsiblefrontend.ui.component.templates.default.FinsibleBottomSheetDefaults
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleButtonVariant
-import com.itsjeel01.finsiblefrontend.ui.component.newtransaction.sheet.CategorySelectionSheetContent
-import com.itsjeel01.finsiblefrontend.ui.component.newtransaction.sheet.DatePickerSheetContent
-import com.itsjeel01.finsiblefrontend.ui.component.newtransaction.sheet.CurrencySheetContent
-import com.itsjeel01.finsiblefrontend.ui.component.newtransaction.sheet.SelectAccountBottomSheetContent
 import com.itsjeel01.finsiblefrontend.ui.model.event.NewTransactionUiEvent
 import com.itsjeel01.finsiblefrontend.ui.model.state.NewTransactionFormState
 import com.itsjeel01.finsiblefrontend.ui.model.state.NewTransactionSheetMode
@@ -38,12 +39,11 @@ fun NewTransactionBottomSheetHost(
     fromAccounts: List<AccountUIModel>,
     toAccounts: List<AccountUIModel>,
     onEvent: (NewTransactionUiEvent) -> Unit,
-    accentColor: androidx.compose.ui.graphics.Color,
-    surfaceColor: androidx.compose.ui.graphics.Color,
+    accentColor: Color,
+    surfaceColor: Color,
     availableCurrencies: List<Currency>,
     modifier: Modifier = Modifier
 ) {
-    // 1. Hoist these ABOVE the early return so they survive recompositions
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
@@ -64,7 +64,6 @@ fun NewTransactionBottomSheetHost(
         }
     }
 
-    // 2. Only render the sheet if mode is not null
     if (mode != null) {
         val sheetTitle = when (mode) {
             NewTransactionSheetMode.CURRENCY -> "Select Currency"
@@ -74,11 +73,8 @@ fun NewTransactionBottomSheetHost(
             NewTransactionSheetMode.ACCOUNT_TO_SELECTOR -> "Select Destination Account"
         }
 
-        // fixedHeightPercent expects a value between 0.0 and 1.0 (fraction of screen height).
-        // Previously 60f was passed here (mistakenly treated as "60%"), which gets coerced to 1f
-        // and results in a full-screen sheet. Use 0.6f for 60% of screen height.
         val fixedHeight: Float? = when (mode) {
-            NewTransactionSheetMode.CURRENCY -> 0.6f
+            NewTransactionSheetMode.CURRENCY -> 0.6f // 60% of screen height for currency list
             else -> null
         }
 

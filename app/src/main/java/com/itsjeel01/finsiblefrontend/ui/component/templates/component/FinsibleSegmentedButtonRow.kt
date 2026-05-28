@@ -52,7 +52,6 @@ import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleSegme
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.FinsibleSegmentedButtonSizes
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleSegmentedButtonArrangement
 import com.itsjeel01.finsiblefrontend.ui.component.templates.model.variant.FinsibleSegmentedButtonVariant
-import com.itsjeel01.finsiblefrontend.ui.constants.Duration
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
 
 /** Single-select segmented control API.

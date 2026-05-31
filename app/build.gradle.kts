@@ -11,6 +11,7 @@ plugins {
     id("kotlin-parcelize") // needed only for non-primitive classes
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
     alias(libs.plugins.objectboxPlugin)
+    alias(libs.plugins.roborazzi.plugin)
 }
 
 android {
@@ -138,6 +139,8 @@ dependencies {
     testImplementation(libs.roborazzi)
     testImplementation(libs.roborazzi.compose)
     testImplementation(libs.robolectric)
+    testImplementation(platform(libs.androidx.compose.bom))
+    testImplementation(libs.androidx.ui.test.junit4)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.mockk.android)

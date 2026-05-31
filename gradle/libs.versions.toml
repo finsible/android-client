@@ -10,7 +10,7 @@ coreKtx = "1.18.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
-mockk = "1.14.9"
+mockk = "1.14.11"
 coroutinesTest = "1.11.0"
 lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.13.0"
@@ -37,6 +37,11 @@ kotlinxCollectionsImmutable = "0.4.0"
 kizitonwoseCalendar = "2.10.1"
 datastore = "1.2.1"
 tink = "1.21.0"
+truth = "1.4.5"
+turbine = "1.2.1"
+roborazzi = "1.63.0"
+robolectric = "4.16.1"
+hiltTesting = "2.59.2"
 
 [libraries]
 androidx-activity = { module = "androidx.activity:activity", version.ref = "activityCompose" }
@@ -101,6 +106,12 @@ kizitonwose-calendar-compose = { module = "com.kizitonwose.calendar:compose", ve
 kizitonwose-calendar-core = { module = "com.kizitonwose.calendar:core", version.ref = "kizitonwoseCalendar" }
 androidx-datastore = { group = "androidx.datastore", name = "datastore", version.ref = "datastore" }
 tink-android = { group = "com.google.crypto.tink", name = "tink-android", version.ref = "tink" }
+truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
+turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
+roborazzi = { group = "io.github.takahirom.roborazzi", name = "roborazzi", version.ref = "roborazzi" }
+roborazzi-compose = { group = "io.github.takahirom.roborazzi", name = "roborazzi-compose", version.ref = "roborazzi" }
+robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
+hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hiltTesting" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

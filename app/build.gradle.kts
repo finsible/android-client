@@ -1,3 +1,6 @@
+@file:OptIn(ExperimentalRoborazziApi::class)
+
+import com.github.takahirom.roborazzi.ExperimentalRoborazziApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 

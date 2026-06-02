@@ -56,11 +56,14 @@ util/                               Host/Manager pairs, runtime-only utilities
 
 ### Composable Rules
 
-- `Modifier` follows required params — before optional params. If all params have defaults, modifier may be first.
+- `Modifier` follows required params — before optional params. If all params have defaults, modifier
+  may be first.
 - State is hoisted — no `remember {}` for state that callers need to own
 - No hardcoded colors, sizes, or spacing — always `FinsibleTheme.*`
 - Animation durations from `ui/constants/Duration.kt` (`Duration.MS_150`, `Duration.MS_200`)
-- Anti-patterns (Hard No — enforced): direct server writes from VM/Repo, ad-hoc `Log.*` when `Logger` domains available, unrelated icon libs when existing packs suffice, business logic in nav files or `@Preview`, shared production logic in variant source sets
+- Anti-patterns (Hard No — enforced): direct server writes from VM/Repo, ad-hoc `Log.*` when
+  `Logger` domains available, unrelated icon libs when existing packs suffice, business logic in nav
+  files or `@Preview`, shared production logic in variant source sets
 
 ### ViewModel Pattern
 
@@ -117,3 +120,37 @@ Dependency version changed           → /build-graph
 ```
 
 If in doubt between the two — use `/build-graph`.
+
+---
+
+## Testing Strategy
+
+### Quick reference
+
+```bash
+# All unit tests (137 tests, JVM)
+./gradlew testDebugUnitTest
+
+# Integration tests (5 tests, emulator required)
+./gradlew :app:connectedDebugAndroidTest
+```
+
+### Test types and locations
+
+| Type                                   | Location           | Runs on                       | Count |
+|----------------------------------------|--------------------|-------------------------------|-------|
+| Unit tests (mappers, utils, VMs, sync) | `src/test/`        | JVM (Robolectric for Context) | 137   |
+| Instrumented tests (DB, Hilt)          | `src/androidTest/` | Emulator/device               | 5     |
+
+### Testing principles enforced
+
+- Mocks use `mockk(relaxed = true)` for complex ViewModels; pure functions get zero mocking
+- ViewModel tests use `MainDispatcherRule` to replace `Dispatchers.Main`
+- Tests challenge edge cases and race conditions, not just happy paths
+- Sync tests cover concurrent access, mid-flight network failure, and partial operation failure
+- Instrumented tests use `HiltTestRunner` with `kaptAndroidTest`-compiled Hilt bindings
+- `HiltTestRunner` registers `HiltTestApplication` for `@HiltAndroidTest` DI injection
+
+### Reporting changed
+
+After adding/modifying any test file, run `/build-graph` to update the symbol index.

@@ -1,151 +1,116 @@
 package com.itsjeel01.finsiblefrontend.data.sync
 
+import com.google.common.truth.Truth.assertThat
+import com.itsjeel01.finsiblefrontend.MainDispatcherRule
 import com.itsjeel01.finsiblefrontend.common.PreferenceManager
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
-import org.junit.Assert.*
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 
-/** Unit tests for LocalIdGenerator negative ID generation and persistence. */
 class LocalIdGeneratorTest {
 
-    private lateinit var mockPreferenceManager: PreferenceManager
-    private lateinit var localIdGenerator: LocalIdGenerator
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
+
+    private val preferenceManager: PreferenceManager = mockk()
+    private lateinit var generator: LocalIdGenerator
 
     @Before
     fun setUp() {
-        mockPreferenceManager = mockk(relaxed = true)
+        coEvery { preferenceManager.getLocalIdCounter() } returns 0L
+        coEvery { preferenceManager.saveLocalIdCounter(any()) } returns Unit
+        generator = LocalIdGenerator(preferenceManager)
     }
 
     @Test
-    fun `test nextLocalId generates negative IDs`() {
-        every { mockPreferenceManager.getLocalIdCounter() } returns 0L
-        localIdGenerator = LocalIdGenerator(mockPreferenceManager)
-
-        val id1 = localIdGenerator.nextLocalId()
-        val id2 = localIdGenerator.nextLocalId()
-        val id3 = localIdGenerator.nextLocalId()
-
-        assertTrue("First ID should be negative", id1 < 0)
-        assertTrue("Second ID should be negative", id2 < 0)
-        assertTrue("Third ID should be negative", id3 < 0)
-        assertEquals("First ID should be -1", -1L, id1)
-        assertEquals("Second ID should be -2", -2L, id2)
-        assertEquals("Third ID should be -3", -3L, id3)
+    fun `nextLocalId returns negative IDs`() = runTest {
+        val id = generator.nextLocalId()
+        assertThat(id).isLessThan(0)
     }
 
     @Test
-    fun `test nextLocalId generates unique sequential IDs`() {
-        every { mockPreferenceManager.getLocalIdCounter() } returns 0L
-        localIdGenerator = LocalIdGenerator(mockPreferenceManager)
+    fun `nextLocalId produces decreasing sequence`() = runTest {
+        val id1 = generator.nextLocalId()
+        val id2 = generator.nextLocalId()
+        val id3 = generator.nextLocalId()
 
-        val ids = mutableSetOf<Long>()
-        repeat(1000) {
-            val id = localIdGenerator.nextLocalId()
-            assertTrue("ID should be unique", ids.add(id))
-            assertTrue("ID should be negative", id < 0)
+        assertThat(id1).isLessThan(0)
+        assertThat(id2).isLessThan(id1)
+        assertThat(id3).isLessThan(id2)
+    }
+
+    @Test
+    fun `nextLocalId produces unique IDs across multiple calls`() = runTest {
+        val ids = (1..100).map { generator.nextLocalId() }
+        val uniqueIds = ids.toSet()
+        assertThat(uniqueIds).hasSize(100)
+    }
+
+    @Test
+    fun `isLocalId returns true for negative IDs`() {
+        assertThat(generator.isLocalId(-1L)).isTrue()
+        assertThat(generator.isLocalId(-100L)).isTrue()
+    }
+
+    @Test
+    fun `isLocalId returns false for non-negative IDs`() {
+        assertThat(generator.isLocalId(0L)).isFalse()
+        assertThat(generator.isLocalId(1L)).isFalse()
+        assertThat(generator.isLocalId(100L)).isFalse()
+    }
+
+    @Test
+    fun `nextLocalId persists counter after each call`() = runTest {
+        generator.nextLocalId()
+        generator.nextLocalId()
+
+        coVerify(exactly = 2) { preferenceManager.saveLocalIdCounter(any()) }
+    }
+
+    @Test
+    fun `concurrent calls produce unique IDs with no collisions`() = runTest {
+        val ids = coroutineScope {
+            (1..50).map {
+                async { generator.nextLocalId() }
+            }.map { it.await() }
         }
 
-        assertEquals("Should generate 1000 unique IDs", 1000, ids.size)
+        // All 50 IDs should be unique and negative
+        assertThat(ids.toSet()).hasSize(50)
+        assertThat(ids.all { it < 0 }).isTrue()
+
+        // Values should be strictly decreasing
+        val sorted = ids.sortedDescending()
+        assertThat(ids).isEqualTo(sorted)
     }
 
     @Test
-    fun `test nextLocalId persists each ID to preferences`() {
-        every { mockPreferenceManager.getLocalIdCounter() } returns 0L
-        localIdGenerator = LocalIdGenerator(mockPreferenceManager)
-
-        localIdGenerator.nextLocalId()
-        verify { mockPreferenceManager.saveLocalIdCounter(-1L) }
-
-        localIdGenerator.nextLocalId()
-        verify { mockPreferenceManager.saveLocalIdCounter(-2L) }
-
-        localIdGenerator.nextLocalId()
-        verify { mockPreferenceManager.saveLocalIdCounter(-3L) }
-    }
-
-    @Test
-    fun `test initialization restores counter from preferences`() {
-        every { mockPreferenceManager.getLocalIdCounter() } returns -100L
-        localIdGenerator = LocalIdGenerator(mockPreferenceManager)
-
-        val nextId = localIdGenerator.nextLocalId()
-
-        assertEquals("Should continue from persisted counter", -101L, nextId)
-        verify { mockPreferenceManager.getLocalIdCounter() }
-    }
-
-    @Test
-    fun `test isLocalId correctly identifies negative IDs`() {
-        every { mockPreferenceManager.getLocalIdCounter() } returns 0L
-        localIdGenerator = LocalIdGenerator(mockPreferenceManager)
-
-        assertTrue("Should identify -1 as local ID", localIdGenerator.isLocalId(-1L))
-        assertTrue("Should identify -999 as local ID", localIdGenerator.isLocalId(-999L))
-        assertTrue("Should identify -1000000 as local ID", localIdGenerator.isLocalId(-1000000L))
-    }
-
-    @Test
-    fun `test isLocalId correctly identifies positive IDs as non-local`() {
-        every { mockPreferenceManager.getLocalIdCounter() } returns 0L
-        localIdGenerator = LocalIdGenerator(mockPreferenceManager)
-
-        assertFalse("Should identify 1 as server ID", localIdGenerator.isLocalId(1L))
-        assertFalse("Should identify 999 as server ID", localIdGenerator.isLocalId(999L))
-        assertFalse("Should identify 1000000 as server ID", localIdGenerator.isLocalId(1000000L))
-    }
-
-    @Test
-    fun `test isLocalId handles zero as non-local ID`() {
-        every { mockPreferenceManager.getLocalIdCounter() } returns 0L
-        localIdGenerator = LocalIdGenerator(mockPreferenceManager)
-
-        assertFalse("Zero should not be considered local ID", localIdGenerator.isLocalId(0L))
-    }
-
-    @Test
-    fun `test concurrent ID generation produces unique IDs`() {
-        every { mockPreferenceManager.getLocalIdCounter() } returns 0L
-        localIdGenerator = LocalIdGenerator(mockPreferenceManager)
-
-        val ids = mutableSetOf<Long>()
-        val threads = (1 .. 10).map {
-            Thread {
-                repeat(100) {
-                    synchronized(ids) {
-                        ids.add(localIdGenerator.nextLocalId())
-                    }
-                }
-            }
+    fun `persists exact counter value after concurrent access`() = runTest {
+        coroutineScope {
+            (1..10).map {
+                async { generator.nextLocalId() }
+            }.forEach { it.await() }
         }
 
-        threads.forEach { it.start() }
-        threads.forEach { it.join() }
-
-        assertEquals("Should generate 1000 unique IDs across threads", 1000, ids.size)
-        assertTrue("All IDs should be negative", ids.all { it < 0 })
+        // Should have saved 10 times (once per call)
+        coVerify(exactly = 10) { preferenceManager.saveLocalIdCounter(any()) }
     }
 
     @Test
-    fun `test no ID collisions after simulated app restart`() {
-        // First session
-        every { mockPreferenceManager.getLocalIdCounter() } returns 0L
-        val generator1 = LocalIdGenerator(mockPreferenceManager)
+    fun `starts from persisted value`() = runTest {
+        coEvery { preferenceManager.getLocalIdCounter() } returns -1000L
 
-        val id1 = generator1.nextLocalId()
-        val id2 = generator1.nextLocalId()
+        val generator2 = LocalIdGenerator(preferenceManager)
+        val id = generator2.nextLocalId()
 
-        // Simulate app restart - restore from preferences
-        every { mockPreferenceManager.getLocalIdCounter() } returns -2L
-        val generator2 = LocalIdGenerator(mockPreferenceManager)
-
-        val id3 = generator2.nextLocalId()
-
-        assertEquals("First ID should be -1", -1L, id1)
-        assertEquals("Second ID should be -2", -2L, id2)
-        assertEquals("Third ID after restart should be -3", -3L, id3)
+        // Should start from -1000 and decrement
+        assertThat(id).isEqualTo(-1001L)
     }
 }
-

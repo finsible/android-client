@@ -126,4 +126,44 @@ class DateUtilsTest {
 
         assertThat(startOfSecond).isEqualTo(startOfFirst)
     }
+
+    @Test
+    fun `formatDateHeader handles leap year date`() {
+        // 2024-02-29 (leap year)
+        val ms = 1_709_164_800_000L
+
+        val result = DateUtils.readableDate(ms)
+
+        assertThat(result).isEqualTo("29 Feb 2024")
+    }
+
+    @Test
+    fun `getEndOfDayMs is always after startOfDayMs`() {
+        val start = DateUtils.getStartOfDayMs(1_700_000_000_000L)
+        val end = DateUtils.getEndOfDayMs(start)
+
+        assertThat(end).isGreaterThan(start)
+        // Should be approximately 24 hours later
+        val diffMs = end - start
+        assertThat(diffMs).isAtLeast(86_399_000L) // at least 23:59:59
+        assertThat(diffMs).isAtMost(86_401_000L)  // at most 24:00:01
+    }
+
+    @Test
+    fun `getStartOfDayMs is idempotent`() {
+        val original = DateUtils.getStartOfDayMs(1_700_000_000_000L)
+        val again = DateUtils.getStartOfDayMs(original)
+
+        assertThat(again).isEqualTo(original)
+    }
+
+    @Test
+    fun `formatTime returns consistent 12-hour format`() {
+        val morning = DateUtils.formatTime(1_735_084_800_000L)
+        val evening = DateUtils.formatTime(1_735_134_000_000L)
+
+        // Both should contain : and am/pm
+        assertThat(morning).matches(Pattern.compile(".*:.*[ap]m"))
+        assertThat(evening).matches(Pattern.compile(".*:.*[ap]m"))
+    }
 }

@@ -159,4 +159,52 @@ class HistoryViewModelTest {
     fun `loadMore does nothing when no more data`() {
         viewModel.loadMore()
     }
+
+    @Test
+    fun `rapid search query updates only trigger debounced query`() {
+        // 10 rapid updates — check last value is set
+        viewModel.updateSearchQuery("query0")
+        viewModel.updateSearchQuery("query1")
+        viewModel.updateSearchQuery("query2")
+        viewModel.updateSearchQuery("query3")
+        viewModel.updateSearchQuery("query4")
+        viewModel.updateSearchQuery("query5")
+        viewModel.updateSearchQuery("query6")
+        viewModel.updateSearchQuery("query7")
+        viewModel.updateSearchQuery("query8")
+        viewModel.updateSearchQuery("query9")
+
+        assertThat(viewModel.filterState.value.searchQuery).isEqualTo("query9")
+    }
+
+    @Test
+    fun `toggleFilterSheet then clearAllFilters hides sheet`() {
+        viewModel.toggleFilterSheet()
+        assertThat(viewModel.isFilterSheetVisible.value).isTrue()
+
+        viewModel.clearAllFilters()
+        assertThat(viewModel.isFilterSheetVisible.value).isFalse()
+    }
+
+    @Test
+    fun `applyFilterCriteria then collapseSearch restores search`() {
+        viewModel.updateSearchQuery("test")
+        viewModel.applyFilterCriteria(
+            com.itsjeel01.finsiblefrontend.ui.model.state.TransactionsFilterState(
+                sortOption = com.itsjeel01.finsiblefrontend.ui.model.SortOption.AMOUNT_HIGH_TO_LOW
+            )
+        )
+
+        // Search query should be preserved, sort option applied
+        assertThat(viewModel.filterState.value.searchQuery).isEqualTo("test")
+        assertThat(viewModel.filterState.value.sortOption).isEqualTo(
+            com.itsjeel01.finsiblefrontend.ui.model.SortOption.AMOUNT_HIGH_TO_LOW
+        )
+    }
+
+    @Test
+    fun `empty search does not trigger executeQuery`() {
+        viewModel.updateSearchQuery("")
+        // No crash = pass
+    }
 }

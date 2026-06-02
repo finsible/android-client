@@ -129,4 +129,56 @@ class CurrencyFormatterTest {
 
         assertThat(result).isEqualTo("₹12.35")
     }
+
+    @Test
+    fun `formats max long value without crash`() {
+        every { currencyRepository.getByIsoCode("INR") } returns inrCurrency
+
+        val result = formatter.format(centis = Long.MAX_VALUE, currencyCode = "INR")
+
+        assertThat(result).isNotEmpty()
+    }
+
+    @Test
+    fun `formats min long value without crash`() {
+        every { currencyRepository.getByIsoCode("INR") } returns inrCurrency
+
+        val result = formatter.format(centis = Long.MIN_VALUE, currencyCode = "INR")
+
+        assertThat(result).isNotEmpty()
+    }
+
+    @Test
+    fun `formats negative zero as zero`() {
+        every { currencyRepository.getByIsoCode("INR") } returns inrCurrency
+
+        val result = formatter.format(centis = -0L, currencyCode = "INR")
+
+        assertThat(result).isEqualTo("₹0")
+    }
+
+    @Test
+    fun `formats small centis correctly`() {
+        every { currencyRepository.getByIsoCode("INR") } returns inrCurrency
+
+        val result = formatter.format(centis = 1L, currencyCode = "INR")
+
+        assertThat(result).isEqualTo("₹0.01")
+    }
+
+    @Test
+    fun `formats multiple currencies without cross-contamination`() {
+        val usdCurrency = Currency(
+            code = "USD", symbol = "\$", name = "US Dollar",
+            flagEmoji = "🇺🇸", localeTag = "en-US"
+        )
+        every { currencyRepository.getByIsoCode("INR") } returns inrCurrency
+        every { currencyRepository.getByIsoCode("USD") } returns usdCurrency
+
+        val inrResult = formatter.format(centis = 100_000L, currencyCode = "INR")
+        val usdResult = formatter.format(centis = 100_000L, currencyCode = "USD")
+
+        assertThat(inrResult).contains("₹")
+        assertThat(usdResult).contains("\$")
+    }
 }

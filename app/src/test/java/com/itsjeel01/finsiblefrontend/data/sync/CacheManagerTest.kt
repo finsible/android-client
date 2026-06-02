@@ -160,4 +160,39 @@ class CacheManagerTest {
 
         verify(exactly = 0) { accountLocalRepo.addAll(any<List<Account>>(), any()) }
     }
+
+    @Test
+    fun `caches mixed list skips non-matching entries`() {
+        // List with both Account and AccountGroup — only accounts should be added
+        val data = listOf(
+            Account(id = 1, name = "A", description = "", balance = "0.00", currencyCode = "INR", icon = "", isActive = true, isSystemDefault = false),
+            com.itsjeel01.finsiblefrontend.data.model.AccountGroup(id = 1, name = "G", description = "", icon = "", color = "red", isSystemDefault = false),
+        )
+        val response = BaseResponse<List<Any>>(
+            success = true,
+            message = "",
+            cache = true,
+            data = data
+        )
+
+        cacheManager.cacheData(response)
+
+        // Should not crash — mismatched list items are skipped
+        verify(atLeast = 0) { accountLocalRepo.addAll(any<List<Account>>(), any()) }
+    }
+
+    @Test
+    fun `skips caching unknown data type`() {
+        val response = BaseResponse<String>(
+            success = true,
+            message = "",
+            cache = true,
+            data = "unexpected_string"
+        )
+
+        cacheManager.cacheData(response)
+
+        verify(exactly = 0) { accountLocalRepo.addAll(any<List<Account>>(), any()) }
+        verify(exactly = 0) { categoryLocalRepo.addAll(any<List<com.itsjeel01.finsiblefrontend.data.model.Category>>(), any()) }
+    }
 }

@@ -7,6 +7,8 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -70,5 +72,45 @@ class LocalIdGeneratorTest {
         generator.nextLocalId()
 
         coVerify(exactly = 2) { preferenceManager.saveLocalIdCounter(any()) }
+    }
+
+    @Test
+    fun `concurrent calls produce unique IDs with no collisions`() = runTest {
+        val ids = coroutineScope {
+            (1..50).map {
+                async { generator.nextLocalId() }
+            }.map { it.await() }
+        }
+
+        // All 50 IDs should be unique and negative
+        assertThat(ids.toSet()).hasSize(50)
+        assertThat(ids.all { it < 0 }).isTrue()
+
+        // Values should be strictly decreasing
+        val sorted = ids.sortedDescending()
+        assertThat(ids).isEqualTo(sorted)
+    }
+
+    @Test
+    fun `persists exact counter value after concurrent access`() = runTest {
+        coroutineScope {
+            (1..10).map {
+                async { generator.nextLocalId() }
+            }.forEach { it.await() }
+        }
+
+        // Should have saved 10 times (once per call)
+        coVerify(exactly = 10) { preferenceManager.saveLocalIdCounter(any()) }
+    }
+
+    @Test
+    fun `starts from persisted value`() = runTest {
+        coEvery { preferenceManager.getLocalIdCounter() } returns -1000L
+
+        val generator2 = LocalIdGenerator(preferenceManager)
+        val id = generator2.nextLocalId()
+
+        // Should start from -1000 and decrement
+        assertThat(id).isEqualTo(-1001L)
     }
 }

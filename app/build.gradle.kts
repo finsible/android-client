@@ -1,6 +1,3 @@
-@file:OptIn(ExperimentalRoborazziApi::class)
-
-import com.github.takahirom.roborazzi.ExperimentalRoborazziApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -14,7 +11,6 @@ plugins {
     id("kotlin-parcelize") // needed only for non-primitive classes
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
     alias(libs.plugins.objectboxPlugin)
-    alias(libs.plugins.roborazzi.plugin)
 }
 
 android {
@@ -28,7 +24,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.itsjeel01.finsiblefrontend.HiltTestRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -139,8 +135,6 @@ dependencies {
     testImplementation(libs.androidx.core.testing)
     testImplementation(libs.truth)
     testImplementation(libs.turbine)
-    testImplementation(libs.roborazzi)
-    testImplementation(libs.roborazzi.compose)
     testImplementation(libs.robolectric)
     testImplementation(platform(libs.androidx.compose.bom))
     testImplementation(libs.androidx.ui.test.junit4)
@@ -151,7 +145,8 @@ dependencies {
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     androidTestImplementation(libs.hilt.android.testing)
-    kaptAndroidTest(libs.hilt.compiler)
+    androidTestImplementation(libs.truth)
+    kspAndroidTest(libs.hilt.compiler)
 
     debugImplementation(libs.okhttp.logging.interceptor)
     debugImplementation(libs.androidx.ui.tooling)

@@ -5,10 +5,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
@@ -142,7 +146,7 @@ fun TestScreen(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = FinsibleTheme.colors.surfaceBase,
-        contentWindowInsets = WindowInsets(0, 0, 0, 0), // Header handles its own insets safely
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
             FinsibleTopNavigationBar(state = headerState)
         }
@@ -236,8 +240,9 @@ fun TestScreen(
                     containerColor = FinsibleTheme.colors.brandInteractive,
                 ),
                 modifier = Modifier
+                    .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
                     .padding(horizontal = FinsibleTheme.spacing.gapMd)
-                    .padding(bottom = FinsibleTheme.spacing.gapMd),
+                    .padding(bottom = FinsibleTheme.spacing.gapSm),
             )
         }
     }

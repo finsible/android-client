@@ -1,5 +1,4 @@
 package com.itsjeel01.finsiblefrontend.ui.screen.playground
-import com.itsjeel01.finsiblefrontend.ui.theme.medium
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -8,9 +7,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -34,6 +37,7 @@ import com.itsjeel01.finsiblefrontend.ui.navigation.Route
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.entryForRoute
 import com.itsjeel01.finsiblefrontend.ui.screen.playground.helper.playgroundEntries
 import com.itsjeel01.finsiblefrontend.ui.theme.FinsibleTheme
+import com.itsjeel01.finsiblefrontend.ui.theme.medium
 import com.composables.icons.lucide.R as LucideR
 
 @Composable
@@ -106,6 +110,7 @@ private fun PlaygroundScaffold(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .background(FinsibleTheme.colors.surfaceBase)
+                .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
         ) {
             Column(modifier = Modifier.padding(top = FinsibleTheme.spacing.inlineMd)) {
                 content()
@@ -120,14 +125,8 @@ private fun ComponentPlaygroundList(onSelect: (Route) -> Unit) {
         modifier = Modifier
             .verticalScroll(rememberScrollState())
             .padding(horizontal = FinsibleTheme.spacing.gapMd, vertical = FinsibleTheme.spacing.inlineMd),
-        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.inlineMd)
+        verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.gapLg)
     ) {
-        FinsibleText(
-            text = stringResource(R.string.component_playground_list_title),
-            textStyle = FinsibleTheme.typography.bodyMd.medium(),
-            color = FinsibleTheme.colors.contentPrimary
-        )
-
         playgroundEntries.forEach { entry ->
             ComponentEntry(
                 title = stringResource(entry.titleRes),
@@ -144,15 +143,15 @@ private fun ComponentEntry(title: String, description: String, onOpen: () -> Uni
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(FinsibleTheme.spacing.gapMd))
+            .clip(RoundedCornerShape(FinsibleTheme.radius.md))
             .background(FinsibleTheme.colors.surfaceDefault)
-            .border(FinsibleTheme.stroke.thin, FinsibleTheme.colors.borderSubtle, RoundedCornerShape(FinsibleTheme.spacing.gapMd))
+            .border(FinsibleTheme.stroke.thin, FinsibleTheme.colors.borderSubtle, RoundedCornerShape(FinsibleTheme.radius.md))
             .clickable(role = Role.Button, onClick = onOpen)
-            .padding(horizontal = FinsibleTheme.spacing.inlineMd, vertical = FinsibleTheme.spacing.inlineMd),
+            .padding(horizontal = FinsibleTheme.spacing.gapLg, vertical = FinsibleTheme.spacing.gapMd),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.inlineMd)
     ) {
-        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackMicro)) {
+        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(FinsibleTheme.spacing.stackXs)) {
             FinsibleText(
                 text = title,
                 textStyle = FinsibleTheme.typography.bodyMd.medium(),

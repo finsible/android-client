@@ -49,6 +49,7 @@ import com.itsjeel01.finsiblefrontend.ui.theme.medium
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.OperationStatus
 import com.itsjeel01.finsiblefrontend.ui.viewmodel.TestViewModel
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 import com.composables.icons.lucide.R as LucideR
 
 /** Data-driven checkbox action - executes when Launch clicked. */
@@ -93,7 +94,7 @@ fun TestScreen(
 
     LaunchedEffect(operationStatus) {
         if (operationStatus is OperationStatus.Success || operationStatus is OperationStatus.Error) {
-            delay(3000)
+            delay(3000.milliseconds)
             viewModel.clearStatus()
         }
     }
